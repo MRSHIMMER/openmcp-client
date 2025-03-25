@@ -59,8 +59,7 @@ const debugOptions = [
 
 .debug-welcome > span {
 	font-size: 30px;
-	margin-top: 100px;
-	margin-bottom: 76px;
+    margin: 50px;
 }
 
 

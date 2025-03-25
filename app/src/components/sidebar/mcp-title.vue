@@ -15,7 +15,6 @@ defineComponent({ name: 'mcp-title' });
 .mcp-title {
 	display: flex;
 	align-items: center;
-	justify-content: center;
 }
 
 .mcp-title > img {
