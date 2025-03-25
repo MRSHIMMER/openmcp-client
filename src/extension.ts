@@ -1,16 +1,9 @@
 import * as vscode from 'vscode';
 
 export function activate(context: vscode.ExtensionContext) {
-    // 注册 WebView 视图
-	console.log('activate');
-	
-    const provider = new WebviewViewProvider(context.extensionUri);
+    console.log('activate openmcp'); // 确保插件已激活
 
-	context.subscriptions.push(
-		vscode.commands.registerCommand('openmcp.helloWorld', () => {
-			vscode.window.showInformationMessage('Hello World!');
-		})
-	)
+    const provider = new WebviewViewProvider(context.extensionUri);
 
     context.subscriptions.push(
         vscode.window.registerWebviewViewProvider('webview-sidebar.view', provider)
@@ -20,13 +13,19 @@ export function activate(context: vscode.ExtensionContext) {
 class WebviewViewProvider implements vscode.WebviewViewProvider {
     constructor(private readonly _extensionUri: vscode.Uri) {}
 
-    public resolveWebviewView(webviewView: vscode.WebviewView) {
+    public resolveWebviewView(
+        webviewView: vscode.WebviewView,
+		_context: vscode.WebviewViewResolveContext,
+		_token: vscode.CancellationToken,
+    ) {
+        console.log('resolveWebviewView called'); // 确保方法被调用
         webviewView.webview.options = {
-            enableScripts: true, // 启用 JavaScript
+            enableScripts: true,
         };
 
-        // 设置 WebView 的 HTML 内容
-        webviewView.webview.html = getWebviewContent();
+        const html = getWebviewContent();
+        console.log('WebView HTML:', html); // 检查 HTML 内容
+        webviewView.webview.html = html;
     }
 }
 
