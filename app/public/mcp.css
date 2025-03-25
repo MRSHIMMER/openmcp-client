@@ -2,7 +2,7 @@
     --signal-default-color: #4CAF50;
     --main-color: #CB81DA;
     --main-dark-color: #2D323B;
-    --main-light-color: var(--main-color);
+    --main-light-color: rgba(203, 129, 218, 0.7);
     --sidebar-width: 330px;
     --right-nav-width: 50px;
     --time-scale-height: 30px;
