@@ -1,29 +1,40 @@
 <template>
 	<div class="main-panel-container">
 		<div class="tabs-container">
-			<span
-				class="tab"
-				v-for="(tab, index) of tabs.content"
-				:key="index"
-				:class="{ 'active-tab': tabs.activeIndex === index }"
-				@click="setActiveTab(index)"
-			>
-				<span :class="`iconfont ${tab.icon}`"></span>
-				<span>{{ tab.name }}</span>
-				<span 
-					class="iconfont icon-close"
-					@click.stop="closeTab(index)"
-				></span>
-			</span>
+            <el-scrollbar>
+                <div class="scroll-tabs-container">
+                    <span
+                        class="tab"
+                        v-for="(tab, index) of tabs.content"
+                        :key="index"
+                        :class="{ 'active-tab': tabs.activeIndex === index }"
+                        @click="setActiveTab(index)"
+                    >
+                        <span>
+                            <span :class="`iconfont ${tab.icon}`"></span>
+                            <span>{{ tab.name }}</span>
+                        </span>
+                        <span 
+                            class="iconfont icon-close"
+                            @click.stop="closeTab(index)"
+                        ></span>
+                    </span>
+                </div>
+            </el-scrollbar>
+
 			<span
 				class="add-button iconfont icon-add"
 				@click="addNewTab"
 			>
 			</span>
 		</div>
+
+
 		<div class="main-panel">
 			<router-view />
 		</div>
+
+
 	</div>
 </template>
 
@@ -52,6 +63,11 @@ defineComponent({ name: 'main-panel' });
 	height: 95%;
 }
 
+.scroll-tabs-container {
+    width: fit-content;
+    display: flex;
+}
+
 .tabs-container {
 	height: 78px;
 	width: 90%;
@@ -62,20 +78,31 @@ defineComponent({ name: 'main-panel' });
 	padding: 0 10px;
 }
 
+.tabs-container .el-scrollbar {
+    height: fit-content;
+}
+
 .tabs-container .tab {
 	margin: 5px;
+    font-size: 13px;
+    width: 120px;
 	border-radius: .5em;
 	background-color: var(--sidebar);
 	padding: 10px;
 	display: flex;
 	align-items: center;
-	cursor: pointer;
 	transition: var(--animation-3s);
+    justify-content: space-between;
 	position: relative;
 }
 
+.tabs-container .tab > span:first-child {
+    display: flex;
+    align-items: center;
+}
+
 .tabs-container .tab:hover {
-	background-color: var(--sidebar-hover);
+	background-color: var(--input-active-background);
 }
 
 .tabs-container .tab.active-tab {
@@ -89,6 +116,16 @@ defineComponent({ name: 'main-panel' });
 
 .tabs-container .icon-close {
     margin-left: 10px;
+    margin-right: 0 !important;
+    border-radius: .5em;
+    cursor: pointer;
+    padding: 3px;
+    transition: var(--animation-3s);
+}
+
+.tabs-container .icon-close:hover {
+    background-color: var(--main-light-color);
+    transition: var(--animation-3s);
 }
 
 .tabs-container .add-button {

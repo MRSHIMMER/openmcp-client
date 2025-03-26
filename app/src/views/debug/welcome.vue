@@ -5,7 +5,8 @@
 			<span
 				class="debug-option"
 				v-for="(option, index) of debugOptions"
-				:key="index"	
+				:key="index"
+                @click="chooseDebugMode(index)"
 			>
 				<span>
 					<span :class="`iconfont ${option.icon}`"></span>
@@ -17,7 +18,8 @@
 </template>
 
 <script setup lang="ts">
-import { defineComponent } from 'vue';
+import { debugModes, tabs } from '@/components/main-panel/panel';
+import { defineComponent, markRaw } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 defineComponent({ name: 'welcome' });
@@ -46,6 +48,13 @@ const debugOptions = [
 		ident: 'interaction'
 	}
 ];
+
+function chooseDebugMode(index: number) {
+    const activeTab = tabs.activeTab;
+    activeTab.component = markRaw(debugModes[index]);
+    activeTab.icon = debugOptions[index].icon;
+    activeTab.name = debugOptions[index].name;
+}
 
 </script>
 

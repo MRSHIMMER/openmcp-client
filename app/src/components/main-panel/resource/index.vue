@@ -6,7 +6,9 @@
 </template>
 
 <script setup lang="ts">
-defineOptions({ name: 'resource' });
+import { defineComponent } from 'vue';
+
+defineComponent({ name: 'resource' });
 </script>
 
 <style scoped>

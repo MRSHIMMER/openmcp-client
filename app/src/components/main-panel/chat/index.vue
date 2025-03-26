@@ -6,7 +6,9 @@
 </template>
 
 <script setup lang="ts">
-defineOptions({ name: 'chat' });
+import { defineComponent } from 'vue';
+
+defineComponent({ name: 'chat' });
 </script>
 
 <style scoped>

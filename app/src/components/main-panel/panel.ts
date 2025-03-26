@@ -1,29 +1,45 @@
 import { reactive } from 'vue';
 
+
+import Chat from './chat/index.vue';
+import Resource from './chat/index.vue';
+import Prompt from './prompt/index.vue';
+import Tool from './tool/index.vue';
+
 interface Tab {
 	name: string;
 	icon: string;
 	type: string;
+    component: any;
 }
+
+export const debugModes = [
+    Resource, Prompt, Tool, Chat
+]
 
 export const tabs = reactive({
 	content: [
 		{
-			name: '空白的测试',
+			name: '空白测试 1',
 			icon: 'icon-blank',
-			type: 'blank'
+			type: 'blank',
+            component: undefined
 		}
 	] as Tab[],
-	activeIndex: 0
+	activeIndex: 0,
+    get activeTab() {
+        return this.content[this.activeIndex];
+    }
 });
 
 let tabCounter = 1;
 
 export function addNewTab() {
 	const newTab = {
-		name: `新标签页 ${tabCounter++}`,
+		name: `空白测试 ${++ tabCounter}`,
 		icon: 'icon-blank',
-		type: 'blank'
+		type: 'blank',
+        component: undefined
 	};
 	tabs.content.push(newTab);
 	tabs.activeIndex = tabs.content.length - 1;

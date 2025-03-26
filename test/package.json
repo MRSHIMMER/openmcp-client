@@ -1,22 +1,19 @@
 {
 	"devDependencies": {
-        "@types/cors": "^2.8.17",
-        "@types/express": "^5.0.0",
-        "@types/morgan": "^1.9.9",
-        "@types/node": "^22.7.5",
-        "@types/pako": "^2.0.3",
-        "ts-node": "^10.9.2",
-        "typescript": "^5.6.3"
-    },
-    "dependencies": {
-        "body-parser": "^1.20.3",
-        "bson": "^6.8.0",
-        "cors": "^2.8.5",
-        "electron": "^33.0.1",
-        "express": "^4.21.1",
-        "morgan": "^1.10.0",
-        "pako": "^2.1.0",
-        "pdf-lib": "^1.17.1",
-        "puppeteer-core": "^19.4.1"
-    }
+		"@types/cors": "^2.8.17",
+		"@types/express": "^5.0.0",
+		"@types/morgan": "^1.9.9",
+		"@types/node": "^22.7.5",
+		"@types/pako": "^2.0.3",
+		"@types/ws": "^8.18.0",
+		"ts-node": "^10.9.2",
+		"typescript": "^5.6.3"
+	},
+	"dependencies": {
+		"body-parser": "^1.20.3",
+		"cors": "^2.8.5",
+		"express": "^4.21.1",
+		"morgan": "^1.10.0",
+		"pako": "^2.1.0"
+	}
 }

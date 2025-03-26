@@ -6,7 +6,9 @@
 </template>
 
 <script setup lang="ts">
-defineOptions({ name: 'prompt' });
+import { defineComponent } from 'vue';
+
+defineComponent({ name: 'prompt' });
 </script>
 
 <style scoped>

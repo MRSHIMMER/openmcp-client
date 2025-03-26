@@ -1,6 +1,7 @@
 <template>
 	<div style="height: 100%;">
-		<Welcome></Welcome>
+		<Welcome v-if="!tabs.activeTab.component"></Welcome>
+        <component v-else :is="tabs.activeTab.component" />
 	</div>
 </template>
 
@@ -8,6 +9,7 @@
 import { defineComponent } from 'vue';
 
 import Welcome from './welcome.vue';
+import { tabs } from '@/components/main-panel/panel';
 
 defineComponent({ name: 'TEMPLATE_NAME' });
 </script>

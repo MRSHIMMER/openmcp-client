@@ -6,7 +6,9 @@
 </template>
 
 <script setup lang="ts">
-defineOptions({ name: 'tool' });
+import { defineComponent } from 'vue';
+
+defineComponent({ name: 'tool' });
 </script>
 
 <style scoped>
