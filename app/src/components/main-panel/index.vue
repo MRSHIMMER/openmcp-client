@@ -5,9 +5,15 @@
 				class="tab"
 				v-for="(tab, index) of tabs.content"
 				:key="index"
+				:class="{ 'active-tab': tabs.activeIndex === index }"
+				@click="setActiveTab(index)"
 			>
 				<span :class="`iconfont ${tab.icon}`"></span>
 				<span>{{ tab.name }}</span>
+				<span 
+					class="iconfont icon-close"
+					@click.stop="closeTab(index)"
+				></span>
 			</span>
 			<span
 				class="add-button iconfont icon-add"
@@ -23,13 +29,12 @@
 
 <script setup lang="ts">
 import { defineComponent } from 'vue';
-import { addNewTab, tabs } from './panel';
+import { addNewTab, tabs, setActiveTab, closeTab } from './panel';
 
 defineComponent({ name: 'main-panel' });
 </script>
 
 <style>
-
 .main-panel-container {
 	display: flex;
 	justify-content: center;
@@ -53,7 +58,8 @@ defineComponent({ name: 'main-panel' });
 	background-color: var(--background);
 	display: flex;
 	align-items: center;
-
+    user-select: none;
+	padding: 0 10px;
 }
 
 .tabs-container .tab {
@@ -61,16 +67,28 @@ defineComponent({ name: 'main-panel' });
 	border-radius: .5em;
 	background-color: var(--sidebar);
 	padding: 10px;
+	display: flex;
+	align-items: center;
+	cursor: pointer;
+	transition: var(--animation-3s);
+	position: relative;
+}
+
+.tabs-container .tab:hover {
+	background-color: var(--sidebar-hover);
+}
+
+.tabs-container .tab.active-tab {
+	background-color: var(--main-color);
+	color: white;
 }
 
 .tabs-container .tab .iconfont {
 	margin-right: 10px;
 }
 
-.tabs-container .add-button {
-	height: 20px;
-	width: 20px;
-	border-radius: .5em;
+.tabs-container .icon-close {
+    margin-left: 10px;
 }
 
 .tabs-container .add-button {
@@ -92,4 +110,14 @@ defineComponent({ name: 'main-panel' });
 	transition: var(--animation-3s);
 }
 
+.close-icon {
+	margin-left: 8px;
+	font-size: 14px;
+	padding: 2px;
+	border-radius: 50%;
+}
+
+.close-icon:hover {
+	background-color: rgba(255, 255, 255, 0.2);
+}
 </style>
