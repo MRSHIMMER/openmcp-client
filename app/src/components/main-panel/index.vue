@@ -3,12 +3,17 @@
 		<div class="tabs-container">
 			<span
 				class="tab"
-				v-for="(_, index) of tabs.content"
+				v-for="(tab, index) of tabs.content"
 				:key="index"
-			></span>
-			<span class="add-button"
+			>
+				<span :class="`iconfont ${tab.icon}`"></span>
+				<span>{{ tab.name }}</span>
+			</span>
+			<span
+				class="add-button iconfont icon-add"
 				@click="addNewTab"
-			></span>
+			>
+			</span>
 		</div>
 		<div class="main-panel">
 			<router-view />
@@ -27,7 +32,6 @@ defineComponent({ name: 'main-panel' });
 
 .main-panel-container {
 	display: flex;
-	align-items: center;
 	justify-content: center;
 	flex-direction: column;
 	width: 100%;
@@ -54,12 +58,38 @@ defineComponent({ name: 'main-panel' });
 
 .tabs-container .tab {
 	margin: 5px;
+	border-radius: .5em;
+	background-color: var(--sidebar);
+	padding: 10px;
+}
+
+.tabs-container .tab .iconfont {
+	margin-right: 10px;
 }
 
 .tabs-container .add-button {
 	height: 20px;
 	width: 20px;
 	border-radius: .5em;
+}
+
+.tabs-container .add-button {
+	cursor: pointer;
+	font-size: 20px;
+	margin-left: 5px;
+	border-radius: .5em;
+	height: 35px;
+	width: 35px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: var(--animation-3s);
+}
+
+.tabs-container .add-button:hover {
+	color: var(--main-color);
+	background-color: var(--sidebar);
+	transition: var(--animation-3s);
 }
 
 </style>

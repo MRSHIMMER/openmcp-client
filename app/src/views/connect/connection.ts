@@ -18,6 +18,23 @@ export const connectionCommand = reactive({
 	commandString: ''
 });
 
+export interface EnvItem {
+	key: string
+	value: string
+}
+
+export interface IConnectionEnv {
+	data: EnvItem[]
+	newKey: string
+	newValue: string
+}
+
+export const connectionEnv = reactive<IConnectionEnv>({
+	data: [],
+	newKey: '',
+	newValue: ''
+});
+
 export function onconnectionmethodchange() {
 	console.log();
 	
