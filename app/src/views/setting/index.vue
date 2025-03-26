@@ -1,8 +1,26 @@
 <template>
 	<div class="setting-container">
-		<General></General>
-		<Api></Api>
-		<Appearance></Appearance>
+		<div>
+			<el-segmented
+				v-model="settingSections.current"
+				:options="settingSections.data"
+				size="large"
+				style="margin: 10px; font-size: 16px; background-color: var(--background);"
+			>
+			<template #default="scope">
+				<div class="setting-section-option">
+					{{ scope.item.label }}
+				</div>
+			</template>
+			</el-segmented>
+			<div>
+
+				<General v-show="settingSections.current === 'general'"></General>
+				<Api v-show="settingSections.current === 'api'"></Api>
+				<Appearance v-show="settingSections.current === 'appearance'"></Appearance>
+
+			</div>
+		</div>
 	</div>
 </template>
 
@@ -14,12 +32,15 @@ import { colorManager } from './color';
 import General from './general.vue';
 import Api from './api.vue';
 import Appearance from './appearance.vue';
+import { settingSections } from './setting-section';
 
 defineComponent({ name: 'setting' });
 
 onMounted(() => {
 	colorManager.initColor();
 });
+
+
 
 </script>
 
@@ -41,6 +62,11 @@ onMounted(() => {
 	background-color: var(--main-color);
 	position: relative;
 	border-radius: .5em .5em 0 0;
+}
+
+.setting-section-option {
+	padding: 10px;
+
 }
 
 .setting-container .el-scrollbar {
