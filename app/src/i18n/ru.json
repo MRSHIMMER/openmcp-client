@@ -106,5 +106,11 @@
     "connected": "Подключено",
     "disconnected": "Отключено",
     "debug": "Отладка",
-    "connect": "Подключение"
+    "connect": "Подключение",
+    "setting.general-color-setting": "Общие настройки цвета",
+    "choose-a-project-debug": "Выберите проект для отладки",
+    "model": "Модель",
+    "server-provider": "Поставщик услуг",
+    "api-root-url": "Корневой путь API",
+    "api-token": "API-ключ"
 }

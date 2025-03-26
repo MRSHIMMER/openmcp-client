@@ -106,5 +106,11 @@
     "connected": "已連線",
     "disconnected": "已斷開連接",
     "debug": "偵錯",
-    "connect": "連接"
+    "connect": "連接",
+    "setting.general-color-setting": "通用顏色設定",
+    "choose-a-project-debug": "選擇一個項目進行調試",
+    "model": "模型",
+    "server-provider": "服務提供者",
+    "api-root-url": "API 根路徑",
+    "api-token": "API 密鑰"
 }

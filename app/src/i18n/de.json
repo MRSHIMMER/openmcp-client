@@ -106,5 +106,11 @@
     "connected": "Verbunden",
     "disconnected": "Getrennt",
     "debug": "Debuggen",
-    "connect": "Verbinden"
+    "connect": "Verbinden",
+    "setting.general-color-setting": "Allgemeine Farbeinstellungen",
+    "choose-a-project-debug": "Wählen Sie ein Projekt zum Debuggen aus",
+    "model": "Modell",
+    "server-provider": "Dienstanbieter",
+    "api-root-url": "API-Stammpfad",
+    "api-token": "API-Schlüssel"
 }

@@ -106,5 +106,11 @@
     "connected": "接続済み",
     "disconnected": "切断されました",
     "debug": "デバッグ",
-    "connect": "接続"
+    "connect": "接続",
+    "setting.general-color-setting": "一般的な色設定",
+    "choose-a-project-debug": "デバッグするプロジェクトを選択",
+    "model": "モデル",
+    "server-provider": "サービスプロバイダー",
+    "api-root-url": "APIルートパス",
+    "api-token": "APIキー"
 }

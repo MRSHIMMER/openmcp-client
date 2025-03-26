@@ -1,6 +1,6 @@
 <template>
 	<div class="mcp-title">
-		<img src="/protocol.svg" alt="">
+		<img src="/images/openmcp.svg" alt="">
 		<div>OpenMCP</div>
 	</div>
 </template>

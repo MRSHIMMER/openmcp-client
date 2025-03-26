@@ -106,5 +106,11 @@
     "connected": "Connecté",
     "disconnected": "Déconnecté",
     "debug": "Déboguer",
-    "connect": "Connexion"
+    "connect": "Connexion",
+    "setting.general-color-setting": "Paramètres de couleur généraux",
+    "choose-a-project-debug": "Sélectionnez un projet à déboguer",
+    "model": "Modèle",
+    "server-provider": "Fournisseur de services",
+    "api-root-url": "Chemin racine de l'API",
+    "api-token": "Clé API"
 }

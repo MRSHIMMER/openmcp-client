@@ -106,5 +106,11 @@
     "connected": "متصل",
     "disconnected": "غير متصل",
     "debug": "تصحيح",
-    "connect": "اتصال"
+    "connect": "اتصال",
+    "setting.general-color-setting": "إعدادات الألوان العامة",
+    "choose-a-project-debug": "اختر مشروعًا لتصحيحه",
+    "model": "النموذج",
+    "server-provider": "مزود الخدمة",
+    "api-root-url": "مسار جذر API",
+    "api-token": "مفتاح API"
 }

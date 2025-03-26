@@ -1,6 +1,6 @@
 <template>
 	<div class="debug-welcome">
-		<span>选择一个项目进行调试</span>
+		<span>{{ t('choose-a-project-debug') }}</span>
 		<div class="welcome-container">
 			<span
 				class="debug-option"
@@ -97,6 +97,10 @@ const debugOptions = [
 
 .debug-option .iconfont {
 	font-size: 48px;
+}
+
+.debug-welcome {
+	user-select: none;
 }
 
 </style>

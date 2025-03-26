@@ -11,12 +11,17 @@ import { Connection } from './components/sidebar/sidebar';
 
 import Sidebar from '@/components/sidebar/index.vue';
 import MainPanel from '@/components/main-panel/index.vue';
+import { setDefaultCss } from './hook/css';
+import { pinkLog } from './views/setting/util';
 
 
 onMounted(() => {
+	setDefaultCss();
 	document.addEventListener('click', () => {
 		Connection.showPanel = false;
 	});
+
+	pinkLog('OpenMCP Client 启动');
 })
 
 </script>

@@ -31,6 +31,7 @@ defineComponent({ name: 'main-panel' });
 	justify-content: center;
 	flex-direction: column;
 	width: 100%;
+	min-width: 800px;
 	height: 100%;
 	margin-left: 20px;
 }

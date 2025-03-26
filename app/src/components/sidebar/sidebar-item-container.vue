@@ -8,13 +8,14 @@
 			@click="gotoOption(item.ident)"
 		>
 			<span :class="`iconfont ${item.icon}`"></span>
-			<span>{{ item.name }}</span>
+			<span>{{ t(item.ident) }}</span>
 		</div>
 	</div>
 </template>
 
 <script setup lang="ts">
 import { defineComponent } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 import { sidebarItems } from './sidebar';
 
@@ -22,6 +23,7 @@ defineComponent({ name: 'sidebar-item-container' });
 
 const route = useRoute();
 const router = useRouter();
+const { t } = useI18n();
 
 function isActive(name: string) {	
 	return route.name === name;
