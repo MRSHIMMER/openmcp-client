@@ -4,7 +4,7 @@
 	"description": "",
 	"main": "dist/main.js",
 	"scripts": {
-		"dev": "ts-node src/main.ts",
+		"serve": "ts-node src/main.ts",
 		"build": "tsc && cp -R src/public dist/ 2> /dev/null || :",
 		"build:watch": "tsc --watch",
 		"start": "node dist/main.js",
@@ -27,6 +27,7 @@
 		"typescript": "^5.6.3"
 	},
 	"dependencies": {
+		"@modelcontextprotocol/sdk": "^1.8.0",
 		"body-parser": "^1.20.3",
 		"cors": "^2.8.5",
 		"express": "^4.21.1",
