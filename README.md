@@ -6,6 +6,9 @@
 
 <a href="https://qm.qq.com/cgi-bin/qm/qr?k=C6ZUTZvfqWoI12lWe7L93cWa1hUsuVT0&jump_from=webapi&authKey=McW6B1ogTPjPDrCyGttS890tMZGQ1KB3QLuG4aqVNRaYp4vlTSgf2c6dMcNjMuBD" target="_blank">加入 OpenMCP正式级技术组</a>
 
+<a href="https://qm.qq.com/q/qyVJ189OUg" target="_blank">加入 OpenMCP咖啡厅</a>
+
+<a href="https://qm.qq.com/q/AO0sJS3r7U" target="_blank">加入 OpenMCP正式级宣传组</a>
 </div>
 
 ## OpenMCP
