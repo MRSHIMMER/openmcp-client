@@ -1,4 +1,21 @@
 {
+	"name": "openmcp-test-backend",
+	"version": "1.0.0",
+	"description": "",
+	"main": "dist/main.js",
+	"scripts": {
+		"dev": "ts-node src/main.ts",
+		"build": "tsc && cp -R src/public dist/ 2> /dev/null || :",
+		"build:watch": "tsc --watch",
+		"start": "node dist/main.js",
+		"start:prod": "NODE_ENV=production node dist/main.js",
+		"debug": "node --inspect -r ts-node/register src/main.ts",
+		"clean": "rm -rf dist",
+		"lint": "eslint src --ext .ts,.tsx",
+		"typecheck": "tsc --noEmit"
+	},
+	"author": "LSTM-Kirigaya",
+	"license": "MIT",
 	"devDependencies": {
 		"@types/cors": "^2.8.17",
 		"@types/express": "^5.0.0",
@@ -14,6 +31,7 @@
 		"cors": "^2.8.5",
 		"express": "^4.21.1",
 		"morgan": "^1.10.0",
-		"pako": "^2.1.0"
+		"pako": "^2.1.0",
+		"ws": "^8.18.1"
 	}
 }

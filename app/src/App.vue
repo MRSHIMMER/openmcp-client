@@ -13,6 +13,22 @@ import Sidebar from '@/components/sidebar/index.vue';
 import MainPanel from '@/components/main-panel/index.vue';
 import { setDefaultCss } from './hook/css';
 import { pinkLog } from './views/setting/util';
+import { useMessageBridge } from './api/message-bridge';
+
+const { postMessage, onMessage, isConnected } = useMessageBridge();
+
+// 监听所有消息
+onMessage((message) => {
+	console.log('Received:', message.command, message.payload);
+});
+
+// 发送消息
+const sendPing = () => {
+	postMessage({
+		command: 'ping',
+		payload: { timestamp: Date.now() }
+	});
+};
 
 
 onMounted(() => {
@@ -22,6 +38,8 @@ onMounted(() => {
 	});
 
 	pinkLog('OpenMCP Client 启动');
+
+	sendPing();
 })
 
 </script>

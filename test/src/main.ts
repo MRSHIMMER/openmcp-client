@@ -1,19 +1,37 @@
-// server/src/server.ts
-import express from 'express';
-import { WSServer } from './wsHandler';
+// server/wsServer.ts
+import WebSocket from 'ws';
 
-const app = express();
-const PORT = 3000;
+export interface VSCodeMessage {
+    command: string;
+    payload?: unknown;
+    callbackId?: string;
+}
 
-// 初始化 WebSocket 服务器
-const wsServer = new WSServer(8080);
+export type MessageHandler = (message: VSCodeMessage) => void;
 
-// HTTP 接口
-app.get('/', (req, res) => {
-    res.send('WebSocket Server is running');
-});
+const wss = new WebSocket.Server({ port: 8080 });
 
-// 启动 HTTP 服务器
-app.listen(PORT, () => {
-    console.log(`HTTP server running on port ${PORT}`);
+wss.on('connection', (ws) => {
+    // 转换普通消息为 VS Code 格式
+    ws.on('message', (data) => {
+        console.log('receive data from frontend: ' + data.toString());
+        
+        // const rawMessage = data.toString();
+        // const vscodeMessage: VSCodeMessage = {
+        //     command: 'ws-message',
+        //     payload: rawMessage,
+        //     callbackId: Math.random().toString(36).slice(2)
+        // };
+        // ws.send(JSON.stringify(vscodeMessage));
+    });
+
+    // 连接后发送一个消息
+    const vscodeMessage: VSCodeMessage = {
+        command: 'ws-message',
+        payload: {
+            text: 'connection completed'
+        },
+        callbackId: Math.random().toString(36).slice(2)
+    };
+    ws.send(JSON.stringify(vscodeMessage));
 });
