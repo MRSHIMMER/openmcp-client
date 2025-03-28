@@ -19,14 +19,14 @@ const { postMessage, onMessage, isConnected } = useMessageBridge();
 
 // 监听所有消息
 onMessage((message) => {
-	console.log('Received:', message.command, message.payload);
+	console.log('Received:', message.command, message.data);
 });
 
 // 发送消息
 const sendPing = () => {
 	postMessage({
 		command: 'ping',
-		payload: { timestamp: Date.now() }
+		data: { timestamp: Date.now() }
 	});
 };
 

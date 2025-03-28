@@ -8,7 +8,7 @@ type ConnectionType = 'STDIO' | 'SSE';
 type McpTransport = StdioClientTransport | SSEClientTransport;
 
 // 定义命令行参数接口
-interface MCPOptions {
+export interface MCPOptions {
     connectionType: ConnectionType;
     // STDIO 特定选项
     command?: string;
@@ -31,8 +31,8 @@ class MCPClient {
 
         this.client = new Client(
             {
-                name: "example-client",
-                version: "1.0.0"
+                name: "openmcp test local client",
+                version: "0.0.1"
             },
             {
                 capabilities: {

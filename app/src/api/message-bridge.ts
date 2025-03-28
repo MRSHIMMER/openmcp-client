@@ -3,7 +3,7 @@ import { onUnmounted, ref } from 'vue';
 
 export interface VSCodeMessage {
 	command: string;
-	payload?: unknown;
+	data?: unknown;
 	callbackId?: string;
 }
 
