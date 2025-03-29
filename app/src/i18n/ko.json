@@ -103,5 +103,6 @@
     "api-token": "API 키",
     "connection-method": "연결 방법",
     "command": "명령",
-    "env-var": "환경 변수"
+    "env-var": "환경 변수",
+    "log": "로그"
 }

@@ -33,12 +33,8 @@ import { connectionArgs, connectionMethods } from './connection';
 
 const { t } = useI18n();
 
-interface ConnectionMethods {
-    current: string
-}
 const stdioForm = ref<FormInstance>()
 const urlForm = ref<FormInstance>()
-
 
 // 验证规则
 const rules = reactive<FormRules>({

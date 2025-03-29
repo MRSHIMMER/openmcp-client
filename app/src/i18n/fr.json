@@ -103,5 +103,6 @@
     "api-token": "Clé API",
     "connection-method": "Méthode de connexion",
     "command": "Commande",
-    "env-var": "Variables d'environnement"
+    "env-var": "Variables d'environnement",
+    "log": "Journaux"
 }

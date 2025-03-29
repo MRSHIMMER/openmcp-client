@@ -103,5 +103,6 @@
     "api-token": "API 密鑰",
     "connection-method": "連接方式",
     "command": "命令",
-    "env-var": "環境變數"
+    "env-var": "環境變數",
+    "log": "日誌"
 }

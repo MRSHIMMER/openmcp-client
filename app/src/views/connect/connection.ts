@@ -37,10 +37,6 @@ export const connectionEnv = reactive<IConnectionEnv>({
 	newValue: ''
 });
 
-export function onconnectionmethodchange() {
-	console.log();
-	
-}
 
 // 定义连接类型
 type ConnectionType = 'STDIO' | 'SSE';
@@ -58,12 +54,15 @@ export interface MCPOptions {
     clientVersion?: string;
 }
 
-
-
 export function doConnect() {
     let connectOption: MCPOptions;
 
     if (connectionMethods.current === 'STDIO') {
+
+        if (connectionArgs.commandString.length === 0) {
+            return;
+        }
+
         const commandComponents = connectionArgs.commandString.split(/\s+/g);
         const command = commandComponents[0];
         commandComponents.shift();
@@ -79,6 +78,10 @@ export function doConnect() {
     } else {
         const url = connectionArgs.urlString;
 
+        if (url.length === 0) {
+            return;
+        }
+
         connectOption = {
             connectionType: 'SSE',
             url: url,
@@ -93,3 +96,13 @@ export function doConnect() {
         data: connectOption
     });
 }
+
+export function doReconnect() {
+    // TODO: finish this
+    console.log();
+}
+
+export const connectionResult = reactive({
+    success: false,
+    logString: ''
+});

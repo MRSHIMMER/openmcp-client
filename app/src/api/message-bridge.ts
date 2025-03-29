@@ -8,11 +8,13 @@ export interface VSCodeMessage {
 }
 
 export type MessageHandler = (message: VSCodeMessage) => void;
+export type CommandHandler = (data: any) => void;
+
 export const acquireVsCodeApi = (window as any)['acquireVsCodeApi'];
 
 class MessageBridge {
 	private ws: WebSocket | null = null;
-	private handlers = new Set<MessageHandler>();
+	private handlers = new Map<string, Set<CommandHandler>>();
 	public isConnected = ref(false);
 
 	constructor(private wsUrl: string = 'ws://localhost:8080') {
@@ -72,17 +74,35 @@ class MessageBridge {
 		};
 	}
 
+	/**
+	 * @description 对 message 发起调度，根据 command 类型获取调取器
+	 * @param message 
+	 */
 	private dispatchMessage(message: VSCodeMessage) {
-		this.handlers.forEach(handler => handler(message));
+		const command = message.command;
+		const data = message.data;
+
+		const handlers = this.handlers.get(command) || [];
+		handlers.forEach(handler => handler(data));
 	}
 
 	public postMessage(message: VSCodeMessage) {
 		throw new Error('PostMessage not initialized');
 	}
+	
+	/**
+	 * @description 注册一个命令的执行器
+	 * @param handler 
+	 * @returns 
+	 */
+	public addCommandListener(command: string, commandHandler: CommandHandler) {
+		if (!this.handlers.has(command)) {
+			this.handlers.set(command, new Set<CommandHandler>());
+		}
+		const commandHandlers = this.handlers.get(command)!;
+		commandHandlers.add(commandHandler);
 
-	public onMessage(handler: MessageHandler) {
-		this.handlers.add(handler);
-		return () => this.handlers.delete(handler);
+		return () => commandHandlers.delete(commandHandler);
 	}
 
 	public destroy() {
@@ -104,7 +124,7 @@ export function useMessageBridge() {
 
 	return {
 		postMessage: bridge.postMessage.bind(bridge),
-		onMessage: bridge.onMessage.bind(bridge),
+		addCommandListener: bridge.addCommandListener.bind(bridge),
 		isConnected: bridge.isConnected
 	};
 }

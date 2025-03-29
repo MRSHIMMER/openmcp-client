@@ -51,8 +51,8 @@ class MCPClient {
         switch (this.options.connectionType) {
             case 'STDIO':
                 this.transport = new StdioClientTransport({
-                    command: this.options.command || 'node',
-                    args: this.options.args || ['server.js']
+                    command: this.options.command || '',
+                    args: this.options.args || []
                 });
                 break;
             case 'SSE':

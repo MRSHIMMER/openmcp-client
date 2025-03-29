@@ -11,6 +11,8 @@
     --toolbar-height: 50px;
     --toolbar-item-height: 32px;
 
+    --code-font-family: "Cascadia code";
+
     /* css 动画属性 */
     --animation-7s: .7s cubic-bezier(0.23,1,0.32,1);
     --animation-5s: .5s cubic-bezier(0.23,1,0.32,1);

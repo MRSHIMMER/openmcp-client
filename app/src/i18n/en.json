@@ -103,5 +103,6 @@
     "api-token": "API key",
     "connection-method": "Connection method",
     "command": "Command",
-    "env-var": "Environment variables"
+    "env-var": "Environment variables",
+    "log": "Logs"
 }

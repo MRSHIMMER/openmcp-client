@@ -18,9 +18,11 @@ import { useMessageBridge } from './api/message-bridge';
 const bridge = useMessageBridge();
 
 // 监听所有消息
-bridge.onMessage((message) => {
-	console.log('Received:', message.command, message.data);
+bridge.addCommandListener('hello', data => {
+	pinkLog(`${data.name} 上线`);
+	pinkLog(`version: ${data.version}`);
 });
+
 
 // 发送消息
 const sendPing = () => {

@@ -103,5 +103,6 @@
     "api-token": "مفتاح API",
     "connection-method": "طريقة الاتصال",
     "command": "أمر",
-    "env-var": "متغيرات البيئة"
+    "env-var": "متغيرات البيئة",
+    "log": "سجلات"
 }

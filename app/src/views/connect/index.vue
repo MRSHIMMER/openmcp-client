@@ -1,124 +1,74 @@
 <template>
-	<div class="connect-panel-container">
-		<div class="connection-option">
-			<span>{{ t('connection-method') }}</span>
-			<span style="width: 200px;">
-				<el-select name="language-setting" class="language-setting" v-model="connectionMethods.current"
-					@change="onconnectionmethodchange">
-					<el-option v-for="option in connectionMethods.data" :value="option.value" :label="option.label"
-						:key="option.label"></el-option>
-				</el-select>
-			</span>
-		</div>
+	<div class="connection-container">
+		<div class="connect-panel-container">
+			<ConnectionMethod></ConnectionMethod>
+			<ConnectionArgs></ConnectionArgs>
+			<EnvVar></EnvVar>
 
+			<div class="connect-action">
+				<el-button
+					type="primary"
+					size="large"
+					:disabled="!connectionResult"
+					@click="doConnect()"
+				>
+					Connect
+				</el-button>
 
-        <ConnectionArgs></ConnectionArgs>
-
-
-		<div class="connection-option">
-			<span>{{ t('env-var') }}</span>
-			<div class="input-env">
-				<span class="input-env-container">
-					<span>
-						<el-input v-model="connectionEnv.newKey" @keyup.enter="addEnvVar"></el-input>
-					</span>
-					<span>
-						<el-input v-model="connectionEnv.newValue" @keyup.enter="addEnvVar"></el-input>
-					</span>
-					<span>
-						<div @click="addEnvVar">
-							<span class="iconfont icon-add"></span>
-						</div>
-					</span>
-				</span>
-
+				<el-button
+					type="primary"
+					size="large"
+					@click="doReconnect()"
+				>
+					Reconnect
+				</el-button>
 			</div>
-			<el-scrollbar height="200px" width="350px" class="display-env-container">
-				<div class="display-env">
-					<div class="input-env-container" v-for="option of connectionEnv.data" :key="option.key">
-						<span> <el-input v-model="option.key"></el-input></span>
-						<span> <el-input v-model="option.value" show-password></el-input></span>
-						<span @click="deleteEnvVar(option)">
-							<span class="iconfont icon-delete"></span>
-						</span>
-					</div>
-				</div>
-			</el-scrollbar>
 		</div>
 
-		<div class="connect-action">
-			<el-button type="primary" size="large"
-                @click="doConnect()"
-            >
-				Connect
-			</el-button>
+		<div class="connect-panel-container">
+			<ConnectionLog></ConnectionLog>
 		</div>
 	</div>
+
 </template>
 
 <script setup lang="ts">
 import { defineComponent } from 'vue';
-import { useI18n } from 'vue-i18n';
-import { connectionArgs, connectionEnv, connectionMethods, doConnect, EnvItem, onconnectionmethodchange } from './connection';
+import { connectionResult, doConnect, doReconnect } from './connection';
 
+import ConnectionMethod from './connection-method.vue';
 import ConnectionArgs from './connection-args.vue';
+import EnvVar from './env-var.vue';
+
+import ConnectionLog from './connection-log.vue';
+
 import { useMessageBridge } from '@/api/message-bridge';
 
 defineComponent({ name: 'connect' });
 
-const { t } = useI18n();
-
 const bridge = useMessageBridge();
 
-bridge.onMessage(message => {
-    if (message.command === 'connect') {
-        console.log('connect result');
-        console.log(message.data);
-    }
+bridge.addCommandListener('connect', data => {
+	const { code, msg } = data;
+
+	connectionResult.success = (code === 200);
+	connectionResult.logString = msg;
 });
 
-/**
- * @description 添加环境变量
- */
-function addEnvVar() {
-	// 检查是否存在一样的 key
-	const currentKey = connectionEnv.newKey;
-	const currentValue = connectionEnv.newValue;
-
-	if (currentKey.length === 0 || currentValue.length === 0) {
-		return;
-	}
-
-	const sameNameItems = connectionEnv.data.filter(item => item.key === currentKey);
-
-	if (sameNameItems.length > 0) {
-		const conflictItem = sameNameItems[0];
-		conflictItem.value = currentValue;
-	} else {
-		connectionEnv.data.push({
-			key: currentKey, value: currentValue
-		});
-		connectionEnv.newKey = '';
-		connectionEnv.newValue = '';
-	}
-}
-
-/**
- * @description 删除环境变量
- */
-function deleteEnvVar(option: EnvItem) {
-	const currentKey = option.key;
-	const reserveItems = connectionEnv.data.filter(item => item.key !== currentKey);
-	connectionEnv.data = reserveItems;
-}
 
 </script>
 
 <style>
+.connection-container {
+	display: flex;
+}
+
+
 .connect-panel-container {
 	display: flex;
 	flex-direction: column;
-	width: 60%;
+	width: 45%;
+	min-width: 300px;
 	padding: 20px;
 }
 
@@ -129,6 +79,7 @@ function deleteEnvVar(option: EnvItem) {
 	padding: 10px;
 	margin-bottom: 20px;
 	border-radius: .5em;
+	border: 1px solid var(--background);
 }
 
 .connection-option>span:first-child {

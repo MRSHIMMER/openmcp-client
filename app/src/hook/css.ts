@@ -22,6 +22,8 @@ export function setDefaultCss() {
     document.body.style.setProperty('--el-color-primary-dark-2', 'var(--main-light-color)');
     document.body.style.setProperty('--el-fill-color-dark', 'var(--main-light-color)');
     document.body.style.setProperty('--el-fill-color-darker', 'var(--main-light-color)');
+    document.body.style.setProperty('--el-color-primary-light-5', 'var(--button-disabled)');
+
     // document.body.style.setProperty('--el-color-white', 'var(--background)');
     
     // 设置全局宏
