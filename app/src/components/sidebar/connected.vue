@@ -16,13 +16,14 @@
 import { defineComponent, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Connection } from './sidebar';
+import { connectionResult } from '@/views/connect/connection';
 
 defineComponent({ name: 'connected' });
 
 const { t } = useI18n();
 
 const statusString = computed(() => {
-	if (Connection.connected) {
+	if (connectionResult.success) {
 		return t('connected');
 	} else {
 		return t('disconnected');
@@ -30,7 +31,7 @@ const statusString = computed(() => {
 });
 
 const statusColorStyle = computed(() => {
-	if (Connection.connected) {
+	if (connectionResult.success) {
 		return 'connected-color';
 	} else {
 		return 'disconnected-color';

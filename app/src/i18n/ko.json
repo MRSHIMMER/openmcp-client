@@ -104,5 +104,6 @@
     "connection-method": "연결 방법",
     "command": "명령",
     "env-var": "환경 변수",
-    "log": "로그"
+    "log": "로그",
+    "warning.click-to-connect": "먼저 왼쪽의 $1을 클릭하여 연결하십시오"
 }

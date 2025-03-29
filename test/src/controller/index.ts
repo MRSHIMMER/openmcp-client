@@ -1,17 +1,22 @@
 
 import { VSCodeWebViewLike } from '../adapter';
-import { connect, type MCPOptions } from './connect';
+import { connect, MCPClient, type MCPOptions } from './connect';
+import { callTool, getPrompt, listPrompts, listResources, readResource } from './handler';
+
+
+// TODO: 支持更多的 client
+let client: MCPClient | undefined = undefined;
 
 async function connectHandler(option: MCPOptions, webview: VSCodeWebViewLike) {
 	try {
-		const client = await connect(option);
+		client = await connect(option);
 		const connectResult = {
 			code: 200,
-			msg: 'connect success'
+			msg: 'connect success\nHello from OpenMCP | virtual client version: 0.0.1'
 		};
 		webview.postMessage({ command: 'connect', data: connectResult });
 	} catch (error) {
-		
+
 		// TODO: 这边获取到的 error 不够精致，如何才能获取到更加精准的错误
 		// 比如	error: Failed to spawn: `server.py`
   		//		  Caused by: No such file or directory (os error 2)
@@ -24,12 +29,33 @@ async function connectHandler(option: MCPOptions, webview: VSCodeWebViewLike) {
 	}
 }
 
+
 export function messageController(command: string, data: any, webview: VSCodeWebViewLike) {
 	switch (command) {
 		case 'connect':
 			connectHandler(data, webview);
 			break;
-	
+
+		case 'prompts/list':
+			listPrompts(client, webview);
+			break;
+
+		case 'prompts/get':
+			getPrompt(client, data, webview);
+			break;
+
+		case 'resources/list':
+			listResources(client, webview);
+			break;
+
+		case 'resources/read':
+			readResource(client, data, webview);
+			break;
+
+		case 'tools/call':
+			callTool(client, data, webview);
+			break;
+
 		default:
 			break;
 	}

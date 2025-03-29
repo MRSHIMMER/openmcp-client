@@ -104,5 +104,6 @@
     "connection-method": "連接方式",
     "command": "命令",
     "env-var": "環境變數",
-    "log": "日誌"
+    "log": "日誌",
+    "warning.click-to-connect": "請先點擊左側的 $1 進行連接"
 }

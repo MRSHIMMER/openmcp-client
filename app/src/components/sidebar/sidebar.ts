@@ -20,6 +20,5 @@ export const sidebarItems = reactive([
 ]);
 
 export const Connection = reactive({
-	connected: false,
 	showPanel: false
 });

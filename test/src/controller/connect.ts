@@ -22,7 +22,7 @@ export interface MCPOptions {
 }
 
 // 增强的客户端类
-class MCPClient {
+export class MCPClient {
     private client: Client;
     private transport?: McpTransport;
     private options: MCPOptions;
@@ -77,29 +77,29 @@ class MCPClient {
     }
 
     // 列出提示
-    public async listPrompts(): Promise<any> {
+    public async listPrompts() {
         return await this.client.listPrompts();
     }
 
     // 获取提示
-    public async getPrompt(name: string, args: Record<string, any> = {}): Promise<any> {
+    public async getPrompt(name: string, args: Record<string, any> = {}) {
         return await this.client.getPrompt({ name }, args);
     }
 
     // 列出资源
-    public async listResources(): Promise<any> {
+    public async listResources() {
         return await this.client.listResources();
     }
 
     // 读取资源
-    public async readResource(uri: string): Promise<any> {
+    public async readResource(uri: string) {
         return await this.client.readResource({
             uri
         });
     }
 
     // 调用工具
-    public async callTool(options: { name: string; arguments: Record<string, any> }): Promise<any> {
+    public async callTool(options: { name: string; arguments: Record<string, any> }) {
         return await this.client.callTool(options);
     }
 }

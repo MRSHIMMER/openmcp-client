@@ -104,5 +104,6 @@
     "connection-method": "接続方法",
     "command": "コマンド",
     "env-var": "環境変数",
-    "log": "ログ"
+    "log": "ログ",
+    "warning.click-to-connect": "まず左側の$1をクリックして接続してください"
 }

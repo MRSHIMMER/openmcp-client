@@ -2,8 +2,10 @@
 	<div class="debug-welcome">
 		<span>{{ t('choose-a-project-debug') }}</span>
 		<div class="welcome-container">
+			<!-- TODO: 支持更多的 server -->
 			<span
 				class="debug-option"
+				:class="{ 'disable': !connectionResult.success }"
 				v-for="(option, index) of debugOptions"
 				:key="index"
                 @click="chooseDebugMode(index)"
@@ -21,6 +23,8 @@
 import { debugModes, tabs } from '@/components/main-panel/panel';
 import { defineComponent, markRaw } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { connectionResult } from '../connect/connection';
+import { ElMessage } from 'element-plus';
 
 defineComponent({ name: 'welcome' });
 
@@ -50,10 +54,24 @@ const debugOptions = [
 ];
 
 function chooseDebugMode(index: number) {
-    const activeTab = tabs.activeTab;
-    activeTab.component = markRaw(debugModes[index]);
-    activeTab.icon = debugOptions[index].icon;
-    activeTab.name = debugOptions[index].name;
+
+	// TODO: 支持更多的 server
+	if (connectionResult.success) {
+		const activeTab = tabs.activeTab;
+		activeTab.component = markRaw(debugModes[index]);
+		activeTab.icon = debugOptions[index].icon;
+		activeTab.name = debugOptions[index].name;
+	} else {
+		const message = t('warning.click-to-connect')
+			.replace('$1', t('connect'));
+		
+		ElMessage({
+			message,
+			type: 'error',
+			duration: 3000,
+			showClose: true,
+		});
+	}
 }
 
 </script>
@@ -110,6 +128,11 @@ function chooseDebugMode(index: number) {
 
 .debug-welcome {
 	user-select: none;
+}
+
+.debug-option.disable {
+	cursor: not-allowed;
+	opacity: 0.5;
 }
 
 </style>

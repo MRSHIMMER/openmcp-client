@@ -1,7 +1,9 @@
 <template>
     <div class="resource-module">
         <h2>资源模块</h2>
-        <!-- 资源模块内容将在这里实现 -->
+        
+        
+
     </div>
 </template>
 
