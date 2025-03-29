@@ -60,8 +60,9 @@ function gotoOption(ident: string) {
 }
 
 .sidebar-option-item .iconfont {
-	margin-right: 5px;
-	font-size: 20px;
+    margin-top: 2px;
+	margin-right: 7px;
+	font-size: 17px;
 }
 
 .sidebar-option-item.active {

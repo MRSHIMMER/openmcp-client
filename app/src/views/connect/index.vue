@@ -11,12 +11,9 @@
 			</span>
 		</div>
 
-		<div class="connection-option">
-			<span>{{ t('command') }}</span>
-			<span style="width: 310px;">
-				<el-input v-model="connectionCommand.commandString"></el-input>
-			</span>
-		</div>
+
+        <ConnectionArgs></ConnectionArgs>
+
 
 		<div class="connection-option">
 			<span>{{ t('env-var') }}</span>
@@ -50,7 +47,9 @@
 		</div>
 
 		<div class="connect-action">
-			<el-button type="primary" size="large">
+			<el-button type="primary" size="large"
+                @click="doConnect()"
+            >
 				Connect
 			</el-button>
 		</div>
@@ -60,12 +59,23 @@
 <script setup lang="ts">
 import { defineComponent } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { connectionCommand, connectionEnv, connectionMethods, EnvItem, onconnectionmethodchange } from './connection';
+import { connectionArgs, connectionEnv, connectionMethods, doConnect, EnvItem, onconnectionmethodchange } from './connection';
+
+import ConnectionArgs from './connection-args.vue';
+import { useMessageBridge } from '@/api/message-bridge';
 
 defineComponent({ name: 'connect' });
 
 const { t } = useI18n();
 
+const bridge = useMessageBridge();
+
+bridge.onMessage(message => {
+    if (message.command === 'connect') {
+        console.log('connect result');
+        console.log(message.data);
+    }
+});
 
 /**
  * @description 添加环境变量

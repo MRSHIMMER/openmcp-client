@@ -15,16 +15,16 @@ import { setDefaultCss } from './hook/css';
 import { pinkLog } from './views/setting/util';
 import { useMessageBridge } from './api/message-bridge';
 
-const { postMessage, onMessage, isConnected } = useMessageBridge();
+const bridge = useMessageBridge();
 
 // 监听所有消息
-onMessage((message) => {
+bridge.onMessage((message) => {
 	console.log('Received:', message.command, message.data);
 });
 
 // 发送消息
 const sendPing = () => {
-	postMessage({
+	bridge.postMessage({
 		command: 'ping',
 		data: { timestamp: Date.now() }
 	});
