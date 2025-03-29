@@ -29,9 +29,7 @@ function isActive(name: string) {
 	return route.name === name;
 }
 
-function gotoOption(ident: string) {
-	console.log(router);
-	
+function gotoOption(ident: string) {	
 	router.push('/' + ident);
 }
 

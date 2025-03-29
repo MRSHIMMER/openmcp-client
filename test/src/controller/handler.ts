@@ -115,6 +115,40 @@ export async function listResources(
 	}
 }
 
+
+/**
+ * @description 列出所有resources
+ */
+export async function listResourceTemplates(
+	client: MCPClient | undefined,
+	webview: VSCodeWebViewLike
+) {
+	if (!client) {
+		const connectResult = {
+			code: 501,
+			msg: 'mcp client 尚未连接'
+		};
+		webview.postMessage({ command: 'resources/templates/list', data: connectResult });
+		return;
+	}
+
+	try {
+		const resources = await client.listResourceTemplates();
+		const result = {
+			code: 200,
+			msg: resources
+		};
+		webview.postMessage({ command: 'resources/templates/list', data: result });
+	} catch (error) {
+		const result = {
+			code: 500,
+			msg: (error as any).toString()
+		};
+		webview.postMessage({ command: 'resources/templates/list', data: result });
+	}
+}
+
+
 /**
  * @description 读取特定resource
  */

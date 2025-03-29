@@ -91,6 +91,11 @@ export class MCPClient {
         return await this.client.listResources();
     }
 
+    // 列出所有模板资源
+    public async listResourceTemplates() {
+        return await this.client.listResourceTemplates();
+    }
+
     // 读取资源
     public async readResource(uri: string) {
         return await this.client.readResource({

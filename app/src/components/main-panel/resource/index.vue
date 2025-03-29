@@ -1,16 +1,23 @@
 <template>
     <div class="resource-module">
-        <h2>资源模块</h2>
-        
-        
+        <div class="left">
+            <h2>
+                <span class="iconfont icon-file"></span>
+                资源模块
+            </h2>
+            <h3><code>resources/templates/list</code></h3>
+            
+            <ResourceTemplates></ResourceTemplates>
+        </div>
+        <div class="right">
 
-    </div>
+        </div>
+</div>
 </template>
 
 <script setup lang="ts">
-import { defineComponent } from 'vue';
+import ResourceTemplates from './resource-templates.vue';
 
-defineComponent({ name: 'resource' });
 </script>
 
 <style scoped>
@@ -18,4 +25,14 @@ defineComponent({ name: 'resource' });
     padding: 20px;
     height: 100%;
 }
+
+.resource-module .left {
+    width: 45%;
+}
+
+.resource-module .right {
+    width: 45%;
+}
+
+
 </style>

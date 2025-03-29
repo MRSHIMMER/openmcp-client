@@ -36,7 +36,7 @@ const { t } = useI18n();
 	user-select: text;
 	cursor: text;
 	font-size: 15px;
-	line-height: 1.3;
+	line-height: 1.5;
 	background-color: var(--sidebar);
 }
 </style>

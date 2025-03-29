@@ -1,8 +1,7 @@
 import { reactive } from 'vue';
 
-
+import Resource from './resource/index.vue';
 import Chat from './chat/index.vue';
-import Resource from './chat/index.vue';
 import Prompt from './prompt/index.vue';
 import Tool from './tool/index.vue';
 

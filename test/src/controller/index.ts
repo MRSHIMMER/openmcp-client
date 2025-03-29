@@ -1,7 +1,8 @@
 
 import { VSCodeWebViewLike } from '../adapter';
 import { connect, MCPClient, type MCPOptions } from './connect';
-import { callTool, getPrompt, listPrompts, listResources, readResource } from './handler';
+import { callTool, getPrompt, listPrompts, listResources, listResourceTemplates, readResource } from './handler';
+import { ping } from './util';
 
 
 // TODO: 支持更多的 client
@@ -48,6 +49,10 @@ export function messageController(command: string, data: any, webview: VSCodeWeb
 			listResources(client, webview);
 			break;
 
+		case 'resources/templates/list':
+			listResourceTemplates(client, webview);
+			break;
+
 		case 'resources/read':
 			readResource(client, data, webview);
 			break;
@@ -56,6 +61,10 @@ export function messageController(command: string, data: any, webview: VSCodeWeb
 			callTool(client, data, webview);
 			break;
 
+		case 'ping':
+			ping(client, webview);
+			break;
+			
 		default:
 			break;
 	}

@@ -67,8 +67,10 @@ class MessageBridge {
 			this.isConnected.value = false;
 		};
 
-		this.postMessage = (message) => {
+		this.postMessage = (message) => {			
 			if (this.ws?.readyState === WebSocket.OPEN) {
+				console.log(message);
+				
 				this.ws.send(JSON.stringify(message));
 			}
 		};
@@ -105,7 +107,7 @@ class MessageBridge {
 		return () => commandHandlers.delete(commandHandler);
 	}
 
-	public destroy() {
+	public destroy() {		
 		this.ws?.close();
 		this.handlers.clear();
 	}
@@ -117,10 +119,6 @@ const messageBridge = new MessageBridge();
 // 向外暴露一个独立函数，保证 MessageBridge 是单例的
 export function useMessageBridge() {
 	const bridge = messageBridge;
-
-	onUnmounted(() => {
-		bridge.destroy();
-	});
 
 	return {
 		postMessage: bridge.postMessage.bind(bridge),
