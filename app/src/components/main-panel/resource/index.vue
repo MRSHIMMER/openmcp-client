@@ -16,6 +16,10 @@
             <ResourceReader
                 :tab-id="props.tabId"
             ></ResourceReader>
+
+            <ResourceLogger
+                :tab-id="props.tabId"
+            ></ResourceLogger>
         </div>
 </div>
 </template>
@@ -24,6 +28,7 @@
 import { defineProps } from 'vue';
 import ResourceTemplates from './resource-templates.vue';
 import ResourceReader from './resouce-reader.vue';
+import ResourceLogger from './resource-logger.vue';
 
 const props = defineProps({
     tabId: {
@@ -40,6 +45,8 @@ const props = defineProps({
 .resource-module {
     padding: 20px;
     height: 100%;
+    display: flex;
+    justify-content: space-between;
 }
 
 .resource-module .left {

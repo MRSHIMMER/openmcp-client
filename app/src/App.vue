@@ -22,7 +22,7 @@ const bridge = useMessageBridge();
 bridge.addCommandListener('hello', data => {
 	pinkLog(`${data.name} 上线`);
 	pinkLog(`version: ${data.version}`);
-});
+}, { once: true });
 
 
 // 发送消息
@@ -47,14 +47,11 @@ onMounted(() => {
         connectionArgs.commandString = 'uv run mcp run ../servers/main.py';
         connectionMethods.current = 'STDIO';
 
-        let handler: (() => void);
-        handler = bridge.addCommandListener('connect', data => {
+        bridge.addCommandListener('connect', data => {
             const { code, msg } = data;            
             connectionResult.success = (code === 200);
             connectionResult.logString = msg;
-
-            handler();
-        });
+        }, { once: true });
 
         setTimeout(() => {
             doConnect();

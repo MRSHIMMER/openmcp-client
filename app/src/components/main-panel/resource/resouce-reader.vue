@@ -1,24 +1,27 @@
 <template>
+    <div>
+        <h3>{{ currentResource.template?.name }}</h3>
+    </div>
     <div class="resource-reader-container">
         <el-form :model="formData" :rules="formRules" ref="formRef" label-position="top">
             <el-form-item v-for="param in currentResource?.params" :key="param.name"
-                :label="`${param.name}${param.required ? '*' : ''}`" :prop="param.name" :rules="getParamRules(param)">
+                :label="param.name" :prop="param.name">
                 <!-- 根据不同类型渲染不同输入组件 -->
                 <el-input v-if="param.type === 'string'" v-model="formData[param.name]"
-                    :placeholder="param.description || `请输入${param.name}`" />
+                    :placeholder="param.placeholder || `请输入${param.name}`" />
 
                 <el-input-number v-else-if="param.type === 'number'" v-model="formData[param.name]"
-                    :placeholder="param.description || `请输入${param.name}`" />
+                    :placeholder="param.placeholder || `请输入${param.name}`" />
 
                 <el-switch v-else-if="param.type === 'boolean'" v-model="formData[param.name]" />
             </el-form-item>
 
             <el-form-item>
                 <el-button type="primary" :loading="loading" @click="handleSubmit">
-                    submit
+                    {{ t('read-resource') }}
                 </el-button>
                 <el-button @click="resetForm">
-                    reset
+                    {{ t('reset') }}
                 </el-button>
             </el-form-item>
         </el-form>
@@ -27,13 +30,16 @@
 
 <script setup lang="ts">
 import { defineComponent, defineProps, watch, ref, computed } from 'vue';
-import { ElMessage } from 'element-plus';
+import { useI18n } from 'vue-i18n';
 import type { FormInstance, FormRules } from 'element-plus';
 import { tabs } from '../panel';
-import { ResourceStorage } from './resources';
-import { ResourcesReadResponse } from '@/hook/type';
+import { parseResourceTemplate, resourcesManager, ResourceStorage } from './resources';
+import { CasualRestAPI, ResourcesReadResponse } from '@/hook/type';
+import { useMessageBridge } from '@/api/message-bridge';
 
 defineComponent({ name: 'resource-reader' });
+
+const { t } = useI18n();
 
 const props = defineProps({
     tabId: {
@@ -51,8 +57,24 @@ const formData = ref<Record<string, any>>({});
 const loading = ref(false);
 const responseData = ref<ResourcesReadResponse>();
 
-// 当前资源协议
-const currentResource = computed(() => props.resource);
+// 当前 resource 的模板参数
+const currentResource = computed(() => {
+    const template = resourcesManager.templates.find(template => template.name === tabStorage.currentResourceName);
+    const { params, fill } = parseResourceTemplate(template?.uriTemplate || ''); 
+
+    const viewParams = params.map(param => ({
+        name: param,
+        type: 'string',
+        placeholder: t('enter') +' ' + param,
+        required: true
+    }));
+
+    return {
+        template,
+        params: viewParams,
+        fill
+    };
+});
 
 // 表单验证规则
 const formRules = computed<FormRules>(() => {
@@ -60,7 +82,6 @@ const formRules = computed<FormRules>(() => {
     currentResource.value?.params.forEach(param => {
         rules[param.name] = [
             {
-                required: param.required,
                 message: `${param.name} 是必填字段`,
                 trigger: 'blur'
             }
@@ -68,30 +89,8 @@ const formRules = computed<FormRules>(() => {
     });
 
     return rules;
-})
+});
 
-// 根据参数类型获取特定规则
-const getParamRules = (param: ResourceProtocol['params'][0]) => {
-    const rules: FormRules[number] = []
-
-    if (param.required) {
-        rules.push({
-            required: true,
-            message: `${param.name}是必填字段`,
-            trigger: 'blur'
-        })
-    }
-
-    if (param.type === 'number') {
-        rules.push({
-            type: 'number',
-            message: `${param.name}必须是数字`,
-            trigger: 'blur'
-        })
-    }
-
-    return rules
-}
 
 // 初始化表单数据
 const initFormData = () => {
@@ -109,8 +108,20 @@ const resetForm = () => {
 }
 
 // 提交表单
-const handleSubmit = async () => {
-    console.log('submit');
+function handleSubmit() {
+    const fillFn = currentResource.value.fill;    
+    const uri = fillFn(formData.value);
+
+    const bridge = useMessageBridge();
+
+    bridge.addCommandListener('resources/read', (data: CasualRestAPI<ResourcesReadResponse>) => {
+        tabStorage.lastResourceReadResponse = data.msg;
+    }, { once: true });
+
+    bridge.postMessage({
+        command: 'resources/read',
+        data: { resourceUri: uri }
+    });
 }
 
 // 监听资源变化重置表单
@@ -121,4 +132,11 @@ watch(() => tabStorage.currentResourceName, () => {
 
 </script>
 
-<style></style>
+<style>
+.resource-reader-container {
+    background-color: var(--background);
+    padding: 10px 12px;
+    border-radius: .5em;
+    margin-bottom: 15px;
+}
+</style>

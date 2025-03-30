@@ -105,5 +105,8 @@
     "command": "Befehl",
     "env-var": "Umgebungsvariablen",
     "log": "Protokolle",
-    "warning.click-to-connect": "Bitte klicken Sie zuerst auf $1 links, um eine Verbindung herzustellen"
+    "warning.click-to-connect": "Bitte klicken Sie zuerst auf $1 links, um eine Verbindung herzustellen",
+    "reset": "Zurücksetzen",
+    "read-resource": "Ressourcen lesen",
+    "enter": "Eingabe"
 }

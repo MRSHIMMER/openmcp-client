@@ -105,5 +105,8 @@
     "command": "コマンド",
     "env-var": "環境変数",
     "log": "ログ",
-    "warning.click-to-connect": "まず左側の$1をクリックして接続してください"
+    "warning.click-to-connect": "まず左側の$1をクリックして接続してください",
+    "reset": "リセット",
+    "read-resource": "リソースを読み込む",
+    "enter": "入力"
 }

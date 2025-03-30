@@ -25,7 +25,6 @@ import { resourcesManager, ResourceStorage } from './resources';
 import { tabs } from '../panel';
 
 const bridge = useMessageBridge();
-let cancelListener: undefined | (() => void) = undefined;
 
 const props = defineProps({
     tabId: {
@@ -45,24 +44,24 @@ function reloadResources() {
 
 function handleClick(template: ResourceTemplate) {
     tabStorage.currentResourceName = template.name;
+    // TODO: 恢复这部分响应？
+    tabStorage.lastResourceReadResponse = undefined;
 }
 
 onMounted(() => {    
-    cancelListener = bridge.addCommandListener('resources/templates/list', (data: CasualRestAPI<ResourceTemplatesListResponse>) => {
+    bridge.addCommandListener('resources/templates/list', (data: CasualRestAPI<ResourceTemplatesListResponse>) => {
 		resourcesManager.templates = data.msg.resourceTemplates || [];
 
         if (resourcesManager.templates.length > 0) {
             tabStorage.currentResourceName = resourcesManager.templates[0].name;
+            // TODO: 恢复这部分响应？
+            tabStorage.lastResourceReadResponse = undefined;
         }
-	});
+	}, { once: true });
+
     reloadResources();
 });
 
-onUnmounted(() => {
-	if (cancelListener) {
-		cancelListener();
-	}
-});
 
 </script>
 

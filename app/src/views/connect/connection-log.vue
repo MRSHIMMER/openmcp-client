@@ -24,7 +24,6 @@ const { t } = useI18n();
 </script>
 
 <style>
-
 .connection-option .output-content {
 	border-radius: .5em;
 	padding: 15px;

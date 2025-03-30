@@ -12,6 +12,10 @@ export type CommandHandler = (data: any) => void;
 
 export const acquireVsCodeApi = (window as any)['acquireVsCodeApi'];
 
+interface AddCommandListenerOption {
+    once: boolean // 只调用一次就销毁
+}
+
 class MessageBridge {
 	private ws: WebSocket | null = null;
 	private handlers = new Map<string, Set<CommandHandler>>();
@@ -94,17 +98,21 @@ class MessageBridge {
 	
 	/**
 	 * @description 注册一个命令的执行器
-	 * @param handler 
 	 * @returns 
 	 */
-	public addCommandListener(command: string, commandHandler: CommandHandler) {
+	public addCommandListener(command: string, commandHandler: CommandHandler, option: AddCommandListenerOption) {
 		if (!this.handlers.has(command)) {
 			this.handlers.set(command, new Set<CommandHandler>());
 		}
 		const commandHandlers = this.handlers.get(command)!;
-		commandHandlers.add(commandHandler);
 
-		return () => commandHandlers.delete(commandHandler);
+        const wrapperCommandHandler = option.once ? (data: any) => {
+            commandHandler(data);
+            commandHandlers.delete(wrapperCommandHandler);
+        } : commandHandler;
+
+		commandHandlers.add(wrapperCommandHandler);
+		return () => commandHandlers.delete(wrapperCommandHandler);
 	}
 
 	public destroy() {		
