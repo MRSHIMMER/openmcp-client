@@ -7,16 +7,32 @@
             </h2>
             <h3><code>resources/templates/list</code></h3>
             
-            <ResourceTemplates></ResourceTemplates>
+            <ResourceTemplates
+                :tab-id="props.tabId"
+            ></ResourceTemplates>
+
         </div>
         <div class="right">
-
+            <ResourceReader
+                :tab-id="props.tabId"
+            ></ResourceReader>
         </div>
 </div>
 </template>
 
 <script setup lang="ts">
+import { defineProps } from 'vue';
 import ResourceTemplates from './resource-templates.vue';
+import ResourceReader from './resouce-reader.vue';
+
+const props = defineProps({
+    tabId: {
+        type: Number,
+        required: true
+    }
+});
+
+
 
 </script>
 

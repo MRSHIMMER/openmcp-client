@@ -16,7 +16,7 @@ const logger = pino({
         options: {
             colorize: true,      // 开启颜色
             levelFirst: true,    // 先打印日志级别
-            translateTime: 'yyyy-mm-dd HH:MM:ss', // 格式化时间
+            translateTime: 'SYS:yyyy-mm-dd HH:MM:ss', // 格式化时间
             ignore: 'pid,hostname',     // 忽略部分字段
         }
     }

@@ -6,9 +6,17 @@
 </template>
 
 <script setup lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, defineProps } from 'vue';
 
 defineComponent({ name: 'tool' });
+
+const props = defineProps({
+    storage: {
+        type: Object,
+        required: true
+    }
+});
+
 </script>
 
 <style scoped>

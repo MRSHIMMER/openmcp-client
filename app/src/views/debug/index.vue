@@ -5,10 +5,11 @@
 		<!-- 如果存在激活标签页，则根据标签页进行渲染 -->
 		<div v-show="tabs.activeTab.component">
 			<component
-				v-for="(tab, index) of tabs.content"
-				v-show="tab === tabs.activeTab"
+                v-show="tab === tabs.activeTab"
+                v-for="(tab, index) of tabs.content"
 				:key="index"
 				:is="tab.component"
+                :tab-id="index"
 			/>
 		</div>
 	</div>

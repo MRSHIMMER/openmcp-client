@@ -9,3 +9,7 @@ export const resourcesManager = reactive<{
 	current: undefined,
 	templates: []
 });
+
+export interface ResourceStorage {
+    currentResourceName: string;
+}

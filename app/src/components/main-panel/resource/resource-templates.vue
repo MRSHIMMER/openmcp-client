@@ -4,8 +4,10 @@
 			<div class="resource-template-container">
 				<div
 					class="item"
+                    :class="{ 'active': tabStorage.currentResourceName === template.name }"
 					v-for="template of resourcesManager.templates"
 					:key="template.name"
+                    @click="handleClick(template)"
 				>
 					<span>{{ template.name }}</span>
 					<span>{{ template.description || '' }}</span>
@@ -17,12 +19,23 @@
 
 <script setup lang="ts">
 import { useMessageBridge } from '@/api/message-bridge';
-import { CasualRestAPI, ResourceTemplatesListResponse } from '@/hook/type';
-import { onMounted, onUnmounted } from 'vue';
-import { resourcesManager } from './resources';
+import { CasualRestAPI, ResourceTemplate, ResourceTemplatesListResponse } from '@/hook/type';
+import { onMounted, onUnmounted, defineProps } from 'vue';
+import { resourcesManager, ResourceStorage } from './resources';
+import { tabs } from '../panel';
 
 const bridge = useMessageBridge();
 let cancelListener: undefined | (() => void) = undefined;
+
+const props = defineProps({
+    tabId: {
+        type: Number,
+        required: true
+    }
+});
+
+const tab = tabs.content[props.tabId];
+const tabStorage = tab.storage as ResourceStorage;
 
 function reloadResources() {    
     bridge.postMessage({
@@ -30,9 +43,17 @@ function reloadResources() {
     });
 }
 
+function handleClick(template: ResourceTemplate) {
+    tabStorage.currentResourceName = template.name;
+}
+
 onMounted(() => {    
     cancelListener = bridge.addCommandListener('resources/templates/list', (data: CasualRestAPI<ResourceTemplatesListResponse>) => {
-		resourcesManager.templates = data.msg.resourceTemplates;
+		resourcesManager.templates = data.msg.resourceTemplates || [];
+
+        if (resourcesManager.templates.length > 0) {
+            tabStorage.currentResourceName = resourcesManager.templates[0].name;
+        }
 	});
     reloadResources();
 });
@@ -71,6 +92,11 @@ onUnmounted(() => {
 }
 
 .resource-template-container > .item:hover {
+	background-color: var(--main-light-color);
+	transition: var(--animation-3s);
+}
+
+.resource-template-container > .item.active {
 	background-color: var(--main-light-color);
 	transition: var(--animation-3s);
 }

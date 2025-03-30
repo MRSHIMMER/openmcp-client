@@ -50,7 +50,6 @@ const bridge = useMessageBridge();
 
 bridge.addCommandListener('connect', data => {
 	const { code, msg } = data;
-
 	connectionResult.success = (code === 200);
 	connectionResult.logString = msg;
 });

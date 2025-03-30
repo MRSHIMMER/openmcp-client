@@ -13,7 +13,8 @@ import Sidebar from '@/components/sidebar/index.vue';
 import MainPanel from '@/components/main-panel/index.vue';
 import { setDefaultCss } from './hook/css';
 import { pinkLog } from './views/setting/util';
-import { useMessageBridge } from './api/message-bridge';
+import { acquireVsCodeApi, useMessageBridge } from './api/message-bridge';
+import { connectionArgs, connectionMethods, connectionResult, doConnect } from './views/connect/connection';
 
 const bridge = useMessageBridge();
 
@@ -41,8 +42,25 @@ onMounted(() => {
 
 	pinkLog('OpenMCP Client 启动');
 
-	sendPing();
-})
+    // 如果是 debug 模式，直接连接项目中的服务器
+    if (acquireVsCodeApi === undefined) {
+        connectionArgs.commandString = 'uv run mcp run ../servers/main.py';
+        connectionMethods.current = 'STDIO';
+
+        let handler: (() => void);
+        handler = bridge.addCommandListener('connect', data => {
+            const { code, msg } = data;            
+            connectionResult.success = (code === 200);
+            connectionResult.logString = msg;
+
+            handler();
+        });
+
+        setTimeout(() => {
+            doConnect();
+        }, 200);
+    }
+});
 
 </script>
 

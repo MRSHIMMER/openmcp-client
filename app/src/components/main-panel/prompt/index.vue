@@ -6,9 +6,17 @@
 </template>
 
 <script setup lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, defineProps } from 'vue';
 
 defineComponent({ name: 'prompt' });
+
+const props = defineProps({
+    tabId: {
+        type: Number,
+        required: true
+    }
+});
+
 </script>
 
 <style scoped>
