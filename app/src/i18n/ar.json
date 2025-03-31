@@ -108,5 +108,7 @@
     "warning.click-to-connect": "يرجى النقر أولاً على $1 على اليسار للاتصال",
     "reset": "إعادة تعيين",
     "read-resource": "قراءة الموارد",
-    "enter": "إدخال"
+    "enter": "إدخال",
+    "connect.appearance.connect": "اتصال",
+    "connect.appearance.reconnect": "إعادة الاتصال"
 }

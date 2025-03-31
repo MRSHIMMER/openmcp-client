@@ -108,5 +108,7 @@
     "warning.click-to-connect": "Пожалуйста, сначала нажмите на $1 слева для подключения",
     "reset": "Сброс",
     "read-resource": "Чтение ресурсов",
-    "enter": "Ввод"
+    "enter": "Ввод",
+    "connect.appearance.connect": "Подключиться",
+    "connect.appearance.reconnect": "Переподключиться"
 }
