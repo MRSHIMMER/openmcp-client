@@ -41,12 +41,14 @@ export interface ToolsListResponse {
 	}>;
 }
 
+export interface PromptTemplate {
+    name: string;
+    description: string;
+    arguments: Argument[];
+}
+
 export interface PromptsListResponse {
-	prompts: Array<{
-		name: string;
-		description: string;
-		arguments: Argument[];
-	}>;
+	prompts: PromptTemplate[];
 }
 
 export interface ResourceTemplate {
