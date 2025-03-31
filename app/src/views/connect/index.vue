@@ -12,7 +12,7 @@
 					:disabled="!connectionResult"
 					@click="doConnect()"
 				>
-					Connect
+					{{ t('connect.appearance.connect') }}
 				</el-button>
 
 				<el-button
@@ -20,7 +20,7 @@
 					size="large"
 					@click="doReconnect()"
 				>
-					Reconnect
+				{{ t('connect.appearance.reconnect') }}
 				</el-button>
 			</div>
 		</div>
@@ -34,6 +34,10 @@
 
 <script setup lang="ts">
 import { defineComponent } from 'vue';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
+
 import { connectionResult, doConnect, doReconnect } from './connection';
 
 import ConnectionMethod from './connection-method.vue';

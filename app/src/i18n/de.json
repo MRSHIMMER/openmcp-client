@@ -108,5 +108,7 @@
     "warning.click-to-connect": "Bitte klicken Sie zuerst auf $1 links, um eine Verbindung herzustellen",
     "reset": "Zurücksetzen",
     "read-resource": "Ressourcen lesen",
-    "enter": "Eingabe"
+    "enter": "Eingabe",
+    "connect.appearance.connect": "Verbinden",
+    "connect.appearance.reconnect": "Wiederverbinden"
 }

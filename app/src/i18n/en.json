@@ -108,5 +108,7 @@
     "warning.click-to-connect": "Please first click on $1 on the left to connect",
     "reset": "Reset",
     "read-resource": "Read resources",
-    "enter": "Input"
+    "enter": "Input",
+    "connect.appearance.connect": "Connect",
+    "connect.appearance.reconnect": "Reconnect"
 }
