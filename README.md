@@ -36,3 +36,23 @@
 - `app`: 前端 UI 的定义
 - `test`: 测试 `app` 的部分，包含一个简易的转发层
 - `src`: vscode 插件端定义
+
+### 初始化环境
+
+```bash
+source configure.sh
+```
+
+### 启动前端
+
+```bash
+cd app
+npm run serve
+```
+
+### 启动后端 (Test)
+
+```bash
+cd test
+npm run serve
+```
