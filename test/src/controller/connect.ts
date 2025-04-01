@@ -105,6 +105,11 @@ export class MCPClient {
         });
     }
 
+    // 列出所有工具
+    public async listTools() {
+        return await this.client.listTools();
+    }
+
     // 调用工具
     public async callTool(options: { name: string; arguments: Record<string, any> }) {
         return await this.client.callTool(options);

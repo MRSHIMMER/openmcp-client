@@ -112,5 +112,6 @@
     "refresh": "새로 고침",
     "finish-refresh": "새로 고침 완료",
     "response": "응답",
-    "read-prompt": "키워드 추출"
+    "read-prompt": "키워드 추출",
+    "execute-tool": "도구 실행"
 }

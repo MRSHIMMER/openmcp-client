@@ -76,6 +76,16 @@ export interface PromptsGetResponse {
 	}>;
 }
 
+export interface ToolCallContent {
+    type: string;
+    text: string;
+}
+
+export interface ToolCallResponse {
+    content: ToolCallContent[];
+    isError: boolean;
+}
+
 // ==================== 请求接口定义 ====================
 export interface BaseRequest {
 	method: string;
@@ -97,6 +107,17 @@ export interface PromptsGetRequest extends BaseRequest {
 	};
 }
 
+export interface ToolCallRequest extends BaseRequest {
+    method: 'tools/call';
+    params: {
+        name: string;
+        arguments: Record<string, any>;
+        _meta?: {
+            progressToken?: number;
+        };
+    };
+}
+
 // ==================== 合并类型定义 ====================
 export type APIResponse =
 	| ToolsListResponse
@@ -104,9 +125,11 @@ export type APIResponse =
 	| ResourceTemplatesListResponse
 	| ResourcesListResponse
 	| ResourcesReadResponse
-	| PromptsGetResponse;
+	| PromptsGetResponse
+    | ToolCallResponse;
 
 export type APIRequest =
 	| BaseRequest
 	| ResourcesReadRequest
-	| PromptsGetRequest;
+	| PromptsGetRequest
+    | ToolCallRequest;

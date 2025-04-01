@@ -112,5 +112,6 @@
     "refresh": "Refresh",
     "finish-refresh": "Refresh completed",
     "response": "Response",
-    "read-prompt": "Extract keywords"
+    "read-prompt": "Extract keywords",
+    "execute-tool": "Run tool"
 }

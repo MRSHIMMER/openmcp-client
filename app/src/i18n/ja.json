@@ -112,5 +112,6 @@
     "refresh": "更新",
     "finish-refresh": "更新が完了しました",
     "response": "応答",
-    "read-prompt": "キーワードを抽出"
+    "read-prompt": "キーワードを抽出",
+    "execute-tool": "ツールを実行"
 }

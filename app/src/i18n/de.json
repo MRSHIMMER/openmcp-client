@@ -112,5 +112,6 @@
     "refresh": "Aktualisieren",
     "finish-refresh": "Aktualisierung abgeschlossen",
     "response": "Antwort",
-    "read-prompt": "Stichwörter extrahieren"
+    "read-prompt": "Stichwörter extrahieren",
+    "execute-tool": "Werkzeug ausführen"
 }

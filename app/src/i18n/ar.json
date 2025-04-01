@@ -112,5 +112,6 @@
     "refresh": "تحديث",
     "finish-refresh": "تم التحديث",
     "response": "الاستجابة",
-    "read-prompt": "استخراج الكلمات الرئيسية"
+    "read-prompt": "استخراج الكلمات الرئيسية",
+    "execute-tool": "تشغيل الأداة"
 }

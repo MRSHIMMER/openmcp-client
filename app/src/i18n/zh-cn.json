@@ -112,5 +112,6 @@
     "refresh": "刷新",
     "finish-refresh": "刷新完成",
     "response": "响应",
-    "read-prompt": "提取提词"
+    "read-prompt": "提取提词",
+    "execute-tool": "运行工具"
 }
