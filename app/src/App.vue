@@ -35,7 +35,11 @@ const sendPing = () => {
 
 
 onMounted(() => {
+    // 初始化 css
 	setDefaultCss();
+
+    // 初始化 设置
+
 	document.addEventListener('click', () => {
 		Connection.showPanel = false;
 	});

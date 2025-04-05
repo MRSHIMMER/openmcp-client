@@ -102,13 +102,3 @@ export function onmodelchange() {
 	console.log();
 	
 }
-
-export async function save() {
-	console.log();
-	
-}
-
-export async function load() {
-	console.log();
-	
-}
