@@ -2,6 +2,7 @@
 import { VSCodeWebViewLike } from '../adapter';
 import { connect, MCPClient, type MCPOptions } from './connect';
 import { callTool, getPrompt, listPrompts, listResources, listResourceTemplates, listTools, readResource } from './handler';
+import { panelLoadHandler, panelSaveHandler } from './panel';
 import { settingLoadHandler, settingSaveHandler } from './setting';
 import { ping } from './util';
 
@@ -77,6 +78,14 @@ export function messageController(command: string, data: any, webview: VSCodeWeb
         case 'setting/load':
             settingLoadHandler(client, webview);
             break;
+
+		case 'panel/save':
+			panelSaveHandler(client, data, webview);
+			break;
+		
+		case 'panel/load':
+			panelLoadHandler(client, webview);
+			break;
 
 		default:
 			break;

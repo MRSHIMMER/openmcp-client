@@ -59,6 +59,7 @@ function chooseDebugMode(index: number) {
 	if (connectionResult.success) {
 		const activeTab = tabs.activeTab;
 		activeTab.component = markRaw(debugModes[index]);
+		activeTab.componentIndex = index;
 		activeTab.icon = debugOptions[index].icon;
 
 		// 此处可以这么做是因为这个操作过后 activeTab 绑定的 tab 的 name 就不会再被进行赋值操作了

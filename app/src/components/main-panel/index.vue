@@ -24,7 +24,7 @@
 
 			<span
 				class="add-button iconfont icon-add"
-				@click="addNewTab"
+				@click="pageAddNewTab"
 			>
 			</span>
 		</div>
@@ -38,9 +38,23 @@
 
 <script setup lang="ts">
 import { defineComponent } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import { addNewTab, tabs, setActiveTab, closeTab } from './panel';
 
 defineComponent({ name: 'main-panel' });
+
+const route = useRoute();
+const router = useRouter();
+
+function pageAddNewTab() {
+	addNewTab();	
+
+	// 如果当前不在 debug 路由，则切换到 debug 路由
+	if (route.name !== 'debug') {
+		router.push('/debug');
+	}
+}
+
 </script>
 
 <style>

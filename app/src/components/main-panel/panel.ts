@@ -1,10 +1,12 @@
-import { reactive } from 'vue';
+import { watch, reactive } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 
 import Resource from './resource/index.vue';
 import Chat from './chat/index.vue';
 import Prompt from './prompt/index.vue';
 import Tool from './tool/index.vue';
 import I18n from '@/i18n/index';
+import { safeSavePanels, savePanels } from '@/hook/panel';
 
 const { t } = I18n.global;
 
@@ -13,6 +15,7 @@ interface Tab {
 	icon: string;
 	type: string;
 	component: any;
+	componentIndex: number;
 	storage: Record<string, any>;
 }
 
@@ -37,6 +40,17 @@ export const tabs = reactive<{
 
 let tabCounter = 1;
 
+// 监控 tabs
+
+watch(
+	() => tabs,
+	(newValue, oldValue) => {
+		console.log('state change');
+		safeSavePanels();
+	},
+	{ deep: true }
+);
+
 function createTab(type: string, index: number): Tab {
 	let customName: string | null = null;
 
@@ -52,6 +66,7 @@ function createTab(type: string, index: number): Tab {
 		},
 		icon: 'icon-blank',
 		type,
+		componentIndex: -1,
 		component: undefined,
 		storage: {},
 	};
