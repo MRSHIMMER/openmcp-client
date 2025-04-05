@@ -1,5 +1,5 @@
 {
-  "currentIndex": 1,
+  "currentIndex": 2,
   "tabs": [
     {
       "name": "资源",
@@ -18,6 +18,13 @@
       "storage": {
         "currentPromptName": "translate"
       }
+    },
+    {
+      "name": "交互测试",
+      "icon": "icon-robot",
+      "type": "blank",
+      "componentIndex": 3,
+      "storage": {}
     }
   ]
 }

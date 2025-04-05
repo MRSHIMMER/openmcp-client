@@ -2,6 +2,7 @@
 import { VSCodeWebViewLike } from '../adapter';
 import { connect, MCPClient, type MCPOptions } from './connect';
 import { callTool, getPrompt, listPrompts, listResources, listResourceTemplates, listTools, readResource } from './handler';
+import { chatCompletionHandler } from './llm';
 import { panelLoadHandler, panelSaveHandler } from './panel';
 import { settingLoadHandler, settingSaveHandler } from './setting';
 import { ping } from './util';
@@ -85,6 +86,10 @@ export function messageController(command: string, data: any, webview: VSCodeWeb
 		
 		case 'panel/load':
 			panelLoadHandler(client, webview);
+			break;
+		
+		case 'llm/chat/completions':
+			chatCompletionHandler(client, data, webview);
 			break;
 
 		default:
