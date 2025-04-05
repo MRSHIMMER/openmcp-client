@@ -30,14 +30,18 @@ export async function chatCompletionHandler(client: MCPClient | undefined, data:
         for await (const chunk of stream) {
             const content = chunk.choices[0]?.delta?.content || '';
             if (content) {
+				const chunkResult = {
+					code: 200,
+					msg: {
+						content,
+                        finish_reason: chunk.choices[0]?.finish_reason || null
+					}
+				};
+
                 webview.postMessage({
                     command: 'llm/chat/completions/chunk',
-                    data: {
-                        code: 200,
-                        content,
-                        finish_reason: chunk.choices[0]?.finish_reason || null
-                    }
-                });
+                    data: chunkResult
+				});
             }
         }
 
@@ -46,7 +50,9 @@ export async function chatCompletionHandler(client: MCPClient | undefined, data:
             command: 'llm/chat/completions/done',
             data: {
                 code: 200,
-                success: true
+                msg: {
+					success: true
+				}
             }
         });
 

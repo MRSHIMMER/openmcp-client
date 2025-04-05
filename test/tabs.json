@@ -1,24 +1,6 @@
 {
-  "currentIndex": 2,
+  "currentIndex": 0,
   "tabs": [
-    {
-      "name": "资源",
-      "icon": "icon-file",
-      "type": "blank",
-      "componentIndex": 0,
-      "storage": {
-        "currentResourceName": "greeting"
-      }
-    },
-    {
-      "name": "提词",
-      "icon": "icon-chat",
-      "type": "blank",
-      "componentIndex": 1,
-      "storage": {
-        "currentPromptName": "translate"
-      }
-    },
     {
       "name": "交互测试",
       "icon": "icon-robot",
