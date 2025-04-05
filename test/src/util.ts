@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
+import { llms } from './llm';
 
 function getConfigurationPath() {
     // 如果是 vscode 插件下，则修改为 ~/.openmcp/config.json
@@ -16,17 +17,23 @@ function getConfigurationPath() {
     return 'config.json';
 }
 
+function getDefaultLanguage() {
+    if (process.env.VSCODE_PID) {
+        // TODO: 获取 vscode 内部的语言
+
+    }
+    return 'zh';
+}
+
 interface IConfig {
-    MODEL_BASE_URL: string;
-    MODEL_NAME: string;
-    API_TOKEN: string;
+    MODEL_INDEX: number;
     [key: string]: any;
 }
 
 const DEFAULT_CONFIG: IConfig = {
-    MODEL_BASE_URL: '',
-    MODEL_NAME: '',
-    API_TOKEN: ''
+    MODEL_INDEX: 0,
+    LLM_INFO: llms,
+    LANG: getDefaultLanguage()
 };
 
 function createConfig(): IConfig {

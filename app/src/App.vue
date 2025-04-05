@@ -15,6 +15,7 @@ import { setDefaultCss } from './hook/css';
 import { pinkLog } from './views/setting/util';
 import { acquireVsCodeApi, useMessageBridge } from './api/message-bridge';
 import { connectionArgs, connectionMethods, connectionResult, doConnect } from './views/connect/connection';
+import { loadSetting } from './hook/setting';
 
 const bridge = useMessageBridge();
 
@@ -25,20 +26,9 @@ bridge.addCommandListener('hello', data => {
 }, { once: true });
 
 
-// 发送消息
-const sendPing = () => {
-	bridge.postMessage({
-		command: 'ping',
-		data: { timestamp: Date.now() }
-	});
-};
-
-
 onMounted(() => {
     // 初始化 css
 	setDefaultCss();
-
-    // 初始化 设置
 
 	document.addEventListener('click', () => {
 		Connection.showPanel = false;
@@ -58,6 +48,9 @@ onMounted(() => {
         }, { once: true });
 
         setTimeout(() => {
+			// 初始化 设置
+			loadSetting();
+			
             doConnect();
         }, 200);
     }

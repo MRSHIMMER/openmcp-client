@@ -21,6 +21,7 @@
 import { defineComponent, ref } from 'vue';
 import { languageSetting } from './language';
 import { useI18n } from 'vue-i18n';
+import { saveSetting } from '@/hook/setting';
 
 defineComponent({ name: 'appearance' });
 
@@ -34,6 +35,8 @@ function onlanguagechange(code: string) {
 		currentLanguage.value = option.text;
 	}
 	// languageDialogShow.value = true;
+
+	saveSetting();	
 }
 </script>
 

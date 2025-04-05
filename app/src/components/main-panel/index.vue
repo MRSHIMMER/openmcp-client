@@ -12,7 +12,7 @@
                     >
                         <span>
                             <span :class="`iconfont ${tab.icon}`"></span>
-                            <span>{{ tab.name }}</span>
+                            <span class="tab-name">{{ tab.name }}</span>
                         </span>
                         <span 
                             class="iconfont icon-close"
@@ -33,8 +33,6 @@
 		<div class="main-panel">
 			<router-view />
 		</div>
-
-
 	</div>
 </template>
 
@@ -83,6 +81,7 @@ defineComponent({ name: 'main-panel' });
 }
 
 .tabs-container .tab {
+	white-space: nowrap;
 	margin: 5px;
     font-size: 13px;
     width: 120px;
@@ -99,6 +98,12 @@ defineComponent({ name: 'main-panel' });
 .tabs-container .tab > span:first-child {
     display: flex;
     align-items: center;
+}
+
+.tabs-container .tab .tab-name {
+	max-width: 70px;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .tabs-container .tab:hover {
