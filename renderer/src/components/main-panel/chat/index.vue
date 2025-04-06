@@ -28,13 +28,13 @@
 
         <el-footer class="chat-footer" ref="footerRef">
             <div class="input-area">
-
-                <Setting :tabId="tabId" />
-
                 <div class="input-wrapper">
+                    <Setting :tabId="tabId" />
+                    
                     <el-input v-model="userInput" type="textarea" :rows="inputHeightLines" :maxlength="2000"
-                        placeholder="输入消息..." :disabled="isLoading" @keydown.enter="handleKeydown" resize="none"
+                        placeholder="输入消息..." @keydown.enter="handleKeydown" resize="none"
                         class="chat-input" />
+                    
                     <el-button type="primary" :loading="isLoading" @click="handleSend" class="send-button"
                         :disabled="!userInput.trim()">
                         <span class="iconfont icon-send"></span>
@@ -48,14 +48,14 @@
 <script setup lang="ts">
 import { ref, onMounted, defineComponent, defineProps, onUnmounted, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { User, Comment } from '@element-plus/icons-vue';
+import { Comment } from '@element-plus/icons-vue';
 import { useMessageBridge } from "@/api/message-bridge";
 import { ElMessage } from 'element-plus';
-import { llmManager, llms } from '@/views/setting/llm';
 import { tabs } from '../panel';
 import { ChatMessage, ChatStorage } from './chat';
 
 import Setting from './setting.vue';
+import { llmManager, llms } from '@/views/setting/llm';
 
 defineComponent({ name: 'chat' });
 
@@ -71,55 +71,19 @@ const props = defineProps({
 const tab = tabs.content[props.tabId];
 const tabStorage = tab.storage as ChatStorage;
 
-
 const bridge = useMessageBridge();
 const userInput = ref('');
 const inputHeightLines = computed(() => {
     const currentLines = userInput.value.split('\n').length;
     return Math.min(12, Math.max(5, currentLines));
 });
-const messages = ref<ChatMessage[]>([
-    {
-        role: 'assistant',
-        content: '你好！我是AI助手，有什么可以帮您的吗？'
-    },
-    {
-        role: 'user',
-        content: '你好，能帮我写一封求职信吗？'
-    },
-    {
-        role: 'assistant',
-        content: '当然可以。请问您应聘的是什么职位？需要包含哪些特别的信息吗？'
-    },
-    {
-        role: 'user',
-        content: '我想应聘前端开发工程师，有3年Vue和React经验'
-    },
-    {
-        role: 'assistant',
-        content: '好的，我已根据您的要求写了一封求职信模板：\n\n尊敬的招聘经理，\n\n您好！我在贵公司官网上看到前端开发工程师的招聘信息...'
-    },
-    {
-        role: 'user',
-        content: '谢谢！能再帮我优化一下简历中的项目描述部分吗？'
-    },
-    {
-        role: 'assistant',
-        content: '当然可以。建议采用STAR法则(Situation-Task-Action-Result)来描述项目经验，这样更能突出您的贡献和价值。'
-    },
-    {
-        role: 'user',
-        content: '什么是STAR法则？能举个例子吗？'
-    },
-    {
-        role: 'assistant',
-        content: 'STAR法则是一种结构化表达方法：\n\n情境(Situation)：项目背景\n任务(Task)：你的职责\n行动(Action)：采取的措施\n结果(Result)：取得的成果\n\n例如：开发了基于Vue3的管理系统，优化了页面加载速度30%...'
-    },
-    {
-        role: 'user',
-        content: '明白了，这样写确实更专业！'
-    }
-]);
+
+// 创建 messages
+if (!tabStorage.messages) {
+    tabStorage.messages = [] as ChatMessage[];
+}
+const messages = tabStorage.messages;
+
 const isLoading = ref(false);
 const streamingContent = ref('');
 const chatContainerRef = ref<HTMLElement>();
@@ -146,16 +110,34 @@ const handleSend = () => {
     if (!userInput.value.trim() || isLoading.value) return;
 
     const userMessage = userInput.value.trim();
-    messages.value.push({ role: 'user', content: userMessage });
+    messages.push({ role: 'user', content: userMessage });
+
+    // 后端接受属性 baseURL, apiKey, model, messages, temperature
+    const baseURL = llms[llmManager.currentModelIndex].baseUrl;
+    const apiKey = llms[llmManager.currentModelIndex].userToken;
+    const model = llms[llmManager.currentModelIndex].userModel;
+    const temperature = tabStorage.settings.temperature;
+
+    const userMessages = [];
+    if (tabStorage.settings.systemPrompt) {
+        userMessages.push({
+            role: 'system',
+            content: tabStorage.settings.systemPrompt
+        });
+    }
+
+    userMessages.concat(messages);
+    userMessages.push({
+        role: 'assistant',
+        content: streamingContent.value
+    });
 
     const chatData = {
-        messages: [
-            ...messages.value.filter(msg => msg.role === 'user').map(msg => ({
-                role: msg.role,
-                content: msg.content
-            })),
-            { role: 'assistant', content: streamingContent.value }
-        ]
+        baseURL,
+        apiKey,
+        model,
+        temperature,
+        messages: userMessages,
     };
 
     isLoading.value = true;
@@ -171,7 +153,7 @@ const handleSend = () => {
 
 const handleError = (errorMsg: string) => {
     ElMessage.error(errorMsg);
-    messages.value.push({
+    messages.push({
         role: 'assistant',
         content: `错误: ${errorMsg}`
     });
@@ -200,7 +182,7 @@ onMounted(() => {
             return;
         }
         if (streamingContent.value) {
-            messages.value.push({
+            messages.push({
                 role: 'assistant',
                 content: streamingContent.value
             });
@@ -323,6 +305,12 @@ onUnmounted(() => {
     border-radius: .5em;
 }
 
+:deep(.chat-settings) {
+    position: absolute;
+    left: 0;
+    bottom: 8px;
+    z-index: 1;
+}
 .typing-cursor {
     animation: blink 1s infinite;
 }

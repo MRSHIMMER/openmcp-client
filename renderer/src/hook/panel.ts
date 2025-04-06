@@ -58,7 +58,7 @@ export function safeSavePanels() {
 	clearTimeout(debounceHandler);
 	debounceHandler = setTimeout(() => {
 		savePanels();
-	}, 200);
+	}, 1000);
 }
 
 export function savePanels(saveHandler?: () => void) {

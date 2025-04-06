@@ -45,7 +45,6 @@ let tabCounter = 1;
 watch(
 	() => tabs,
 	(newValue, oldValue) => {
-		console.log('state change');
 		safeSavePanels();
 	},
 	{ deep: true }

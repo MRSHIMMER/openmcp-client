@@ -12,9 +12,19 @@
           "enableTools": true,
           "enableWebSearch": false,
           "temperature": 0.7,
-          "contextLength": 41,
-          "systemPrompt": "ad"
-        }
+          "contextLength": 10,
+          "systemPrompt": "你的名字是 openmcp"
+        },
+        "messages": [
+          {
+            "role": "user",
+            "content": "请问你的名字是什么"
+          },
+          {
+            "role": "assistant",
+            "content": "我的名字是 **OpenMCP**（Open Multi-modal Cognitive Platform）。  \n\n我是由 **深度求索（DeepSeek）** 开发的一款 **多模态认知大模型**，能够处理文本、图像、文档等多种信息，并具备强大的理解和推理能力。  \n\n你可以叫我 **OpenMCP**，或者简称 **MCP**！😊 有什么我可以帮你的吗？"
+          }
+        ]
       }
     },
     {

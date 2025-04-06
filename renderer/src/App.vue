@@ -39,7 +39,7 @@ onMounted(() => {
 
     // 如果是 debug 模式，直接连接项目中的服务器
     if (acquireVsCodeApi === undefined) {
-        connectionArgs.commandString = 'uv run mcp run ../servers/main.py';
+        connectionArgs.commandString = 'mcp run ../servers/main.py';
         connectionMethods.current = 'STDIO';
 
         bridge.addCommandListener('connect', data => {

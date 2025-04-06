@@ -46,7 +46,9 @@
 
 		<!-- 模型选择对话框 -->
 		<el-dialog v-model="showModelDialog" title="选择模型" width="400px">
-			<el-radio-group v-model="selectedModelIndex">
+			<el-radio-group v-model="selectedModelIndex"
+				@change="onRadioGroupChange"
+			>
 				<el-radio v-for="(model, index) in availableModels" :key="index" :label="index">
 					{{ model }}
 				</el-radio>
@@ -157,6 +159,11 @@ const confirmModelChange = () => {
 	llmManager.currentModelIndex = selectedModelIndex.value;
 	showModelDialog.value = false;
 };
+
+const onRadioGroupChange = () => {
+	const currentModel = llms[llmManager.currentModelIndex].models[selectedModelIndex.value];
+	llms[llmManager.currentModelIndex].userModel = currentModel;
+};
 </script>
 
 <style scoped>
@@ -164,6 +171,12 @@ const confirmModelChange = () => {
 	display: flex;
 	gap: 2px;
 	padding: 8px 0;
+	background-color: var(--sidebar);
+	width: fit-content;
+	border-radius: 99%;
+	bottom: 0px;
+	z-index: 10;
+	position: absolute;
 }
 
 .setting-button {
