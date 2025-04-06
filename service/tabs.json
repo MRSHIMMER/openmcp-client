@@ -1,5 +1,5 @@
 {
-  "currentIndex": 0,
+  "currentIndex": 1,
   "tabs": [
     {
       "name": "交互测试",
@@ -23,17 +23,58 @@
           {
             "role": "assistant",
             "content": "我的名字是 **OpenMCP**（Open Multi-modal Cognitive Platform）。  \n\n我是由 **深度求索（DeepSeek）** 开发的一款 **多模态认知大模型**，能够处理文本、图像、文档等多种信息，并具备强大的理解和推理能力。  \n\n你可以叫我 **OpenMCP**，或者简称 **MCP**！😊 有什么我可以帮你的吗？"
+          },
+          {
+            "role": "user",
+            "content": "我的上一个问题是什么"
+          },
+          {
+            "role": "assistant",
+            "content": "我的名字是 **OpenMCP**（Open Multi-modal Cognitive Platform），一个基于开源技术的多模态认知智能平台。  \n\n我的设计目标是整合文本、图像、语音等多种交互方式，提供灵活、可扩展的AI服务，支持开发者快速构建智能应用。如果你有具体需求（比如代码生成、数据分析、知识问答等），可以直接告诉我，我会尽力协助！  \n\n（名字中的 **MCP** 也可以理解为 **Modular Cognitive Processor**，强调模块化处理能力 😊）"
+          },
+          {
+            "role": "user",
+            "content": "请问杭州今天的气温是多少度"
+          },
+          {
+            "role": "assistant",
+            "content": "你的名字是 **OpenMCP**（Open Multi-Cloud Platform），一个专注于多云管理和自动化运维的开源平台。  \n\n### 核心功能：  \n1. **多云资源管理**：统一管理AWS、Azure、GCP、阿里云等主流云服务商的资源。  \n2. **自动化运维**：通过策略和脚本实现资源调度、成本优化、监控告警等。  \n3. **DevOps集成**：支持CI/CD工具链，如Jenkins、GitLab CI等。  \n4. **开源开放**：代码公开，社区驱动，支持自定义扩展。  \n\n### 技术栈示例：  \n- **后端**：Go/Python + Kubernetes Operator  \n- **前端**：React/Vue + 可视化仪表盘  \n- **基础设施**：Terraform/Ansible跨云编排  \n\n如果需要具体实现方案或代码片段，可以告诉我你的场景（例如：“如何用OpenMCP自动化部署K8s集群到AWS和Azure？”），我会提供详细建议！  \n\n🚀 **口号**： *\"Simplify Multi-Cloud, Code the Future.\"*"
+          },
+          {
+            "role": "assistant",
+            "content": "\n\nTo determine the number of ways to choose 3 people out of 10, we can use the combination formula. The combination formula is given by:\n\n\\[\nC(n, k) = \\frac{n!}{k!(n - k)!}\n\\]\n\nwhere:\n- \\( n \\) is the total number of items,\n- \\( k \\) is the number of items to choose,\n- \\( ! \\) denotes factorial, which is the product of all positive integers up to that number.\n\n**Applying the formula:**\n\n\\[\nC(10, 3) = \\frac{10!}{3!(10 - 3)!} = \\frac{10!}{3! \\times 7!}\n\\]\n\n**Calculating the factorials:**\n\n\\[\n10! = 10 \\times 9 \\times 8 \\times 7! \\\\\n3! = 3 \\times 2 \\times 1 = 6\n\\]\n\n**Simplifying the expression:**\n\n\\[\nC(10, 3) = \\frac{10 \\times 9 \\times 8 \\times 7!}{6 \\times 7!} = \\frac{10 \\times 9 \\times 8}{6} = \\frac{720}{6} = 120\n\\]\n\n**Final Answer:**\n\n\\[\n\\boxed{120}\n\\]"
+          },
+          {
+            "role": "assistant",
+            "content": "\nTo solve the equation \\( 5^{x} = 3125 \\), we can follow these steps:\n\n1. **Express 3125 as a Power of 5:**\n   \n   First, recognize that 3125 is a power of 5. Let's find the exponent:\n   \\[\n   5^5 = 5 \\times 5 \\times 5 \\times 5 \\times 5 = 3125\n   \\]\n   \n2. **Set the Exponents Equal:**\n   \n   Since the bases are the same, we can set the exponents equal to each other:\n   \\[\n   5^{x} = 5^{5}\n   \\]\n   \\[\n   x = 5\n   \\]\n   \n3. **Final Answer:**\n   \n   Therefore, the solution to the equation is:\n   \\[\n   \\boxed{5}\n   \\]"
           }
         ]
       }
     },
     {
-      "name": "资源",
-      "icon": "icon-file",
+      "name": "交互测试",
+      "icon": "icon-robot",
       "type": "blank",
-      "componentIndex": 0,
+      "componentIndex": 3,
       "storage": {
-        "currentResourceName": "greeting"
+        "messages": [
+          {
+            "role": "user",
+            "content": "请问杭州今天的气温是多少？"
+          },
+          {
+            "role": "assistant",
+            "content": "\nTo solve the equation \\( 5^{x} = 3125 \\), we can follow these steps:\n\n1. **Express 3125 as a Power of 5:**\n   \n   First, recognize that 3125 is a power of 5. Let's find the exponent:\n   \\[\n   5^5 = 5 \\times 5 \\times 5 \\times 5 \\times 5 = 3125\n   \\]\n   \n2. **Set the Exponents Equal:**\n   \n   Since the bases are the same, we can set the exponents equal to each other:\n   \\[\n   5^{x} = 5^{5}\n   \\]\n   \\[\n   x = 5\n   \\]\n   \n3. **Final Answer:**\n   \n   Therefore, the solution to the equation is:\n   \\[\n   \\boxed{5}\n   \\]"
+          }
+        ],
+        "settings": {
+          "modelIndex": 0,
+          "enableTools": true,
+          "enableWebSearch": false,
+          "temperature": 0.7,
+          "contextLength": 10,
+          "systemPrompt": ""
+        }
       }
     }
   ]
