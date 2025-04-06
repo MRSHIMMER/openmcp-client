@@ -130,11 +130,7 @@ const handleSend = () => {
     }
     // 如果超出了 tabStorage.settings.contextLength, 则删除最早的消息
     const loadMessages = messages.slice(-tabStorage.settings.contextLength);
-    userMessages.concat(loadMessages);
-    userMessages.push({
-        role: 'assistant',
-        content: streamingContent.value
-    });
+    userMessages.push(...loadMessages);
 
     const chatData = {
         baseURL,
