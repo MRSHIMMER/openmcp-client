@@ -16,10 +16,10 @@
 
                 <div v-if="isLoading" class="message-item assistant">
                     <div class="message-avatar">
-                        <el-avatar :icon="Comment" />
+                        <span class="iconfont icon-chat"></span>
                     </div>
                     <div class="message-content">
-                        <div class="message-role">AI</div>
+                        <div class="message-role">Agent</div>
                         <div class="message-text">{{ streamingContent }}<span class="typing-cursor">|</span></div>
                     </div>
                 </div>
@@ -35,7 +35,11 @@
                         placeholder="输入消息..." @keydown.enter="handleKeydown" resize="none"
                         class="chat-input" />
                     
-                    <el-button type="primary" :loading="isLoading" @click="handleSend" class="send-button"
+                    <el-button
+                        type="primary"
+                        :loading="isLoading"
+                        @click="handleSend"
+                        class="send-button"
                         :disabled="!userInput.trim()">
                         <span class="iconfont icon-send"></span>
                     </el-button>
@@ -48,7 +52,6 @@
 <script setup lang="ts">
 import { ref, onMounted, defineComponent, defineProps, onUnmounted, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { Comment } from '@element-plus/icons-vue';
 import { useMessageBridge } from "@/api/message-bridge";
 import { ElMessage } from 'element-plus';
 import { tabs } from '../panel';
@@ -296,9 +299,9 @@ onUnmounted(() => {
 }
 
 .send-button {
-    position: absolute;
-    right: 8px;
-    bottom: 8px;
+    position: absolute !important;
+    right: 8px !important;
+    bottom: 8px !important;
     height: auto;
     padding: 8px 12px;
     font-size: 20px;
