@@ -116,5 +116,6 @@
     "refresh": "刷新",
     "read-prompt": "读取 prompt",
     "execute-tool": "运行",
-    "save": "保存"
+    "save": "保存",
+    "send": "发送"
 }

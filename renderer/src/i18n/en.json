@@ -116,5 +116,6 @@
     "refresh": "Refresh",
     "read-prompt": "Read prompt",
     "execute-tool": "Run",
-    "save": "Save"
+    "save": "Save",
+    "send": "Send"
 }

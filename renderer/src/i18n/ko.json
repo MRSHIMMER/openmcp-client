@@ -116,5 +116,6 @@
     "refresh": "새로 고침",
     "read-prompt": "프롬프트 읽기",
     "execute-tool": "실행",
-    "save": "저장"
+    "save": "저장",
+    "send": "보내기"
 }

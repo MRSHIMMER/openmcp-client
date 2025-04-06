@@ -116,5 +116,6 @@
     "refresh": "Rafraîchir",
     "read-prompt": "Lire l'invite",
     "execute-tool": "Exécuter",
-    "save": "Enregistrer"
+    "save": "Enregistrer",
+    "send": "Envoyer"
 }

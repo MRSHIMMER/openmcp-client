@@ -116,5 +116,6 @@
     "refresh": "تحديث",
     "read-prompt": "قراءة المطالبة",
     "execute-tool": "تشغيل",
-    "save": "حفظ"
+    "save": "حفظ",
+    "send": "إرسال"
 }

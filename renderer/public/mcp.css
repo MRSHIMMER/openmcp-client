@@ -14,9 +14,9 @@
     --code-font-family: "Cascadia code";
 
     /* css 动画属性 */
-    --animation-7s: .7s cubic-bezier(0.23,1,0.32,1);
-    --animation-5s: .5s cubic-bezier(0.23,1,0.32,1);
-    --animation-3s: .35s cubic-bezier(0.23,1,0.32,1);
+    --animation-7s: .7s cubic-bezier(0.23, 1, 0.32, 1);
+    --animation-5s: .5s cubic-bezier(0.23, 1, 0.32, 1);
+    --animation-3s: .35s cubic-bezier(0.23, 1, 0.32, 1);
     --gray-box-shadow-0: 0 0 8px 3px rgba(182, 181, 182, 0.9);
     --gray-box-shadow-1: 0 0 5px 1px rgba(16, 16, 16, 0.5);
 }
@@ -26,7 +26,8 @@
     src: url("./CascadiaCode.woff2");
 }
 
-html, body {
+html,
+body {
     background-color: var(--background);
     color: var(--foreground);
     overflow: hidden;
@@ -42,6 +43,7 @@ body::-webkit-scrollbar {
     height: 1.5px;
     width: 95%;
 }
+
 /* 
 ::-webkit-scrollbar {
     width: 12px;
@@ -100,23 +102,15 @@ body::-webkit-scrollbar {
     font-size: 16px !important;
 }
 
+.el-textarea__inner {
+    border-radius: .9em !important;
+    padding: 10px !important;
+    box-shadow: 0 0 0 1px var(--main-color) !important;
+}
+
 
 a {
     color: var(--main-color);
-}
-
-.digital-ide-icon {
-    background-image: url(./icon.svg);
-    background-size: 100%;
-    height: 50px;
-    width: 50px;
-}
-
-.digital-ide-icon.big {
-    background-image: url(./icon.svg);
-    background-size: 100%;
-    height: 150px;
-    width: 150px;
 }
 
 .el-radio-button__original-radio:disabled:checked+.el-radio-button__inner {
@@ -126,4 +120,26 @@ a {
 .el-select__wrapper.is-disabled {
     opacity: 0.6;
     box-shadow: unset !important;
+}
+
+.el-textarea__inner::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.el-textarea__inner::-webkit-scrollbar-track {
+    background: transparent;
+    /* 浅紫色背景 */
+    border-radius: 4px;
+}
+
+.el-textarea__inner::-webkit-scrollbar-thumb {
+    background: #cb81da;
+    /* 使用您的主题色 */
+    border-radius: 4px;
+}
+
+.el-textarea__inner::-webkit-scrollbar-thumb:hover {
+    background: #a259b5;
+    /* 深紫色悬停状态 */
 }

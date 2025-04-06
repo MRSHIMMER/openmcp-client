@@ -116,5 +116,6 @@
     "refresh": "更新",
     "read-prompt": "プロンプトを読み取る",
     "execute-tool": "実行",
-    "save": "保存"
+    "save": "保存",
+    "send": "送信"
 }

@@ -116,5 +116,6 @@
     "refresh": "Aktualisieren",
     "read-prompt": "Prompt lesen",
     "execute-tool": "Ausführen",
-    "save": "Speichern"
+    "save": "Speichern",
+    "send": "Senden"
 }

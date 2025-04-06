@@ -116,5 +116,6 @@
     "refresh": "重新整理",
     "read-prompt": "讀取提示",
     "execute-tool": "執行",
-    "save": "儲存"
+    "save": "儲存",
+    "send": "傳送"
 }
