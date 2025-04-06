@@ -7,6 +7,15 @@
       "type": "blank",
       "componentIndex": 3,
       "storage": {}
+    },
+    {
+      "name": "资源",
+      "icon": "icon-file",
+      "type": "blank",
+      "componentIndex": 0,
+      "storage": {
+        "currentResourceName": "greeting"
+      }
     }
   ]
 }

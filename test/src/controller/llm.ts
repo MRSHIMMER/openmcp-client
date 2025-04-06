@@ -58,7 +58,7 @@ export async function chatCompletionHandler(client: MCPClient | undefined, data:
 
     } catch (error) {
         webview.postMessage({
-            command: 'llm/chat/completions/error',
+            command: 'llm/chat/completions/chunk',
             data: {
                 code: 500,
                 msg: `OpenAI API error: ${(error as Error).message}`
