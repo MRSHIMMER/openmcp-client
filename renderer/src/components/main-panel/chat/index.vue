@@ -2,16 +2,38 @@
     <div class="chat-container" ref="chatContainerRef">
         <el-scrollbar :height="'90%'">
             <div class="message-list">
-                <div v-for="(message, index) in messages" :key="index" :class="['message-item', message.role]">
+                <div v-for="(message, index) in tabStorage.messages" :key="index"
+                    :class="['message-item', message.role]"
+                >
                     <div class="message-avatar" v-if="message.role === 'assistant'">
                         <span class="iconfont icon-chat"></span>
                     </div>
-                    <div class="message-content">
-                        <div class="message-role">{{ message.role === 'user' ? '' : 'Agent' }}</div>
+
+                    <!-- 用户输入的部分，不需要渲染成 markdown -->
+                    <div class="message-content" v-if="message.role === 'user'">
+                        <div class="message-role"></div>
                         <div class="message-text">
                             <span>{{ message.content }}</span>
                         </div>
                     </div>
+
+                    <!-- 助手返回的部分 -->
+                    <div class="message-content" v-else-if="message.role === 'assistant'">
+                        <div class="message-role">Agent</div>
+                        <div class="message-text">
+                            <div v-html="markdownToHtml(message.content)" ref="markdownContent"></div>
+                            <span class="iconfont icon-copy" @click="handleCopy(message.content)"></span>
+                        </div>
+                    </div>
+
+                    <!-- 待定 -->
+                    <div class="message-content" v-else>
+                        <div class="message-role">Tool</div>
+                        <div class="message-text">
+                            <span>Tool</span>
+                        </div>
+                    </div>
+
                 </div>
 
                 <div v-if="isLoading" class="message-item assistant">
@@ -59,6 +81,8 @@ import { ChatMessage, ChatStorage } from './chat';
 
 import Setting from './setting.vue';
 import { llmManager, llms } from '@/views/setting/llm';
+// 引入 markdown.ts 中的函数
+import { markdownToHtml, copyToClipboard } from './markdown';
 
 defineComponent({ name: 'chat' });
 
@@ -85,7 +109,6 @@ const inputHeightLines = computed(() => {
 if (!tabStorage.messages) {
     tabStorage.messages = [] as ChatMessage[];
 }
-const messages = tabStorage.messages;
 
 const isLoading = ref(false);
 const streamingContent = ref('');
@@ -109,11 +132,20 @@ const handleKeydown = (event: KeyboardEvent) => {
     // Shift+Enter 允许自然换行
 };
 
+const handleCopy = async (text: string) => {
+    try {
+        await copyToClipboard(text);
+        ElMessage.success('复制成功');
+    } catch (error) {
+        ElMessage.error('复制失败: ' + error);
+    }
+};
+
 const handleSend = () => {
     if (!userInput.value.trim() || isLoading.value) return;
 
     const userMessage = userInput.value.trim();
-    messages.push({ role: 'user', content: userMessage });
+    tabStorage.messages.push({ role: 'user', content: userMessage });
 
     // 后端接受属性 baseURL, apiKey, model, messages, temperature
     const baseURL = llms[llmManager.currentModelIndex].baseUrl;
@@ -129,7 +161,7 @@ const handleSend = () => {
         });
     }
     // 如果超出了 tabStorage.settings.contextLength, 则删除最早的消息
-    const loadMessages = messages.slice(-tabStorage.settings.contextLength);
+    const loadMessages = tabStorage.messages.slice(-tabStorage.settings.contextLength);
     userMessages.push(...loadMessages);
 
     const chatData = {
@@ -143,29 +175,7 @@ const handleSend = () => {
     isLoading.value = true;
     streamingContent.value = '';
 
-    bridge.postMessage({
-        command: 'llm/chat/completions',
-        data: chatData
-    });
-
-    userInput.value = '';
-};
-
-const handleError = (errorMsg: string) => {
-    ElMessage.error(errorMsg);
-    messages.push({
-        role: 'assistant',
-        content: `错误: ${errorMsg}`
-    });
-    streamingContent.value = '';
-    isLoading.value = false;
-};
-
-onMounted(() => {
-    updateScrollHeight();
-    window.addEventListener('resize', updateScrollHeight);
-
-    bridge.addCommandListener('llm/chat/completions/chunk', data => {
+    const chunkHandler = bridge.addCommandListener('llm/chat/completions/chunk', data => {
         if (data.code !== 200) {
             handleError(data.msg || '请求模型服务时发生错误');
             return;
@@ -182,14 +192,40 @@ onMounted(() => {
             return;
         }
         if (streamingContent.value) {
-            messages.push({
+            // 加入消息列表
+            console.log(tabStorage);
+            
+            tabStorage.messages.push({
                 role: 'assistant',
                 content: streamingContent.value
             });
             streamingContent.value = '';
         }
         isLoading.value = false;
-    }, { once: false });
+        chunkHandler();
+    }, { once: true });
+
+    bridge.postMessage({
+        command: 'llm/chat/completions',
+        data: chatData
+    });
+
+    userInput.value = '';
+};
+
+const handleError = (errorMsg: string) => {
+    ElMessage.error(errorMsg);
+    tabStorage.messages.push({
+        role: 'assistant',
+        content: `错误: ${errorMsg}`
+    });
+    streamingContent.value = '';
+    isLoading.value = false;
+};
+
+onMounted(() => {
+    updateScrollHeight();
+    window.addEventListener('resize', updateScrollHeight);
 });
 
 onUnmounted(() => {
@@ -234,7 +270,6 @@ onUnmounted(() => {
 
 .message-text {
     line-height: 1.6;
-    white-space: pre-wrap;
 }
 
 .user .message-text {
@@ -308,7 +343,7 @@ onUnmounted(() => {
 :deep(.chat-settings) {
     position: absolute;
     left: 0;
-    bottom: 8px;
+    bottom: 0px;
     z-index: 1;
 }
 .typing-cursor {
@@ -326,4 +361,29 @@ onUnmounted(() => {
         opacity: 0;
     }
 }
+</style>
+
+<style scoped>
+/* 原有样式保持不变 */
+
+/* 新增样式来减小行距 */
+.message-text p,
+.message-text h3,
+.message-text ol,
+.message-text ul {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    line-height: 1.4; /* 可以根据需要调整行高 */
+}
+
+.message-text ol li,
+.message-text ul li {
+    margin-top: 0.2em;
+    margin-bottom: 0.2em;
+}
+</style>
+
+<style>
+/* 引入 KaTeX 样式 */
+@import 'katex/dist/katex.min.css';
 </style>

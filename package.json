@@ -9,8 +9,7 @@
     "categories": [
         "Other"
     ],
-    "activationEvents": [
-    ],
+    "activationEvents": [],
     "main": "./dist/extension.js",
     "contributes": {
         "viewsContainers": {
@@ -32,5 +31,11 @@
                 }
             ]
         }
+    },
+    "dependencies": {
+
+    },
+    "devDependencies": {
+        "@types/markdown-it": "^14.1.2"
     }
 }

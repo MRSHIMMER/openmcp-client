@@ -46,6 +46,8 @@ watch(
 	() => tabs,
 	(newValue, oldValue) => {
 		safeSavePanels();
+
+		console.log(newValue);
 	},
 	{ deep: true }
 );
