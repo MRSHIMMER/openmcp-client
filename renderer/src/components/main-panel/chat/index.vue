@@ -21,7 +21,7 @@
                     <div class="message-content" v-else-if="message.role === 'assistant'">
                         <div class="message-role">Agent</div>
                         <div class="message-text">
-                            <div v-html="markdownToHtml(message.content)" ref="markdownContent"></div>
+                            <div v-html="markdownToHtml(message.content)"></div>
                             <span class="iconfont icon-copy" @click="handleCopy(message.content)"></span>
                         </div>
                     </div>
@@ -36,13 +36,17 @@
 
                 </div>
 
+                <!-- 正在加载的部分实时解析 markdown -->
                 <div v-if="isLoading" class="message-item assistant">
                     <div class="message-avatar">
                         <span class="iconfont icon-chat"></span>
                     </div>
                     <div class="message-content">
                         <div class="message-role">Agent</div>
-                        <div class="message-text">{{ streamingContent }}<span class="typing-cursor">|</span></div>
+                        <div class="message-text">
+                            <span v-html="markdownToHtml(streamingContent)"></span>
+                            <span class="typing-cursor">|</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -193,7 +197,6 @@ const handleSend = () => {
         }
         if (streamingContent.value) {
             // 加入消息列表
-            console.log(tabStorage);
             
             tabStorage.messages.push({
                 role: 'assistant',
@@ -381,9 +384,5 @@ onUnmounted(() => {
     margin-top: 0.2em;
     margin-bottom: 0.2em;
 }
-</style>
 
-<style>
-/* 引入 KaTeX 样式 */
-@import 'katex/dist/katex.min.css';
 </style>

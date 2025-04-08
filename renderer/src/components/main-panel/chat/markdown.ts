@@ -1,13 +1,17 @@
 import MarkdownIt from 'markdown-it';
-import katex from 'katex';
-import markdownItKatex from 'markdown-it-katex';
-import { pinkLog } from '@/views/setting/util';
+import MarkdownKatex from './markdown-katex';
+import MarkdownHighlight from './markdown-highlight';
 
-const md = new MarkdownIt();
+const md = new MarkdownIt({
+    highlight: MarkdownHighlight,
+});
 
-md.use(markdownItKatex, {
-    throwOnError: false,
-    errorColor: '#cc0000'
+md.use(MarkdownKatex, {
+    delimiters: [
+        { left: '\\[', right: '\\]', display: true },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '$$', right: '$$', display: false },
+    ],
 });
 
 export const markdownToHtml = (markdown: string) => {

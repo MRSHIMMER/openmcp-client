@@ -48,8 +48,6 @@ onMounted(() => {
             connectionResult.logString = msg;
         }, { once: true });
 
-
-
         setTimeout(() => {
 			// 初始化 设置
 			loadSetting();
