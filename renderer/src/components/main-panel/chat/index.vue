@@ -74,7 +74,7 @@ import { useI18n } from 'vue-i18n';
 import { useMessageBridge } from "@/api/message-bridge";
 import { ElMessage, ScrollbarInstance } from 'element-plus';
 import { tabs } from '../panel';
-import { ChatMessage, ChatStorage } from './chat';
+import { ChatMessage, ChatStorage, getToolSchema } from './chat';
 
 import Setting from './setting.vue';
 import { llmManager, llms } from '@/views/setting/llm';
@@ -196,6 +196,7 @@ const handleSend = () => {
     const apiKey = llms[llmManager.currentModelIndex].userToken;
     const model = llms[llmManager.currentModelIndex].userModel;
     const temperature = tabStorage.settings.temperature;
+    const tools = getToolSchema(tabStorage.settings.enableTools);
 
     const userMessages = [];
     if (tabStorage.settings.systemPrompt) {
@@ -213,6 +214,7 @@ const handleSend = () => {
         apiKey,
         model,
         temperature,
+        tools,
         messages: userMessages,
     };
 
@@ -224,7 +226,9 @@ const handleSend = () => {
             handleError(data.msg || '请求模型服务时发生错误');
             return;
         }
-        const { content } = data.msg;
+        const { chunk } = data.msg;
+        const content = chunk.choices[0]?.delta?.content || '';
+
         if (content) {
             streamingContent.value += content;
             scrollToBottom(); // 内容更新时滚动到底部

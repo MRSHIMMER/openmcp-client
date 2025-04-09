@@ -14,7 +14,7 @@ export async function chatCompletionHandler(client: MCPClient | undefined, data:
 	}
 
 
-    const { baseURL, apiKey, model, messages, temperature } = data;
+    const { baseURL, apiKey, model, messages, temperature, tools = [] } = data;
 
     try {
 		const client = new OpenAI({
@@ -26,6 +26,8 @@ export async function chatCompletionHandler(client: MCPClient | undefined, data:
             model,
             messages,
             temperature,
+            tools,
+            tool_choice: 'auto',
             web_search_options: {},
             stream: true
         });
@@ -52,17 +54,15 @@ export async function chatCompletionHandler(client: MCPClient | undefined, data:
                 });
                 break;
             }
-
-            const content = chunk.choices[0]?.delta?.content || '';
-            if (content) {
+            
+            if (chunk.choices) {
 				const chunkResult = {
 					code: 200,
 					msg: {
-						content,
-                        finish_reason: chunk.choices[0]?.finish_reason || null
+						chunk
 					}
 				};
-
+    
                 webview.postMessage({
                     command: 'llm/chat/completions/chunk',
                     data: chunkResult
