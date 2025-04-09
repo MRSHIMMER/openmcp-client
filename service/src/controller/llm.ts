@@ -22,6 +22,9 @@ export async function chatCompletionHandler(client: MCPClient | undefined, data:
 			apiKey
 		});
 
+        console.log(tools);
+        
+
         const stream = await client.chat.completions.create({
             model,
             messages,

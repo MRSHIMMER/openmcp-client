@@ -29,7 +29,10 @@
                     <div class="message-content" v-else>
                         <div class="message-role">Tool</div>
                         <div class="message-text">
-                            <span>Tool</span>
+                            <div v-if="streamingToolCalls.length > 0">
+                                <span>正在调用工具: {{ streamingToolCalls[0].name }}</span>
+                            </div>
+                            <span v-else>{{ message.content }}</span>
                         </div>
                     </div>
 
@@ -74,7 +77,7 @@ import { useI18n } from 'vue-i18n';
 import { useMessageBridge } from "@/api/message-bridge";
 import { ElMessage, ScrollbarInstance } from 'element-plus';
 import { tabs } from '../panel';
-import { ChatMessage, ChatStorage, getToolSchema } from './chat';
+import { ChatMessage, ChatStorage, getToolSchema, ToolCall } from './chat';
 
 import Setting from './setting.vue';
 import { llmManager, llms } from '@/views/setting/llm';
@@ -115,7 +118,10 @@ if (!tabStorage.messages) {
 }
 
 const isLoading = ref(false);
+
 const streamingContent = ref('');
+const streamingToolCalls = ref<ToolCall[]>([]);
+
 const chatContainerRef = ref<any>(null);
 const messageListRef = ref<any>(null);
 
@@ -227,11 +233,45 @@ const handleSend = () => {
             return;
         }
         const { chunk } = data.msg;
+        
         const content = chunk.choices[0]?.delta?.content || '';
-
+        const toolCall = chunk.choices[0]?.delta?.tool_calls?.[0];
+        
         if (content) {
             streamingContent.value += content;
-            scrollToBottom(); // 内容更新时滚动到底部
+            scrollToBottom();
+        }
+        
+        if (toolCall) {
+            if (toolCall.index === 0) {
+                // 新的工具调用开始
+                streamingToolCalls.value = [{
+                    id: toolCall.id,
+                    name: toolCall.function?.name || '',
+                    arguments: toolCall.function?.arguments || ''
+                }];
+            } else {
+                // 累积现有工具调用的信息
+                const currentCall = streamingToolCalls.value[toolCall.index];
+                if (currentCall) {
+                    if (toolCall.id) {
+                        currentCall.id = toolCall.id;
+                    }
+                    if (toolCall.function?.name) {
+                        currentCall.name = toolCall.function.name;
+                    }
+                    if (toolCall.function?.arguments) {
+                        currentCall.arguments += toolCall.function.arguments;
+                    }
+                }
+            }
+        }
+        
+        const finishReason = chunk.choices[0]?.finish_reason;
+        if (finishReason === 'tool_calls') {
+            // 工具调用完成，这里可以处理工具调用
+            console.log('Tool calls completed:', streamingToolCalls.value);
+            streamingToolCalls.value = [];
         }
     }, { once: false });
 
@@ -248,6 +288,19 @@ const handleSend = () => {
                 content: streamingContent.value
             });
             streamingContent.value = '';
+        }
+        // 如果有工具调用结果，也加入消息列表
+        if (streamingToolCalls.value.length > 0) {
+            streamingToolCalls.value.forEach(tool => {
+                if (tool.id) {
+                    tabStorage.messages.push({
+                        role: 'tool',
+                        tool_call_id: tool.id,
+                        content: tool.arguments
+                    });
+                }
+            });
+            streamingToolCalls.value = [];
         }
         isLoading.value = false;
         chunkHandler();

@@ -2,8 +2,10 @@ import { ToolItem } from "@/hook/type";
 import { ref } from "vue";
 
 export interface ChatMessage {
-    role: 'user' | 'assistant' | 'system';
+    role: 'user' | 'assistant' | 'system' | 'tool';
     content: string;
+    tool_call_id?: string
+    name?: string // 工具名称，当 role 为 tool
 }
 
 // 新增状态和工具数据
@@ -27,6 +29,12 @@ export interface ChatStorage {
     settings: ChatSetting
 }
 
+export interface ToolCall {
+    id?: string;
+    name: string;
+    arguments: string;
+}
+
 export const allTools = ref<ToolItem[]>([]);
 
 export function getToolSchema(enableTools: EnableToolItem[]) {
@@ -36,12 +44,11 @@ export function getToolSchema(enableTools: EnableToolItem[]) {
 			const tool = allTools.value[i];
 			
 			toolsSchema.push({
-				name: tool.name,
-				description: tool.description || "",
-				parameters: {
-					type: "function",
-					properties: tool.inputSchema.properties,
-					required: tool.inputSchema.required
+				type: 'function',
+				function: {
+					name: tool.name,
+					description: tool.description || "",
+					parameters: tool.inputSchema
 				}
 			});
 		}

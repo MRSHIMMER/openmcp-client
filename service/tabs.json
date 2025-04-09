@@ -10,11 +10,7 @@
         "messages": [
           {
             "role": "user",
-            "content": "test"
-          },
-          {
-            "role": "assistant",
-            "content": "错误: OpenAI API error: 422 Failed to deserialize the JSON body into the target type: tools[0]: missing field `type` at line 31 column 5"
+            "content": "test add"
           }
         ],
         "settings": {
