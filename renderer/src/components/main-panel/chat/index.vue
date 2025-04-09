@@ -1,10 +1,9 @@
 <template>
-    <div class="chat-container" ref="chatContainerRef">
-        <el-scrollbar :height="'90%'">
-            <div class="message-list">
+    <div class="chat-container" :ref="el => chatContainerRef = el">
+        <el-scrollbar ref="scrollbarRef" :height="'90%'" @scroll="handleScroll">
+            <div class="message-list" :ref="el => messageListRef = el">
                 <div v-for="(message, index) in tabStorage.messages" :key="index"
-                    :class="['message-item', message.role]"
-                >
+                    :class="['message-item', message.role]">
                     <div class="message-avatar" v-if="message.role === 'assistant'">
                         <span class="iconfont icon-chat"></span>
                     </div>
@@ -44,8 +43,7 @@
                     <div class="message-content">
                         <div class="message-role">Agent</div>
                         <div class="message-text">
-                            <span v-html="markdownToHtml(streamingContent)"></span>
-                            <span class="typing-cursor">|</span>
+                            <span v-html="waitingMarkdownToHtml(streamingContent)"></span>
                         </div>
                     </div>
                 </div>
@@ -56,18 +54,13 @@
             <div class="input-area">
                 <div class="input-wrapper">
                     <Setting :tabId="tabId" />
-                    
+
                     <el-input v-model="userInput" type="textarea" :rows="inputHeightLines" :maxlength="2000"
-                        placeholder="输入消息..." @keydown.enter="handleKeydown" resize="none"
-                        class="chat-input" />
-                    
-                    <el-button
-                        type="primary"
-                        :loading="isLoading"
-                        @click="handleSend"
-                        class="send-button"
-                        :disabled="!userInput.trim()">
-                        <span class="iconfont icon-send"></span>
+                        placeholder="输入消息..." @keydown.enter="handleKeydown" resize="none" class="chat-input" />
+
+                    <el-button type="primary" @click="isLoading ? handleAbort() : handleSend()" class="send-button">
+                        <span v-if="!isLoading" class="iconfont icon-send"></span>
+                        <span v-else class="iconfont icon-stop"></span>
                     </el-button>
                 </div>
             </div>
@@ -76,10 +69,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, defineComponent, defineProps, onUnmounted, computed } from 'vue';
+import { ref, onMounted, defineComponent, defineProps, onUnmounted, computed, nextTick, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useMessageBridge } from "@/api/message-bridge";
-import { ElMessage } from 'element-plus';
+import { ElMessage, ScrollbarInstance } from 'element-plus';
 import { tabs } from '../panel';
 import { ChatMessage, ChatStorage } from './chat';
 
@@ -91,6 +84,13 @@ import { markdownToHtml, copyToClipboard } from './markdown';
 defineComponent({ name: 'chat' });
 
 const { t } = useI18n();
+
+function waitingMarkdownToHtml(content: string) {
+    if (content) {
+        return markdownToHtml(content);
+    }
+    return '<span class="typing-cursor">|</span>';
+}
 
 const props = defineProps({
     tabId: {
@@ -116,7 +116,9 @@ if (!tabStorage.messages) {
 
 const isLoading = ref(false);
 const streamingContent = ref('');
-const chatContainerRef = ref<HTMLElement>();
+const chatContainerRef = ref<any>(null);
+const messageListRef = ref<any>(null);
+
 const footerRef = ref<HTMLElement>();
 const scrollHeight = ref('500px');
 
@@ -145,9 +147,47 @@ const handleCopy = async (text: string) => {
     }
 };
 
+const autoScroll = ref(true);
+const scrollbarRef = ref<ScrollbarInstance>();
+
+// 修改后的 handleScroll 方法
+const handleScroll = ({ scrollTop, scrollHeight, clientHeight }: {
+    scrollTop: number,
+    scrollHeight: number,
+    clientHeight: number
+}) => {
+    // 如果用户滚动到接近底部(留10px缓冲)，则恢复自动滚动
+    autoScroll.value = scrollTop + clientHeight >= scrollHeight - 10;
+};
+
+// 修改 scrollToBottom 方法
+const scrollToBottom = async () => {
+    if (!scrollbarRef.value || !messageListRef.value) return;
+
+    await nextTick(); // 等待 DOM 更新
+
+    try {
+        const container = scrollbarRef.value.wrapRef;
+        if (container) {
+            container.scrollTop = container.scrollHeight;
+        }
+    } catch (error) {
+        console.error('Scroll to bottom failed:', error);
+    }
+};
+
+// 添加对 streamingContent 的监听
+watch(streamingContent, () => {
+    if (autoScroll.value) {
+        scrollToBottom();
+    }
+}, { deep: true });
+
+
 const handleSend = () => {
     if (!userInput.value.trim() || isLoading.value) return;
 
+    autoScroll.value = true; // 发送新消息时恢复自动滚动
     const userMessage = userInput.value.trim();
     tabStorage.messages.push({ role: 'user', content: userMessage });
 
@@ -187,6 +227,7 @@ const handleSend = () => {
         const { content } = data.msg;
         if (content) {
             streamingContent.value += content;
+            scrollToBottom(); // 内容更新时滚动到底部
         }
     }, { once: false });
 
@@ -197,7 +238,7 @@ const handleSend = () => {
         }
         if (streamingContent.value) {
             // 加入消息列表
-            
+
             tabStorage.messages.push({
                 role: 'assistant',
                 content: streamingContent.value
@@ -216,6 +257,16 @@ const handleSend = () => {
     userInput.value = '';
 };
 
+const handleAbort = () => {
+    bridge.postMessage({
+        command: 'llm/chat/completions/abort', // 假设后端有对应的中止命令
+        data: {}
+    });
+    isLoading.value = false;
+    streamingContent.value = '';
+    ElMessage.info('请求已中止');
+};
+
 const handleError = (errorMsg: string) => {
     ElMessage.error(errorMsg);
     tabStorage.messages.push({
@@ -229,6 +280,7 @@ const handleError = (errorMsg: string) => {
 onMounted(() => {
     updateScrollHeight();
     window.addEventListener('resize', updateScrollHeight);
+    scrollToBottom();
 });
 
 onUnmounted(() => {
@@ -280,7 +332,7 @@ onUnmounted(() => {
     margin-bottom: 10px;
 }
 
-.user .message-text > span {
+.user .message-text>span {
     border-radius: .9em;
     background-color: var(--main-light-color);
     padding: 10px 15px;
@@ -349,6 +401,7 @@ onUnmounted(() => {
     bottom: 0px;
     z-index: 1;
 }
+
 .typing-cursor {
     animation: blink 1s infinite;
 }
@@ -376,7 +429,8 @@ onUnmounted(() => {
 .message-text ul {
     margin-top: 0.5em;
     margin-bottom: 0.5em;
-    line-height: 1.4; /* 可以根据需要调整行高 */
+    line-height: 1.4;
+    /* 可以根据需要调整行高 */
 }
 
 .message-text ol li,
@@ -384,5 +438,4 @@ onUnmounted(() => {
     margin-top: 0.2em;
     margin-bottom: 0.2em;
 }
-
 </style>

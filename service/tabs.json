@@ -1,5 +1,5 @@
 {
-  "currentIndex": 3,
+  "currentIndex": 0,
   "tabs": [
     {
       "name": "交互测试",
@@ -7,116 +7,30 @@
       "type": "blank",
       "componentIndex": 3,
       "storage": {
-        "settings": {
-          "modelIndex": 0,
-          "enableTools": true,
-          "enableWebSearch": false,
-          "temperature": 0.7,
-          "contextLength": 10,
-          "systemPrompt": "你的名字是 openmcp"
-        },
         "messages": [
           {
             "role": "user",
-            "content": "请问你的名字是什么"
+            "content": "你好，请问什么是 core dump"
           },
           {
             "role": "assistant",
-            "content": "我的名字是 **OpenMCP**（Open Multi-modal Cognitive Platform）。  \n\n我是由 **深度求索（DeepSeek）** 开发的一款 **多模态认知大模型**，能够处理文本、图像、文档等多种信息，并具备强大的理解和推理能力。  \n\n你可以叫我 **OpenMCP**，或者简称 **MCP**！😊 有什么我可以帮你的吗？"
-          }
-        ]
-      }
-    },
-    {
-      "name": "交互测试",
-      "icon": "icon-robot",
-      "type": "blank",
-      "componentIndex": 3,
-      "storage": {
-        "messages": [
-          {
-            "role": "user",
-            "content": "杭州今天的气温如何"
-          },
-          {
-            "role": "assistant",
-            "content": "要获取杭州今天的最新气温信息，你可以通过以下几种方式实时查询：\n\n1. **天气应用/网站**  \n   - 打开手机上的天气应用（如苹果天气、墨迹天气等），搜索“杭州”。\n   - 访问中国天气网（[www.weather.com.cn](http://www.weather.com.cn)）或国际服务（如AccuWeather、Weather.com）。\n\n2. **搜索引擎**  \n   在百度、谷歌等搜索“杭州今日天气”，结果页通常会直接显示当前气温和预报。\n\n3. **语音助手**  \n   对手机说“Hey Siri”或“小爱同学，杭州今天多少度？”快速获取答案。\n\n**提示**：气温可能因城区/郊区差异略有不同，建议查看实时更新数据。如果需要更详细的天气信息（如湿度、降水概率），上述方法也可提供。\n\n（由于我无法实时联网，暂不能提供此刻的具体温度，请见谅！）"
+            "content": "**Core Dump（核心转储）**是操作系统在程序异常终止（如崩溃或收到特定信号）时生成的一个文件，记录了程序崩溃时的内存状态、寄存器值、堆栈信息等关键数据，用于后续调试和分析问题。\n\n### 核心概念：\n1. **触发条件**：\n   - 程序发生**段错误**（Segmentation Fault）、**总线错误**（Bus Error）等严重错误。\n   - 收到特定信号（如 `SIGSEGV`、`SIGABRT`）。\n   - 用户主动触发（如通过 `gcore` 命令）。\n\n2. **文件内容**：\n   - 崩溃时的内存映像（包括堆、栈、全局变量等）。\n   - 程序计数器（PC）、寄存器状态。\n   - 动态链接库信息。\n\n3. **文件命名**：\n   - 通常命名为 `core` 或 `core.<pid>`（如 `core.1234`）。\n\n---\n\n### 常见用途：\n- **调试崩溃问题**：通过调试器（如 `gdb`）分析 core dump，定位崩溃的代码位置。\n  ```bash\n  gdb /path/to/program /path/to/core\n  ```\n- **事后分析**：即使程序已终止，仍可复现崩溃时的场景。\n\n---\n\n### 配置与启用：\n1. **检查系统限制**：\n   ```bash\n   ulimit -c          # 查看 core 文件大小限制（0 表示禁用）\n   ulimit -c unlimited # 临时解除限制\n   ```\n2. **永久生效**：\n   - 在 `/etc/security/limits.conf` 中添加：\n     ```\n     * soft core unlimited\n     ```\n   - 或通过 `sysctl` 配置存储路径：\n     ```bash\n     echo \"/var/coredumps/core.%e.%p\" > /proc/sys/kernel/core_pattern\n     ```\n\n---\n\n### 注意事项：\n- **安全性**：Core dump 可能包含敏感信息（如密码），需妥善保管。\n- **磁盘空间**：大内存程序生成的 core 文件可能很大，需确保磁盘充足。\n- **容器环境**：某些容器默认禁用 core dump，需额外配置。\n\n---\n\n### 示例场景：\n若程序崩溃后生成 `core.1234`，用 `gdb` 分析：\n```bash\ngdb ./my_program core.1234\n(gdb) bt  # 查看崩溃时的调用栈\n```\n\n通过分析，可快速定位到引发崩溃的代码行或函数。"
           },
           {
             "role": "user",
-            "content": "我的上一个问题是什么"
+            "content": "python 的"
           },
           {
             "role": "assistant",
-            "content": "你上一个问题是：  \n**“杭州今天的气温如何”**  \n\n而我的回答中已说明，由于无法实时联网，建议你通过天气应用或搜索引擎获取最新数据。需要我帮你回顾其他内容吗？ 😊"
-          }
-        ],
-        "settings": {
-          "modelIndex": 0,
-          "enableTools": true,
-          "enableWebSearch": false,
-          "temperature": 0.7,
-          "contextLength": 10,
-          "systemPrompt": ""
-        }
-      }
-    },
-    {
-      "name": "交互测试",
-      "icon": "icon-robot",
-      "type": "blank",
-      "componentIndex": 3,
-      "storage": {
-        "messages": [
-          {
-            "role": "user",
-            "content": "简述康托洛维奇不等式，只需要给出数学公式，不需要给出额外的解释"
-          },
-          {
-            "role": "assistant",
-            "content": "康托洛维奇不等式（Kantorovich Inequality）的数学公式为：\n\n对于正定矩阵 \\( A \\) 和任意非零向量 \\( x \\)，有\n\n\\[\n\\frac{(x^\\top A x)(x^\\top A^{-1} x)}{(x^\\top x)^2} \\leq \\frac{(\\lambda_{\\max} + \\lambda_{\\min})^2}{4 \\lambda_{\\max} \\lambda_{\\min}},\n\\]\n\n其中 \\( \\lambda_{\\max} \\) 和 \\( \\lambda_{\\min} \\) 分别是矩阵 \\( A \\) 的最大和最小特征值。"
+            "content": "在 Python 中，**Core Dump** 的概念与系统层面的核心转储类似，但 Python 作为一种高级语言，通常不直接生成传统的 core dump 文件（如 C/C++ 程序）。不过，Python 程序崩溃时仍可能通过以下方式提供类似调试信息：\n\n---\n\n### 1. **Python 程序崩溃的常见场景**\n   - **段错误（Segmentation Fault）**：通常由底层 C 扩展（如 NumPy、Pandas 的 C 模块）引发。\n   - **未捕获的异常**：如 `MemoryError`、`SystemError` 等。\n   - **信号中断**：如 `SIGSEGV`（非法内存访问）。\n\n---\n\n### 2. **获取类似 Core Dump 的信息**\n#### **方法 1：使用 `faulthandler` 模块**\n   Python 内置的 `faulthandler` 可以在程序崩溃时打印堆栈跟踪（类似 core dump 的简化版）：\n   ```python\n   import faulthandler\n   faulthandler.enable()  # 默认输出到 stderr\n   # 或者在程序启动时通过环境变量启用：\n   # PYTHONFAULTHANDLER=1 python your_script.py\n   ```\n   **效果**：当发生段错误时，会输出当前 Python 和 C 的调用栈。\n\n#### **方法 2：生成核心转储文件（需系统支持）**\n   如果 Python 解释器或 C 扩展崩溃，可以强制生成系统的 core dump：\n   ```bash\n   ulimit -c unlimited  # 启用 core dump\n   python your_script.py\n   ```\n   - 生成的 `core` 文件可用 `gdb` 分析：\n     ```bash\n     gdb /usr/bin/python core\n     (gdb) bt  # 查看调用栈\n     ```\n\n#### **方法 3：使用 `pdb` 或 `traceback`**\n   - 对 Python 层面的异常，通过 `try-except` 捕获并记录：\n     ```python\n     import traceback\n     try:\n         your_code()\n     except Exception as e:\n         with open(\"error.log\", \"w\") as f:\n             traceback.print_exc(file=f)  # 输出完整堆栈到文件\n     ```\n\n---\n\n### 3. **调试 C 扩展崩溃**\n   如果崩溃来自 Python 的 C 扩展（如自定义模块）：\n   - 用 `gdb` 直接调试 Python 进程：\n     ```bash\n     gdb --args python your_script.py\n     (gdb) run\n     ```\n   - 或分析 core dump 文件（需编译扩展时带调试符号 `-g`）。\n\n---\n\n### 4. **容器/Kubernetes 环境**\n   若在容器中运行 Python：\n   - 确保容器有权限生成 core dump（需挂载 `/proc/sys/kernel/core_pattern`）。\n   - 示例 Docker 命令：\n     ```bash\n     docker run --ulimit core=-1 -v /tmp:/coredumps your_image\n     ```\n\n---\n\n### 5. **注意事项**\n   - **性能开销**：`faulthandler` 对性能有轻微影响，生产环境慎用。\n   - **敏感信息**：Core dump 可能泄露内存中的数据，需限制访问权限。\n   - **替代方案**：对于纯 Python 代码，优先用日志和异常处理而非 core dump。\n\n---\n\n### 示例：分析段错误\n假设一个 C 扩展崩溃导致 Python 段错误：\n```bash\n# 启用 core dump 后运行程序\nulimit -c unlimited\npython crashy_script.py  # 生成 core 文件\n\n# 用 gdb 分析\ngdb /usr/bin/python core.<pid>\n(gdb) bt full  # 查看完整调用栈\n```\n\n通过结合 Python 的 `faulthandler` 和系统工具，可以高效定位问题根源。"
           },
           {
             "role": "user",
-            "content": "请简述调和平均数"
+            "content": "python 的生成器是如何实现的"
           },
           {
             "role": "assistant",
-            "content": "调和平均数（Harmonic Mean）是 \\( n \\) 个正数 \\( x_1, x_2, \\dots, x_n \\) 的平均数的一种形式，定义为：  \n\n\\[\nH = \\frac{n}{\\frac{1}{x_1} + \\frac{1}{x_2} + \\cdots + \\frac{1}{x_n}}.\n\\]\n\n它适用于计算**速率、比例**等涉及**倒数关系**的平均值，例如平均速度、并联电阻等。调和平均数总是**不大于算术平均数**（\\( H \\leq G \\leq A \\)，其中 \\( G \\) 是几何平均数，\\( A \\) 是算术平均数）。"
-          }
-        ],
-        "settings": {
-          "modelIndex": 0,
-          "enableTools": true,
-          "enableWebSearch": false,
-          "temperature": 0.7,
-          "contextLength": 10,
-          "systemPrompt": ""
-        }
-      }
-    },
-    {
-      "name": "交互测试",
-      "icon": "icon-robot",
-      "type": "blank",
-      "componentIndex": 3,
-      "storage": {
-        "messages": [
-          {
-            "role": "user",
-            "content": "如何让 mardown-it 支持渲染出来的编程语言自带语法高亮"
-          },
-          {
-            "role": "assistant",
-            "content": "要让 `markdown-it` 渲染的代码块自带语法高亮，你可以通过以下步骤实现：\n\n---\n\n### 1. **安装必要的依赖**\n首先确保已安装 `markdown-it` 和语法高亮库（如 `highlight.js` 或 `prismjs`）：\n```bash\nnpm install markdown-it highlight.js\n# 或\nnpm install markdown-it prismjs\n```\n\n---\n\n### 2. **配置 markdown-it 启用代码高亮**\n#### 方案一：使用 `highlight.js`（推荐）\n```javascript\nconst md = require('markdown-it')({\n  highlight: function (str, lang) {\n    if (lang && require('highlight.js').getLanguage(lang)) {\n      try {\n        return require('highlight.js').highlight(str, { language: lang }).value;\n      } catch (__) {}\n    }\n    return ''; // 使用默认转义\n  }\n});\n```\n\n#### 方案二：使用 `prismjs`\n```javascript\nconst md = require('markdown-it')({\n  highlight: function (str, lang) {\n    if (lang && require('prismjs').languages[lang]) {\n      try {\n        return require('prismjs').highlight(str, require('prismjs').languages[lang], lang);\n      } catch (__) {}\n    }\n    return ''; // 使用默认转义\n  }\n});\n```\n\n---\n\n### 3. **引入高亮样式**\n语法高亮需要对应的 CSS 样式文件，可以通过以下方式引入：\n#### 对于 `highlight.js`：\n- 从 [highlight.js 主题库](https://highlightjs.org/static/demo/) 选择样式，然后在 HTML 中引入：\n  ```html\n  <link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css\">\n  ```\n\n#### 对于 `prismjs`：\n- 从 [Prism 主题库](https://prismjs.com/) 下载样式，或在 HTML 中引入：\n  ```html\n  <link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css\">\n  ```\n\n---\n\n### 4. **渲染 Markdown 内容**\n```javascript\nconst result = md.render('```js\\nconsole.log(\"Hello\");\\n```');\nconsole.log(result);\n```\n输出会包含语法高亮的 HTML（如 `<span class=\"hljs-keyword\">console</span>`）。\n\n---\n\n### 5. **可选：自定义高亮逻辑**\n如果需要更复杂的处理（如行号、错误提示），可以修改 `highlight` 函数：\n```javascript\nhighlight: function (str, lang) {\n  if (lang === 'mermaid') {\n    return `<div class=\"mermaid\">${str}</div>`; // 特殊处理 Mermaid 图表\n  }\n  // ...默认高亮逻辑\n}\n```\n\n---\n\n### 6. **在浏览器中使用**\n如果在前端使用，确保通过 CDN 或打包工具引入库：\n```html\n<script src=\"https://cdnjs.cloudflare.com/ajax/libs/markdown-it/13.0.2/markdown-it.min.js\"></script>\n<script src=\"https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js\"></script>\n<script>\n  const md = window.markdownit({\n    highlight: (str, lang) => {\n      if (lang && hljs.getLanguage(lang)) {\n        return hljs.highlight(str, { language: lang }).value;\n      }\n      return '';\n    }\n  });\n</script>\n```\n\n---\n\n### 常见问题\n- **语言未高亮？** 检查是否安装了对应的语言包（如 `highlight.js` 可能需要额外加载语言模块）。\n- **样式不生效？** 确认 CSS 文件路径正确且未被其他样式覆盖。\n\n通过以上步骤，`markdown-it` 渲染的代码块将自动支持语法高亮。"
-          },
-          {
-            "role": "user",
-            "content": "markdown-it 如何让生成的"
-          },
-          {
-            "role": "assistant",
-            "content": "要让 `markdown-it` 生成的代码块支持语法高亮，你需要结合语法高亮库（如 `highlight.js` 或 `Prism.js`）进行配置。以下是详细步骤：\n\n---\n\n## **1. 安装依赖**\n首先，确保安装了 `markdown-it` 和语法高亮库（如 `highlight.js` 或 `Prism.js`）：\n\n### **使用 `highlight.js`**\n```bash\nnpm install markdown-it highlight.js\n```\n### **使用 `Prism.js`**\n```bash\nnpm install markdown-it prismjs\n```\n\n---\n\n## **2. 配置 `markdown-it` 启用语法高亮**\n### **方案 1：使用 `highlight.js`（推荐）**\n```javascript\nconst md = require(\"markdown-it\")({\n  highlight: function (str, lang) {\n    if (lang && require(\"highlight.js\").getLanguage(lang)) {\n      try {\n        return require(\"highlight.js\").highlight(str, { language: lang }).value;\n      } catch (err) {\n        console.error(\"语法高亮失败:\", err);\n      }\n    }\n    return \"\"; // 使用默认的转义\n  },\n});\n```\n### **方案 2：使用 `Prism.js`**\n```javascript\nconst md = require(\"markdown-it\")({\n  highlight: function (str, lang) {\n    if (lang && require(\"prismjs\").languages[lang]) {\n      try {\n        return require(\"prismjs\").highlight(str, require(\"prismjs\").languages[lang], lang);\n      } catch (err) {\n        console.error(\"语法高亮失败:\", err);\n      }\n    }\n    return \"\"; // 使用默认的转义\n  },\n});\n```\n\n---\n\n## **3. 引入高亮样式**\n语法高亮需要对应的 CSS 样式文件，你可以：\n### **`highlight.js` 样式**\n```html\n<!-- 选择一个主题，如 atom-one-dark -->\n<link\n  rel=\"stylesheet\"\n  href=\"https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css\"\n/>\n```\n### **`Prism.js` 样式**\n```html\n<!-- 选择一个主题，如 prism-tomorrow -->\n<link\n  rel=\"stylesheet\"\n  href=\"https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css\"\n/>\n```\n\n---\n\n## **4. 渲染 Markdown**\n```javascript\nconst markdownText = `\n\\`\\`\\`javascript\nconsole.log(\"Hello, World!\");\n\\`\\`\\`\n`;\n\nconst htmlOutput = md.render(markdownText);\nconsole.log(htmlOutput);\n```\n输出：\n```html\n<pre><code class=\"language-javascript\"><span class=\"hljs-built_in\">console</span>.<span class=\"hljs-title function_\">log</span>(<span class=\"hljs-string\">\"Hello, World!\"</span>);</code></pre>\n```\n\n---\n\n## **5. 在浏览器中使用**\n如果你在前端使用 `markdown-it`，可以这样加载：\n```html\n<script src=\"https://cdnjs.cloudflare.com/ajax/libs/markdown-it/13.0.2/markdown-it.min.js\"></script>\n<script src=\"https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js\"></script>\n<script>\n  const md = window.markdownit({\n    highlight: function (str, lang) {\n      if (lang && hljs.getLanguage(lang)) {\n        try {\n          return hljs.highlight(str, { language: lang }).value;\n        } catch (err) {\n          console.error(\"语法高亮失败:\", err);\n        }\n      }\n      return \"\";\n    },\n  });\n  const html = md.render(\"```js\\nconsole.log('Hello');\\n```\");\n  document.body.innerHTML = html;\n  hljs.highlightAll(); // 确保动态加载的代码块也能高亮\n</script>\n```\n\n---\n\n## **6. 高级用法**\n### **（1）自定义高亮**\n```javascript\nhighlight: function (str, lang) {\n  if (lang === \"mermaid\") {\n    return `<div class=\"mermaid\">${str}</div>`; // 特殊处理 Mermaid 图表\n  }\n  // 其他语言的高亮逻辑\n  // ...\n}\n```\n### **（2）行号支持**\n使用 `highlight.js` + `highlightjs-line-numbers.js`：\n```html\n<script src=\"https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.8.0/highlightjs-line-numbers.min.js\"></script>\n<script>\n  hljs.highlightAll();\n  hljs.initLineNumbersOnLoad();\n</script>\n```\n\n---\n\n## **7. 常见问题**\n### **（1）某些语言不高亮？**\n- `highlight.js` 默认只支持部分语言，其他语言需要额外引入：\n  ```html\n  <script src=\"https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/go.min.js\"></script>\n  ```\n- `Prism.js` 需要手动加载语言：\n  ```javascript\n  require(\"prismjs/components/prism-go\");\n  ```\n\n### **（2）样式不生效？**\n- 确保 CSS 文件正确加载。\n- 检查是否有其他样式覆盖。\n\n---\n\n## **总结**\n| 步骤 | 操作 |\n|------|------|\n| 1. 安装依赖 | `npm install markdown-it highlight.js` |\n| 2. 配置高亮 | 在 `markdown-it` 的 `highlight` 回调中使用 `highlight.js` 或 `Prism.js` |\n| 3. 引入样式 | 加载对应的 CSS 文件 |\n| 4. 渲染 Markdown | `md.render(\"```js\\nconsole.log('Hi');\\n```\")` |\n| 5. 浏览器支持 | 确保 `hljs.highlightAll()` 执行 |\n\n这样，`markdown-it` 生成的代码块就会自动带有语法高亮！ 🎨"
+            "content": "Python 的**生成器（Generator）**是一种特殊的迭代器，通过延迟计算（惰性求值）动态生成值，而不是一次性生成所有数据。它的核心实现依赖于 **Python 解释器对函数执行状态的暂停与恢复**，以下是其底层机制和关键实现原理：\n\n---\n\n### 1. **生成器的基本实现**\n当一个函数包含 `yield` 关键字时，Python 会将其编译为**生成器函数**，调用时返回一个生成器对象（而非直接执行函数体）：\n```python\ndef my_generator():\n    yield 1\n    yield 2\n\ngen = my_generator()  # 返回生成器对象，函数体未执行\nprint(next(gen))      # 输出 1，函数执行到第一个 yield 暂停\nprint(next(gen))      # 输出 2，从暂停处恢复执行到下一个 yield\n```\n\n---\n\n### 2. **底层实现原理**\n生成器的核心依赖以下 Python 内部机制：\n\n#### **（1）代码对象（Code Object）**\n- Python 在编译阶段会将生成器函数的字节码标记为 `GENERATOR` 类型，区别于普通函数。\n- 通过 `dis` 模块可查看字节码差异：\n  ```python\n  import dis\n  dis.dis(my_generator)\n  ```\n  输出中会看到 `YIELD_VALUE` 操作码，这是生成器的关键指令。\n\n#### **（2）帧对象（Frame Object）**\n- 每次调用生成器函数时，Python 会创建一个**独立的帧对象**（Frame），保存局部变量、执行位置（如 `yield` 的断点）等状态。\n- 生成器暂停时，帧对象会被保留；恢复时，从帧对象中加载状态继续执行。\n\n#### **（3）生成器对象（Generator Object）**\n- 生成器对象是 `PyGenObject`（CPython 实现中的 C 结构体），包含：\n  - `gi_frame`：指向当前帧对象的指针。\n  - `gi_code`：指向生成器函数的代码对象。\n  - `gi_running`：标记生成器是否正在执行。\n\n---\n\n### 3. **关键行为分析**\n#### **（1）状态保存与恢复**\n- 当执行到 `yield` 时，Python 会：\n  1. 保存当前帧的所有状态（局部变量、指令指针等）。\n  2. 返回 `yield` 的值给调用者。\n  3. **暂停执行**，直到下一次调用 `next()` 或 `send()`。\n- 恢复时，从保存的帧状态继续执行。\n\n#### **（2）协程特性**\n生成器可通过 `send()`、`throw()`、`close()` 实现**协程**功能：\n```python\ndef coro():\n    x = yield 1  # 接收外部 send 的值\n    yield x + 2\n\nc = coro()\nprint(next(c))       # 输出 1\nprint(c.send(10))    # 输出 12（x=10）\n```\n\n---\n\n### 4. **CPython 源码层面的实现**\n在 CPython 中，生成器的核心逻辑位于：\n- **字节码解释器**（`Python/ceval.c`）处理 `YIELD_VALUE` 操作码。\n- **生成器对象**（`Include/genobject.h` 和 `Objects/genobject.c`）：\n  ```c\n  typedef struct {\n      PyObject_HEAD\n      PyFrameObject *gi_frame;      // 执行帧\n      PyObject *gi_code;            // 代码对象\n      PyObject *gi_weakreflist;     // 弱引用列表\n      int gi_running;               // 是否在运行\n  } PyGenObject;\n  ```\n\n---\n\n### 5. **与普通迭代器的对比**\n| 特性               | 生成器                          | 普通迭代器（如 `list`）       |\n|--------------------|--------------------------------|-----------------------------|\n| 内存占用           | 低（逐项生成）                 | 高（需存储所有数据）         |\n| 实现方式           | 函数 + `yield`                 | 类 + `__iter__`/`__next__`  |\n| 状态保存           | 自动由帧对象管理               | 需手动维护状态（如索引）     |\n| 延迟计算           | 支持                           | 不支持                      |\n\n---\n\n### 6. **生成器的应用场景**\n1. **处理大数据流**：逐行读取文件避免内存爆炸。\n   ```python\n   def read_large_file(file):\n       while True:\n           line = file.readline()\n           if not line:\n               break\n           yield line\n   ```\n2. **无限序列**：如斐波那契数列。\n   ```python\n   def fibonacci():\n       a, b = 0, 1\n       while True:\n           yield a\n           a, b = b, a + b\n   ```\n3. **协程与异步编程**：作为早期 Python 协程的基础（现代异步已由 `async/await` 替代）。\n\n---\n\n### 7. **性能优化技巧**\n- **避免多次创建生成器**：重复调用生成器函数会创建新对象，如需复用，可转换为列表或缓存结果。\n- **组合生成器**：使用 `itertools.chain` 合并多个生成器：\n  ```python\n  import itertools\n  gen = itertools.chain(gen1(), gen2())\n  ```\n\n---\n\n### 总结\nPython 生成器的本质是**通过 `yield` 暂停函数执行并保存状态**，利用帧对象和字节码指令实现惰性求值。这种设计在内存效率和代码简洁性上具有显著优势，是 Python 迭代器协议的核心实现方式之一。"
           }
         ],
         "settings": {
