@@ -22,9 +22,10 @@ export class TaskLoop {
     constructor(
         private readonly streamingContent: Ref<string>,
         private readonly streamingToolCalls: Ref<ToolCall[]>,
-        private readonly onError: (msg: string) => void = (msg) => {},
-        private readonly onChunk: (chunk: ChatCompletionChunk) => void = (chunk) => {},
-        private readonly onDone: () => void = () => {},
+        private onError: (msg: string) => void = (msg) => {},
+        private onChunk: (chunk: ChatCompletionChunk) => void = (chunk) => {},
+        private onDone: () => void = () => {},
+        private onEpoch: () => void = () => {},
         private readonly taskOptions: TaskLoopOptions = { maxEpochs: 20 },
     ) {}
 
@@ -166,6 +167,21 @@ export class TaskLoop {
         this.streamingToolCalls.value = [];
     }
 
+    public registerOnError(handler: (msg: string) => void) {
+        this.onError = handler;
+    }
+
+    public registerOnChunk(handler: (chunk: ChatCompletionChunk) => void) {
+        this.onChunk = handler;
+    }
+    
+    public registerOnDone(handler: () => void) {
+        this.onDone = handler;
+    }
+
+    public registerOnEpoch(handler: () => void) {
+        this.onEpoch = handler;
+    }
 
     /**
      * @description 开启循环，异步更新 DOM
@@ -175,6 +191,8 @@ export class TaskLoop {
         tabStorage.messages.push({ role: 'user', content: userMessage });
 
         for (let i = 0; i < this.taskOptions.maxEpochs; ++ i) {
+
+            this.onEpoch();
 
             // 初始累计清空
             this.streamingContent.value = '';

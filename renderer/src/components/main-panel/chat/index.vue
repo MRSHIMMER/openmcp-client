@@ -5,7 +5,7 @@
                 <div v-for="(message, index) in renderMessages" :key="index"
                     :class="['message-item', message.role.split('/')[0]]">
                     <div class="message-avatar" v-if="message.role.split('/')[0] === 'assistant'">
-                        <span class="iconfont icon-chat"></span>
+                        <span class="iconfont icon-robot"></span>
                     </div>
 
                     <!-- 用户输入的部分 -->
@@ -90,7 +90,14 @@
                         <span class="iconfont icon-chat"></span>
                     </div>
                     <div class="message-content">
-                        <div class="message-role">Agent</div>
+                        <div class="message-role">
+                            Agent
+                            <span class="message-reminder">
+                                正在生成答案
+                                <span class="tool-loading iconfont icon-double-loading">
+                                </span>
+                            </span>
+                        </div>
                         <div class="message-text">
                             <span v-html="waitingMarkdownToHtml(streamingContent)"></span>
                         </div>
@@ -268,6 +275,12 @@ watch(streamingContent, () => {
     }
 }, { deep: true });
 
+watch(streamingToolCalls, () => {
+    if (autoScroll.value) {
+        scrollToBottom();
+    }
+}, { deep: true });
+
 let loop: TaskLoop | undefined = undefined;
 
 const handleSend = () => {
@@ -278,36 +291,37 @@ const handleSend = () => {
 
     const userMessage = userInput.value.trim();
 
-    loop = new TaskLoop(
-        streamingContent,
-        streamingToolCalls,
-        // onerror
-        (msg) => {
-            ElMessage({
-                message: msg,
-                type: 'error',
-                duration: 3000
-            });
+    loop = new TaskLoop(streamingContent, streamingToolCalls);
 
-            tabStorage.messages.push({
-                role: 'assistant',
-                content: `错误: ${msg}`
-            });
+    loop.registerOnError((msg) => {
+        ElMessage({
+            message: msg,
+            type: 'error',
+            duration: 3000
+        });
 
-            isLoading.value = false;
-        },
-        // onchunk
-        (chunk) => {
-            scrollToBottom();
-        },
-        // ondone
-        () => {
-            isLoading.value = false;
-            scrollToBottom();
+        tabStorage.messages.push({
+            role: 'assistant',
+            content: `错误: ${msg}`
+        });
 
-            loop = undefined;
-        }
-    );
+        isLoading.value = false;
+    });
+
+    loop.registerOnChunk((chunk) => {
+        scrollToBottom();
+    });
+
+    loop.registerOnDone(() => {
+        isLoading.value = false;
+        scrollToBottom();
+    });
+
+    loop.registerOnEpoch(() => {
+        isLoading.value = true;
+        scrollToBottom();
+    });
+
 
     loop.start(tabStorage, userMessage);
     userInput.value = '';
