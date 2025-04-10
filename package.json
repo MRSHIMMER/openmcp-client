@@ -33,9 +33,16 @@
         }
     },
     "dependencies": {
-
+        "@modelcontextprotocol/sdk": "^1.9.0",
+        "axios": "^1.7.7",
+        "bson": "^6.8.0",
+        "openai": "^4.93.0",
+        "pako": "^2.1.0"
     },
     "devDependencies": {
-        "@types/markdown-it": "^14.1.2"
+        "@types/node": "16.x",
+        "@types/pako": "^2.0.3",
+        "@types/showdown": "^2.0.0",
+        "@types/vscode": "^1.72.0"
     }
 }
