@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="./app/public/images/openmcp.svg" height="200px"/>
+<img src="./renderer/public/images/openmcp.svg" height="200px"/>
 
 <h3>OpenMCP: 一体化 MCP Server 调试器</h3>
 
@@ -56,4 +56,20 @@ npm run serve
 ```bash
 cd test
 npm run serve
+```
+
+---
+
+## Flowchart
+
+
+```mermaid
+flowchart TB
+    A[用户输入问题] --> B[选择工具]
+    B --> C[大模型处理]
+    C --> D{是否有tool use?}
+    D -- 否 --> E[返回 content]
+    D -- 是 --> F[执行工具]
+    F --> G[返回工具执行结果]
+    G --> C
 ```
