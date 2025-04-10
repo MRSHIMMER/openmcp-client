@@ -83,6 +83,7 @@ import Setting from './setting.vue';
 import { llmManager, llms } from '@/views/setting/llm';
 // 引入 markdown.ts 中的函数
 import { markdownToHtml, copyToClipboard } from './markdown';
+import { TaskLoop } from './task-loop';
 
 defineComponent({ name: 'chat' });
 
@@ -189,149 +190,57 @@ watch(streamingContent, () => {
     }
 }, { deep: true });
 
+let loop: TaskLoop | undefined = undefined;
 
 const handleSend = () => {
     if (!userInput.value.trim() || isLoading.value) return;
 
-    autoScroll.value = true; // 发送新消息时恢复自动滚动
-    const userMessage = userInput.value.trim();
-    tabStorage.messages.push({ role: 'user', content: userMessage });
-
-    // 后端接受属性 baseURL, apiKey, model, messages, temperature
-    const baseURL = llms[llmManager.currentModelIndex].baseUrl;
-    const apiKey = llms[llmManager.currentModelIndex].userToken;
-    const model = llms[llmManager.currentModelIndex].userModel;
-    const temperature = tabStorage.settings.temperature;
-    const tools = getToolSchema(tabStorage.settings.enableTools);
-
-    const userMessages = [];
-    if (tabStorage.settings.systemPrompt) {
-        userMessages.push({
-            role: 'system',
-            content: tabStorage.settings.systemPrompt
-        });
-    }
-    // 如果超出了 tabStorage.settings.contextLength, 则删除最早的消息
-    const loadMessages = tabStorage.messages.slice(-tabStorage.settings.contextLength);
-    userMessages.push(...loadMessages);
-
-    const chatData = {
-        baseURL,
-        apiKey,
-        model,
-        temperature,
-        tools,
-        messages: userMessages,
-    };
-
+    autoScroll.value = true;
     isLoading.value = true;
-    streamingContent.value = '';
 
-    const chunkHandler = bridge.addCommandListener('llm/chat/completions/chunk', data => {
-        if (data.code !== 200) {
-            handleError(data.msg || '请求模型服务时发生错误');
-            return;
-        }
-        const { chunk } = data.msg;
-        
-        const content = chunk.choices[0]?.delta?.content || '';
-        const toolCall = chunk.choices[0]?.delta?.tool_calls?.[0];
-        
-        if (content) {
-            streamingContent.value += content;
-            scrollToBottom();
-        }
-        
-        if (toolCall) {
-            if (toolCall.index === 0) {
-                // 新的工具调用开始
-                streamingToolCalls.value = [{
-                    id: toolCall.id,
-                    name: toolCall.function?.name || '',
-                    arguments: toolCall.function?.arguments || ''
-                }];
-            } else {
-                // 累积现有工具调用的信息
-                const currentCall = streamingToolCalls.value[toolCall.index];
-                if (currentCall) {
-                    if (toolCall.id) {
-                        currentCall.id = toolCall.id;
-                    }
-                    if (toolCall.function?.name) {
-                        currentCall.name = toolCall.function.name;
-                    }
-                    if (toolCall.function?.arguments) {
-                        currentCall.arguments += toolCall.function.arguments;
-                    }
-                }
-            }
-        }
-        
-        const finishReason = chunk.choices[0]?.finish_reason;
-        if (finishReason === 'tool_calls') {
-            // 工具调用完成，这里可以处理工具调用
-            console.log('Tool calls completed:', streamingToolCalls.value);
-            streamingToolCalls.value = [];
-        }
-    }, { once: false });
+    const userMessage = userInput.value.trim();
 
-    bridge.addCommandListener('llm/chat/completions/done', data => {
-        if (data.code !== 200) {
-            handleError(data.msg || '模型服务处理完成但返回错误');
-            return;
-        }
-        if (streamingContent.value) {
-            // 加入消息列表
+    loop = new TaskLoop(
+        streamingContent,
+        streamingToolCalls,
+        // onerror
+        (msg) => {
+            ElMessage({
+                message: msg,
+                type: 'error',
+                duration: 3000
+            });
 
             tabStorage.messages.push({
                 role: 'assistant',
-                content: streamingContent.value
+                content: `错误: ${msg}`
             });
-            streamingContent.value = '';
-        }
-        // 如果有工具调用结果，也加入消息列表
-        if (streamingToolCalls.value.length > 0) {
-            streamingToolCalls.value.forEach(tool => {
-                if (tool.id) {
-                    tabStorage.messages.push({
-                        role: 'tool',
-                        tool_call_id: tool.id,
-                        content: tool.arguments
-                    });
-                }
-            });
-            streamingToolCalls.value = [];
-        }
-        isLoading.value = false;
-        chunkHandler();
-    }, { once: true });
 
-    bridge.postMessage({
-        command: 'llm/chat/completions',
-        data: chatData
-    });
+            isLoading.value = false;
+        },
+        // onchunk
+        (chunk) => {
+            scrollToBottom();
+        },
+        // ondone
+        () => {
+            isLoading.value = false;
+            scrollToBottom();
 
+            loop = undefined;
+        }
+    );
+
+    loop.start(tabStorage, userMessage);
     userInput.value = '';
 };
 
 const handleAbort = () => {
-    bridge.postMessage({
-        command: 'llm/chat/completions/abort', // 假设后端有对应的中止命令
-        data: {}
-    });
-    isLoading.value = false;
-    streamingContent.value = '';
-    ElMessage.info('请求已中止');
-};
-
-const handleError = (msg: string) => {
-    ElMessage.error(msg);
-    tabStorage.messages.push({
-        role: 'assistant',
-        content: `错误: ${msg}`
-    });
-    streamingContent.value = '';
-    isLoading.value = false;
+    if (loop) {
+        loop.abort();
+        isLoading.value = false;
+        ElMessage.info('请求已中止');
+    }
 };
 
 onMounted(() => {

@@ -3,8 +3,7 @@
 		<el-tooltip content="选择模型" placement="top">
 			<div class="setting-button" size="small" @click="showModelDialog = true">
 				<span class="iconfont icon-model">
-					{{ llms[llmManager.currentModelIndex].name }}/{{
-						llms[llmManager.currentModelIndex].models[selectedModelIndex] }}
+					{{ currentServerName }}/{{ currentModelName }}
 				</span>
 			</div>
 		</el-tooltip>
@@ -142,6 +141,22 @@ const showTemperatureSlider = ref(false);
 const showContextLengthDialog = ref(false);
 const showSystemPromptDialog = ref(false);
 
+const currentServerName = computed(() => {
+	const currentLlm = llms[llmManager.currentModelIndex];
+	if (currentLlm) {
+		return currentLlm.name;
+	}
+	return '';
+});
+
+const currentModelName = computed(() => {
+	const currentLlm = llms[llmManager.currentModelIndex];
+	if (currentLlm) {
+		return currentLlm.models[selectedModelIndex.value];
+	}
+	return '';
+});	
+
 const tab = tabs.content[props.tabId];
 const tabStorage = tab.storage as ChatStorage & { settings: ChatSetting };
 
@@ -156,7 +171,6 @@ if (!tabStorage.settings) {
 		systemPrompt: ''
 	} as ChatSetting;
 }
-
 
 const selectedModelIndex = ref(llmManager.currentModelIndex);
 

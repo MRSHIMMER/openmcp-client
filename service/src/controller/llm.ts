@@ -14,7 +14,7 @@ export async function chatCompletionHandler(client: MCPClient | undefined, data:
 	}
 
 
-    const { baseURL, apiKey, model, messages, temperature, tools = [] } = data;
+    let { baseURL, apiKey, model, messages, temperature, tools = [] } = data;
 
     try {
 		const client = new OpenAI({
@@ -22,7 +22,9 @@ export async function chatCompletionHandler(client: MCPClient | undefined, data:
 			apiKey
 		});
 
-        console.log(tools);
+        if (tools.length === 0) {
+        	tools = undefined;
+        }
         
 
         const stream = await client.chat.completions.create({

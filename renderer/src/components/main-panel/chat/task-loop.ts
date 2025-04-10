@@ -1,5 +1,6 @@
+/* eslint-disable */
 import { Ref } from "vue";
-import { ToolCall, ChatMessage, ChatStorage, getToolSchema } from "./chat";
+import { ToolCall, ChatStorage, getToolSchema } from "./chat";
 import { useMessageBridge } from "@/api/message-bridge";
 import type { OpenAI } from 'openai';
 import { callTool } from "../tool/tools";
@@ -16,15 +17,15 @@ interface TaskLoopOptions {
  */
 export class TaskLoop {
     private bridge = useMessageBridge();
+    private currentChatId = '';
 
     constructor(
         private readonly streamingContent: Ref<string>,
         private readonly streamingToolCalls: Ref<ToolCall[]>,
-        private readonly messages: ChatMessage[],
-        private readonly taskOptions: TaskLoopOptions = { maxEpochs: 20 },
         private readonly onError: (msg: string) => void = (msg) => {},
         private readonly onChunk: (chunk: ChatCompletionChunk) => void = (chunk) => {},
         private readonly onDone: () => void = () => {},
+        private readonly taskOptions: TaskLoopOptions = { maxEpochs: 20 },
     ) {}
 
     private async handleToolCalls(toolCalls: ToolCall[]) {
@@ -83,9 +84,8 @@ export class TaskLoop {
 
     private doConversation(chatData: ChatCompletionCreateParamsBase) {
 
-        const bridge = useMessageBridge();
         return new Promise<void>((resolve, reject) => {
-            const chunkHandler = bridge.addCommandListener('llm/chat/completions/chunk', data => {
+            const chunkHandler = this.bridge.addCommandListener('llm/chat/completions/chunk', data => {
                 if (data.code !== 200) {
                     this.onError(data.msg || '请求模型服务时发生错误');
                     reject(new Error(data.msg || '请求模型服务时发生错误'));
@@ -100,14 +100,14 @@ export class TaskLoop {
                 this.onChunk(chunk);
             }, { once: false });
         
-            bridge.addCommandListener('llm/chat/completions/done', data => {
+            this.bridge.addCommandListener('llm/chat/completions/done', data => {
                 this.onDone();
                 chunkHandler();
 
                 resolve();
             }, { once: true });
 
-            bridge.postMessage({
+            this.bridge.postMessage({
                 command: 'llm/chat/completions',
                 data: chatData
             });
@@ -149,20 +149,35 @@ export class TaskLoop {
         return chatData;
     }
 
+    public abort() {
+        this.bridge.postMessage({
+            command: 'llm/chat/completions/abort',
+            data: {
+                id: this.currentChatId
+            }
+        });
+        this.streamingContent.value = '';
+        this.streamingToolCalls.value = [];
+    }
+
 
     /**
      * @description 开启循环，异步更新 DOM
      */
-    public async start(tabStorage: ChatStorage) {
-        // 后端接受属性 baseURL, apiKey, model, messages, temperature
-        
-        while (true) {
+    public async start(tabStorage: ChatStorage, userMessage: string) {
+        // 添加目前的消息
+        tabStorage.messages.push({ role: 'user', content: userMessage });
+
+        for (let i = 0; i < this.taskOptions.maxEpochs; ++ i) {
+
             // 初始累计清空
             this.streamingContent.value = '';
             this.streamingToolCalls.value = [];
 
             // 构造 chatData
             const chatData = this.makeChatData(tabStorage);
+
+            this.currentChatId = chatData.id!;
 
             // 发送请求
             await this.doConversation(chatData);
@@ -179,12 +194,18 @@ export class TaskLoop {
                         content: toolCallResult
                     });
                 }
-                
+
             } else if (this.streamingContent.value) {
                 tabStorage.messages.push({
                     role: 'assistant',
                     content: this.streamingContent.value
                 });
+                break;
+
+            } else {
+                // 一些提示
+
+                break;
             }
         }
     }
