@@ -4,7 +4,7 @@
     "description": "A MCP Client for MCP/OpenMCP",
     "version": "0.0.1",
     "engines": {
-        "vscode": "^1.98.0"
+        "vscode": "^1.95.0"
     },
     "categories": [
         "Other"
@@ -12,6 +12,13 @@
     "activationEvents": [],
     "main": "./dist/extension.js",
     "contributes": {
+        "commands": [
+            {
+                "command": "openmcp.showOpenMCP",
+                "title": "展示 OpenMCP",
+                "category": "openmcp"
+            }
+        ],
         "viewsContainers": {
             "activitybar": [
                 {
@@ -45,7 +52,8 @@
         "axios": "^1.7.7",
         "bson": "^6.8.0",
         "openai": "^4.93.0",
-        "pako": "^2.1.0"
+        "pako": "^2.1.0",
+        "ws": "^8.18.1"
     },
     "devDependencies": {
         "@types/node": "16.x",
