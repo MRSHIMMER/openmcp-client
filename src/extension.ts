@@ -1,9 +1,8 @@
 import * as vscode from 'vscode';
-import * as path from 'path';
 import * as fs from 'fs';
 import * as fspath from 'path';
 
-import * as OpenMCPService from '../resources/service';
+import * as OpenMCPService from '@resources/service';
 
 function getWebviewContent(context: vscode.ExtensionContext, panel?: vscode.WebviewPanel): string | undefined {
     const viewRoot = fspath.join(context.extensionPath, 'resources', 'renderer');
