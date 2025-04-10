@@ -47,14 +47,14 @@ source configure.sh
 ### 启动前端
 
 ```bash
-cd app
+cd renderer
 npm run serve
 ```
 
 ### 启动后端 (Test)
 
 ```bash
-cd test
+cd service
 npm run serve
 ```
 

@@ -324,11 +324,11 @@ const handleAbort = () => {
     ElMessage.info('请求已中止');
 };
 
-const handleError = (errorMsg: string) => {
-    ElMessage.error(errorMsg);
+const handleError = (msg: string) => {
+    ElMessage.error(msg);
     tabStorage.messages.push({
         role: 'assistant',
-        content: `错误: ${errorMsg}`
+        content: `错误: ${msg}`
     });
     streamingContent.value = '';
     isLoading.value = false;
