@@ -3,7 +3,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as fspath from 'path';
 
-import OpenMCPService from '../resources/service';
+import * as OpenMCPService from '../resources/service';
 
 function getWebviewContent(context: vscode.ExtensionContext, panel?: vscode.WebviewPanel): string | undefined {
     const viewRoot = fspath.join(context.extensionPath, 'resources', 'renderer');
@@ -23,13 +23,6 @@ export function activate(context: vscode.ExtensionContext) {
     // 注册 showOpenMCP 命令
     context.subscriptions.push(
         vscode.commands.registerCommand('openmcp.showOpenMCP', async () => {
-            const htmlPath = path.join(context.extensionPath, 'resources', 'renderer', 'index.html');
-            
-            if (!fs.existsSync(htmlPath)) {
-                vscode.window.showErrorMessage('未找到 index.html 文件');
-                return;
-            }
-
             const panel = vscode.window.createWebviewPanel(
                 'openmcpView',
                 'OpenMCP',
@@ -40,8 +33,7 @@ export function activate(context: vscode.ExtensionContext) {
                 }
             );
 
-            const htmlContent = fs.readFileSync(htmlPath, 'utf8');
-            panel.webview.html = htmlContent;
+            initaliseWebview(context, panel.webview);
         })
     );
 
@@ -50,6 +42,23 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(
         vscode.window.registerWebviewViewProvider('webview-sidebar.view', provider)
     );
+}
+
+function initaliseWebview(context: vscode.ExtensionContext, webview: vscode.Webview) {
+    webview.options = {
+        enableScripts: true,
+    };
+
+    // 设置HTML内容
+    const html = getWebviewContent(context);
+    webview.html = html || '';
+
+    // 处理来自webview的消息
+    webview.onDidReceiveMessage(message => {
+        const { command, data } = message;
+        
+        OpenMCPService.messageController(command, data, webview as any);
+    });
 }
 
 class WebviewViewProvider implements vscode.WebviewViewProvider {
@@ -63,30 +72,10 @@ class WebviewViewProvider implements vscode.WebviewViewProvider {
         _token: vscode.CancellationToken,
     ) {
         this._view = webviewView;
-        webviewView.webview.options = {
-            enableScripts: true,
-        };
-
-        // 设置HTML内容
-        const html = getWebviewContent(this.context);
-        webviewView.webview.html = html || '';
-
-        // 处理来自webview的消息
-        webviewView.webview.onDidReceiveMessage(message => {
-            const { command, data } = message;
-            
-            OpenMCPService.messageController(command, data, webviewView.webview as any);
-        });
-
-        // 向webview发送消息的示例
-        this.sendMessageToWebview({ command: 'init', data: 'Hello from extension' });
-    }
-
-    private sendMessageToWebview(message: any) {
-        if (this._view) {
-            this._view.webview.postMessage(message);
-        }
+        initaliseWebview(this.context, webviewView.webview);
     }
 }
 
-export function deactivate() {}
+export function deactivate() {
+
+}
