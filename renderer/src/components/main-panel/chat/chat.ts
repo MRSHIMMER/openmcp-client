@@ -6,6 +6,7 @@ export interface ChatMessage {
     content: string;
     tool_call_id?: string
     name?: string // 工具名称，当 role 为 tool
+    tool_calls?: ToolCall[]
 }
 
 // 新增状态和工具数据
@@ -31,8 +32,12 @@ export interface ChatStorage {
 
 export interface ToolCall {
     id?: string;
-    name: string;
-    arguments: string;
+    index?: number;
+    type: string;
+    function: {
+        name: string;
+        arguments: string;
+    }
 }
 
 export const allTools = ref<ToolItem[]>([]);

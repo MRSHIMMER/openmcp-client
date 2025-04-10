@@ -32,8 +32,8 @@ export class TaskLoop {
         // TODO: 调用多个工具并返回调用结果？
         const toolCall = toolCalls[0];
         try {
-            const toolName = toolCall.name;
-            const toolArgs = JSON.parse(toolCall.arguments);
+            const toolName = toolCall.function.name;
+            const toolArgs = JSON.parse(toolCall.function.arguments);
             const toolResponse = await callTool(toolName, toolArgs);
             if (!toolResponse.isError) {
                 const content = JSON.stringify(toolResponse.content);
@@ -57,29 +57,35 @@ export class TaskLoop {
     private handleChunkDeltaToolCalls(chunk: ChatCompletionChunk) {
         const toolCall = chunk.choices[0]?.delta?.tool_calls?.[0];
         if (toolCall) {
-            if (toolCall.index === 0) {
+            const currentCall = this.streamingToolCalls.value[toolCall.index];
+
+            if (currentCall === undefined) {
                 // 新的工具调用开始
                 this.streamingToolCalls.value = [{
                     id: toolCall.id,
-                    name: toolCall.function?.name || '',
-                    arguments: toolCall.function?.arguments || ''
+                    index: 0,
+                    type: 'function',
+                    function: {
+                        name: toolCall.function?.name || '',
+                        arguments: toolCall.function?.arguments || ''
+                    }
                 }];
             } else {
                 // 累积现有工具调用的信息
-                const currentCall = this.streamingToolCalls.value[toolCall.index];
                 if (currentCall) {
                     if (toolCall.id) {
                         currentCall.id = toolCall.id;
                     }
                     if (toolCall.function?.name) {
-                        currentCall.name = toolCall.function.name;
+                        currentCall.function.name = toolCall.function.name;
                     }
                     if (toolCall.function?.arguments) {
-                        currentCall.arguments += toolCall.function.arguments;
+                        currentCall.function.arguments += toolCall.function.arguments;
                     }
                 }
             }
-        }
+
+        }        
     }
 
     private doConversation(chatData: ChatCompletionCreateParamsBase) {
@@ -184,13 +190,20 @@ export class TaskLoop {
 
             // 如果存在需要调度的工具
             if (this.streamingToolCalls.value.length > 0) {
+
+                tabStorage.messages.push({
+                    role: 'assistant',
+                    content: this.streamingContent.value || '',
+                    tool_calls: this.streamingToolCalls.value
+                });
+
                 const toolCallResult = await this.handleToolCalls(this.streamingToolCalls.value);
                 if (toolCallResult) {
                     const toolCall = this.streamingToolCalls.value[0];
 
                     tabStorage.messages.push({
                         role: 'tool',
-                        tool_call_id: toolCall.id || toolCall.name,
+                        tool_call_id: toolCall.id || toolCall.function.name,
                         content: toolCallResult
                     });
                 }

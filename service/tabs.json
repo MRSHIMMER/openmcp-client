@@ -1,5 +1,5 @@
 {
-  "currentIndex": 0,
+  "currentIndex": 1,
   "tabs": [
     {
       "name": "交互测试",
@@ -23,6 +23,18 @@
           {
             "role": "assistant",
             "content": "聚类算法（Clustering Algorithm）是一种**无监督学习**（Unsupervised Learning）方法，用于将数据集中的样本划分为若干个组（称为“簇”或“类”），使得同一组内的样本彼此相似，而不同组的样本差异较大。聚类算法的目标是通过数据的内在结构，发现数据中的潜在模式或分组。\n\n### 聚类算法的核心思想\n1. **相似性度量**：通过距离（如欧氏距离、曼哈顿距离）或相似性（如余弦相似度）来衡量样本之间的相似程度。\n2. **簇内紧凑性**：同一簇内的样本应尽可能相似。\n3. **簇间分离性**：不同簇的样本应尽可能不相似。\n\n---\n\n### 常见的聚类算法\n1. **K-Means**  \n   - 将数据划分为K个簇，每个簇的中心由簇内样本的平均值表示。\n   - 适用于数值型数据，计算高效，但对初始中心点敏感，且需要预先指定K值。\n\n2. **层次聚类（Hierarchical Clustering）**  \n   - 通过自底向上（凝聚法）或自顶向下（分裂法）的方式构建树状图（Dendrogram）。\n   - 不需要预先指定簇的数量，但计算复杂度较高。\n\n3. **DBSCAN（Density-Based Spatial Clustering of Applications with Noise）**  \n   - 基于密度的聚类，能够发现任意形状的簇，并能识别噪声点。\n   - 不需要预先指定簇的数量，但对参数（如邻域半径和最小样本数）敏感。\n\n4. **高斯混合模型（GMM, Gaussian Mixture Model）**  \n   - 假设数据由多个高斯分布混合生成，通过概率模型进行聚类。\n   - 适用于数据分布复杂的情况，但计算复杂度较高。\n\n5. **谱聚类（Spectral Clustering）**  \n   - 基于图论的聚类方法，利用数据的相似性矩阵进行降维和聚类。\n   - 适用于非凸形状的簇，但对相似性矩阵的计算要求较高。\n\n---\n\n### 聚类算法的应用场景\n1. **客户分群**：根据消费行为将用户划分为不同群体，便于精准营销。\n2. **图像分割**：将图像中的像素聚类为不同的区域。\n3. **异常检测**：通过聚类识别离群点（如金融欺诈检测）。\n4. **文本挖掘**：对文档或词汇进行聚类，发现主题或类别。\n5. **生物信息学**：基因表达数据的聚类分析。\n\n---\n\n### 聚类算法的评估指标\n1. **轮廓系数（Silhouette Coefficient）**：衡量样本与同簇和其他簇的相似性，值越接近1表示聚类效果越好。\n2. **Calinski-Harabasz指数**：基于簇内离散度和簇间离散度的比值，值越大表示聚类效果越好。\n3. **Davies-Bouldin指数**：衡量簇内距离与簇间距离的比值，值越小表示聚类效果越好。\n\n---\n\n如果你有具体的数据或场景需要聚类分析，可以告诉我，我可以帮助你选择合适的算法或工具！"
+          },
+          {
+            "role": "user",
+            "content": "请帮我计算 add 1 2"
+          },
+          {
+            "role": "assistant",
+            "content": "错误: 工具调用失败: Unexpected token '}', \"}\" is not valid JSON"
+          },
+          {
+            "role": "assistant",
+            "content": "看起来在调用工具时出现了问题。让我手动帮你计算 `1 + 2` 的结果：\n\n\\[\n1 + 2 = 3\n\\]\n\n结果是 **3**！如果你有其他计算需求，也可以告诉我哦！"
           }
         ],
         "settings": {
@@ -47,6 +59,73 @@
               "name": "capitalize",
               "description": "将字符串首字母大写",
               "enabled": true
+            }
+          ],
+          "enableWebSearch": false,
+          "temperature": 0.7,
+          "contextLength": 10,
+          "systemPrompt": ""
+        }
+      }
+    },
+    {
+      "name": "交互测试",
+      "icon": "icon-robot",
+      "type": "blank",
+      "componentIndex": 3,
+      "storage": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "计算 add 1 2"
+          },
+          {
+            "role": "assistant",
+            "content": "",
+            "tool_calls": [
+              {
+                "id": "call_0_12c5b219-bb79-46db-b1ea-876d708415f5",
+                "index": 0,
+                "type": "function",
+                "function": {
+                  "name": "add",
+                  "arguments": "{\"a\":1,\"b\":2}"
+                }
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "call_0_12c5b219-bb79-46db-b1ea-876d708415f5",
+            "content": "[{\"type\":\"text\",\"text\":\"3\"}]"
+          },
+          {
+            "role": "assistant",
+            "content": "1 + 2 = 3"
+          }
+        ],
+        "settings": {
+          "modelIndex": 0,
+          "enableTools": [
+            {
+              "name": "add",
+              "description": "对两个数字进行实数域的加法",
+              "enabled": true
+            },
+            {
+              "name": "multiply",
+              "description": "对两个数字进行实数域的乘法运算",
+              "enabled": false
+            },
+            {
+              "name": "is_even",
+              "description": "判断一个整数是否为偶数",
+              "enabled": false
+            },
+            {
+              "name": "capitalize",
+              "description": "将字符串首字母大写",
+              "enabled": false
             }
           ],
           "enableWebSearch": false,

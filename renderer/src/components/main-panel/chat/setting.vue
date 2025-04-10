@@ -1,7 +1,7 @@
 <template>
 	<div class="chat-settings">
 		<el-tooltip content="选择模型" placement="top">
-			<div class="setting-button" size="small" @click="showModelDialog = true">
+			<div class="setting-button" @click="showModelDialog = true">
 				<span class="iconfont icon-model">
 					{{ currentServerName }}/{{ currentModelName }}
 				</span>
@@ -30,14 +30,14 @@
 		</el-tooltip>
 
 		<el-tooltip content="温度参数" placement="top">
-			<div class="setting-button" size="small" @click="showTemperatureSlider = true">
+			<div class="setting-button" @click="showTemperatureSlider = true">
 				<span class="iconfont icon-temperature"></span>
 				<span class="value-badge">{{ tabStorage.settings.temperature.toFixed(1) }}</span>
 			</div>
 		</el-tooltip>
 
 		<el-tooltip content="上下文长度" placement="top">
-			<div class="setting-button" size="small" @click="showContextLengthDialog = true">
+			<div class="setting-button" @click="showContextLengthDialog = true">
 				<span class="iconfont icon-length"></span>
 				<span class="value-badge">{{ tabStorage.settings.contextLength }}</span>
 			</div>
@@ -114,6 +114,8 @@
 				</el-scrollbar>
 			</div>
 			<template #footer>
+				<el-button type="primary" @click="enableAllTools">激活所有工具</el-button>
+				<el-button type="danger" @click="disableAllTools">禁用所有工具</el-button>
 				<el-button type="primary" @click="showToolsDialog = false">关闭</el-button>
 			</template>
 		</el-dialog>
@@ -183,7 +185,6 @@ const hasSystemPrompt = computed(() => {
 });
 
 
-
 const showToolsDialog = ref(false);
 
 const toolActive = computed(() => {
@@ -247,6 +248,20 @@ const activeToolsSchemaHTML = computed(() => {
 		"```json\n" + jsonString + "\n```"
 	);
 });
+
+// 新增方法 - 激活所有工具
+const enableAllTools = () => {
+	tabStorage.settings.enableTools.forEach(tool => {
+        tool.enabled = true;
+    });
+};
+
+// 新增方法 - 禁用所有工具
+const disableAllTools = () => {
+    tabStorage.settings.enableTools.forEach(tool => {
+        tool.enabled = false;
+    });
+};
 </script>
 
 <style>
@@ -380,6 +395,11 @@ const activeToolsSchemaHTML = computed(() => {
 	border-radius: 4px;
 	white-space: pre-wrap;
 	word-wrap: break-word;
+	background-color: var(--el-bg-color-overlay);
+}
+
+.schema-viewer .openmcp-code-block {
+	border: none;
 }
 
 .schema-viewer code {
