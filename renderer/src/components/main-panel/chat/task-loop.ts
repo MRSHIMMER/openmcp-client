@@ -10,7 +10,12 @@ export class TaskLoop {
         private readonly streamingToolCalls: Ref<ToolCall[]>,
         private readonly messages: ChatMessage[],
         private readonly onError: (msg: string) => void
-    ) {}
+    ) {
+        if (!onError) {
+            this.onError = (msg) => {
+            }
+        }
+    }
 
     private handleToolCalls(toolCalls: ToolCall[]) {
         // 这里预留给调用方实现工具执行逻辑
@@ -22,6 +27,7 @@ export class TaskLoop {
             const chunkHandler = this.bridge.addCommandListener('llm/chat/completions/chunk', data => {
                 if (data.code !== 200) {
                     this.onError(data.msg || '请求模型服务时发生错误');
+
                     reject(new Error(data.msg));
                     return;
                 }
@@ -112,5 +118,11 @@ export class TaskLoop {
         } catch (error) {
             this.onError(error instanceof Error ? error.message : '未知错误');
         }
+    }
+
+
+    // bridge api
+    public async name() {
+        
     }
 }
