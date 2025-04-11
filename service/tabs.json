@@ -39,28 +39,7 @@
         ],
         "settings": {
           "modelIndex": 0,
-          "enableTools": [
-            {
-              "name": "add",
-              "description": "对两个数字进行实数域的加法",
-              "enabled": true
-            },
-            {
-              "name": "multiply",
-              "description": "对两个数字进行实数域的乘法运算",
-              "enabled": true
-            },
-            {
-              "name": "is_even",
-              "description": "判断一个整数是否为偶数",
-              "enabled": true
-            },
-            {
-              "name": "capitalize",
-              "description": "将字符串首字母大写",
-              "enabled": true
-            }
-          ],
+          "enableTools": [],
           "enableWebSearch": false,
           "temperature": 0.7,
           "contextLength": 10,
@@ -106,28 +85,7 @@
         ],
         "settings": {
           "modelIndex": 0,
-          "enableTools": [
-            {
-              "name": "add",
-              "description": "对两个数字进行实数域的加法",
-              "enabled": true
-            },
-            {
-              "name": "multiply",
-              "description": "对两个数字进行实数域的乘法运算",
-              "enabled": true
-            },
-            {
-              "name": "is_even",
-              "description": "判断一个整数是否为偶数",
-              "enabled": true
-            },
-            {
-              "name": "capitalize",
-              "description": "将字符串首字母大写",
-              "enabled": true
-            }
-          ],
+          "enableTools": [],
           "enableWebSearch": false,
           "temperature": 0.7,
           "contextLength": 10,
@@ -189,28 +147,7 @@
         ],
         "settings": {
           "modelIndex": 0,
-          "enableTools": [
-            {
-              "name": "add",
-              "description": "对两个数字进行实数域的加法",
-              "enabled": true
-            },
-            {
-              "name": "multiply",
-              "description": "对两个数字进行实数域的乘法运算",
-              "enabled": true
-            },
-            {
-              "name": "is_even",
-              "description": "判断一个整数是否为偶数",
-              "enabled": true
-            },
-            {
-              "name": "capitalize",
-              "description": "将字符串首字母大写",
-              "enabled": true
-            }
-          ],
+          "enableTools": [],
           "enableWebSearch": false,
           "temperature": 0.7,
           "contextLength": 10,
