@@ -18,3 +18,4 @@ test/**
 servers/**
 scripts/**
 *.sh
+*.ps1
