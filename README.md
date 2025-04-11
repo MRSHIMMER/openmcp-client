@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="./renderer/public/images/openmcp.svg" height="200px"/>
+<img src="./renderer/public/images/openmcp.png" height="200px"/>
 
 <h3>OpenMCP: 一体化 MCP Server 调试器</h3>
 
