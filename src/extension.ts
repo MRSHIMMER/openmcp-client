@@ -17,12 +17,19 @@ function getWebviewContent(context: vscode.ExtensionContext, panel: vscode.Webvi
     return html;
 }
 
+function getLaunchCWD(context: vscode.ExtensionContext, uri: vscode.Uri) {
+    // TODO: 启动上下文？
+    // 获取当前打开的项目的路径
+    const workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);
+    return workspaceFolder?.uri.fsPath || '';
+}
+
 export function activate(context: vscode.ExtensionContext) {
     console.log('activate openmcp');
 
     // 注册 showOpenMCP 命令
     context.subscriptions.push(
-        vscode.commands.registerCommand('openmcp.showOpenMCP', async () => {
+        vscode.commands.registerCommand('openmcp.showOpenMCP', async (uri: vscode.Uri) => {
 
             const panel = vscode.window.createWebviewPanel(
                 'OpenMCP',
@@ -35,6 +42,8 @@ export function activate(context: vscode.ExtensionContext) {
                 }
             );
 
+            const cwd = getLaunchCWD(context, uri);
+
             // 设置HTML内容
             const html = getWebviewContent(context, panel); 
             panel.webview.html = html || '';            
@@ -43,8 +52,22 @@ export function activate(context: vscode.ExtensionContext) {
             panel.webview.onDidReceiveMessage(message => {
                 const { command, data } = message;
                 console.log('receive message', message);
+
+                // 拦截消息，注入额外信息
+                switch (command) {
+                    case 'connect':
+                        data.cwd = cwd;
+                        break;
+                
+                    default:
+                        break;
+                }
                 
                 OpenMCPService.messageController(command, data, panel.webview as any);
+            });
+
+            panel.onDidDispose(() => {
+                panel.dispose();
             });
         })
     );

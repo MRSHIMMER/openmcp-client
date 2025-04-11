@@ -6,6 +6,7 @@ export async function settingSaveHandler(client: MCPClient | undefined, data: an
     try {
         // 保存配置
         saveConfig(data);
+        console.log('Settings saved successfully');
         
         webview.postMessage({
             command: 'setting/save',
@@ -15,6 +16,8 @@ export async function settingSaveHandler(client: MCPClient | undefined, data: an
             }
         });
     } catch (error) {
+        console.log('Setting save failed:', error);
+        
         webview.postMessage({
             command: 'setting/save',
             data: {

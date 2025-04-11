@@ -16,9 +16,22 @@
             {
                 "command": "openmcp.showOpenMCP",
                 "title": "展示 OpenMCP",
-                "category": "openmcp"
+                "category": "openmcp",
+                "icon": {
+                    "light": "./icons/protocol.svg",
+                    "dark": "./icons/protocol.svg"
+                }
             }
         ],
+        "menus": {
+            "editor/title": [
+                {
+                    "command": "openmcp.showOpenMCP",
+                    "group": "navigation",
+                    "when": "editorLangId == python || editorLangId == javascript || editorLangId == typescript || editorLangId == java || editorLangId == csharp"
+                }
+            ]
+        },
         "viewsContainers": {
             "activitybar": [
                 {
