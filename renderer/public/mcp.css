@@ -190,3 +190,10 @@ a {
     background-color: var(--main-color);
     color: #fff;
 }
+
+.openmcp-logo {
+	background-image: url('./images/openmcp.svg');
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center;
+}

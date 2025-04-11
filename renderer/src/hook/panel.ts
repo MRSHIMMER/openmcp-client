@@ -24,6 +24,8 @@ export function loadPanels() {
     bridge.addCommandListener('panel/load', data => {
         const persistTab = data.msg as SaveTab;
 
+		console.log('receive persist tab', persistTab);
+
 		if (persistTab.tabs.length === 0) {
 			// 空的，直接返回不需要管
 			return;

@@ -48,6 +48,11 @@ class MessageBridge {
 
 		this.postMessage = (message) => vscode.postMessage(message);
 		this.isConnected.value = true;
+
+		this.postMessage({
+			command: 'init',
+			data: {}
+		});
 	}
 
 	// WebSocket 环境连接

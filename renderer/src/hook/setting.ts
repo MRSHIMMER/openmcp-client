@@ -8,6 +8,8 @@ export function loadSetting() {
     
     bridge.addCommandListener('setting/load', data => {
         const persistConfig = data.msg;
+
+        console.log('receive persist config', persistConfig);
         
         llmManager.currentModelIndex = persistConfig.MODEL_INDEX;
         I18n.global.locale.value = persistConfig.LANG;

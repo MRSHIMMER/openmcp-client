@@ -26,9 +26,54 @@ bridge.addCommandListener('hello', data => {
 	pinkLog(`version: ${data.version}`);
 }, { once: true });
 
+function initDebug() {
+	connectionArgs.commandString = 'mcp run ../servers/main.py';
+	connectionMethods.current = 'STDIO';
+
+	bridge.addCommandListener('connect', data => {
+		const { code, msg } = data;
+		connectionResult.success = (code === 200);
+		connectionResult.logString = msg;
+	}, { once: true });
+
+	setTimeout(() => {
+		// 初始化 设置
+		loadSetting();
+
+		// 初始化 tab
+		loadPanels();
+
+		// 尝试连接
+		doConnect();
+
+		// 200 是我的电脑上的 ws 的连接时间，部署环境中不存在 ws 连接延时的问题，所以
+		// 可以直接不管
+	}, 200);
+}
+
+function initProduce() {
+	// TODO: get from vscode
+	connectionArgs.commandString = 'mcp run ../servers/main.py';
+	connectionMethods.current = 'STDIO';
+
+	bridge.addCommandListener('connect', data => {
+		const { code, msg } = data;
+		connectionResult.success = (code === 200);
+		connectionResult.logString = msg;
+	}, { once: true });
+
+	// 初始化 设置
+	loadSetting();
+
+	// 初始化 tab
+	loadPanels();
+
+	// 尝试连接
+	doConnect();
+}
 
 onMounted(() => {
-    // 初始化 css
+	// 初始化 css
 	setDefaultCss();
 
 	document.addEventListener('click', () => {
@@ -37,30 +82,11 @@ onMounted(() => {
 
 	pinkLog('OpenMCP Client 启动');
 
-    // 如果是 debug 模式，直接连接项目中的服务器
-    if (acquireVsCodeApi === undefined) {
-        connectionArgs.commandString = 'mcp run ../servers/main.py';
-        connectionMethods.current = 'STDIO';
-
-        bridge.addCommandListener('connect', data => {
-            const { code, msg } = data;            
-            connectionResult.success = (code === 200);
-            connectionResult.logString = msg;
-        }, { once: true });
-
-        setTimeout(() => {
-			// 初始化 设置
-			loadSetting();
-
-			// 初始化 tab
-			loadPanels();
-			
-            doConnect();
-
-		// 200 是我的电脑上的 ws 的连接时间，部署环境中不存在 ws 连接延时的问题，所以
-		// 可以直接不管
-        }, 200);
-    }
+	if (acquireVsCodeApi === undefined) {
+		initDebug();
+	} else {
+		initProduce();
+	}
 });
 
 </script>
