@@ -16,19 +16,21 @@
                         <el-input 
                             v-if="property.type === 'string'" 
                             v-model="formData[name]"
-                            :placeholder="t('enter') + ' ' + (property.title || name)" 
+                            :placeholder="t('enter') + ' ' + (property.title || name)"
+                            @keydown.enter.prevent="handleExecute" 
                         />
 
                         <el-input-number 
                             v-else-if="property.type === 'number' || property.type === 'integer'" 
                             v-model="formData[name]"
                             controls-position="right"
-                            :placeholder="t('enter') + ' ' + (property.title || name)" 
+                            :placeholder="t('enter') + ' ' + (property.title || name)"
+                            @keydown.enter.prevent="handleExecute" 
                         />
 
                         <el-switch 
                             v-else-if="property.type === 'boolean'" 
-                            v-model="formData[name]" 
+                            v-model="formData[name]"
                         />
                     </el-form-item>
                 </el-scrollbar>

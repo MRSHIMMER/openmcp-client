@@ -3,7 +3,7 @@ import { llmManager, llms } from "@/views/setting/llm";
 import { pinkLog } from "@/views/setting/util";
 import I18n from '@/i18n/index';
 import { debugModes, tabs } from "@/components/main-panel/panel";
-import { markRaw } from "vue";
+import { markRaw, ref } from "vue";
 
 interface SaveTabItem {
 	name: string;
@@ -17,6 +17,8 @@ interface SaveTab {
 	tabs: SaveTabItem[]
 	currentIndex: number
 }
+
+export const panelLoaded = ref(false);
 
 export function loadPanels() {
     const bridge = useMessageBridge();
@@ -53,6 +55,7 @@ export function loadPanels() {
 			tabs.activeIndex = persistTab.currentIndex;
 		}
 
+		panelLoaded.value = true;
     }, { once: true });
 
     bridge.postMessage({
