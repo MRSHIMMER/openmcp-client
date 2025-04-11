@@ -1,8 +1,16 @@
 {
     "name": "openmcp",
     "displayName": "openmcp",
-    "description": "A MCP Client for MCP/OpenMCP",
+    "description": "An all in one MCP Client/TestTool",
     "version": "0.0.1",
+    "author": {
+        "name": "kirigaya",
+        "email": "1193466151@qq.com"
+    },
+    "repository": {
+        "url": "https://github.com/LSTM-Kirigaya/openmcp-client",
+        "type": "git"
+    },
     "engines": {
         "vscode": "^1.95.0"
     },
@@ -72,6 +80,10 @@
         "@types/node": "16.x",
         "@types/pako": "^2.0.3",
         "@types/showdown": "^2.0.0",
-        "@types/vscode": "^1.72.0"
+        "@types/vscode": "^1.72.0",
+        "ts-loader": "^9.5.1",
+        "typescript": "^5.4.2",
+        "webpack": "^5.88.2",
+        "webpack-cli": "^5.1.4"
     }
 }
