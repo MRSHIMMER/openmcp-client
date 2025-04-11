@@ -20,4 +20,4 @@ Wait-Job -Job $jobs | Out-Null
 Receive-Job -Job $jobs
 Remove-Job -Job $jobs
 
-Write-Host "构建完成，dist文件已移动到resources目录"
+Write-Host "finish building services in ./resources"
