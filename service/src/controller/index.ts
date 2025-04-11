@@ -1,5 +1,5 @@
 
-import { VSCodeWebViewLike } from '../adapter';
+import { PostMessageble } from '../adapter';
 import { connect, MCPClient, type MCPOptions } from './connect';
 import { callTool, getPrompt, listPrompts, listResources, listResourceTemplates, listTools, readResource } from './handler';
 import { chatCompletionHandler } from './llm';
@@ -11,7 +11,7 @@ import { ping } from './util';
 // TODO: 支持更多的 client
 let client: MCPClient | undefined = undefined;
 
-async function connectHandler(option: MCPOptions, webview: VSCodeWebViewLike) {
+async function connectHandler(option: MCPOptions, webview: PostMessageble) {
 	try {
 		client = await connect(option);
 		const connectResult = {
@@ -34,7 +34,7 @@ async function connectHandler(option: MCPOptions, webview: VSCodeWebViewLike) {
 }
 
 
-export function messageController(command: string, data: any, webview: VSCodeWebViewLike) {
+export function messageController(command: string, data: any, webview: PostMessageble) {
 	switch (command) {
 		case 'connect':
 			connectHandler(data, webview);

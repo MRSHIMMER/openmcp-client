@@ -1,8 +1,8 @@
-import { VSCodeWebViewLike } from '../adapter';
+import { PostMessageble } from '../adapter';
 import { loadConfig, loadTabSaveConfig, saveConfig, saveTabSaveConfig } from '../util';
 import { MCPClient } from './connect';
 
-export async function panelSaveHandler(client: MCPClient | undefined, data: any, webview: VSCodeWebViewLike) {
+export async function panelSaveHandler(client: MCPClient | undefined, data: any, webview: PostMessageble) {
 	if (!client) {
 		const connectResult = {
 			code: 501,
@@ -35,7 +35,7 @@ export async function panelSaveHandler(client: MCPClient | undefined, data: any,
 	}
 }
 
-export async function panelLoadHandler(client: MCPClient | undefined, webview: VSCodeWebViewLike) {
+export async function panelLoadHandler(client: MCPClient | undefined, webview: PostMessageble) {
 	if (!client) {
 		const connectResult = {
 			code: 501,

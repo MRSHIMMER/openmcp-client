@@ -68,8 +68,6 @@ function initProduce() {
 	// 初始化 tab
 	loadPanels();
 
-	// 尝试连接
-	doConnect();
 }
 
 onMounted(() => {

@@ -1,9 +1,10 @@
 import { OpenAI } from 'openai';
 import { MCPClient } from './connect';
+import { PostMessageble } from '../adapter';
 
 let currentStream: AsyncIterable<any> | null = null;
 
-export async function chatCompletionHandler(client: MCPClient | undefined, data: any, webview: { postMessage: (message: any) => void }) {
+export async function chatCompletionHandler(client: MCPClient | undefined, data: any, webview: PostMessageble) {
 	if (!client) {
 		const connectResult = {
 			code: 501,
@@ -99,7 +100,7 @@ export async function chatCompletionHandler(client: MCPClient | undefined, data:
 }
 
 // 处理中止消息的函数
-export function handleAbortMessage(webview: { postMessage: (message: any) => void }) {
+export function handleAbortMessage(webview: PostMessageble) {
     if (currentStream) {
         // 标记流已中止
         currentStream = null;
