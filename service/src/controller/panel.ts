@@ -3,16 +3,6 @@ import { loadConfig, loadTabSaveConfig, saveConfig, saveTabSaveConfig } from '..
 import { MCPClient } from './connect';
 
 export async function panelSaveHandler(client: MCPClient | undefined, data: any, webview: PostMessageble) {
-	if (!client) {
-		const connectResult = {
-			code: 501,
-			msg: 'mcp client 尚未连接'
-		};
-		webview.postMessage({ command: 'ping', data: connectResult });
-		return;
-	}
-
-
 	try {
 		// 保存配置
 		saveTabSaveConfig(data);
@@ -36,16 +26,6 @@ export async function panelSaveHandler(client: MCPClient | undefined, data: any,
 }
 
 export async function panelLoadHandler(client: MCPClient | undefined, webview: PostMessageble) {
-	if (!client) {
-		const connectResult = {
-			code: 501,
-			msg: 'mcp client 尚未连接'
-		};
-		webview.postMessage({ command: 'ping', data: connectResult });
-		return;
-	}
-
-
 	try {
 		// 加载配置
 		const config = loadTabSaveConfig();

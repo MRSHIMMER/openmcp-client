@@ -3,7 +3,7 @@ export const llms = [
 		id: 'deepseek',
 		name: 'DeepSeek',
 		baseUrl: 'https://api.deepseek.com/v1',
-		models: ['deepseek-chat', 'deepseek-coder', 'deepseek-math'],
+		models: ['deepseek-chat', 'deepseek-reasoner'],
 		icon: '/images/deepseek.com.ico',
 		provider: 'DeepSeek',
 		isOpenAICompatible: true,
