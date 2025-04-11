@@ -116,7 +116,7 @@ export class TaskLoop {
 
             this.bridge.postMessage({
                 command: 'llm/chat/completions',
-                data: chatData
+                data: JSON.parse(JSON.stringify(chatData)),
             });
         });
     }

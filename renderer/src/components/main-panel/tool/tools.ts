@@ -1,5 +1,6 @@
 import { useMessageBridge } from '@/api/message-bridge';
 import { ToolsListResponse, ToolCallResponse, CasualRestAPI } from '@/hook/type';
+import { pinkLog } from '@/views/setting/util';
 import { reactive } from 'vue';
 
 export const toolsManager = reactive<{
@@ -26,10 +27,16 @@ export function callTool(toolName: string, toolArgs: Record<string, any>) {
                 resolve(data.msg);
             }
         }, { once: true });
+
+        pinkLog('callTool');
+        console.log(toolArgs);
     
         bridge.postMessage({
             command: 'tools/call',
-            data: { toolName, toolArgs }
+            data: {
+                toolName,
+                toolArgs: JSON.parse(JSON.stringify(toolArgs))
+            }
         });
     });
 }

@@ -6,7 +6,7 @@ import I18n from '@/i18n/index';
 export function loadSetting() {
     const bridge = useMessageBridge();
 
-    bridge.addCommandListener('setting/load', data => {
+    bridge.addCommandListener('setting/load', data => {        
         if (data.code !== 200) {
             pinkLog('配置加载失败');
             console.log(data.msg);

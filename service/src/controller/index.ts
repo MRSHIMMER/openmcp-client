@@ -13,6 +13,8 @@ let client: MCPClient | undefined = undefined;
 
 async function connectHandler(option: MCPOptions, webview: PostMessageble) {
 	try {
+		console.log('ready to connect', option);
+		
 		client = await connect(option);
 		const connectResult = {
 			code: 200,

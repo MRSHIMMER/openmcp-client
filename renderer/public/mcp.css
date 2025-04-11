@@ -123,10 +123,18 @@ a {
     font-size: 12px;
 }
 
+.openmcp-code-block pre code {
+    background-color: none;
+}
 
 .openmcp-code-block pre code::-webkit-scrollbar {
     width: 8px;
     height: 5px;
+}
+
+.tool-arguments .openmcp-code-block pre code {
+    background: var(--el-fill-color-light);
+    
 }
 
 .openmcp-code-block pre code::-webkit-scrollbar-track {

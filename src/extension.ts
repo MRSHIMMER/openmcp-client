@@ -43,6 +43,11 @@ export function activate(context: vscode.ExtensionContext) {
             );
 
             const cwd = getLaunchCWD(context, uri);
+            // 获取 uri 相对于 cwd 的路径
+            const relativePath = fspath.relative(cwd, uri.fsPath);
+            
+            console.log('current file' + uri.fsPath);
+            console.log(`relativePath: ${relativePath}`);
 
             // 设置HTML内容
             const html = getWebviewContent(context, panel); 
@@ -55,15 +60,28 @@ export function activate(context: vscode.ExtensionContext) {
 
                 // 拦截消息，注入额外信息
                 switch (command) {
-                    case 'connect':
-                        data.cwd = cwd;
+                    case 'vscode/launch-command':
+                        const commandString = 'uv run mcp run ' + relativePath;
+                        const launchResult = {
+                            code: 200,
+                            msg: {
+                                commandString: commandString,
+                                cwd: cwd
+                            }
+                        }
+
+                        panel.webview.postMessage({
+                            command: 'vscode/launch-command',
+                            data: launchResult
+                        });
+
                         break;
                 
                     default:
+                        OpenMCPService.messageController(command, data, panel.webview);                
                         break;
                 }
-                
-                OpenMCPService.messageController(command, data, panel.webview as any);
+
             });
 
             panel.onDidDispose(() => {

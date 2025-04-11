@@ -14,7 +14,7 @@ import MainPanel from '@/components/main-panel/index.vue';
 import { setDefaultCss } from './hook/css';
 import { pinkLog } from './views/setting/util';
 import { acquireVsCodeApi, useMessageBridge } from './api/message-bridge';
-import { connectionArgs, connectionMethods, connectionResult, doConnect } from './views/connect/connection';
+import { connectionArgs, connectionMethods, connectionResult, doConnect, launchConnect } from './views/connect/connection';
 import { loadSetting } from './hook/setting';
 import { loadPanels } from './hook/panel';
 
@@ -68,6 +68,7 @@ function initProduce() {
 	// 初始化 tab
 	loadPanels();
 
+	launchConnect();
 }
 
 onMounted(() => {
