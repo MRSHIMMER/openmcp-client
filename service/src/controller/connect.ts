@@ -69,12 +69,17 @@ export class MCPClient {
 
         // 建立连接
         await this.client.connect(this.transport);
-        console.log(`Connected to MCP server via ${this.options.connectionType}`);
+        console.log(`Connected to MCP server via ${this.options.connectionType}`);        
+    }
+
+    public getServerVersion() {
+        return this.client.getServerVersion();
     }
 
     // 断开连接
     public async disconnect(): Promise<void> {
         await this.client.close();
+        
         console.log('Disconnected from MCP server');
     }
 

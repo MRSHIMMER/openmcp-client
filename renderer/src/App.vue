@@ -14,7 +14,7 @@ import MainPanel from '@/components/main-panel/index.vue';
 import { setDefaultCss } from './hook/css';
 import { pinkLog } from './views/setting/util';
 import { acquireVsCodeApi, useMessageBridge } from './api/message-bridge';
-import { connectionArgs, connectionMethods, connectionResult, doConnect, launchConnect } from './views/connect/connection';
+import { connectionArgs, connectionMethods, connectionResult, doConnect, getServerVersion, launchConnect } from './views/connect/connection';
 import { loadSetting } from './hook/setting';
 import { loadPanels } from './hook/panel';
 
@@ -26,15 +26,23 @@ bridge.addCommandListener('hello', data => {
 	pinkLog(`version: ${data.version}`);
 }, { once: true });
 
+// 监听 connect
+bridge.addCommandListener('connect', async data => {
+	const { code, msg } = data;
+	connectionResult.success = (code === 200);
+	connectionResult.logString = msg;
+
+	const res = await getServerVersion() as { name: string, version: string };
+	connectionResult.serverInfo.name = res.name || '';
+	connectionResult.serverInfo.version = res.version || '';
+
+}, { once: true });
+
+
+
 function initDebug() {
 	connectionArgs.commandString = 'mcp run ../servers/main.py';
 	connectionMethods.current = 'STDIO';
-
-	bridge.addCommandListener('connect', data => {
-		const { code, msg } = data;
-		connectionResult.success = (code === 200);
-		connectionResult.logString = msg;
-	}, { once: true });
 
 	setTimeout(() => {
 		// 初始化 设置
@@ -55,12 +63,6 @@ function initProduce() {
 	// TODO: get from vscode
 	connectionArgs.commandString = 'mcp run ../servers/main.py';
 	connectionMethods.current = 'STDIO';
-
-	bridge.addCommandListener('connect', data => {
-		const { code, msg } = data;
-		connectionResult.success = (code === 200);
-		connectionResult.logString = msg;
-	}, { once: true });
 
 	// 初始化 设置
 	loadSetting();
