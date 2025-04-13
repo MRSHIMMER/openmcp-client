@@ -58,6 +58,7 @@ export function messageController(command: string, data: any, webview: PostMessa
 			listResources(client, webview);
 			break;
 
+
 		case 'resources/templates/list':
 			listResourceTemplates(client, webview);
 			break;

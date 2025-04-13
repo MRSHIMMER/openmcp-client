@@ -12,7 +12,7 @@ import { Connection } from './components/sidebar/sidebar';
 import Sidebar from '@/components/sidebar/index.vue';
 import MainPanel from '@/components/main-panel/index.vue';
 import { setDefaultCss } from './hook/css';
-import { pinkLog } from './views/setting/util';
+import { greenLog, pinkLog } from './views/setting/util';
 import { acquireVsCodeApi, useMessageBridge } from './api/message-bridge';
 import { connectionArgs, connectionMethods, connectionResult, doConnect, getServerVersion, launchConnect } from './views/connect/connection';
 import { loadSetting } from './hook/setting';
@@ -22,8 +22,8 @@ const bridge = useMessageBridge();
 
 // 监听所有消息
 bridge.addCommandListener('hello', data => {
-	pinkLog(`${data.name} 上线`);
-	pinkLog(`version: ${data.version}`);
+	greenLog(`${data.name}`);
+	greenLog(`version: ${data.version}`);
 }, { once: true });
 
 // 监听 connect
