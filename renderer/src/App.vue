@@ -29,7 +29,7 @@ bridge.addCommandListener('hello', data => {
 
 
 function initDebug() {
-	connectionArgs.commandString = 'mcp run ../servers/main.py';
+	connectionArgs.commandString = 'uv run mcp run ../servers/main.py';
 	connectionMethods.current = 'STDIO';
 
 	setTimeout(async () => {

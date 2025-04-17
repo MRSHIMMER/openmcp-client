@@ -27,6 +27,8 @@ async function connectHandler(option: MCPOptions, webview: PostMessageble) {
 		// 比如	error: Failed to spawn: `server.py`
   		//		  Caused by: No such file or directory (os error 2)
 
+		console.log('error', error);
+		
 		const connectResult = {
 			code: 500,
 			msg: (error as any).toString()

@@ -1,5 +1,5 @@
 {
-  "currentIndex": 1,
+  "currentIndex": 2,
   "tabs": [
     {
       "name": "资源",
@@ -17,6 +17,87 @@
       "componentIndex": 1,
       "storage": {
         "currentPromptName": "translate"
+      }
+    },
+    {
+      "name": "交互测试",
+      "icon": "icon-robot",
+      "type": "blank",
+      "componentIndex": 3,
+      "storage": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "你好，请问什么是",
+            "extraInfo": {
+              "created": 1744876735890,
+              "serverName": "deepseek"
+            }
+          },
+          {
+            "role": "assistant",
+            "content": "你好！请问你是想问什么呢？可以具体一点吗？比如：\n\n- 什么是人工智能？\n- 什么是区块链？\n- 什么是量子计算？\n- 或者其他任何你想了解的概念或问题？\n\n告诉我你的具体需求，我会尽力解答！",
+            "extraInfo": {
+              "created": 1744876742266,
+              "serverName": "deepseek",
+              "usage": {
+                "prompt_tokens": 453,
+                "completion_tokens": 49,
+                "total_tokens": 502,
+                "prompt_tokens_details": {
+                  "cached_tokens": 448
+                },
+                "prompt_cache_hit_tokens": 448,
+                "prompt_cache_miss_tokens": 5
+              }
+            }
+          },
+          {
+            "role": "user",
+            "content": "你的名字是",
+            "extraInfo": {
+              "created": 1744878380791,
+              "serverName": "openai"
+            }
+          },
+          {
+            "role": "assistant",
+            "content": "错误: OpenAI API error: 404 404 page not found",
+            "extraInfo": {
+              "created": 1744878381940,
+              "serverName": "openai"
+            }
+          }
+        ],
+        "settings": {
+          "modelIndex": 0,
+          "enableTools": [
+            {
+              "name": "add",
+              "description": "对两个数字进行实数域的加法",
+              "enabled": true
+            },
+            {
+              "name": "multiply",
+              "description": "对两个数字进行实数域的乘法运算",
+              "enabled": true
+            },
+            {
+              "name": "is_even",
+              "description": "判断一个整数是否为偶数",
+              "enabled": true
+            },
+            {
+              "name": "capitalize",
+              "description": "将字符串首字母大写",
+              "enabled": true
+            }
+          ],
+          "enableWebSearch": false,
+          "temperature": 0.7,
+          "contextLength": 10,
+          "systemPrompt": ""
+        }
       }
     }
   ]
