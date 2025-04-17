@@ -2,7 +2,7 @@
     "name": "openmcp",
     "displayName": "OpenMCP",
     "description": "An all in one MCP Client/TestTool",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "publisher": "kirigaya",
     "author": {
         "name": "kirigaya",
