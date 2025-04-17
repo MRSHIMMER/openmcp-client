@@ -124,7 +124,7 @@ a {
 }
 
 .openmcp-code-block pre code {
-    background-color: none;
+    background-color: none !important;
 }
 
 .openmcp-code-block pre code::-webkit-scrollbar {

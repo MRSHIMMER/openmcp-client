@@ -16,8 +16,9 @@
                         <el-input 
                             v-if="property.type === 'string'" 
                             v-model="formData[name]"
+                            type="text"
                             :placeholder="t('enter') + ' ' + (property.title || name)"
-                            @keydown.enter.prevent="handleExecute" 
+                            @keydown.enter.prevent="handleExecute"
                         />
 
                         <el-input-number 
@@ -114,8 +115,7 @@ const resetForm = () => {
 };
 
 async function handleExecute() {
-    if (!currentTool.value) return;
-
+    if (!currentTool.value) return;    
     const toolResponse = await callTool(tabStorage.currentToolName, formData.value);
     tabStorage.lastToolCallResponse = toolResponse;
 }

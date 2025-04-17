@@ -30,7 +30,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineComponent, defineProps, ref } from 'vue';
+import { defineComponent, defineProps, ref, computed } from 'vue';
 import { makeUsageStatistic } from './usage';
 
 defineComponent({ name: 'message-meta' });
@@ -42,7 +42,13 @@ const props = defineProps({
     }
 });
 
-const usageStatistic = makeUsageStatistic(props.message.extraInfo);
+const usageStatistic = computed(() => {
+    return makeUsageStatistic(props.message.extraInfo);
+});
+
+console.log(props.message);
+console.log(usageStatistic);
+
 const showTime = ref(false);
 </script>
 

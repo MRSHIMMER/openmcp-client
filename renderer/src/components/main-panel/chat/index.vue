@@ -214,6 +214,7 @@ const renderMessages = computed(() => {
             const lastAssistantMessage = messages[messages.length - 1];
             if (lastAssistantMessage.role === 'assistant/tool_calls') {
                 lastAssistantMessage.toolResult = message.content;
+                lastAssistantMessage.extraInfo.usage = lastAssistantMessage.extraInfo.usage || message.extraInfo.usage;
             }
         }
     }
