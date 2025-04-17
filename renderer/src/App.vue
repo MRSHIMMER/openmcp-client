@@ -62,8 +62,11 @@ async function initProduce() {
 	// 初始化 tab
 	await loadPanels();
 
+	console.log(route);
+	
 	if (route.name !== 'debug') {
 		router.replace('/debug');
+		router.push('/debug');
 	}
 }
 

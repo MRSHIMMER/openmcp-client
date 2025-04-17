@@ -35,6 +35,7 @@ export function loadPanels() {
 		
 				if (persistTab.tabs.length === 0) {
 					// 空的，直接返回不需要管
+					resolve(void 0);
 					return;
 				}
 				
