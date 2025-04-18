@@ -2,28 +2,28 @@
     <div class="message-meta" @mouseenter="showTime = true" @mouseleave="showTime = false">
         <span v-if="usageStatistic" class="message-usage">
             <span>
-                输入 {{ usageStatistic.input }}
+                {{ t('input-token') }} {{ usageStatistic.input }}
             </span>
 
             <span>
-                输出 {{ usageStatistic.output }}
+                {{ t('output-token') }} {{ usageStatistic.output }}
             </span> 
 
             <span>
-                消耗的总 token {{ usageStatistic.total }}
+                {{ t('total') }} {{ usageStatistic.total }}
             </span>
 
             <span>
-                缓存命中率 {{ usageStatistic.cacheHitRatio }}%
+                {{ t('cache-hit-ratio') }} {{ usageStatistic.cacheHitRatio }}%
             </span>
         </span>
 
         <span v-else class="message-usage">
-            <span>你使用的供应商暂时不支持统计信息</span>
+            <span>{{ t('server-not-support-statistic') }}</span>
         </span>
 
         <span v-show="showTime" class="message-time">
-            {{ props.message.extraInfo.serverName }} 作答于
+            {{ props.message.extraInfo.serverName }} {{ t('answer-at') }}
             {{ new Date(message.extraInfo.created).toLocaleString() }}
         </span>
     </div>
@@ -31,9 +31,12 @@
 
 <script setup lang="ts">
 import { defineComponent, defineProps, ref, computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { makeUsageStatistic } from './usage';
 
 defineComponent({ name: 'message-meta' });
+
+const { t } = useI18n();
 
 const props = defineProps({
     message: {

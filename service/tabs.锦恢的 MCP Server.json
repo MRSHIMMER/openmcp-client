@@ -1,5 +1,5 @@
 {
-  "currentIndex": 0,
+  "currentIndex": 1,
   "tabs": [
     {
       "name": "交互测试",
@@ -22,6 +22,80 @@
             "extraInfo": {
               "created": 1744971604583,
               "serverName": "openai"
+            }
+          },
+          {
+            "role": "user",
+            "content": "杭州今天的气温",
+            "extraInfo": {
+              "created": 1744979181964,
+              "serverName": "deepseek"
+            }
+          },
+          {
+            "role": "assistant",
+            "content": "",
+            "tool_calls": [
+              {
+                "id": "call_0_99f46975-2238-49b0-a4ba-eace2f199a74",
+                "index": 0,
+                "type": "function",
+                "function": {
+                  "name": "get_weather_by_city_code",
+                  "arguments": "{\"city_code\":101210101}"
+                }
+              }
+            ],
+            "extraInfo": {
+              "created": 1744979187506,
+              "serverName": "deepseek",
+              "usage": {
+                "prompt_tokens": 207,
+                "completion_tokens": 26,
+                "total_tokens": 233,
+                "prompt_tokens_details": {
+                  "cached_tokens": 0
+                },
+                "prompt_cache_hit_tokens": 0,
+                "prompt_cache_miss_tokens": 207
+              }
+            }
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "call_0_99f46975-2238-49b0-a4ba-eace2f199a74",
+            "content": "[{\"type\":\"text\",\"text\":\"CityWeather(city_name_en='hangzhou', city_name_cn='杭州', city_code='101210101', temp='24.7', wd='', ws='', sd='58%', aqi='69', weather='晴')\"}]",
+            "extraInfo": {
+              "created": 1744979187685,
+              "serverName": "deepseek",
+              "usage": {
+                "prompt_tokens": 207,
+                "completion_tokens": 26,
+                "total_tokens": 233,
+                "prompt_tokens_details": {
+                  "cached_tokens": 0
+                },
+                "prompt_cache_hit_tokens": 0,
+                "prompt_cache_miss_tokens": 207
+              }
+            }
+          },
+          {
+            "role": "assistant",
+            "content": "杭州今天的气温是24.7°C，天气晴朗，空气质量指数为69。",
+            "extraInfo": {
+              "created": 1744979192559,
+              "serverName": "deepseek",
+              "usage": {
+                "prompt_tokens": 299,
+                "completion_tokens": 19,
+                "total_tokens": 318,
+                "prompt_tokens_details": {
+                  "cached_tokens": 192
+                },
+                "prompt_cache_hit_tokens": 192,
+                "prompt_cache_miss_tokens": 107
+              }
             }
           }
         ],
@@ -59,6 +133,15 @@
           "contextLength": 10,
           "systemPrompt": ""
         }
+      }
+    },
+    {
+      "name": "资源",
+      "icon": "icon-file",
+      "type": "blank",
+      "componentIndex": 0,
+      "storage": {
+        "currentResourceName": "greeting"
       }
     }
   ]
