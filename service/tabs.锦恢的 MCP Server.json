@@ -1,4 +1,65 @@
 {
-  "tabs": [],
-  "currentIndex": -1
+  "currentIndex": 0,
+  "tabs": [
+    {
+      "name": "交互测试",
+      "icon": "icon-robot",
+      "type": "blank",
+      "componentIndex": 3,
+      "storage": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "float 9.9 and float 9.11, which one is bigger",
+            "extraInfo": {
+              "created": 1744971603852,
+              "serverName": "openai"
+            }
+          },
+          {
+            "role": "assistant",
+            "content": "错误: OpenAI API error: 401 Incorrect API key provided: AK-e5ecb***************************1f37. You can find your API key at https://platform.openai.com/account/api-keys.",
+            "extraInfo": {
+              "created": 1744971604583,
+              "serverName": "openai"
+            }
+          }
+        ],
+        "settings": {
+          "modelIndex": 0,
+          "enableTools": [
+            {
+              "name": "add",
+              "description": "对两个数字进行实数域的加法",
+              "enabled": true
+            },
+            {
+              "name": "multiply",
+              "description": "对两个数字进行实数域的乘法运算",
+              "enabled": true
+            },
+            {
+              "name": "is_even",
+              "description": "判断一个整数是否为偶数",
+              "enabled": true
+            },
+            {
+              "name": "capitalize",
+              "description": "将字符串首字母大写",
+              "enabled": true
+            },
+            {
+              "name": "get_weather_by_city_code",
+              "description": "根据城市天气预报的城市编码 (int)，获取指定城市的天气信息",
+              "enabled": true
+            }
+          ],
+          "enableWebSearch": false,
+          "temperature": 0.7,
+          "contextLength": 10,
+          "systemPrompt": ""
+        }
+      }
+    }
+  ]
 }
