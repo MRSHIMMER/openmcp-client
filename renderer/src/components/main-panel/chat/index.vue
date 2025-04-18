@@ -1,6 +1,6 @@
 <template>
     <div class="chat-container" :ref="el => chatContainerRef = el">
-        <el-scrollbar ref="scrollbarRef" :height="'90%'" @scroll="handleScroll">
+        <el-scrollbar ref="scrollbarRef" :height="'90%'" @scroll="handleScroll" v-if="renderMessages.length > 0 || isLoading">
             <div class="message-list" :ref="el => messageListRef = el">
                 <div v-for="(message, index) in renderMessages" :key="index"
                     :class="['message-item', message.role.split('/')[0]]">
@@ -107,6 +107,9 @@
                 </div>
             </div>
         </el-scrollbar>
+        <div v-else>
+            
+        </div>
 
         <el-footer class="chat-footer" ref="footerRef">
             <div class="input-area">
