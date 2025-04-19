@@ -1,6 +1,7 @@
 import { useMessageBridge } from '@/api/message-bridge';
 import { reactive } from 'vue';
 import { pinkLog } from '../setting/util';
+import { ElMessage } from 'element-plus';
 
 export const connectionMethods = reactive({
     current: 'STDIO',
@@ -66,9 +67,17 @@ export function doConnect() {
             connectionResult.success = (code === 200);
             connectionResult.logString = msg;
 
-            const res = await getServerVersion() as { name: string, version: string };
-            connectionResult.serverInfo.name = res.name || '';
-            connectionResult.serverInfo.version = res.version || '';
+            if (code === 200) {
+                const res = await getServerVersion() as { name: string, version: string };
+                connectionResult.serverInfo.name = res.name || '';
+                connectionResult.serverInfo.version = res.version || '';
+            } else {
+                ElMessage({
+                    type: 'error',
+                    message: msg
+                });
+            }
+
             resolve(void 0);
         }, { once: true });
 
