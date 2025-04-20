@@ -1,0 +1,37 @@
+{
+  "currentIndex": 1,
+  "tabs": [
+    {
+      "name": "交互测试",
+      "icon": "icon-robot",
+      "type": "blank",
+      "componentIndex": 3,
+      "storage": {
+        "messages": [],
+        "settings": {
+          "modelIndex": 0,
+          "enableTools": [
+            {
+              "name": "image_crawler",
+              "description": "根据关键词从指定搜索引擎爬取图片",
+              "enabled": true
+            }
+          ],
+          "enableWebSearch": false,
+          "temperature": 0.7,
+          "contextLength": 10,
+          "systemPrompt": "你是一个聪明的机器人，我现在会询问你一些问题，这些问题可能会调用我给你的工具，如果用户的输入的问题内包含的参数不足以发起一次工具调用，那么你应该提醒用户缺失的参数。"
+        }
+      }
+    },
+    {
+      "name": "工具",
+      "icon": "icon-tool",
+      "type": "blank",
+      "componentIndex": 2,
+      "storage": {
+        "currentToolName": "image_crawler"
+      }
+    }
+  ]
+}
