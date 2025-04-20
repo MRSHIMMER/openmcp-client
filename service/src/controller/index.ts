@@ -15,6 +15,9 @@ let client: MCPClient | undefined = undefined;
 
 function tryGetRunCommandError(command: string, args: string[] = [], cwd?: string): string | null {
     try {
+		console.log('current command', command);
+		console.log('current args', args);
+		
         const result = spawnSync(command, args, {
             cwd: cwd || process.cwd(),
             stdio: 'pipe',

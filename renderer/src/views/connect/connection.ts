@@ -81,6 +81,7 @@ export function doConnect() {
             resolve(void 0);
         }, { once: true });
 
+        // TODO: 增加判断，获取 cwd
         if (connectionMethods.current === 'STDIO') {
 
             if (connectionArgs.commandString.length === 0) {
@@ -124,19 +125,25 @@ export function doConnect() {
 /**
  * @description vscode 中初始化启动
  */
-export async function launchConnect() {
+export async function launchConnect(option: { updateCommandString?: boolean } = {}) {
     // 本地开发只用 IPC 进行启动
     // 后续需要考虑到不同的连接方式
+
+    const {
+        updateCommandString = true
+    } = option;
 
     connectionMethods.current = 'STDIO';
     const bridge = useMessageBridge();
 
     pinkLog('请求启动参数');
     const { commandString, cwd } = await getLaunchCommand();
-    connectionArgs.commandString = commandString;
 
-    if (connectionArgs.commandString.length === 0) {
-        return;
+    if (updateCommandString) {
+        connectionArgs.commandString = commandString;
+        if (connectionArgs.commandString.length === 0) {
+            return;
+        }
     }
 
     return new Promise<void>((resolve, reject) => {
@@ -146,9 +153,17 @@ export async function launchConnect() {
             connectionResult.success = (code === 200);
             connectionResult.logString = msg;
 
-            const res = await getServerVersion() as { name: string, version: string };
-            connectionResult.serverInfo.name = res.name || '';
-            connectionResult.serverInfo.version = res.version || '';
+            if (code === 200) {
+                const res = await getServerVersion() as { name: string, version: string };
+                connectionResult.serverInfo.name = res.name || '';
+                connectionResult.serverInfo.version = res.version || '';
+            } else {
+                ElMessage({
+                    type: 'error',
+                    message: msg
+                });
+            }
+
             resolve(void 0);
         }, { once: true });
 

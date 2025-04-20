@@ -63,20 +63,8 @@ export class MCPClient {
                 this.transport = new StdioClientTransport({
                     command: this.options.command || '',
                     args: this.options.args || [],
-                    cwd: this.options.cwd || process.cwd(),
-                    // TODO
-                    stderr: 'pipe'
+                    cwd: this.options.cwd || process.cwd()
                 });
-
-                this.transport.onmessage = (message) => {
-                    console.log('Received message from server:', message);
-                    this.transportStdErr += message;
-                };
-
-                this.transport.onerror = (error) => {
-                    console.log('Error from server:', error);
-                    this.transportStdErr += error;
-                };
 
                 break;
             case 'SSE':
