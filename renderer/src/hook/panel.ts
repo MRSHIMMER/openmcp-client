@@ -45,8 +45,8 @@ export function loadPanels() {
 		
 				for (const tab of persistTab.tabs || []) {
 					
-					const component = tab.componentIndex >= 0? debugModes[tab.componentIndex] : undefined;
-					
+					const component = tab.componentIndex >= 0? markRaw(debugModes[tab.componentIndex]) : undefined;
+		
 					tabs.content.push({
 						name: tab.name,
 						icon: tab.icon,

@@ -12,6 +12,7 @@ export const toolsManager = reactive<{
 export interface ToolStorage {
     currentToolName: string;
     lastToolCallResponse?: ToolCallResponse;
+    formData: Record<string, number | string | boolean>;
 }
 
 const bridge = useMessageBridge();

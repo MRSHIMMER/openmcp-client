@@ -42,7 +42,10 @@
                                 <div v-for="(call, index) in message.tool_calls" :key="index" class="tool-call-item">
                                     <div class="tool-call-header">
                                         <span class="tool-name">{{ call.function.name }}</span>
-                                        <span class="tool-type">{{ call.type }}</span>
+                                        <span class="tool-type">{{ 'tool' }}</span>
+                                        <el-button @click="createTest(call)">
+                                            <span class="iconfont icon-send"></span>
+                                        </el-button>
                                     </div>
                                     <div class="tool-arguments">
                                         <div class="inner">
@@ -154,7 +157,7 @@ import MessageMeta from './message-meta.vue';
 // 引入 markdown.ts 中的函数
 import { markdownToHtml, copyToClipboard } from './markdown';
 import { ChatCompletionChunk, TaskLoop } from './task-loop';
-import { llmManager, llms } from '@/views/setting/llm';
+import { createTest, llmManager, llms } from '@/views/setting/llm';
 
 defineComponent({ name: 'chat' });
 
@@ -390,14 +393,6 @@ const jsonResultToHtml = (jsonString: string) => {
     return html;
 };
 
-const formatToolArguments = (args: string) => {
-    try {
-        const parsed = JSON.parse(args);
-        return JSON.stringify(parsed, null, 2);
-    } catch {
-        return args;
-    }
-};
 
 </script>
 

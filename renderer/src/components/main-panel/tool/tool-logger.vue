@@ -41,6 +41,7 @@ import { defineComponent, defineProps, computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { tabs } from '../panel';
 import { ToolStorage } from './tools';
+import { markdownToHtml } from '../chat/markdown';
 
 defineComponent({ name: 'tool-logger' });
 const { t } = useI18n();
@@ -64,6 +65,12 @@ const formattedJson = computed(() => {
         return 'Invalid JSON';
     }
 });
+
+const jsonResultToHtml = (jsonString: string) => {
+    const formattedJson = JSON.stringify(JSON.parse(jsonString), null, 2);
+    const html = markdownToHtml('```json\n' + formattedJson + '\n```');
+    return html;
+};
 </script>
 
 <style>

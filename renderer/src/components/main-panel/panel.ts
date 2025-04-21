@@ -50,7 +50,7 @@ watch(
 	{ deep: true }
 );
 
-function createTab(type: string, index: number): Tab {
+export function createTab(type: string, index: number): Tab {
 	let customName: string | null = null;
 
 	return {
