@@ -123,5 +123,12 @@
     "input-token": "輸入",
     "output-token": "輸出",
     "total": "總計",
-    "cache-hit-ratio": "緩存命中率"
+    "cache-hit-ratio": "緩存命中率",
+    "success-save": "成功儲存",
+    "confirm-delete-model": "確定刪除該模型提供商？",
+    "reserve-one-last-model": "至少保留一個模型",
+    "edit": "編輯",
+    "delete": "刪除",
+    "test": "測試",
+    "add-new-server": "新增服務"
 }

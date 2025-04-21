@@ -105,7 +105,7 @@ export class TaskLoop {
             const chunkHandler = this.bridge.addCommandListener('llm/chat/completions/chunk', data => {
                 if (data.code !== 200) {
                     this.onError(data.msg || '请求模型服务时发生错误');
-                    reject(new Error(data.msg || '请求模型服务时发生错误'));
+                    resolve();
                     return;
                 }
                 const { chunk } = data.msg as { chunk: ChatCompletionChunk };

@@ -99,7 +99,7 @@
     "choose-a-project-debug": "Select a project to debug",
     "model": "Model",
     "server-provider": "Service Provider",
-    "api-root-url": "API root path",
+    "api-root-url": "Base Url",
     "api-token": "API key",
     "connection-method": "Connection method",
     "command": "Command",
@@ -123,5 +123,12 @@
     "input-token": "Input",
     "output-token": "Output",
     "total": "Total",
-    "cache-hit-ratio": "Cache hit rate"
+    "cache-hit-ratio": "Cache hit rate",
+    "success-save": "Successfully saved",
+    "confirm-delete-model": "Are you sure you want to delete the model provider?",
+    "reserve-one-last-model": "Keep at least one model",
+    "edit": "Edit",
+    "delete": "Delete",
+    "test": "Test",
+    "add-new-server": "Add service"
 }

@@ -41,7 +41,7 @@
 | `all` | 完成最基本的各类基础设施 | `完整版本` | 100% | `Done` |
 | `render` | chat 模式下支持进行成本分析 | `迭代版本` | 100% | `Done` |
 | `ext` | 支持基本的 MCP 项目管理 | `MVP` | 0% | `P0` |
-| `service` | 支持自定义大模型接入 | `MVP` | 20% | `P0` |
+| `service` | 支持自定义大模型接入 | `MVP` | 80% | `P0` |
 | `all` | 支持同时调试多个 MCP Server | `MVP` | 0% | `P1` |
 | `all` | 支持通过大模型进行在线验证 | `迭代版本` | 100% | `Done` |
 | `all` | 支持 completion/complete 协议字段 | `MVP` | 0% | `P1` |

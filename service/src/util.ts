@@ -19,9 +19,9 @@ function getConfigurationPath() {
         if (!fs.existsSync(configDir)) {
             fs.mkdirSync(configDir, { recursive: true });
         }
-        return path.join(configDir, 'config.json');
+        return path.join(configDir, 'setting.json');
     }
-    return 'config.json';
+    return 'setting.json';
 }
 
 function getTabSavePath(serverInfo: IServerVersion) {

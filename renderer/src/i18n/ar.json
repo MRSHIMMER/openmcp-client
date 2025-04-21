@@ -123,5 +123,12 @@
     "input-token": "إدخال",
     "output-token": "إخراج",
     "total": "الإجمالي",
-    "cache-hit-ratio": "معدل ضربات التخزين المؤقت"
+    "cache-hit-ratio": "معدل ضربات التخزين المؤقت",
+    "success-save": "تم الحفظ بنجاح",
+    "confirm-delete-model": "هل تريد حذف موفر النموذج؟",
+    "reserve-one-last-model": "احتفظ بنموذج واحد على الأقل",
+    "edit": "تعديل",
+    "delete": "حذف",
+    "test": "اختبار",
+    "add-new-server": "إضافة خدمة"
 }

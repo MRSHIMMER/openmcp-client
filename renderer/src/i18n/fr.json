@@ -123,5 +123,12 @@
     "input-token": "Entrée",
     "output-token": "Sortie",
     "total": "Total",
-    "cache-hit-ratio": "Taux de réussite du cache"
+    "cache-hit-ratio": "Taux de réussite du cache",
+    "success-save": "Enregistré avec succès",
+    "confirm-delete-model": "Êtes-vous sûr de vouloir supprimer le fournisseur de modèles ?",
+    "reserve-one-last-model": "Conservez au moins un modèle",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "test": "Test",
+    "add-new-server": "Ajouter un service"
 }

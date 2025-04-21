@@ -123,5 +123,12 @@
     "input-token": "入力",
     "output-token": "出力",
     "total": "合計",
-    "cache-hit-ratio": "キャッシュヒット率"
+    "cache-hit-ratio": "キャッシュヒット率",
+    "success-save": "正常に保存されました",
+    "confirm-delete-model": "このモデルプロバイダーを削除しますか？",
+    "reserve-one-last-model": "少なくとも1つのモデルを保持してください",
+    "edit": "編集",
+    "delete": "削除",
+    "test": "テスト",
+    "add-new-server": "サービスを追加"
 }

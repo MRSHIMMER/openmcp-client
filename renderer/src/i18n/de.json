@@ -123,5 +123,12 @@
     "input-token": "Eingabe",
     "output-token": "Ausgabe",
     "total": "Gesamt",
-    "cache-hit-ratio": "Cache-Trefferquote"
+    "cache-hit-ratio": "Cache-Trefferquote",
+    "success-save": "Erfolgreich gespeichert",
+    "confirm-delete-model": "Modellanbieter wirklich löschen?",
+    "reserve-one-last-model": "Behalten Sie mindestens ein Modell",
+    "edit": "Bearbeiten",
+    "delete": "Löschen",
+    "test": "Test",
+    "add-new-server": "Dienst hinzufügen"
 }
