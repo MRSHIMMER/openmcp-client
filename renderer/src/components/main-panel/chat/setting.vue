@@ -1,6 +1,6 @@
 <template>
 	<div class="chat-settings">
-		<el-tooltip content="选择模型" placement="top">
+		<el-tooltip :content="t('choose-model')" placement="top">
 			<div class="setting-button" @click="showModelDialog = true">
 				<span class="iconfont icon-model">
 					{{ currentServerName }}/{{ currentModelName }}
@@ -8,35 +8,35 @@
 			</div>
 		</el-tooltip>
 
-		<el-tooltip content="系统提示词" placement="top">
+		<el-tooltip :content="t('system-prompt')" placement="top">
 			<div class="setting-button" :class="{ 'active': hasSystemPrompt }" size="small"
 				@click="showSystemPromptDialog = true">
 				<span class="iconfont icon-robot"></span>
 			</div>
 		</el-tooltip>
 
-		<el-tooltip content="工具使用" placement="top">
+		<el-tooltip :content="t('tool-use')" placement="top">
 			<div class="setting-button" :class="{ 'active': toolActive }" size="small"
 				@click="toggleTools">
 				<span class="iconfont icon-tool"></span>
 			</div>
 		</el-tooltip>
 
-		<el-tooltip content="网络搜索" placement="top">
+		<el-tooltip :content="t('websearch')" placement="top">
 			<div class="setting-button" :class="{ 'active': tabStorage.settings.enableWebSearch }" size="small"
 				@click="toggleWebSearch">
 				<span class="iconfont icon-web"></span>
 			</div>
 		</el-tooltip>
 
-		<el-tooltip content="温度参数" placement="top">
+		<el-tooltip :content="t('temperature-parameter')" placement="top">
 			<div class="setting-button" @click="showTemperatureSlider = true">
 				<span class="iconfont icon-temperature"></span>
 				<span class="value-badge">{{ tabStorage.settings.temperature.toFixed(1) }}</span>
 			</div>
 		</el-tooltip>
 
-		<el-tooltip content="上下文长度" placement="top">
+		<el-tooltip :content="t('context-length')" placement="top">
 			<div class="setting-button" @click="showContextLengthDialog = true">
 				<span class="iconfont icon-length"></span>
 				<span class="value-badge">{{ tabStorage.settings.contextLength }}</span>
@@ -44,55 +44,56 @@
 		</el-tooltip>
 
 		<!-- 模型选择对话框 -->
-		<el-dialog v-model="showModelDialog" title="选择模型" width="400px">
+		<el-dialog v-model="showModelDialog" :title="t('choose-model')" width="400px">
 			<el-radio-group v-model="selectedModelIndex" @change="onRadioGroupChange">
 				<el-radio v-for="(model, index) in availableModels" :key="index" :label="index">
 					{{ model }}
 				</el-radio>
 			</el-radio-group>
 			<template #footer>
-				<el-button @click="showModelDialog = false">取消</el-button>
-				<el-button type="primary" @click="confirmModelChange">确认</el-button>
+				<el-button @click="showModelDialog = false">{{ t("cancel") }}</el-button>
+				<el-button type="primary" @click="confirmModelChange">{{ t("confirm") }}</el-button>
 			</template>
 		</el-dialog>
 
 		<!-- System Prompt对话框 -->
-		<el-dialog v-model="showSystemPromptDialog" title="系统提示词" width="600px">
+		<el-dialog v-model="showSystemPromptDialog" :title="t('system-prompt')" width="600px">
 			<el-input v-model="tabStorage.settings.systemPrompt" type="textarea" :rows="8"
-				placeholder="输入系统提示词（例如：你是一个专业的前端开发助手，用中文回答）" clearable />
+				:placeholder="t('system-prompt.placeholder')"
+				clearable
+			/>
 			<template #footer>
-				<el-button @click="showSystemPromptDialog = false">关闭</el-button>
-				<el-button type="primary" @click="showSystemPromptDialog = false">保存</el-button>
+				<el-button @click="showSystemPromptDialog = false">{{ t("cancel") }}</el-button>
+				<el-button type="primary" @click="showSystemPromptDialog = false">{{ t("save") }}</el-button>
 			</template>
 		</el-dialog>
 
 		<!-- 温度参数滑块 -->
-		<el-dialog v-model="showTemperatureSlider" title="设置温度参数" width="400px">
+		<el-dialog v-model="showTemperatureSlider" :title="t('temperature-parameter')" width="400px">
 			<div class="slider-container">
 				<el-slider v-model="tabStorage.settings.temperature" :min="0" :max="2" :step="0.1" />
 				<div class="slider-tips">
-					<span>精确(0)</span>
-					<span>平衡(1)</span>
-					<span>创意(2)</span>
+					<span> {{ t('precise') }}(0)</span>
+					<span>{{ t('moderate') }}(1)</span>
+					<span>{{ t('creative') }}(2)</span>
 				</div>
 			</div>
 			<template #footer>
-				<el-button @click="showTemperatureSlider = false">关闭</el-button>
+				<el-button @click="showTemperatureSlider = false">{{ t("cancel") }}</el-button>
 			</template>
 		</el-dialog>
 
 		<!-- 上下文长度设置 - 改为滑块形式 -->
-		<el-dialog v-model="showContextLengthDialog" title="设置上下文长度" width="400px">
+		<el-dialog v-model="showContextLengthDialog" :title="t('context-length') + ' ' + tabStorage.settings.contextLength" width="400px">
 			<div class="slider-container">
-				<el-slider v-model="tabStorage.settings.contextLength" :min="0" :max="99" :step="1" />
+				<el-slider v-model="tabStorage.settings.contextLength" :min="1" :max="99" :step="1" />
 				<div class="slider-tips">
-					<span>0: 无上下文</span>
-					<span>10: 默认</span>
-					<span>99: 最大</span>
+					<span> 1: {{ t('single-dialog') }}</span>
+					<span> >1: {{ t('multi-dialog') }}</span>
 				</div>
 			</div>
 			<template #footer>
-				<el-button @click="showContextLengthDialog = false">关闭</el-button>
+				<el-button @click="showContextLengthDialog = false">{{ t("cancel") }}</el-button>
 			</template>
 		</el-dialog>
 
@@ -116,7 +117,7 @@
 			<template #footer>
 				<el-button type="primary" @click="enableAllTools">激活所有工具</el-button>
 				<el-button type="danger" @click="disableAllTools">禁用所有工具</el-button>
-				<el-button type="primary" @click="showToolsDialog = false">关闭</el-button>
+				<el-button type="primary" @click="showToolsDialog = false">{{ t("cancel") }}</el-button>
 			</template>
 		</el-dialog>
 	</div>
@@ -131,6 +132,10 @@ import { useMessageBridge } from '@/api/message-bridge';
 import { CasualRestAPI, ToolItem, ToolsListResponse } from '@/hook/type';
 import { markdownToHtml } from './markdown';
 import { saveSetting } from '@/hook/setting';
+
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 const props = defineProps({
 	tabId: {

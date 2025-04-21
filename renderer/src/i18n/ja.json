@@ -130,5 +130,17 @@
     "edit": "編集",
     "delete": "削除",
     "test": "テスト",
-    "add-new-server": "サービスを追加"
+    "add-new-server": "サービスを追加",
+    "choose-model": "モデルを選択",
+    "system-prompt": "システムプロンプト",
+    "tool-use": "ツールの使用",
+    "websearch": "ウェブ検索",
+    "temperature-parameter": "温度パラメータ",
+    "context-length": "コンテキストの長さ",
+    "system-prompt.placeholder": "システムプロンプトを入力してください（例：あなたはプロのフロントエンド開発アシスタントで、日本語で答えます）",
+    "precise": "精密",
+    "moderate": "バランス",
+    "creative": "創造性",
+    "single-dialog": "単一ラウンドの対話",
+    "multi-dialog": "マルチターン会話"
 }

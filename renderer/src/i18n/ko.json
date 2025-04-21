@@ -130,5 +130,17 @@
     "edit": "편집",
     "delete": "삭제",
     "test": "테스트",
-    "add-new-server": "서비스 추가"
+    "add-new-server": "서비스 추가",
+    "choose-model": "모델 선택",
+    "system-prompt": "시스템 프롬프트",
+    "tool-use": "도구 사용",
+    "websearch": "웹 검색",
+    "temperature-parameter": "온도 매개변수",
+    "context-length": "컨텍스트 길이",
+    "system-prompt.placeholder": "시스템 프롬프트를 입력하세요 (예: 당신은 전문 프론트엔드 개발 어시스턴트이며, 한국어로 답변합니다)",
+    "precise": "정확한",
+    "moderate": "균형",
+    "creative": "창의성",
+    "single-dialog": "단일 라운드 대화",
+    "multi-dialog": "다중 턴 대화"
 }

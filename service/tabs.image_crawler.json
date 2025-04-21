@@ -1,4 +1,28 @@
 {
   "currentIndex": 0,
-  "tabs": []
+  "tabs": [
+    {
+      "name": "Interactive Test",
+      "icon": "icon-robot",
+      "type": "blank",
+      "componentIndex": 3,
+      "storage": {
+        "messages": [],
+        "settings": {
+          "modelIndex": 8,
+          "enableTools": [
+            {
+              "name": "image_crawler",
+              "description": "根据关键词从指定搜索引擎爬取图片",
+              "enabled": true
+            }
+          ],
+          "enableWebSearch": false,
+          "temperature": 0.7,
+          "contextLength": 10,
+          "systemPrompt": ""
+        }
+      }
+    }
+  ]
 }

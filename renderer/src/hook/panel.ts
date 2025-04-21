@@ -29,7 +29,7 @@ export function loadPanels() {
 				console.log(data.msg);
 				
 			} else {
-				const persistTab = data.msg as SaveTab;
+				const persistTab = data.msg as SaveTab;				
 	
 				pinkLog('tabs 加载成功');
 		
@@ -44,12 +44,15 @@ export function loadPanels() {
 				tabs.content = [];
 		
 				for (const tab of persistTab.tabs || []) {
+					
+					const component = tab.componentIndex >= 0? debugModes[tab.componentIndex] : undefined;
+					
 					tabs.content.push({
 						name: tab.name,
 						icon: tab.icon,
 						type: tab.type,
 						componentIndex: tab.componentIndex,
-						component: markRaw(debugModes[tab.componentIndex]),
+						component: component,
 						storage: tab.storage
 					});
 				}

@@ -130,5 +130,17 @@
     "edit": "Edit",
     "delete": "Delete",
     "test": "Test",
-    "add-new-server": "Add service"
+    "add-new-server": "Add service",
+    "choose-model": "Select model",
+    "system-prompt": "System prompt",
+    "tool-use": "Tool usage",
+    "websearch": "Web search",
+    "temperature-parameter": "Temperature parameter",
+    "context-length": "Context length",
+    "system-prompt.placeholder": "Enter the system prompt (e.g.: You are a professional front-end development assistant, answer in English)",
+    "precise": "Precise",
+    "moderate": "Balance",
+    "creative": "Creativity",
+    "single-dialog": "Single-round dialogue",
+    "multi-dialog": "Multi-turn conversation"
 }

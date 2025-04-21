@@ -130,5 +130,17 @@
     "edit": "编辑",
     "delete": "删除",
     "test": "测试",
-    "add-new-server": "添加服务"
+    "add-new-server": "添加服务",
+    "choose-model": "选择模型",
+    "system-prompt": "系统提示词",
+    "tool-use": "工具使用",
+    "websearch": "网络搜索",
+    "temperature-parameter": "温度参数",
+    "context-length": "上下文长度",
+    "system-prompt.placeholder": "输入系统提示词（例如：你是一个专业的前端开发助手，用中文回答）",
+    "precise": "精确",
+    "moderate": "平衡",
+    "creative": "创意",
+    "single-dialog": "单轮对话",
+    "multi-dialog": "多轮对话"
 }

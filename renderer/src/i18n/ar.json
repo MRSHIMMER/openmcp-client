@@ -130,5 +130,17 @@
     "edit": "تعديل",
     "delete": "حذف",
     "test": "اختبار",
-    "add-new-server": "إضافة خدمة"
+    "add-new-server": "إضافة خدمة",
+    "choose-model": "اختر النموذج",
+    "system-prompt": "كلمات توجيه النظام",
+    "tool-use": "استخدام الأداة",
+    "websearch": "بحث على الإنترنت",
+    "temperature-parameter": "معامل درجة الحرارة",
+    "context-length": "طول السياق",
+    "system-prompt.placeholder": "أدخل كلمة تلميح النظام (مثال: أنت مساعد محترف في تطوير الواجهات الأمامية، أجب باللغة العربية)",
+    "precise": "دقيق",
+    "moderate": "توازن",
+    "creative": "إبداع",
+    "single-dialog": "محادثة من جولة واحدة",
+    "multi-dialog": "محادثة متعددة الجولات"
 }

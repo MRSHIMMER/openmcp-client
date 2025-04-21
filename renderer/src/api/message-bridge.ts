@@ -59,11 +59,12 @@ class MessageBridge {
 		};
 
 		this.ws.onmessage = (event) => {
-			try {
+			try {				
 				const message = JSON.parse(event.data) as VSCodeMessage;
 				this.dispatchMessage(message);
 			} catch (err) {
 				console.error('Message parse error:', err);
+				console.log(event);
 			}
 		};
 

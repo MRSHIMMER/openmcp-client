@@ -130,5 +130,17 @@
     "edit": "編輯",
     "delete": "刪除",
     "test": "測試",
-    "add-new-server": "新增服務"
+    "add-new-server": "新增服務",
+    "choose-model": "選擇模型",
+    "system-prompt": "系統提示詞",
+    "tool-use": "工具使用",
+    "websearch": "網路搜尋",
+    "temperature-parameter": "溫度參數",
+    "context-length": "上下文長度",
+    "system-prompt.placeholder": "輸入系統提示詞（例如：你是一個專業的前端開發助手，用中文回答）",
+    "precise": "精確",
+    "moderate": "平衡",
+    "creative": "創意",
+    "single-dialog": "單輪對話",
+    "multi-dialog": "多輪對話"
 }
