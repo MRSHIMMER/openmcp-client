@@ -1,5 +1,5 @@
 {
-  "currentIndex": 2,
+  "currentIndex": 0,
   "tabs": [
     {
       "name": "交互测试",
@@ -42,24 +42,6 @@
           "contextLength": 10,
           "systemPrompt": ""
         }
-      }
-    },
-    {
-      "name": "工具",
-      "icon": "icon-tool",
-      "type": "blank",
-      "componentIndex": 2,
-      "storage": {
-        "currentToolName": "add"
-      }
-    },
-    {
-      "name": "资源",
-      "icon": "icon-file",
-      "type": "blank",
-      "componentIndex": 0,
-      "storage": {
-        "currentResourceName": "greeting"
       }
     }
   ]

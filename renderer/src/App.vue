@@ -29,7 +29,7 @@ bridge.addCommandListener('hello', data => {
 
 
 function initDebug() {
-	connectionArgs.commandString = 'uv run mcp run ../servers/main.py';
+	connectionArgs.commandString = 'uv run mcp run ../servers/bing-picture.py';
 	connectionMethods.current = 'STDIO';
 
 	setTimeout(async () => {
@@ -93,4 +93,9 @@ onMounted(() => {
 	display: flex;
 	justify-content: center;
 }
+
+.message-text img {
+    max-width: 98%;
+}
+
 </style>
