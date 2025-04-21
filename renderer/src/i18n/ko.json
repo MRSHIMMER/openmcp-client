@@ -142,5 +142,6 @@
     "moderate": "균형",
     "creative": "창의성",
     "single-dialog": "단일 라운드 대화",
-    "multi-dialog": "다중 턴 대화"
+    "multi-dialog": "다중 턴 대화",
+    "press-and-run": "테스트를 시작하려면 질문을 입력하세요"
 }

@@ -142,5 +142,6 @@
     "moderate": "Équilibre",
     "creative": "Créativité",
     "single-dialog": "Dialogue en un tour",
-    "multi-dialog": "Conversation multi-tours"
+    "multi-dialog": "Conversation multi-tours",
+    "press-and-run": "Tapez une question pour commencer le test"
 }

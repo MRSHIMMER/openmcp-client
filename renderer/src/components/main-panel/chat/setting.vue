@@ -11,15 +11,20 @@
 		<el-tooltip :content="t('system-prompt')" placement="top">
 			<div class="setting-button" :class="{ 'active': hasSystemPrompt }" size="small"
 				@click="showSystemPromptDialog = true">
-				<span class="iconfont icon-robot"></span>
+				<span class="iconfont icon-prompt"></span>
 			</div>
 		</el-tooltip>
 
 		<el-tooltip :content="t('tool-use')" placement="top">
-			<div class="setting-button" :class="{ 'active': toolActive }" size="small"
-				@click="toggleTools">
-				<span class="iconfont icon-tool"></span>
-			</div>
+			<div class="setting-button" :class="{ 'active': availableToolsNum > 0 }" size="small"
+			@click="toggleTools">
+			<span class="iconfont icon-tool badge-outer" v-if="availableToolsNum > 0">
+				<span class="badge-inner">
+					{{ availableToolsNum }}
+				</span>
+			</span>
+		</div>
+
 		</el-tooltip>
 
 		<el-tooltip :content="t('websearch')" placement="top">
@@ -195,9 +200,8 @@ const hasSystemPrompt = computed(() => {
 
 const showToolsDialog = ref(false);
 
-const toolActive = computed(() => {
-	const availableTools = tabStorage.settings.enableTools.filter(tool => tool.enabled);
-	return availableTools.length > 0;
+const availableToolsNum = computed(() => {
+	return tabStorage.settings.enableTools.filter(tool => tool.enabled).length;
 });
 
 // 修改 toggleTools 方法
@@ -414,5 +418,21 @@ const disableAllTools = () => {
 	font-family: var(--code-font-family);
 	font-size: 12px;
 	color: var(--el-text-color-primary);
+}
+
+.badge-outer {
+	position: relative;
+}
+
+.badge-inner {
+	position: absolute;
+	color: var(--foreground);
+	background-color: var(--main-color);
+	border-radius: 50%;
+	padding: 2px 6px;
+	font-size: 10px;
+	top: -16px;
+	right: -18px;
+	box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
 }
 </style>

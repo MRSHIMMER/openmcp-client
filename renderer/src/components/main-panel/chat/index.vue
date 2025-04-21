@@ -75,8 +75,10 @@
                                     </div>
                                     <span v-else>
                                         <div v-for="(item, index) in JSON.parse(message.toolResult)" :key="index">
-                                            <div v-if="item.type === 'text'" class="tool-text">{{ item.text }}</div>
-                                            <div v-else class="tool-other">{{ JSON.stringify(item) }}</div>
+                                            <el-scrollbar width="100%">
+                                                <div v-if="item.type === 'text'" class="tool-text">{{ item.text }}</div>
+                                                <div v-else class="tool-other">{{ JSON.stringify(item) }}</div>
+                                            </el-scrollbar>
                                         </div>
                                     </span>
                                 </div>
@@ -107,8 +109,17 @@
                 </div>
             </div>
         </el-scrollbar>
-        <div v-else>
-            
+        <div v-else class="chat-openmcp-icon">
+            <div>
+                <!-- <span class="iconfont icon-openmcp"></span> -->
+                <span>{{ t('press-and-run') }}
+
+                    <span style="padding: 5px 15px; border-radius: .5em; background-color: var(--background);">
+                        <span class="iconfont icon-send"></span>
+                    </span>
+
+                </span>
+            </div>
         </div>
 
         <el-footer class="chat-footer" ref="footerRef">
@@ -396,6 +407,30 @@ const formatToolArguments = (args: string) => {
     display: flex;
     position: relative;
     flex-direction: column;
+}
+
+.chat-openmcp-icon {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    height: 100%;
+    opacity: 0.75;
+    padding-top: 70px;
+}
+
+.chat-openmcp-icon > div {
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    font-size: 28px;
+}
+
+.chat-openmcp-icon > div > span {
+    margin-bottom: 23px;
+}
+
+.chat-openmcp-icon .iconfont {
+    font-size: 22px;
 }
 
 .message-list {

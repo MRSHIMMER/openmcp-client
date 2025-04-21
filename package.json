@@ -28,8 +28,8 @@
                 "title": "展示 OpenMCP",
                 "category": "openmcp",
                 "icon": {
-                    "light": "./icons/protocol.svg",
-                    "dark": "./icons/protocol.svg"
+                    "light": "./icons/light/protocol.svg",
+                    "dark": "./icons/dark/protocol.svg"
                 }
             }
         ],

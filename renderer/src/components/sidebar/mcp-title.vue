@@ -1,7 +1,9 @@
 <template>
 	<div class="mcp-title">
-		<div class="openmcp-logo" style="width: 48px; height: 48px; margin-top: 10px; margin-bottom: 15px; margin-right: 10px;"></div>
-		<!-- <div>OpenMCP</div> -->
+		<div class="simple-logo">
+			<span class="iconfont icon-openmcp"></span>
+			<span style="font-size: 12px;">openmcp</span>
+		</div>
 	</div>
 </template>
 
@@ -15,9 +17,20 @@ defineComponent({ name: 'mcp-title' });
 .mcp-title {
 	display: flex;
 	align-items: center;
+	padding: 5px 10px;
 }
 
-.mcp-title > div {
+.mcp-title>div {
 	font-size: 24px;
+}
+
+.simple-logo {
+	height: 73px;
+	display: flex;
+	flex-direction: column;
+}
+
+.simple-logo .iconfont {
+	font-size: 48px;
 }
 </style>

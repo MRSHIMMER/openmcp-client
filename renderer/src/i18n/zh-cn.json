@@ -142,5 +142,6 @@
     "moderate": "平衡",
     "creative": "创意",
     "single-dialog": "单轮对话",
-    "multi-dialog": "多轮对话"
+    "multi-dialog": "多轮对话",
+    "press-and-run": "键入问题以开始测试"
 }

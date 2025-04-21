@@ -142,5 +142,6 @@
     "moderate": "Balance",
     "creative": "Creativity",
     "single-dialog": "Single-round dialogue",
-    "multi-dialog": "Multi-turn conversation"
+    "multi-dialog": "Multi-turn conversation",
+    "press-and-run": "Type a question to start the test"
 }

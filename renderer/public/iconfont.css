@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 4870215 */
-  src: url('iconfont.woff2?t=1745222758998') format('woff2'),
-       url('iconfont.woff?t=1745222758998') format('woff'),
-       url('iconfont.ttf?t=1745222758998') format('truetype');
+  src: url('iconfont.woff2?t=1745241183941') format('woff2'),
+       url('iconfont.woff?t=1745241183941') format('woff'),
+       url('iconfont.ttf?t=1745241183941') format('truetype');
 }
 
 .iconfont {
@@ -11,6 +11,14 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-prompt:before {
+  content: "\eb50";
+}
+
+.icon-empty:before {
+  content: "\e698";
 }
 
 .icon-test:before {
