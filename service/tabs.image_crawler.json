@@ -1,27 +1,20 @@
 {
-  "currentIndex": 0,
+  "currentIndex": 1,
   "tabs": [
     {
-      "name": "交互测试",
-      "icon": "icon-robot",
+      "name": "资源",
+      "icon": "icon-file",
       "type": "blank",
-      "componentIndex": 3,
+      "componentIndex": 0,
+      "storage": {}
+    },
+    {
+      "name": "工具",
+      "icon": "icon-tool",
+      "type": "blank",
+      "componentIndex": 2,
       "storage": {
-        "messages": [],
-        "settings": {
-          "modelIndex": 8,
-          "enableTools": [
-            {
-              "name": "image_crawler",
-              "description": "根据关键词从指定搜索引擎爬取图片",
-              "enabled": true
-            }
-          ],
-          "enableWebSearch": false,
-          "temperature": 0.7,
-          "contextLength": 10,
-          "systemPrompt": ""
-        }
+        "currentToolName": "image_crawler"
       }
     }
   ]
