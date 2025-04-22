@@ -54,10 +54,16 @@
         "views": {
             "openmcp-sidebar": [
                 {
-                    "id": "webview-sidebar.view",
+                    "id": "openmcp.sidebar.connect",
                     "icon": "./icons/protocol.svg",
-                    "name": "chatbot",
-                    "type": "webview"
+                    "name": "MCP 连接",
+                    "type": "tree"
+                },
+                {
+                    "id": "openmcp.sidebar.help",
+                    "icon": "./icons/protocol.svg",
+                    "name": "入门与帮助",
+                    "type": "tree"
                 }
             ]
         }
