@@ -12,6 +12,7 @@ export const promptsManager = reactive<{
 export interface PromptStorage {
     currentPromptName: string;
     lastPromptGetResponse?: PromptsGetResponse;
+    formData: Record<string, number | boolean | string>;
 }
 
 export function parsePromptTemplate(template: string): {
