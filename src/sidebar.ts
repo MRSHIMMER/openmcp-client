@@ -1,27 +1,9 @@
 import * as vscode from 'vscode';
-import { getConnectionConfig, ISSEConnectionItem, IStdioConnectionItem } from './global';
-import { revealOpenMcpWebviewPanel } from './webview';
+import { getConnectionConfig, getWorkspaceConnectionConfig } from './global';
 
-export function registerSidebar(context: vscode.ExtensionContext) {
-
-    context.subscriptions.push(
-        vscode.commands.registerCommand('openmcp.sidebar.revealOpenMcpWebviewPanel', (item: IStdioConnectionItem | ISSEConnectionItem) => {
-            revealOpenMcpWebviewPanel(context, item.name, item);
-        })
-    )
-
-    // 注册 MCP 连接的 sidebar 视图
-    context.subscriptions.push(
-        vscode.window.registerTreeDataProvider('openmcp.sidebar.connect', new McpConnectProvider(context))
-    );
-
-    // 注册 入门与帮助的 sidebar 视图
-    context.subscriptions.push(
-        vscode.window.registerTreeDataProvider('openmcp.sidebar.help', new HelpProvider(context))
-    );
-}
-
-class McpConnectProvider implements vscode.TreeDataProvider<SidebarItem> {
+class McpWorkspaceConnectProvider implements vscode.TreeDataProvider<SidebarItem> {
+    private _onDidChangeTreeData: vscode.EventEmitter<SidebarItem | undefined | null | void> = new vscode.EventEmitter<SidebarItem | undefined | null | void>();
+    readonly onDidChangeTreeData: vscode.Event<SidebarItem | undefined | null | void> = this._onDidChangeTreeData.event;
 
     constructor(private context: vscode.ExtensionContext) {
     }
@@ -33,21 +15,42 @@ class McpConnectProvider implements vscode.TreeDataProvider<SidebarItem> {
 
     getChildren(element?: SidebarItem): Thenable<SidebarItem[]> {
         // TODO: 读取 configDir 下的所有文件，作为子节点
-        const connection = getConnectionConfig();
+        const connection = getWorkspaceConnectionConfig();
         const sidebarItems = connection.items.map((item, index) => {
-            return new SidebarItem(item.name, vscode.TreeItemCollapsibleState.None, {
-                command: 'openmcp.sidebar.revealOpenMcpWebviewPanel',
-                title: 'OpenMCP',
-                arguments: [item]
-            }, 'server');
+            return new SidebarItem(item.name, vscode.TreeItemCollapsibleState.None);
         })
         
         // 返回子节点
         return Promise.resolve(sidebarItems);
     }
+
+    // 添加 refresh 方法
+    public refresh(): void {
+        this._onDidChangeTreeData.fire();
+    }
 }
 
+// 在 registerSidebar 函数中注册 refresh 命令
+export function registerSidebar(context: vscode.ExtensionContext) {
+    const workspaceConnectionProvider = new McpWorkspaceConnectProvider(context);
 
+    // 注册 refresh 命令
+    context.subscriptions.push(
+        vscode.commands.registerCommand('openmcp.sidebar.workspace-connection.refresh', () => {
+            workspaceConnectionProvider.refresh();
+        })
+    );
+
+    // 注册 MCP 连接的 sidebar 视图
+    context.subscriptions.push(
+        vscode.window.registerTreeDataProvider('openmcp.sidebar-view.workspace-connection', workspaceConnectionProvider)
+    );
+
+    // 注册 入门与帮助的 sidebar 视图
+    context.subscriptions.push(
+        vscode.window.registerTreeDataProvider('openmcp.sidebar.help', new HelpProvider(context))
+    );
+}
 
 class HelpProvider implements vscode.TreeDataProvider<SidebarItem> {
 

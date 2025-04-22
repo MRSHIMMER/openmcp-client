@@ -31,6 +31,20 @@
                     "light": "./icons/light/protocol.svg",
                     "dark": "./icons/dark/protocol.svg"
                 }
+            },
+            {
+                "command": "openmcp.sidebar.workspace-connection.revealWebviewPanel",
+                "title": "展示 OpenMCP",
+                "category": "openmcp",
+                "icon": {
+                    "light": "./icons/light/protocol.svg",
+                    "dark": "./icons/dark/protocol.svg"
+                }
+            },
+            {
+                "command": "openmcp.sidebar.workspace-connection.refresh",
+                "title": "刷新",
+                "category": "openmcp"
             }
         ],
         "menus": {
@@ -39,6 +53,13 @@
                     "command": "openmcp.showOpenMCP",
                     "group": "navigation",
                     "when": "editorLangId == python || editorLangId == javascript || editorLangId == typescript || editorLangId == java || editorLangId == csharp"
+                }
+            ],
+            "view/item/context": [
+                {
+                    "command": "openmcp.sidebar.workspace-connection.revealWebviewPanel",
+                    "group": "navigation",
+                    "when": "view == openmcp.sidebar-view.workspace-connection"
                 }
             ]
         },
@@ -54,7 +75,7 @@
         "views": {
             "openmcp-sidebar": [
                 {
-                    "id": "openmcp.sidebar.connect",
+                    "id": "openmcp.sidebar-view.workspace-connection",
                     "icon": "./icons/protocol.svg",
                     "name": "MCP 连接",
                     "type": "tree"

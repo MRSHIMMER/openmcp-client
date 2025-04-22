@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as fspath from 'path';
-import { ISSEConnectionItem, IStdioConnectionItem, panels } from './global';
+import { getWorkspaceConnectionConfigItemByPath, ISSEConnectionItem, IStdioConnectionItem, panels, updateWorkspaceConnectionConfig } from './global';
 import * as OpenMCPService from '../resources/service';
 
 
@@ -92,7 +92,9 @@ export function revealOpenMcpWebviewPanel(
                 });
 
                 break;
-        
+            
+            case 'connect':
+                updateWorkspaceConnectionConfig(panelKey, data);
             default:
                 OpenMCPService.messageController(command, data, panel.webview);                
                 break;
