@@ -7,7 +7,7 @@
         </span>
 
 		<p>
-			OpenMCP Client 0.0.1 由 OpenMCP@<a href="https://www.zhihu.com/people/can-meng-zhong-de-che-xian">锦恢</a> 开发
+			OpenMCP Client 0.0.4 由 OpenMCP@<a href="https://www.zhihu.com/people/can-meng-zhong-de-che-xian">锦恢</a> 开发
 		</p>
 		
 		<p>
@@ -31,12 +31,12 @@
 				<span class="iconfont icon-QQ"></span>
 				加入 OpenMCP 技术群
 			</el-button>
-			<el-button type="primary"
+			<el-button type="success"
 				class="join-qq"
-				@click="gotoWebsite('https://zhuanlan.zhihu.com/p/1894785817186121106')"
+				@click="gotoWebsite('https://marketplace.visualstudio.com/items?itemName=kirigaya.openmcp&ssr=false#review-details')"
 			>
-				<span class="iconfont icon-send"></span>
-				OpenMCP 发布页
+				<span class="iconfont icon-star"></span>
+				为 OpenMCP 撰写评价！
 			</el-button>
 		</div>
 
