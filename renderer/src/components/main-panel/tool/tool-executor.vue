@@ -54,6 +54,7 @@ import type { FormInstance, FormRules } from 'element-plus';
 import { tabs } from '../panel';
 import { callTool, toolsManager, ToolStorage } from './tools';
 import { pinkLog } from '@/views/setting/util';
+import { getDefaultValue, normaliseJavascriptType } from '@/hook/mcp';
 
 defineComponent({ name: 'tool-executor' });
 
@@ -99,15 +100,6 @@ const formRules = computed<FormRules>(() => {
     return rules;
 });
 
-const getDefaultValue = (property: any) => {
-    if (property.type === 'number' || property.type === 'integer') {
-        return 0;
-    } else if (property.type === 'boolean') {
-        return false;
-    } else {
-        return '';
-    }
-};
 
 const initFormData = () => {
     // 初始化，根据输入的 inputSchema 校验
@@ -120,11 +112,8 @@ const initFormData = () => {
     
     Object.entries(currentTool.value.inputSchema.properties).forEach(([name, property]) => {
         newSchemaDataForm[name] = getDefaultValue(property);
-        let originType: string = typeof tabStorage.formData[name];
-        if (originType === 'number') {
-            originType = 'integer';
-        }
-        
+        const originType = normaliseJavascriptType(typeof tabStorage.formData[name]);
+
         if (tabStorage.formData[name] !== undefined && originType === property.type) {
             newSchemaDataForm[name] = tabStorage.formData[name]; 
         }
@@ -135,7 +124,6 @@ const initFormData = () => {
 
 const resetForm = () => {
     formRef.value?.resetFields();
-    tabStorage.lastToolCallResponse = undefined;
 };
 
 async function handleExecute() {

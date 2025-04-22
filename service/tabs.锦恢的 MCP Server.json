@@ -1,5 +1,5 @@
 {
-  "currentIndex": 1,
+  "currentIndex": 2,
   "tabs": [
     {
       "name": "交互测试",
@@ -133,10 +133,31 @@
           "content": [
             {
               "type": "text",
-              "text": "CityWeather(city_name_en='hangzhou', city_name_cn='杭州', city_code='101210101', temp='20.7', wd='', ws='', sd='93%', aqi='13', weather='阴')"
+              "text": "CityWeather(city_name_en='hangzhou', city_name_cn='杭州', city_code='101210101', temp='20.3', wd='', ws='', sd='89%', aqi='38', weather='阴')"
             }
           ],
           "isError": false
+        }
+      }
+    },
+    {
+      "name": "资源",
+      "icon": "icon-file",
+      "type": "blank",
+      "componentIndex": 0,
+      "storage": {
+        "currentResourceName": "greeting",
+        "formData": {
+          "name": "kirigaya"
+        },
+        "lastResourceReadResponse": {
+          "contents": [
+            {
+              "uri": "greeting://kirigaya",
+              "mimeType": "text/plain",
+              "text": "Hello, kirigaya!"
+            }
+          ]
         }
       }
     }
