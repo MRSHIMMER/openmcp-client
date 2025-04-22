@@ -3,26 +3,8 @@ import * as fs from 'fs';
 import * as fspath from 'path';
 
 import * as OpenMCPService from '../resources/service';
-
-function getWebviewContent(context: vscode.ExtensionContext, panel: vscode.WebviewPanel): string | undefined {
-    const viewRoot = fspath.join(context.extensionPath, 'resources', 'renderer');
-    const htmlIndexPath = fspath.join(viewRoot, 'index.html');
-    const html = fs.readFileSync(htmlIndexPath, { encoding: 'utf-8' })?.replace(/(<link.+?href="|<script.+?src="|<img.+?src=")(.+?)"/g, (m, $1, $2) => {
-        const absLocalPath = fspath.resolve(viewRoot, $2);        
-        const webviewUri = panel.webview.asWebviewUri(vscode.Uri.file(absLocalPath));
-
-        const replaceHref = $1 + webviewUri?.toString() + '"';
-        return replaceHref;
-    });
-    return html;
-}
-
-function getLaunchCWD(context: vscode.ExtensionContext, uri: vscode.Uri) {
-    // TODO: 启动上下文？
-    // 获取当前打开的项目的路径
-    const workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);
-    return workspaceFolder?.uri.fsPath || '';
-}
+import { getLaunchCWD, getWebviewContent } from './webview';
+import { panels } from './global';
 
 export function activate(context: vscode.ExtensionContext) {
     console.log('activate openmcp');
@@ -37,6 +19,12 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(
         vscode.commands.registerCommand('openmcp.showOpenMCP', async (uri: vscode.Uri) => {
 
+            if (panels.has(uri.fsPath)) {
+                const panel = panels.get(uri.fsPath);
+                panel?.reveal();
+                return;
+            }
+
             const panel = vscode.window.createWebviewPanel(
                 'OpenMCP',
                 'OpenMCP',
@@ -47,6 +35,8 @@ export function activate(context: vscode.ExtensionContext) {
                     enableFindWidget: true
                 }
             );
+
+            panels.set(uri.fsPath, panel);
 
             const cwd = getLaunchCWD(context, uri);
             // 获取 uri 相对于 cwd 的路径
@@ -93,7 +83,11 @@ export function activate(context: vscode.ExtensionContext) {
 
             });
 
-            panel.onDidDispose(() => {
+            panel.onDidDispose(async () => {
+                // 删除
+                panels.delete(uri.fsPath);
+
+                // 退出
                 panel.dispose();
             });
         })
