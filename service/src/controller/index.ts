@@ -11,7 +11,7 @@ import { spawnSync } from 'node:child_process';
 
 
 // TODO: 支持更多的 client
-let client: MCPClient | undefined = undefined;
+export let client: MCPClient | undefined = undefined;
 
 function tryGetRunCommandError(command: string, args: string[] = [], cwd?: string): string | null {
     try {

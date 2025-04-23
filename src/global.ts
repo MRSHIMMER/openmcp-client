@@ -10,6 +10,7 @@ export const panels = new Map<FsPath, vscode.WebviewPanel>();
 export interface IStdioConnectionItem {
     type: 'stdio';
     name: string;
+    version?: string;
     command: string;
     args: string[];
     cwd?: string;
@@ -20,14 +21,31 @@ export interface IStdioConnectionItem {
 export interface ISSEConnectionItem {
     type: 'sse';
     name: string;
+    version: string;
     url: string;
     oauth?: string;
     env?: { [key: string]: string };
     filePath?: string;
 }
 
+
+interface IStdioLaunchSignature {
+    type: 'stdio';
+    commandString: string;
+    cwd: string;
+}
+
+interface ISSELaunchSignature {
+    type:'sse';
+    url: string;
+    oauth: string;
+}
+
+export type IConnectionItem = IStdioConnectionItem | ISSEConnectionItem;
+export type ILaunchSigature = IStdioLaunchSignature | ISSELaunchSignature;
+
 export interface IConnectionConfig {
-    items: (IStdioConnectionItem | ISSEConnectionItem)[];
+    items: IConnectionItem[];
 }
 
 export const CONNECTION_CONFIG_NAME = 'openmcp_connection.json';
@@ -52,7 +70,13 @@ export function getConnectionConfig() {
     }
 
     const rawConnectionString = fs.readFileSync(connectionConfig, 'utf-8');
-    const connection = JSON.parse(rawConnectionString) as IConnectionConfig;
+    let connection;
+    try {
+        connection = JSON.parse(rawConnectionString) as IConnectionConfig;        
+    } catch (error) {
+        connection = { items: [] };
+    }
+    
     _connectionConfig = connection;
     return connection;
 }
@@ -77,7 +101,13 @@ export function getWorkspaceConnectionConfig() {
     }
 
     const rawConnectionString = fs.readFileSync(connectionConfig, 'utf-8');
-    const connection = JSON.parse(rawConnectionString) as IConnectionConfig;
+
+    let connection;
+    try {
+        connection = JSON.parse(rawConnectionString) as IConnectionConfig;        
+    } catch (error) {
+        connection = { items: [] };
+    }
 
     const workspacePath = getWorkspacePath();
     for (const item of connection.items) {
@@ -119,8 +149,6 @@ export function saveWorkspaceConnectionConfig(workspace: string) {
 interface ClientStdioConnectionItem {
     command: string;
     args: string[];
-    clientName: string;
-    clientVersion: string;
     connectionType: 'STDIO';
     cwd: string;
     env: { [key: string]: string };
@@ -128,14 +156,21 @@ interface ClientStdioConnectionItem {
 
 interface ClientSseConnectionItem {
     url: string;
-    clientName: string;
-    clientVersion: string;
     connectionType: 'SSE';
+    oauth: string;
     env: { [key: string]: string };
 }
 
-export function updateWorkspaceConnectionConfig(absPath: string, data: ClientStdioConnectionItem | ClientSseConnectionItem) {
-    const connectionItem = getWorkspaceConnectionConfigItemByPath(absPath);
+interface ServerInfo {
+    name: string;
+    version: string;
+}
+
+export function updateWorkspaceConnectionConfig(
+    absPath: string,
+    data: (ClientStdioConnectionItem | ClientSseConnectionItem) & { serverInfo: ServerInfo }
+) {
+    const connectionItem = getWorkspaceConnectionConfigItemByPath(absPath);    
     const workspaceConnectionConfig = getWorkspaceConnectionConfig();
 
     // 如果存在，删除老的 connectionItem
@@ -148,14 +183,18 @@ export function updateWorkspaceConnectionConfig(absPath: string, data: ClientStd
 
     if (data.connectionType === 'STDIO') {
         const connectionItem: IStdioConnectionItem = {
-            type:'stdio',
-            name: data.clientName,
+            type: 'stdio',
+            name: data.serverInfo.name,
+            version: data.serverInfo.version,
             command: data.command,
             args: data.args,
             cwd: data.cwd.replace(/\\/g, '/'),
             env: data.env,
             filePath: absPath.replace(/\\/g, '/')
         };
+
+        console.log('get connectionItem: ', connectionItem);
+        
 
         // 插入到第一个
         workspaceConnectionConfig.items.unshift(connectionItem);
@@ -164,11 +203,24 @@ export function updateWorkspaceConnectionConfig(absPath: string, data: ClientStd
         vscode.commands.executeCommand('openmcp.sidebar.workspace-connection.refresh');
 
     } else {
+        const connectionItem: ISSEConnectionItem = {
+            type: 'sse',
+            name: data.serverInfo.name,
+            version: data.serverInfo.version,
+            url: data.url,
+            oauth: data.oauth,
+            filePath: absPath.replace(/\\/g, '/')
+        };
 
+        // 插入到第一个
+        workspaceConnectionConfig.items.unshift(connectionItem);
+        const workspacePath = getWorkspacePath();
+        saveWorkspaceConnectionConfig(workspacePath);
+        vscode.commands.executeCommand('openmcp.sidebar.workspace-connection.refresh');
     }
 }
 
-function normaliseConnectionFilePath(item: IStdioConnectionItem | ISSEConnectionItem, workspace: string) {
+function normaliseConnectionFilePath(item: IConnectionItem, workspace: string) {
     if (item.filePath) {
         if (item.filePath.startsWith('{workspace}')) {
             return item.filePath.replace('{workspace}', workspace).replace(/\\/g, '/');

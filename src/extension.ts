@@ -20,7 +20,7 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(
         vscode.commands.registerCommand('openmcp.sidebar.workspace-connection.revealWebviewPanel', (view: ConnectionViewItem) => {
             const item = view.item;
-            revealOpenMcpWebviewPanel(context, item.name, item);
+            revealOpenMcpWebviewPanel(context, item.filePath || item.name, item);
         })
     );
     

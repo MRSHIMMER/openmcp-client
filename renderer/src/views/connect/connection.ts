@@ -2,6 +2,8 @@ import { useMessageBridge } from '@/api/message-bridge';
 import { reactive } from 'vue';
 import { pinkLog } from '../setting/util';
 import { ElMessage } from 'element-plus';
+import { ILaunchSigature } from '@/hook/type';
+import { url } from 'inspector';
 
 export const connectionMethods = reactive({
     current: 'STDIO',
@@ -19,6 +21,9 @@ export const connectionMethods = reactive({
 
 export const connectionArgs = reactive({
     commandString: '',
+    cwd: '',
+    env: {},
+    oauth: '',
     urlString: ''
 });
 
@@ -96,7 +101,7 @@ export function doConnect() {
                 connectionType: 'STDIO',
                 command: command,
                 args: commandComponents,
-                clientName: 'openmcp.connect.stdio.' + command,
+                clientName: 'openmcp.connect.stdio',
                 clientVersion: '0.0.1'
             }
 
@@ -134,17 +139,38 @@ export async function launchConnect(option: { updateCommandString?: boolean } = 
     } = option;
 
     connectionMethods.current = 'STDIO';
-    const bridge = useMessageBridge();
 
     pinkLog('请求启动参数');
-    const { commandString, cwd } = await getLaunchCommand();
+    const connectionItem = await getLaunchSignature();
 
-    if (updateCommandString) {
-        connectionArgs.commandString = commandString;
-        if (connectionArgs.commandString.length === 0) {
-            return;
+    if (connectionItem.type === 'stdio') {
+        if (updateCommandString) {
+            connectionArgs.commandString = connectionItem.commandString;
+            connectionArgs.cwd = connectionItem.cwd;
+            connectionArgs.env = {};
+
+            if (connectionArgs.commandString.length === 0) {
+                return;
+            }
         }
+        
+        await launchStdio();
+
+    } else {
+        if (updateCommandString) {
+            connectionArgs.urlString = connectionItem.url;
+            if (connectionArgs.urlString.length === 0) {
+                return;
+            }
+        }
+
+        await launchSSE();
+
     }
+}
+
+async function launchStdio() {
+    const bridge = useMessageBridge();
 
     return new Promise<void>((resolve, reject) => {
         // 监听 connect
@@ -157,6 +183,27 @@ export async function launchConnect(option: { updateCommandString?: boolean } = 
                 const res = await getServerVersion() as { name: string, version: string };
                 connectionResult.serverInfo.name = res.name || '';
                 connectionResult.serverInfo.version = res.version || '';
+
+                // 同步信息到 vscode
+                const commandComponents = connectionArgs.commandString.split(/\s+/g);
+                const command = commandComponents[0];
+                commandComponents.shift();
+
+                const clientStdioConnectionItem = {
+                    serverInfo: connectionResult.serverInfo,
+                    connectionType: 'STDIO',
+                    name: 'openmcp.connect.stdio',
+                    command: command,
+                    args: commandComponents,
+                    cwd: connectionArgs.cwd,
+                    env: connectionArgs.env,
+                };
+
+                bridge.postMessage({
+                    command: 'vscode/update-connection-sigature',
+                    data: JSON.parse(JSON.stringify(clientStdioConnectionItem))
+                });
+
             } else {
                 ElMessage({
                     type: 'error',
@@ -176,8 +223,61 @@ export async function launchConnect(option: { updateCommandString?: boolean } = 
             connectionType: 'STDIO',
             command: command,
             args: commandComponents,
-            cwd: cwd,
-            clientName: 'openmcp.connect.stdio.' + command,
+            cwd: connectionArgs.cwd,
+            clientName: 'openmcp.connect.stdio',
+            clientVersion: '0.0.1'
+        };
+
+        bridge.postMessage({
+            command: 'connect',
+            data: connectOption
+        });
+    });
+}
+
+async function launchSSE() {
+    const bridge = useMessageBridge();
+
+    return new Promise<void>((resolve, reject) => {
+        // 监听 connect
+        bridge.addCommandListener('connect', async data => {
+            const { code, msg } = data;
+            connectionResult.success = (code === 200);
+            connectionResult.logString = msg;
+
+            if (code === 200) {
+                const res = await getServerVersion() as { name: string, version: string };
+                connectionResult.serverInfo.name = res.name || '';
+                connectionResult.serverInfo.version = res.version || '';
+                
+                // 同步信息到 vscode
+                const clientSseConnectionItem = {
+                    serverInfo: connectionResult.serverInfo,
+                    connectionType: 'SSE',
+                    name: 'openmcp.connect.sse',
+                    url: connectionArgs.urlString,
+                    oauth: connectionArgs.oauth,
+                    env: connectionArgs.env
+                };
+                bridge.postMessage({
+                    command: 'vscode/update-connection-sigature',
+                    data: JSON.parse(JSON.stringify(clientSseConnectionItem))
+                });
+
+            } else {
+                ElMessage({
+                    type: 'error',
+                    message: msg
+                });
+            }
+
+            resolve(void 0);
+        }, { once: true });
+
+        const connectOption: MCPOptions = {
+            connectionType: 'SSE',
+            url: connectionArgs.urlString,
+            clientName: 'openmcp.connect.sse',
             clientVersion: '0.0.1'
         };
 
@@ -189,19 +289,20 @@ export async function launchConnect(option: { updateCommandString?: boolean } = 
 }
 
 
-function getLaunchCommand() {
-    return new Promise<any>((resolve, reject) => {
+
+function getLaunchSignature() {
+    return new Promise<ILaunchSigature>((resolve, reject) => {
         // 与 vscode 进行同步
         const bridge = useMessageBridge();
 
-        bridge.addCommandListener('vscode/launch-command', data => {
+        bridge.addCommandListener('vscode/launch-signature', data => {
             pinkLog('收到启动参数');
             resolve(data.msg);
 
         }, { once: true });
 
         bridge.postMessage({
-            command: 'vscode/launch-command',
+            command: 'vscode/launch-signature',
             data: {}
         });
     })

@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as fspath from 'path';
-import { getWorkspaceConnectionConfigItemByPath, ISSEConnectionItem, IStdioConnectionItem, panels, updateWorkspaceConnectionConfig } from './global';
+import { IConnectionItem, ILaunchSigature, panels, updateWorkspaceConnectionConfig } from './global';
 import * as OpenMCPService from '../resources/service';
 
 
@@ -25,11 +25,10 @@ export function getLaunchCWD(context: vscode.ExtensionContext, uri: vscode.Uri) 
     return workspaceFolder?.uri.fsPath || '';
 }
 
-
 export function revealOpenMcpWebviewPanel(
     context: vscode.ExtensionContext,
     panelKey: string,
-    option: (IStdioConnectionItem | ISSEConnectionItem) = {
+    option: IConnectionItem = {
         type: 'stdio',
         name: 'OpenMCP',
         command: 'mcp',
@@ -68,33 +67,35 @@ export function revealOpenMcpWebviewPanel(
 
         // 拦截消息，注入额外信息
         switch (command) {
-            case 'vscode/launch-command':
-                const laucnResultMessage = option.type === 'stdio' ?
+            case 'vscode/launch-signature':
+                const launchResultMessage: ILaunchSigature = option.type === 'stdio' ?
                     {
                         type: 'stdio',
                         commandString: option.command + ' ' + option.args.join(' '),
-                        cwd: option.cwd
+                        cwd: option.cwd || ''
                     } :
                     {
                         type: 'sse',
                         url: option.url,
-                        oauth: option.oauth
+                        oauth: option.oauth || ''
                     };
             
                 const launchResult = {
                     code: 200,
-                    msg: laucnResultMessage
+                    msg: launchResultMessage
                 };
 
                 panel.webview.postMessage({
-                    command: 'vscode/launch-command',
+                    command: 'vscode/launch-signature',
                     data: launchResult
                 });
 
                 break;
             
-            case 'connect':
+            case 'vscode/update-connection-sigature':
                 updateWorkspaceConnectionConfig(panelKey, data);
+                break;
+
             default:
                 OpenMCPService.messageController(command, data, panel.webview);                
                 break;

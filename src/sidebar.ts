@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { getConnectionConfig, getWorkspaceConnectionConfig, ISSEConnectionItem, IStdioConnectionItem } from './global';
+import { getConnectionConfig, getWorkspaceConnectionConfig, IConnectionItem } from './global';
 
 class McpWorkspaceConnectProvider implements vscode.TreeDataProvider<ConnectionViewItem> {
     private _onDidChangeTreeData: vscode.EventEmitter<ConnectionViewItem | undefined | null | void> = new vscode.EventEmitter<ConnectionViewItem | undefined | null | void>();
@@ -18,20 +18,12 @@ class McpWorkspaceConnectProvider implements vscode.TreeDataProvider<ConnectionV
         const connection = getWorkspaceConnectionConfig();
         const sidebarItems = connection.items.map((item, index) => {
             // 连接的名字
-            const itemName = this.displayName(item);
+            const itemName = `${item.name} (${item.type})`
             return new ConnectionViewItem(itemName, vscode.TreeItemCollapsibleState.None, item, 'server');
         })
         
         // 返回子节点
         return Promise.resolve(sidebarItems);
-    }
-
-    public displayName(item: IStdioConnectionItem | ISSEConnectionItem) {
-        if (item.filePath) {
-            const filename = item.filePath.split('/').pop();
-            return `${filename} (${item.type})`;
-        }
-        return item.name;
     }
 
     // 添加 refresh 方法
@@ -121,7 +113,7 @@ export class ConnectionViewItem extends vscode.TreeItem {
     constructor(
         public readonly label: string,
         public readonly collapsibleState: vscode.TreeItemCollapsibleState,
-        public readonly item: IStdioConnectionItem | ISSEConnectionItem,
+        public readonly item: IConnectionItem,
         public readonly icon?: string
     ) {
         super(label, collapsibleState);

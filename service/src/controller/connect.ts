@@ -3,10 +3,9 @@ import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
 import { Implementation } from "@modelcontextprotocol/sdk/types";
-import { Writable, Stream } from "node:stream";
 
 // 定义连接类型
-type ConnectionType = 'STDIO' | 'SSE';
+type ConnectionType = 'STDIO' | 'SSE';  
 
 type McpTransport = StdioClientTransport | SSEClientTransport;
 export type IServerVersion = Implementation | undefined;
