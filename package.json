@@ -34,7 +34,7 @@
             },
             {
                 "command": "openmcp.sidebar.workspace-connection.revealWebviewPanel",
-                "title": "展示 OpenMCP",
+                "title": "连接",
                 "category": "openmcp",
                 "icon": {
                     "light": "./icons/light/protocol.svg",
@@ -58,8 +58,11 @@
             "view/item/context": [
                 {
                     "command": "openmcp.sidebar.workspace-connection.revealWebviewPanel",
-                    "group": "navigation",
-                    "when": "view == openmcp.sidebar-view.workspace-connection"
+                    "group": "inline@1",
+                    "when": "view == openmcp.sidebar-view.workspace-connection",
+                    "args": {
+                        "view": "${viewItem}"
+                    }
                 }
             ]
         },
@@ -77,7 +80,7 @@
                 {
                     "id": "openmcp.sidebar-view.workspace-connection",
                     "icon": "./icons/protocol.svg",
-                    "name": "MCP 连接",
+                    "name": "MCP 连接 (工作区)",
                     "type": "tree"
                 },
                 {

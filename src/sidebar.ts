@@ -1,27 +1,37 @@
 import * as vscode from 'vscode';
-import { getConnectionConfig, getWorkspaceConnectionConfig } from './global';
+import { getConnectionConfig, getWorkspaceConnectionConfig, ISSEConnectionItem, IStdioConnectionItem } from './global';
 
-class McpWorkspaceConnectProvider implements vscode.TreeDataProvider<SidebarItem> {
-    private _onDidChangeTreeData: vscode.EventEmitter<SidebarItem | undefined | null | void> = new vscode.EventEmitter<SidebarItem | undefined | null | void>();
-    readonly onDidChangeTreeData: vscode.Event<SidebarItem | undefined | null | void> = this._onDidChangeTreeData.event;
+class McpWorkspaceConnectProvider implements vscode.TreeDataProvider<ConnectionViewItem> {
+    private _onDidChangeTreeData: vscode.EventEmitter<ConnectionViewItem | undefined | null | void> = new vscode.EventEmitter<ConnectionViewItem | undefined | null | void>();
+    readonly onDidChangeTreeData: vscode.Event<ConnectionViewItem | undefined | null | void> = this._onDidChangeTreeData.event;
 
     constructor(private context: vscode.ExtensionContext) {
     }
 
     // 实现 TreeDataProvider 接口
-    getTreeItem(element: SidebarItem): vscode.TreeItem {
+    getTreeItem(element: ConnectionViewItem): vscode.TreeItem {
         return element;
     }
 
-    getChildren(element?: SidebarItem): Thenable<SidebarItem[]> {
+    getChildren(element?: ConnectionViewItem): Thenable<ConnectionViewItem[]> {
         // TODO: 读取 configDir 下的所有文件，作为子节点
         const connection = getWorkspaceConnectionConfig();
         const sidebarItems = connection.items.map((item, index) => {
-            return new SidebarItem(item.name, vscode.TreeItemCollapsibleState.None);
+            // 连接的名字
+            const itemName = this.displayName(item);
+            return new ConnectionViewItem(itemName, vscode.TreeItemCollapsibleState.None, item, 'server');
         })
         
         // 返回子节点
         return Promise.resolve(sidebarItems);
+    }
+
+    public displayName(item: IStdioConnectionItem | ISSEConnectionItem) {
+        if (item.filePath) {
+            const filename = item.filePath.split('/').pop();
+            return `${filename} (${item.type})`;
+        }
+        return item.name;
     }
 
     // 添加 refresh 方法
@@ -103,6 +113,18 @@ class SidebarItem extends vscode.TreeItem {
     ) {
         super(label, collapsibleState);
         this.command = command;
+        this.iconPath = new vscode.ThemeIcon(icon || 'circle-outline');
+    }
+}
+
+export class ConnectionViewItem extends vscode.TreeItem {
+    constructor(
+        public readonly label: string,
+        public readonly collapsibleState: vscode.TreeItemCollapsibleState,
+        public readonly item: IStdioConnectionItem | ISSEConnectionItem,
+        public readonly icon?: string
+    ) {
+        super(label, collapsibleState);
         this.iconPath = new vscode.ThemeIcon(icon || 'circle-outline');
     }
 }

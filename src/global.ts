@@ -82,10 +82,10 @@ export function getWorkspaceConnectionConfig() {
     const workspacePath = getWorkspacePath();
     for (const item of connection.items) {
         if (item.filePath && item.filePath.startsWith('{workspace}')) {
-            item.filePath = item.filePath.replace('{workspace}', workspacePath).replace('\\', '/');
+            item.filePath = item.filePath.replace('{workspace}', workspacePath).replace(/\\/g, '/');
         }
         if (item.type === 'stdio' && item.cwd && item.cwd.startsWith('{workspace}')) {
-            item.cwd = item.cwd.replace('{workspace}', workspacePath).replace('\\', '/');
+            item.cwd = item.cwd.replace('{workspace}', workspacePath).replace(/\\/g, '/');
         }
     }
 
@@ -106,14 +106,14 @@ export function saveWorkspaceConnectionConfig(workspace: string) {
 
     const workspacePath = getWorkspacePath();
     for (const item of connectionConfig.items) {
-        if (item.filePath && item.filePath.startsWith(workspacePath)) {
-            item.filePath = item.filePath.replace(workspacePath, '{workspace}').replace('\\', '/');
+        if (item.filePath && item.filePath.replace(/\\/g, '/').startsWith(workspacePath)) {
+            item.filePath = item.filePath.replace(workspacePath, '{workspace}').replace(/\\/g, '/');
         }
-        if (item.type ==='stdio' && item.cwd && item.cwd.startsWith(workspacePath)) {
-            item.cwd = item.cwd.replace(workspacePath, '{workspace}').replace('\\', '/');
+        if (item.type ==='stdio' && item.cwd && item.cwd.replace(/\\/g, '/').startsWith(workspacePath)) {
+            item.cwd = item.cwd.replace(workspacePath, '{workspace}').replace(/\\/g, '/');
         }
     }
-    fs.writeFileSync(connectionConfigPath, JSON.stringify(connectionConfig), 'utf-8');
+    fs.writeFileSync(connectionConfigPath, JSON.stringify(connectionConfig, null, 2), 'utf-8');
 }
 
 interface ClientStdioConnectionItem {
@@ -152,9 +152,9 @@ export function updateWorkspaceConnectionConfig(absPath: string, data: ClientStd
             name: data.clientName,
             command: data.command,
             args: data.args,
-            cwd: data.cwd.replace('\\', '/'),
+            cwd: data.cwd.replace(/\\/g, '/'),
             env: data.env,
-            filePath: absPath.replace('\\', '/')
+            filePath: absPath.replace(/\\/g, '/')
         };
 
         // 插入到第一个
@@ -162,7 +162,7 @@ export function updateWorkspaceConnectionConfig(absPath: string, data: ClientStd
         const workspacePath = getWorkspacePath();
         saveWorkspaceConnectionConfig(workspacePath);
         vscode.commands.executeCommand('openmcp.sidebar.workspace-connection.refresh');
-        
+
     } else {
 
     }
@@ -171,9 +171,9 @@ export function updateWorkspaceConnectionConfig(absPath: string, data: ClientStd
 function normaliseConnectionFilePath(item: IStdioConnectionItem | ISSEConnectionItem, workspace: string) {
     if (item.filePath) {
         if (item.filePath.startsWith('{workspace}')) {
-            return item.filePath.replace('{workspace}', workspace).replace('\\', '/');
+            return item.filePath.replace('{workspace}', workspace).replace(/\\/g, '/');
         } else {
-            return item.filePath.replace('\\', '/');
+            return item.filePath.replace(/\\/g, '/');
         }
     }
 
@@ -182,7 +182,7 @@ function normaliseConnectionFilePath(item: IStdioConnectionItem | ISSEConnection
 
 export function getWorkspacePath() {
     const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
-    return (workspaceFolder?.uri.fsPath || '').replace('\\', '/');
+    return (workspaceFolder?.uri.fsPath || '').replace(/\\/g, '/');
 }
 
 /**
@@ -193,7 +193,7 @@ export function getWorkspaceConnectionConfigItemByPath(absPath: string) {
     const workspacePath = getWorkspacePath();
     const workspaceConnectionConfig = getWorkspaceConnectionConfig();
 
-    const normaliseAbsPath = absPath.replace('\\', '/');
+    const normaliseAbsPath = absPath.replace(/\\/g, '/');
     for (const item of workspaceConnectionConfig.items) {
         const filePath = normaliseConnectionFilePath(item, workspacePath);
         if (filePath === normaliseAbsPath) {

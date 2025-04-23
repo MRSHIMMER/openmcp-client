@@ -3,7 +3,7 @@ import * as fspath from 'path';
 
 import * as OpenMCPService from '../resources/service';
 import { getLaunchCWD, revealOpenMcpWebviewPanel } from './webview';
-import { registerSidebar } from './sidebar';
+import { ConnectionViewItem, registerSidebar } from './sidebar';
 import { getWorkspaceConnectionConfigItemByPath, ISSEConnectionItem, IStdioConnectionItem } from './global';
 
 export function activate(context: vscode.ExtensionContext) {
@@ -18,7 +18,8 @@ export function activate(context: vscode.ExtensionContext) {
     registerSidebar(context);
 
     context.subscriptions.push(
-        vscode.commands.registerCommand('openmcp.sidebar.workspace-connection.revealWebviewPanel', (item: IStdioConnectionItem | ISSEConnectionItem) => {
+        vscode.commands.registerCommand('openmcp.sidebar.workspace-connection.revealWebviewPanel', (view: ConnectionViewItem) => {
+            const item = view.item;
             revealOpenMcpWebviewPanel(context, item.name, item);
         })
     );
