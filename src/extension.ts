@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import * as fspath from 'path';
 
 import * as OpenMCPService from '../resources/service';
-import { getLaunchCWD, revealOpenMcpWebviewPanel } from './webview';
+import { getDefaultLanunchSigature, getLaunchCWD, revealOpenMcpWebviewPanel } from './webview';
 import { ConnectionViewItem, registerSidebar } from './sidebar';
 import { getWorkspaceConnectionConfigItemByPath, ISSEConnectionItem, IStdioConnectionItem } from './global';
 
@@ -31,19 +31,19 @@ export function activate(context: vscode.ExtensionContext) {
             if (!connectionItem) {
                 // 项目不存在连接信息
                 const cwd = getLaunchCWD(context, uri);
+
+                const sigature = getDefaultLanunchSigature(uri.fsPath, cwd);
                 
-                // 获取 uri 相对于 cwd 的路径
-                const relativePath = fspath.relative(cwd, uri.fsPath);
-    
-                // TODO: 实现从 connection.json 中读取配置，然后启动对应的 connection
-                const command = 'mcp';
-                const args = ['run', relativePath];
-    
+                if (!sigature) {
+                    vscode.window.showErrorMessage('OpenMCP: 无法获取启动参数');
+                    return;
+                }
+
                 revealOpenMcpWebviewPanel(context, uri.fsPath, {
                     type: 'stdio',
                     name: 'OpenMCP',
-                    command,
-                    args,
+                    command: sigature.command,
+                    args: sigature.args,
                     cwd
                 });
             } else {

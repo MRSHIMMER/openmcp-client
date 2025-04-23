@@ -113,3 +113,19 @@ export function revealOpenMcpWebviewPanel(
 
     return panel;
 }
+
+export function getDefaultLanunchSigature(path: string, cwd: string) {
+    const relativePath = fspath.relative(cwd, path);
+
+    if (relativePath.endsWith('.py')) {
+        return {
+            command: 'mcp',
+            args: ['run', relativePath]
+        };
+    } else if (relativePath.endsWith('.js')) {
+        return {
+            command:'node',
+            args: [relativePath]
+        };
+    }
+}
