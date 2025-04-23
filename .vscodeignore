@@ -19,3 +19,6 @@ servers/**
 scripts/**
 *.sh
 *.ps1
+
+.editorconfig
+.gitattributes
