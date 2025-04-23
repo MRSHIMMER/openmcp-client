@@ -7,3 +7,5 @@ node_modules
 resources
 .DS_Store
 .exe
+
+.idea
