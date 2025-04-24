@@ -144,5 +144,6 @@
     "single-dialog": "محادثة من جولة واحدة",
     "multi-dialog": "محادثة متعددة الجولات",
     "press-and-run": "اكتب سؤالاً لبدء الاختبار",
-    "connect-sigature": "توقيع الاتصال"
+    "connect-sigature": "توقيع الاتصال",
+    "finish-refresh": "تم التحديث"
 }

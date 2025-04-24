@@ -1,5 +1,6 @@
 <template>
-	<div class="connection-container">
+	<el-scrollbar>
+		<div class="connection-container">
 		<div class="connect-panel-container">
 			<ConnectionMethod></ConnectionMethod>
 			<ConnectionArgs></ConnectionArgs>
@@ -18,6 +19,7 @@
 			<ConnectionLog></ConnectionLog>
 		</div>
 	</div>
+	</el-scrollbar>
 
 </template>
 

@@ -23,3 +23,5 @@ pnpm-debug.log*
 *.sw?
 config.json
 setting.json
+
+tabs.example-servers/puppeteer.json

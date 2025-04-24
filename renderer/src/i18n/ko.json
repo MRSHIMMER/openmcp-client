@@ -144,5 +144,6 @@
     "single-dialog": "단일 라운드 대화",
     "multi-dialog": "다중 턴 대화",
     "press-and-run": "테스트를 시작하려면 질문을 입력하세요",
-    "connect-sigature": "연결 서명"
+    "connect-sigature": "연결 서명",
+    "finish-refresh": "새로 고침 완료"
 }

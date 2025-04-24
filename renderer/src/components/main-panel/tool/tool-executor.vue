@@ -16,7 +16,7 @@
                         v-if="property.type === 'string'" 
                         v-model="tabStorage.formData[name]"
                         type="text"
-                        :placeholder="t('enter') + ' ' + (property.title || name)"
+                        :placeholder="property.description || t('enter') + ' ' + (property.title || name)"
                         @keydown.enter.prevent="handleExecute"
                     />
 
@@ -24,13 +24,22 @@
                         v-else-if="property.type === 'number' || property.type === 'integer'" 
                         v-model="tabStorage.formData[name]"
                         controls-position="right"
-                        :placeholder="t('enter') + ' ' + (property.title || name)"
+                        :placeholder="property.description || t('enter') + ' ' + (property.title || name)"
                         @keydown.enter.prevent="handleExecute" 
                     />
 
                     <el-switch 
-                        v-else-if="property.type === 'boolean'" 
+                        v-else-if="property.type === 'boolean'"
+                        active-text="true"
+                        inactive-text="false"
                         v-model="tabStorage.formData[name]"
+                    />
+
+
+                    <k-input-object
+                        v-else-if="property.type === 'object'"
+                        v-model="tabStorage.formData[name]"
+                        :placeholder="property.description || t('enter') + ' ' + (property.title || name)"
                     />
                 </el-form-item>
             </template>
@@ -53,8 +62,9 @@ import { useI18n } from 'vue-i18n';
 import type { FormInstance, FormRules } from 'element-plus';
 import { tabs } from '../panel';
 import { callTool, toolsManager, ToolStorage } from './tools';
-import { pinkLog } from '@/views/setting/util';
 import { getDefaultValue, normaliseJavascriptType } from '@/hook/mcp';
+
+import KInputObject from '@/components/k-input-object/index.vue';
 
 defineComponent({ name: 'tool-executor' });
 
@@ -74,12 +84,16 @@ if (!tabStorage.formData) {
     tabStorage.formData = {};
 }
 
+console.log(tabStorage.formData);
+
+
 const formRef = ref<FormInstance>();
 const loading = ref(false);
 
 const currentTool = computed(() => {
     return toolsManager.tools.find(tool => tool.name === tabStorage.currentToolName);
 });
+
 
 const formRules = computed<FormRules>(() => {
     const rules: FormRules = {};
@@ -108,11 +122,13 @@ const initFormData = () => {
 
     if (!currentTool.value?.inputSchema?.properties) return;
 
-    const newSchemaDataForm: Record<string, number | boolean | string> = {};
+    const newSchemaDataForm: Record<string, number | boolean | string | object> = {};
+
+    console.log(currentTool.value.inputSchema.properties);
     
     Object.entries(currentTool.value.inputSchema.properties).forEach(([name, property]) => {
         newSchemaDataForm[name] = getDefaultValue(property);
-        const originType = normaliseJavascriptType(typeof tabStorage.formData[name]);
+        const originType = normaliseJavascriptType(typeof tabStorage.formData[name]);        
 
         if (tabStorage.formData[name] !== undefined && originType === property.type) {
             newSchemaDataForm[name] = tabStorage.formData[name]; 
@@ -145,4 +161,21 @@ watch(() => tabStorage.currentToolName, () => {
     border-radius: .5em;
     margin-bottom: 15px;
 }
+
+.tool-executor-container {
+
+}
+
+.tool-executor-container .el-switch .el-switch__action {
+    background-color: var(--main-color);
+}
+
+.tool-executor-container .el-switch.is-checked .el-switch__action {
+    background-color: var(--sidebar);
+}
+
+.tool-executor-container .el-switch__core {
+    border: 1px solid var(--main-color) !important;
+}
+
 </style>

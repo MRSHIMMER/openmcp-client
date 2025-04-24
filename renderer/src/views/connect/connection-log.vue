@@ -1,7 +1,7 @@
 <template>
 	<div class="connection-option">
 		<span>{{ t('log') }}</span>
-		<el-scrollbar height="100%">
+		<el-scrollbar height="90%">
 			<div class="output-content">
 				<div v-for="(log, index) in connectionResult.logString" :key="index" :class="log.type">
 					<span class="log-message">{{ log.message }}</span>
@@ -24,7 +24,7 @@ const { t } = useI18n();
 
 <style>
 .connection-option {
-	height: 100%;
+	height: 90%;
 }
 
 .connection-option .el-scrollbar__view {

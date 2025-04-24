@@ -105,17 +105,3 @@ B <--mcp--> m(MCP Server)
 ```
 
 and just press f5, いただきます
-
-## Flowchart
-
-
-```mermaid
-flowchart TB
-    A[用户输入问题] --> B[选择工具]
-    B --> C[大模型处理]
-    C --> D{是否有tool use?}
-    D -- 否 --> E[返回 content]
-    D -- 是 --> F[执行工具]
-    F --> G[返回工具执行结果]
-    G --> C
-```

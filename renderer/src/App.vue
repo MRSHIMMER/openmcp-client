@@ -15,7 +15,7 @@ import MainPanel from '@/components/main-panel/index.vue';
 import { setDefaultCss } from './hook/css';
 import { greenLog, pinkLog } from './views/setting/util';
 import { acquireVsCodeApi, useMessageBridge } from './api/message-bridge';
-import { connectionArgs, connectionMethods, connectionResult, doConnect, getServerVersion, launchConnect } from './views/connect/connection';
+import { connectionArgs, connectionMethods, doConnect, launchConnect } from './views/connect/connection';
 import { loadSetting } from './hook/setting';
 import { loadPanels } from './hook/panel';
 
@@ -29,7 +29,7 @@ bridge.addCommandListener('hello', data => {
 
 
 function initDebug() {
-	connectionArgs.commandString = 'uv run mcp run ../servers/main.py';
+	connectionArgs.commandString = 'node C:/Users/K/code/servers/src/puppeteer/dist/index.js';
 	connectionMethods.current = 'STDIO';
 
 	setTimeout(async () => {

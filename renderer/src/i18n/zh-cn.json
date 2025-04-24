@@ -144,5 +144,6 @@
     "single-dialog": "单轮对话",
     "multi-dialog": "多轮对话",
     "press-and-run": "键入问题以开始测试",
-    "connect-sigature": "连接签名"
+    "connect-sigature": "连接签名",
+    "finish-refresh": "完成刷新"
 }

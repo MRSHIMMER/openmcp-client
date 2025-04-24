@@ -2,6 +2,7 @@
 export interface SchemaProperty {
 	title: string;
 	type: string;
+	description?: string;
 }
 
 export interface InputSchema {

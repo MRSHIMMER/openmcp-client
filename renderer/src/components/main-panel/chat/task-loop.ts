@@ -1,6 +1,6 @@
 /* eslint-disable */
 import { Ref } from "vue";
-import { ToolCall, ChatStorage, getToolSchema } from "./chat";
+import { ToolCall, ChatStorage, getToolSchema, MessageState } from "./chat";
 import { useMessageBridge } from "@/api/message-bridge";
 import type { OpenAI } from 'openai';
 import { callTool } from "../tool/tools";
@@ -10,6 +10,11 @@ export type ChatCompletionChunk = OpenAI.Chat.Completions.ChatCompletionChunk;
 export type ChatCompletionCreateParamsBase = OpenAI.Chat.Completions.ChatCompletionCreateParams & { id?: string };
 interface TaskLoopOptions {
     maxEpochs: number;
+}
+
+interface IErrorMssage {
+    state: MessageState,
+    msg: string
 }
 
 /**
@@ -23,7 +28,7 @@ export class TaskLoop {
     constructor(
         private readonly streamingContent: Ref<string>,
         private readonly streamingToolCalls: Ref<ToolCall[]>,
-        private onError: (msg: string) => void = (msg) => {},
+        private onError: (error: IErrorMssage) => void = (msg) => {},
         private onChunk: (chunk: ChatCompletionChunk) => void = (chunk) => {},
         private onDone: () => void = () => {},
         private onEpoch: () => void = () => {},
@@ -42,15 +47,33 @@ export class TaskLoop {
             
             if (!toolResponse.isError) {
                 const content = JSON.stringify(toolResponse.content);
-                return content;
+                return {
+                    content,
+                    state: MessageState.Success,
+
+                };
             } else {
-                this.onError(`工具调用失败: ${toolResponse.content}`);
-                console.error(toolResponse.content);  
+                this.onError({
+                    state: MessageState.ToolCall,
+                    msg: `工具调用失败: ${toolResponse.content}`
+                });
+                console.error(toolResponse.content);
+                return {
+                    content: toolResponse.content.toString(),
+                    state: MessageState.ToolCall
+                }
             }
 
         } catch (error) {
-            this.onError(`工具调用失败: ${(error as Error).message}`);
+            this.onError({
+                state: MessageState.ToolCall,
+                msg: `工具调用失败: ${(error as Error).message}`
+            });
             console.error(error);
+            return {
+                content: (error as Error).message,
+                state: MessageState.ToolCall
+            }
         }
     }
 
@@ -107,7 +130,10 @@ export class TaskLoop {
         return new Promise<void>((resolve, reject) => {
             const chunkHandler = this.bridge.addCommandListener('llm/chat/completions/chunk', data => {
                 if (data.code !== 200) {
-                    this.onError(data.msg || '请求模型服务时发生错误');
+                    this.onError({
+                        state: MessageState.ReceiveChunkError,
+                        msg: data.msg || '请求模型服务时发生错误'
+                    });
                     resolve();
                     return;
                 }
@@ -182,7 +208,7 @@ export class TaskLoop {
         this.streamingToolCalls.value = [];
     }
 
-    public registerOnError(handler: (msg: string) => void) {
+    public registerOnError(handler: (msg: IErrorMssage) => void) {
         this.onError = handler;
     }
 
@@ -208,6 +234,7 @@ export class TaskLoop {
             content: userMessage,
             extraInfo: {
                 created: Date.now(),
+                state: MessageState.Success,
                 serverName: llms[llmManager.currentModelIndex].id || 'unknown'
             }
         });
@@ -238,6 +265,7 @@ export class TaskLoop {
                     tool_calls: this.streamingToolCalls.value,
                     extraInfo: {
                         created: Date.now(),
+                        state: MessageState.Success,
                         serverName: llms[llmManager.currentModelIndex].id || 'unknown'
                     }
                 });
@@ -249,9 +277,10 @@ export class TaskLoop {
                     tabStorage.messages.push({
                         role: 'tool',
                         tool_call_id: toolCall.id || toolCall.function.name,
-                        content: toolCallResult,
+                        content: toolCallResult.content,
                         extraInfo: {
                             created: Date.now(),
+                            state: toolCallResult.state,
                             serverName: llms[llmManager.currentModelIndex].id || 'unknown',
                             usage: this.completionUsage
                         }
@@ -264,6 +293,7 @@ export class TaskLoop {
                     content: this.streamingContent.value,
                     extraInfo: {
                         created: Date.now(),
+                        state: MessageState.Success,
                         serverName: llms[llmManager.currentModelIndex].id || 'unknown',
                         usage: this.completionUsage
                     }

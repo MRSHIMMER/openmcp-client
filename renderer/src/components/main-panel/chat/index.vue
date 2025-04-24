@@ -78,11 +78,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, defineComponent, defineProps, onUnmounted, computed, nextTick, watch, Ref } from 'vue';
+import { ref, onMounted, defineComponent, defineProps, onUnmounted, computed, nextTick, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { ElMessage, ScrollbarInstance } from 'element-plus';
 import { tabs } from '../panel';
-import { ChatMessage, ChatStorage, IExtraInfo, ToolCall } from './chat';
+import { ChatMessage, ChatStorage, IRenderMessage, MessageState, ToolCall } from './chat';
 
 import Setting from './setting.vue';
 
@@ -125,16 +125,6 @@ if (!tabStorage.messages) {
     tabStorage.messages = [] as ChatMessage[];
 }
 
-interface IRenderMessage {
-    role: 'user' | 'assistant/content' | 'assistant/tool_calls' | 'tool';
-    content: string;
-    toolResult?: string;
-    tool_calls?: ToolCall[];
-    showJson?: Ref<boolean>;
-    extraInfo: IExtraInfo;
-    isLast: boolean;
-}
-
 const renderMessages = computed(() => {
     const messages: IRenderMessage[] = [];
     for (const message of tabStorage.messages) {
@@ -142,8 +132,7 @@ const renderMessages = computed(() => {
             messages.push({
                 role: 'user',
                 content: message.content,
-                extraInfo: message.extraInfo,
-                isLast: false
+                extraInfo: message.extraInfo
             });
         } else if (message.role === 'assistant') {
             if (message.tool_calls) {
@@ -152,15 +141,16 @@ const renderMessages = computed(() => {
                     content: message.content,
                     tool_calls: message.tool_calls,
                     showJson: ref(false),
-                    extraInfo: message.extraInfo,
-                    isLast: false
+                    extraInfo: {
+                        ...message.extraInfo,
+                        state: MessageState.Unknown
+                    }
                 });
             } else {
                 messages.push({
                     role: 'assistant/content',
                     content: message.content,
-                    extraInfo: message.extraInfo,
-                    isLast: false
+                    extraInfo: message.extraInfo
                 });
             }
 
@@ -169,14 +159,10 @@ const renderMessages = computed(() => {
             const lastAssistantMessage = messages[messages.length - 1];
             if (lastAssistantMessage.role === 'assistant/tool_calls') {
                 lastAssistantMessage.toolResult = message.content;
+                lastAssistantMessage.extraInfo.state = message.extraInfo.state;
                 lastAssistantMessage.extraInfo.usage = lastAssistantMessage.extraInfo.usage || message.extraInfo.usage;
             }
         }
-    }
-
-    if (messages.length > 0) {
-        const lastMessage = messages[messages.length - 1];
-        lastMessage.isLast = true;
     }
 
     return messages;
@@ -264,26 +250,30 @@ const handleSend = () => {
 
     loop = new TaskLoop(streamingContent, streamingToolCalls);
 
-    loop.registerOnError((msg) => {
+    loop.registerOnError((error) => {
+
         ElMessage({
-            message: msg,
+            message: error.msg,
             type: 'error',
             duration: 3000
         });
-
-        tabStorage.messages.push({
-            role: 'assistant',
-            content: `错误: ${msg}`,
-            extraInfo: {
-                created: Date.now(),
-                serverName: llms[llmManager.currentModelIndex].id || 'unknown'
-            }
-        });
+        
+        if (error.state === MessageState.ReceiveChunkError) {
+            tabStorage.messages.push({
+                role: 'assistant',
+                content: error.msg,
+                extraInfo: {
+                    created: Date.now(),
+                    state: error.state,
+                    serverName: llms[llmManager.currentModelIndex].id || 'unknown'
+                }
+            });
+        }
 
         isLoading.value = false;
     });
 
-    loop.registerOnChunk((chunk) => {
+    loop.registerOnChunk(() => {
         scrollToBottom();
     });
 

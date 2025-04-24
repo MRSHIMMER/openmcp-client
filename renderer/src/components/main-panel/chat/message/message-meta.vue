@@ -49,9 +49,6 @@ const usageStatistic = computed(() => {
     return makeUsageStatistic(props.message.extraInfo);
 });
 
-console.log(props.message);
-console.log(usageStatistic);
-
 const showTime = ref(false);
 </script>
 

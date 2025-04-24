@@ -1,14 +1,27 @@
 import { ToolItem } from "@/hook/type";
-import { ref } from "vue";
+import { Ref, ref } from "vue";
 
 import type { OpenAI } from 'openai';
 type ChatCompletionChunk = OpenAI.Chat.Completions.ChatCompletionChunk;
 
+export enum MessageState {
+    ServerError = 'server internal error',
+    ReceiveChunkError = 'receive chunk error',
+    Timeout = 'timeout',
+    MaxEpochs = 'max epochs',
+    Unknown = 'unknown error',
+    Abort = 'abort',
+    ToolCall = 'tool call failed',
+    None = 'none',
+    Success = 'success'
+}
+
 export interface IExtraInfo {
     created: number,
+    state: MessageState,
     serverName: string,
     usage?: ChatCompletionChunk['usage'];
-    [key: string]: any
+    [key: string]: any;
 }
 
 export interface ChatMessage {
@@ -52,6 +65,15 @@ export interface ToolCall {
 }
 
 export const allTools = ref<ToolItem[]>([]);
+
+export interface IRenderMessage {
+    role: 'user' | 'assistant/content' | 'assistant/tool_calls' | 'tool';
+    content: string;
+    toolResult?: string;
+    tool_calls?: ToolCall[];
+    showJson?: Ref<boolean>;
+    extraInfo: IExtraInfo;
+}
 
 export function getToolSchema(enableTools: EnableToolItem[]) {
     const toolsSchema = [];
