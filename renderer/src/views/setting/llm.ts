@@ -18,7 +18,7 @@ export function createTest(call: ToolCall) {
 	tab.component = markRaw(debugModes[2]);
 	tab.icon = 'icon-tool';
 	tab.name = t("tools");
-	1
+	
 	const storage: ToolStorage = {
 		currentToolName: call.function.name,
 		formData: JSON.parse(call.function.arguments)

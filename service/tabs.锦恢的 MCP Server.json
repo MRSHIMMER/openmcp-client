@@ -81,6 +81,50 @@
                 "prompt_cache_miss_tokens": 84
               }
             }
+          },
+          {
+            "role": "user",
+            "content": "再试一次",
+            "extraInfo": {
+              "created": 1745495349299,
+              "serverName": "Huoshan DeepSeek"
+            }
+          },
+          {
+            "role": "assistant",
+            "content": "",
+            "tool_calls": [
+              {
+                "id": "call_jpm4v1e92v4nq650wlqkhm56",
+                "index": 0,
+                "type": "function",
+                "function": {
+                  "name": "get_weather_by_city_code",
+                  "arguments": "{\"city_code\":101210101}"
+                }
+              }
+            ],
+            "extraInfo": {
+              "created": 1745495350097,
+              "serverName": "Huoshan DeepSeek"
+            }
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "call_jpm4v1e92v4nq650wlqkhm56",
+            "content": "[{\"type\":\"text\",\"text\":\"CityWeather(city_name_en='hangzhou', city_name_cn='杭州', city_code='101210101', temp='18.3', wd='', ws='', sd='89%', aqi='57', weather='阴')\"}]",
+            "extraInfo": {
+              "created": 1745495350319,
+              "serverName": "Huoshan DeepSeek"
+            }
+          },
+          {
+            "role": "assistant",
+            "content": "杭州的最新天气信息如下：\n\n- 城市：杭州\n- 温度：18.3°C\n- 天气状况：阴\n- 湿度：89%\n- 空气质量指数 (AQI)：57（良好）\n\n天气较为凉爽，适合外出活动！",
+            "extraInfo": {
+              "created": 1745495352693,
+              "serverName": "Huoshan DeepSeek"
+            }
           }
         ],
         "settings": {

@@ -3,8 +3,9 @@
         <el-scrollbar ref="scrollbarRef" :height="'90%'" @scroll="handleScroll" v-if="renderMessages.length > 0 || isLoading">
             <div class="message-list" :ref="el => messageListRef = el">
                 <div v-for="(message, index) in renderMessages" :key="index"
-                    :class="['message-item', message.role.split('/')[0]]">
-                    <div class="message-avatar" v-if="message.role.split('/')[0] === 'assistant'">
+                    :class="['message-item', message.role.split('/')[0]]"
+                >
+                    <div class="message-avatar" v-if="message.role.startsWith('assistant')">
                         <span class="iconfont icon-robot"></span>
                     </div>
 
@@ -131,6 +132,7 @@ interface IRenderMessage {
     tool_calls?: ToolCall[];
     showJson?: Ref<boolean>;
     extraInfo: IExtraInfo;
+    isLast: boolean;
 }
 
 const renderMessages = computed(() => {
@@ -140,7 +142,8 @@ const renderMessages = computed(() => {
             messages.push({
                 role: 'user',
                 content: message.content,
-                extraInfo: message.extraInfo
+                extraInfo: message.extraInfo,
+                isLast: false
             });
         } else if (message.role === 'assistant') {
             if (message.tool_calls) {
@@ -149,13 +152,15 @@ const renderMessages = computed(() => {
                     content: message.content,
                     tool_calls: message.tool_calls,
                     showJson: ref(false),
-                    extraInfo: message.extraInfo
+                    extraInfo: message.extraInfo,
+                    isLast: false
                 });
             } else {
                 messages.push({
                     role: 'assistant/content',
                     content: message.content,
-                    extraInfo: message.extraInfo
+                    extraInfo: message.extraInfo,
+                    isLast: false
                 });
             }
 
@@ -167,6 +172,11 @@ const renderMessages = computed(() => {
                 lastAssistantMessage.extraInfo.usage = lastAssistantMessage.extraInfo.usage || message.extraInfo.usage;
             }
         }
+    }
+
+    if (messages.length > 0) {
+        const lastMessage = messages[messages.length - 1];
+        lastMessage.isLast = true;
     }
 
     return messages;
@@ -373,11 +383,6 @@ onUnmounted(() => {
 
 .message-text {
     line-height: 1.6;
-}
-
-.message-text.tool_calls {
-    border-left: 3px solid var(--main-color);
-    padding-left: 10px;
 }
 
 .user .message-text {
