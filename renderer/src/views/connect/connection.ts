@@ -3,7 +3,6 @@ import { reactive } from 'vue';
 import { pinkLog } from '../setting/util';
 import { ElMessage } from 'element-plus';
 import { ILaunchSigature } from '@/hook/type';
-import { url } from 'inspector';
 
 export const connectionMethods = reactive({
     current: 'STDIO',
@@ -80,14 +79,22 @@ export function doConnect() {
         bridge.addCommandListener('connect', async data => {
             const { code, msg } = data;
             connectionResult.success = (code === 200);
-            connectionResult.logString = msg;
 
             if (code === 200) {
                 const res = await getServerVersion() as { name: string, version: string };
                 connectionResult.serverInfo.name = res.name || '';
                 connectionResult.serverInfo.version = res.version || '';
+                connectionResult.logString.push({
+                    type: 'info',
+                    message: msg
+                });
+
             } else {
                 ElMessage({
+                    type: 'error',
+                    message: msg
+                });
+                connectionResult.logString.push({
                     type: 'error',
                     message: msg
                 });
@@ -189,9 +196,13 @@ async function launchStdio() {
         bridge.addCommandListener('connect', async data => {
             const { code, msg } = data;
             connectionResult.success = (code === 200);
-            connectionResult.logString = msg;
 
             if (code === 200) {
+                connectionResult.logString.push({
+                    type: 'info',
+                    message: msg
+                });                
+
                 const res = await getServerVersion() as { name: string, version: string };
                 connectionResult.serverInfo.name = res.name || '';
                 connectionResult.serverInfo.version = res.version || '';
@@ -217,6 +228,11 @@ async function launchStdio() {
                 });
 
             } else {
+                connectionResult.logString.push({
+                    type: 'error',
+                    message: msg
+                });
+
                 ElMessage({
                     type: 'error',
                     message: msg
@@ -257,9 +273,13 @@ async function launchSSE() {
         bridge.addCommandListener('connect', async data => {
             const { code, msg } = data;
             connectionResult.success = (code === 200);
-            connectionResult.logString = msg;
 
             if (code === 200) {
+                connectionResult.logString.push({
+                    type: 'info',
+                    message: msg
+                });
+
                 const res = await getServerVersion() as { name: string, version: string };
                 connectionResult.serverInfo.name = res.name || '';
                 connectionResult.serverInfo.version = res.version || '';
@@ -279,6 +299,11 @@ async function launchSSE() {
                 });
 
             } else {
+                connectionResult.logString.push({
+                    type: 'error',
+                    message: msg
+                });
+
                 ElMessage({
                     type: 'error',
                     message: msg
@@ -328,9 +353,16 @@ export function doReconnect() {
     console.log();
 }
 
-export const connectionResult = reactive({
+export const connectionResult = reactive<{
+    success: boolean,
+    logString: { type: 'info' | 'error' | 'warning', message: string }[],
+    serverInfo: {
+        name: string,
+        version: string
+    }
+}>({
     success: false,
-    logString: '',
+    logString: [],
     serverInfo: {
         name: '',
         version: ''
@@ -353,3 +385,7 @@ export function getServerVersion() {
         });
     });
 }
+
+export const envVarStatus = {
+    launched: false
+};

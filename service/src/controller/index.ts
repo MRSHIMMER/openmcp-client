@@ -44,7 +44,7 @@ async function connectHandler(option: MCPOptions, webview: PostMessageble) {
 		client = await connect(option);
 		const connectResult = {
 			code: 200,
-			msg: 'connect success\nHello from OpenMCP | virtual client version: 0.0.1'
+			msg: 'Connect to OpenMCP successfully\nWelcome back, Kirigaya'
 		};
 		webview.postMessage({ command: 'connect', data: connectResult });
 	} catch (error) {

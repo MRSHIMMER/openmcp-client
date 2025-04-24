@@ -44,7 +44,7 @@
 <script setup lang="ts">
 import { defineComponent, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { connectionEnv, connectionResult, EnvItem } from './connection';
+import { connectionEnv, connectionResult, EnvItem, envVarStatus } from './connection';
 import { useMessageBridge } from '@/api/message-bridge';
 
 defineComponent({ name: 'env-var' });
@@ -60,9 +60,18 @@ function lookupEnvVar(varNames: string[]) {
 			const { code, msg } = data;
 			
 			if (code === 200) {
+				connectionResult.logString.push({
+					type: 'info',
+					message: '预设环境变量同步完成'
+				});
+
 				resolve(msg);
 			} else {
-				connectionResult.logString += '\n' + msg;
+				connectionResult.logString.push({
+					type: 'error',
+					message: '预设环境变量同步失败: ' + msg
+				});
+
 				resolve(undefined);
 			}
 		}, { once: true });
@@ -149,7 +158,11 @@ async function handleEnvSwitch(enabled: boolean) {
 
 onMounted(() => {
 	setTimeout(() => {
+		if (envVarStatus.launched) {
+			return;
+		}
 		handleEnvSwitch(envEnabled.value);
+		envVarStatus.launched = true;
 	}, 200);
 });
 

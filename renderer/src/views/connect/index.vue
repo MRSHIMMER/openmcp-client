@@ -27,7 +27,7 @@ import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 
-import { connectionResult, doConnect, doReconnect, launchConnect } from './connection';
+import { connectionResult, doConnect, launchConnect } from './connection';
 
 import ConnectionMethod from './connection-method.vue';
 import ConnectionArgs from './connection-args.vue';
@@ -35,23 +35,14 @@ import EnvVar from './env-var.vue';
 
 import ConnectionLog from './connection-log.vue';
 
-import { acquireVsCodeApi, useMessageBridge } from '@/api/message-bridge';
+import { acquireVsCodeApi } from '@/api/message-bridge';
 
 defineComponent({ name: 'connect' });
-
-const bridge = useMessageBridge();
-
-bridge.addCommandListener('connect', data => {
-	const { code, msg } = data;
-	connectionResult.success = (code === 200);
-	connectionResult.logString = msg;
-}, { once: false });
 
 const isLoading = ref(false);
 
 async function suitableConnect() {
 	isLoading.value = true;
-	connectionResult.logString = '';
 
 	if (acquireVsCodeApi === undefined) {
 		await doConnect();

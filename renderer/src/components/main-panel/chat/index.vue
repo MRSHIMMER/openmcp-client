@@ -10,84 +10,17 @@
 
                     <!-- 用户输入的部分 -->
                     <div class="message-content" v-if="message.role === 'user'">
-                        <div class="message-role"></div>
-                        <div class="message-text">
-                            <span>{{ message.content }}</span>
-                        </div>
+                        <Message.User :message="message" />
                     </div>
 
                     <!-- 助手返回的内容部分 -->
                     <div class="message-content" v-else-if="message.role === 'assistant/content'">
-                        <div class="message-role">Agent</div>
-                        <div class="message-text">
-                            <div v-if="message.content" v-html="markdownToHtml(message.content)"></div>
-                        </div>
-                        <MessageMeta :message="message" />
+                        <Message.Assistant :message="message" />
                     </div>
 
                     <!-- 助手调用的工具部分 -->
                     <div class="message-content" v-else-if="message.role === 'assistant/tool_calls'">
-                        <div class="message-role">
-                            Agent
-                            <span class="message-reminder" v-if="!message.toolResult">
-                                正在使用工具
-                                <span class="tool-loading iconfont icon-double-loading">
-                                </span>
-                            </span>
-                        </div>
-                        <div class="message-text tool_calls">
-                            <div v-if="message.content" v-html="markdownToHtml(message.content)"></div>
-                            
-                            <div class="tool-calls">
-                                <div v-for="(call, index) in message.tool_calls" :key="index" class="tool-call-item">
-                                    <div class="tool-call-header">
-                                        <span class="tool-name">{{ call.function.name }}</span>
-                                        <span class="tool-type">{{ 'tool' }}</span>
-                                        <el-button @click="createTest(call)">
-                                            <span class="iconfont icon-send"></span>
-                                        </el-button>
-                                    </div>
-                                    <div class="tool-arguments">
-                                        <div class="inner">
-                                            <div v-html="jsonResultToHtml(call.function.arguments)"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- 工具调用结果 -->
-                            <div v-if="message.toolResult">
-                                <div class="tool-call-header">
-                                    <span class="tool-name">{{ "响应" }}</span>
-                                    <span style="width: 200px;" class="tools-dialog-container">
-                                        <el-switch
-                                            v-model="message.showJson!.value"
-                                            inline-prompt
-                                            active-text="JSON"
-                                            inactive-text="Text"
-                                            style="margin-left: 10px; width: 200px;"
-                                            :inactive-action-style="'backgroundColor: var(--sidebar)'"
-                                        />
-                                    </span>
-                                </div>
-                                <div class="tool-result" v-if="isValidJSON(message.toolResult)">
-                                    <div v-if="message.showJson!.value" class="tool-result-content">
-                                        <div class="inner">
-                                            <div v-html="jsonResultToHtml(message.toolResult)"></div>
-                                        </div>
-                                    </div>
-                                    <span v-else>
-                                        <div v-for="(item, index) in JSON.parse(message.toolResult)" :key="index">
-                                            <el-scrollbar width="100%">
-                                                <div v-if="item.type === 'text'" class="tool-text">{{ item.text }}</div>
-                                                <div v-else class="tool-other">{{ JSON.stringify(item) }}</div>
-                                            </el-scrollbar>
-                                        </div>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                        <MessageMeta :message="message" />
+                        <Message.Toolcall :message="message" />
                     </div>
                 </div>
 
@@ -125,7 +58,7 @@
             </div>
         </div>
 
-        <el-footer class="chat-footer" ref="footerRef">
+        <footer class="chat-footer" ref="footerRef">
             <div class="input-area">
                 <div class="input-wrapper">
                     <Setting :tabId="tabId" />
@@ -139,7 +72,7 @@
                     </el-button>
                 </div>
             </div>
-        </el-footer>
+        </footer>
     </div>
 </template>
 
@@ -148,16 +81,16 @@ import { ref, onMounted, defineComponent, defineProps, onUnmounted, computed, ne
 import { useI18n } from 'vue-i18n';
 import { ElMessage, ScrollbarInstance } from 'element-plus';
 import { tabs } from '../panel';
-import { ChatMessage, ChatStorage, getToolSchema, IExtraInfo, ToolCall } from './chat';
-
+import { ChatMessage, ChatStorage, IExtraInfo, ToolCall } from './chat';
 
 import Setting from './setting.vue';
-import MessageMeta from './message-meta.vue';
 
 // 引入 markdown.ts 中的函数
-import { markdownToHtml, copyToClipboard } from './markdown';
-import { ChatCompletionChunk, TaskLoop } from './task-loop';
-import { createTest, llmManager, llms } from '@/views/setting/llm';
+import { markdownToHtml } from './markdown';
+import { TaskLoop } from './task-loop';
+import { llmManager, llms } from '@/views/setting/llm';
+
+import * as Message from './message';
 
 defineComponent({ name: 'chat' });
 
@@ -377,26 +310,9 @@ onUnmounted(() => {
     window.removeEventListener('resize', updateScrollHeight);
 });
 
-// 新增辅助函数检查是否为有效JSON
-const isValidJSON = (str: string) => {
-    try {
-        JSON.parse(str);
-        return true;
-    } catch {
-        return false;
-    }
-};
-
-const jsonResultToHtml = (jsonString: string) => {
-    const formattedJson = JSON.stringify(JSON.parse(jsonString), null, 2);
-    const html = markdownToHtml('```json\n' + formattedJson + '\n```');
-    return html;
-};
-
-
 </script>
 
-<style scoped>
+<style>
 .chat-container {
     height: 100%;
     display: flex;
@@ -499,7 +415,7 @@ const jsonResultToHtml = (jsonString: string) => {
     border-top: 1px solid var(--el-border-color);
     flex-shrink: 0;
     position: absolute;
-    height: fit-content;
+    height: fit-content !important;
     bottom: 0;
     width: 100%;
 }
@@ -554,72 +470,7 @@ const jsonResultToHtml = (jsonString: string) => {
         opacity: 0;
     }
 }
-</style>
 
-<style scoped>
-
-.tool-calls {
-    margin-top: 10px;
-}
-
-.tool-call-item {
-    margin-bottom: 10px;
-}
-
-.tool-call-header {
-    display: flex;
-    align-items: center;
-    margin-bottom: 5px;
-}
-
-.tool-name {
-    font-weight: bold;
-    color: var(--el-color-primary);
-    margin-right: 8px;
-    margin-bottom: 0;
-    display: flex;
-    align-items: center;
-    height: 26px;
-}
-
-.tool-type {
-    font-size: 0.8em;
-    color: var(--el-text-color-secondary);
-    background-color: var(--el-fill-color-light);
-    padding: 2px 6px;
-    display: flex;
-    align-items: center;
-    border-radius: 4px;
-}
-
-.tool-arguments {
-    margin: 0;
-    padding: 8px;
-    background-color: var(--el-fill-color-light);
-    border-radius: 4px;
-    font-family: monospace;
-    font-size: 0.9em;
-}
-
-.tool-result {
-    padding: 8px;
-    background-color: var(--el-fill-color-light);
-    border-radius: 4px;
-}
-
-.tool-text {
-    white-space: pre-wrap;
-    line-height: 1.6;
-}
-
-.tool-other {
-    font-family: monospace;
-    font-size: 0.9em;
-    color: var(--el-text-color-secondary);
-    margin-top: 4px;
-}
-
-/* 新增样式来减小行距 */
 .message-text p,
 .message-text h3,
 .message-text ol,
@@ -627,7 +478,6 @@ const jsonResultToHtml = (jsonString: string) => {
     margin-top: 0.5em;
     margin-bottom: 0.5em;
     line-height: 1.4;
-    /* 可以根据需要调整行高 */
 }
 
 .message-text ol li,
