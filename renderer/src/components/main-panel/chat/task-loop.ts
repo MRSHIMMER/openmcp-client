@@ -39,15 +39,18 @@ export class TaskLoop {
             const toolName = toolCall.function.name;
             const toolArgs = JSON.parse(toolCall.function.arguments);
             const toolResponse = await callTool(toolName, toolArgs);
+            
             if (!toolResponse.isError) {
                 const content = JSON.stringify(toolResponse.content);
                 return content;
             } else {
                 this.onError(`工具调用失败: ${toolResponse.content}`);
+                console.error(toolResponse.content);  
             }
 
         } catch (error) {
             this.onError(`工具调用失败: ${(error as Error).message}`);
+            console.error(error);
         }
     }
 

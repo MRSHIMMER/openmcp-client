@@ -1,6 +1,7 @@
 
 import { PostMessageble } from '../adapter';
 import { connect, MCPClient, type MCPOptions } from './connect';
+import { lookupEnvVarHandler } from './env-var';
 import { callTool, getPrompt, getServerVersion, listPrompts, listResources, listResourceTemplates, listTools, readResource } from './handler';
 import { chatCompletionHandler } from './llm';
 import { panelLoadHandler, panelSaveHandler } from './panel';
@@ -130,6 +131,10 @@ export function messageController(command: string, data: any, webview: PostMessa
 		
 		case 'llm/chat/completions':
 			chatCompletionHandler(client, data, webview);
+			break;
+		
+		case 'lookup-env-var':
+			lookupEnvVarHandler(client, data, webview);
 			break;
 
 		default:

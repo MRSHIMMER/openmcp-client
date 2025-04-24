@@ -143,5 +143,6 @@
     "creative": "Créativité",
     "single-dialog": "Dialogue en un tour",
     "multi-dialog": "Conversation multi-tours",
-    "press-and-run": "Tapez une question pour commencer le test"
+    "press-and-run": "Tapez une question pour commencer le test",
+    "connect-sigature": "Signature de connexion"
 }

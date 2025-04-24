@@ -6,21 +6,10 @@
 			<EnvVar></EnvVar>
 
 			<div class="connect-action">
-				<el-button
-					type="primary"
-					size="large"
-					:disabled="!connectionResult"
-					@click="suitableConnect()"
-				>
+				<el-button type="primary" size="large" :loading="isLoading" :disabled="!connectionResult"
+					@click="suitableConnect()">
+					<span class="iconfont icon-connect" v-if="!isLoading"></span>
 					{{ t('connect.appearance.connect') }}
-				</el-button>
-
-				<el-button
-					type="primary"
-					size="large"
-					@click="doReconnect()"
-				>
-				{{ t('connect.appearance.reconnect') }}
 				</el-button>
 			</div>
 		</div>
@@ -33,7 +22,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
@@ -58,12 +47,19 @@ bridge.addCommandListener('connect', data => {
 	connectionResult.logString = msg;
 }, { once: false });
 
-function suitableConnect() {
+const isLoading = ref(false);
+
+async function suitableConnect() {
+	isLoading.value = true;
+	connectionResult.logString = '';
+
 	if (acquireVsCodeApi === undefined) {
-		doConnect();
+		await doConnect();
 	} else {
-		launchConnect({ updateCommandString: false });
+		await launchConnect({ updateCommandString: false });
 	}
+
+	isLoading.value = false;
 }
 
 </script>
@@ -106,7 +102,7 @@ function suitableConnect() {
 	padding-bottom: 10px;
 }
 
-.input-env-container > span {
+.input-env-container>span {
 	width: 150px;
 	margin-right: 10px;
 	display: flex;

@@ -143,5 +143,6 @@
     "creative": "創造性",
     "single-dialog": "単一ラウンドの対話",
     "multi-dialog": "マルチターン会話",
-    "press-and-run": "テストを開始するには質問を入力してください"
+    "press-and-run": "テストを開始するには質問を入力してください",
+    "connect-sigature": "接続署名"
 }

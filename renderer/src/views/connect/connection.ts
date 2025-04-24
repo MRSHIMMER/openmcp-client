@@ -22,7 +22,6 @@ export const connectionMethods = reactive({
 export const connectionArgs = reactive({
     commandString: '',
     cwd: '',
-    env: {},
     oauth: '',
     urlString: ''
 });
@@ -44,6 +43,14 @@ export const connectionEnv = reactive<IConnectionEnv>({
     newValue: ''
 });
 
+export function makeEnv() {
+    const env = {} as Record<string, string>;
+    connectionEnv.data.forEach(item => {
+        env[item.key] = item.value;
+    });
+    return env;
+}
+
 
 // 定义连接类型
 type ConnectionType = 'STDIO' | 'SSE';
@@ -54,6 +61,8 @@ export interface MCPOptions {
     // STDIO 特定选项
     command?: string;
     args?: string[];
+    cwd?: string;
+    env?: Record<string, string>;
     // SSE 特定选项
     url?: string;
     // 通用客户端选项
@@ -64,6 +73,7 @@ export interface MCPOptions {
 export function doConnect() {
     let connectOption: MCPOptions;
     const bridge = useMessageBridge();
+    const env = makeEnv();
 
     return new Promise((resolve, reject) => {
         // 监听 connect
@@ -86,7 +96,6 @@ export function doConnect() {
             resolve(void 0);
         }, { once: true });
 
-        // TODO: 增加判断，获取 cwd
         if (connectionMethods.current === 'STDIO') {
 
             if (connectionArgs.commandString.length === 0) {
@@ -100,7 +109,9 @@ export function doConnect() {
             connectOption = {
                 connectionType: 'STDIO',
                 command: command,
+                cwd: connectionArgs.cwd,
                 args: commandComponents,
+                env: env,
                 clientName: 'openmcp.connect.stdio',
                 clientVersion: '0.0.1'
             }
@@ -115,6 +126,7 @@ export function doConnect() {
             connectOption = {
                 connectionType: 'SSE',
                 url: url,
+                env: env,
                 clientName: 'openmcp.connect.sse',
                 clientVersion: '0.0.1'
             }
@@ -147,7 +159,6 @@ export async function launchConnect(option: { updateCommandString?: boolean } = 
         if (updateCommandString) {
             connectionArgs.commandString = connectionItem.commandString;
             connectionArgs.cwd = connectionItem.cwd;
-            connectionArgs.env = {};
 
             if (connectionArgs.commandString.length === 0) {
                 return;
@@ -171,6 +182,7 @@ export async function launchConnect(option: { updateCommandString?: boolean } = 
 
 async function launchStdio() {
     const bridge = useMessageBridge();
+    const env = makeEnv();
 
     return new Promise<void>((resolve, reject) => {
         // 监听 connect
@@ -196,7 +208,7 @@ async function launchStdio() {
                     command: command,
                     args: commandComponents,
                     cwd: connectionArgs.cwd,
-                    env: connectionArgs.env,
+                    env
                 };
 
                 bridge.postMessage({
@@ -225,7 +237,8 @@ async function launchStdio() {
             args: commandComponents,
             cwd: connectionArgs.cwd,
             clientName: 'openmcp.connect.stdio',
-            clientVersion: '0.0.1'
+            clientVersion: '0.0.1',
+            env
         };
 
         bridge.postMessage({
@@ -237,6 +250,7 @@ async function launchStdio() {
 
 async function launchSSE() {
     const bridge = useMessageBridge();
+    const env = makeEnv();
 
     return new Promise<void>((resolve, reject) => {
         // 监听 connect
@@ -257,7 +271,7 @@ async function launchSSE() {
                     name: 'openmcp.connect.sse',
                     url: connectionArgs.urlString,
                     oauth: connectionArgs.oauth,
-                    env: connectionArgs.env
+                    env: env
                 };
                 bridge.postMessage({
                     command: 'vscode/update-connection-sigature',
@@ -278,7 +292,8 @@ async function launchSSE() {
             connectionType: 'SSE',
             url: connectionArgs.urlString,
             clientName: 'openmcp.connect.sse',
-            clientVersion: '0.0.1'
+            clientVersion: '0.0.1',
+            env
         };
 
         bridge.postMessage({

@@ -1,7 +1,7 @@
 <template>
 	<div class="connection-option">
 		<span>{{ t('log') }}</span>
-		<el-scrollbar height="300px">
+		<el-scrollbar height="100%">
 			<div
 				class="output-content"
 				contenteditable="false"
@@ -24,6 +24,14 @@ const { t } = useI18n();
 </script>
 
 <style>
+.connection-option {
+	height: 100%;
+}
+
+.connection-option .el-scrollbar__view {
+	height: 100%;
+}
+
 .connection-option .output-content {
 	border-radius: .5em;
 	padding: 15px;
@@ -37,5 +45,6 @@ const { t } = useI18n();
 	font-size: 15px;
 	line-height: 1.5;
 	background-color: var(--sidebar);
+	height: 95%;
 }
 </style>

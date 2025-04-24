@@ -139,50 +139,6 @@
           "isError": false
         }
       }
-    },
-    {
-      "name": "资源",
-      "icon": "icon-file",
-      "type": "blank",
-      "componentIndex": 0,
-      "storage": {
-        "currentResourceName": "greeting",
-        "formData": {
-          "name": "kirigaya"
-        },
-        "lastResourceReadResponse": {
-          "contents": [
-            {
-              "uri": "greeting://kirigaya",
-              "mimeType": "text/plain",
-              "text": "Hello, kirigaya!"
-            }
-          ]
-        }
-      }
-    },
-    {
-      "name": "提词",
-      "icon": "icon-chat",
-      "type": "blank",
-      "componentIndex": 1,
-      "storage": {
-        "formData": {
-          "message": "你好"
-        },
-        "currentPromptName": "translate",
-        "lastPromptGetResponse": {
-          "messages": [
-            {
-              "role": "user",
-              "content": {
-                "type": "text",
-                "text": "请将下面的话语翻译成中文：\n\n你好"
-              }
-            }
-          ]
-        }
-      }
     }
   ]
 }
