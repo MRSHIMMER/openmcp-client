@@ -21,8 +21,9 @@ export interface CallToolOption {
 /**
  * @description 列出所有 prompts
  */
-export async function listPrompts(
+export async function listPromptsService(
 	client: MCPClient | undefined,
+	data: any,
 	webview: PostMessageble
 ) {
 	if (!client) {
@@ -53,7 +54,7 @@ export async function listPrompts(
 /**
  * @description 获取特定 prompt
  */
-export async function getPrompt(
+export async function getPromptService(
 	client: MCPClient | undefined,
 	option: GetPromptOption,
 	webview: PostMessageble
@@ -86,8 +87,9 @@ export async function getPrompt(
 /**
  * @description 列出所有resources
  */
-export async function listResources(
+export async function listResourcesService(
 	client: MCPClient | undefined,
+	data: any,
 	webview: PostMessageble
 ) {
 	if (!client) {
@@ -119,8 +121,9 @@ export async function listResources(
 /**
  * @description 列出所有resources
  */
-export async function listResourceTemplates(
+export async function listResourceTemplatesService(
 	client: MCPClient | undefined,
+	data: any,
 	webview: PostMessageble
 ) {
 	if (!client) {
@@ -152,7 +155,7 @@ export async function listResourceTemplates(
 /**
  * @description 读取特定resource
  */
-export async function readResource(
+export async function readResourceService(
 	client: MCPClient | undefined,
 	option: ReadResourceOption,
 	webview: PostMessageble
@@ -185,8 +188,9 @@ export async function readResource(
 /**
  * @description 获取工具列表
  */
-export async function listTools(
+export async function listToolsService(
     client: MCPClient | undefined,
+	data: any,
     webview: PostMessageble
 ) {
     if (!client) {
@@ -220,7 +224,7 @@ export async function listTools(
 /**
  * @description 调用工具
  */
-export async function callTool(
+export async function callToolService(
 	client: MCPClient | undefined,
 	option: CallToolOption,
 	webview: PostMessageble
@@ -254,8 +258,9 @@ export async function callTool(
 	}
 }
 
-export async function getServerVersion(
+export async function getServerVersionService(
 	client: MCPClient | undefined,
+	data: any,
 	webview: PostMessageble
 ) {
 	if (!client) {

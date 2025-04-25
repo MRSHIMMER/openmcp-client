@@ -2,7 +2,11 @@ import { PostMessageble } from '../hook/adapter';
 import { loadConfig, saveConfig } from '../hook/setting';
 import { MCPClient } from '../hook/client';
 
-export async function settingSaveHandler(client: MCPClient | undefined, data: any, webview: PostMessageble) {
+export async function settingSaveService(
+    client: MCPClient | undefined,
+    data: any,
+    webview: PostMessageble
+) {
     try {
         // 保存配置
         saveConfig(data);
@@ -28,7 +32,11 @@ export async function settingSaveHandler(client: MCPClient | undefined, data: an
     }
 }
 
-export async function settingLoadHandler(client: MCPClient | undefined, webview: PostMessageble) {
+export async function settingLoadService(
+    client: MCPClient | undefined,
+    data: any,
+    webview: PostMessageble
+) {
     try {
         // 加载配置
         const config = loadConfig();

@@ -51,6 +51,7 @@
 | `service` | 系统配置信息云同步 | `MVP` | 0% | `P1` |
 | `all` | 系统提示词管理模块 | `MVP` | 0% | `P1` |
 | `service` | 工具 wise 的日志系统 | `MVP` | 0% | `P0` |
+| `service` | 自带 OCR 进行字符识别 | `MVP` | 0% | `P1` |
 
 
 ## Dev

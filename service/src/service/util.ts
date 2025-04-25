@@ -1,7 +1,11 @@
 import { PostMessageble } from "../hook/adapter";
 import { MCPClient } from "../hook/client";
 
-export function ping(client: MCPClient | undefined, webview: PostMessageble) {
+export function pingService(
+	client: MCPClient | undefined,
+	data: any,
+	webview: PostMessageble
+) {
 	if (!client) {
 		const connectResult = {
 			code: 501,
@@ -12,7 +16,8 @@ export function ping(client: MCPClient | undefined, webview: PostMessageble) {
 	}
 
 	webview.postMessage({
-		command: 'ping', data: {
+		command: 'ping',
+		data: {
 			code: 200,
 			msg: {}
 		}

@@ -1,140 +1,94 @@
 
 import { PostMessageble } from '../hook/adapter';
-import { connect, MCPClient, type MCPOptions } from '../hook/client';
-import { lookupEnvVarHandler } from './env-var';
-import { callTool, getPrompt, getServerVersion, listPrompts, listResources, listResourceTemplates, listTools, readResource } from './mcp-server';
-import { chatCompletionHandler } from './llm';
-import { panelLoadHandler, panelSaveHandler } from './panel';
-import { settingLoadHandler, settingSaveHandler } from './setting';
-import { ping } from './util';
+import { lookupEnvVarService } from '../service/env-var';
 
-import { spawnSync } from 'node:child_process';
+import {
+	callToolService,
+	getPromptService,
+	getServerVersionService,
+	listPromptsService,
+	listResourcesService,
+	listResourceTemplatesService,
+	listToolsService,
+	readResourceService
+} from '../service/mcp-server';
 
+import { abortMessageService, chatCompletionService } from '../service/llm';
+import { panelLoadService, panelSaveService } from '../service/panel';
+import { settingLoadService, settingSaveService } from '../service/setting';
+import { pingService } from '../service/util';
+import { client, connectService } from '../service/connect';
 
-// TODO: 支持更多的 client
-export let client: MCPClient | undefined = undefined;
-
-function tryGetRunCommandError(command: string, args: string[] = [], cwd?: string): string | null {
-    try {
-		console.log('current command', command);
-		console.log('current args', args);
-		
-        const result = spawnSync(command, args, {
-            cwd: cwd || process.cwd(),
-            stdio: 'pipe',
-            encoding: 'utf-8'
-        });
-
-        if (result.error) {
-            return result.error.message;
-        }
-        if (result.status !== 0) {
-            return result.stderr || `Command failed with code ${result.status}`;
-        }
-        return null;
-    } catch (error) {
-        return error instanceof Error ? error.message : String(error);
-    }
-}
-
-async function connectHandler(option: MCPOptions, webview: PostMessageble) {
-	try {
-		console.log('ready to connect', option);
-		
-		client = await connect(option);
-		const connectResult = {
-			code: 200,
-			msg: 'Connect to OpenMCP successfully\nWelcome back, Kirigaya'
-		};
-		webview.postMessage({ command: 'connect', data: connectResult });
-	} catch (error) {
-
-		// TODO: 这边获取到的 error 不够精致，如何才能获取到更加精准的错误
-		// 比如	error: Failed to spawn: `server.py`
-  		//		  Caused by: No such file or directory (os error 2)
-
-		let errorMsg = '';
-
-		if (option.command) {
-			errorMsg += tryGetRunCommandError(option.command, option.args, option.cwd);
-		}
-
-		errorMsg += (error as any).toString();
-		
-		const connectResult = {
-			code: 500,
-			msg: errorMsg
-		};
-		webview.postMessage({ command: 'connect', data: connectResult });
-	}
-}
 
 
 export function messageController(command: string, data: any, webview: PostMessageble) {
 	switch (command) {
 		case 'connect':
-			connectHandler(data, webview);
+			connectService(client, data, webview);
 			break;
-		
+
 		case 'server/version':
-			getServerVersion(client, webview);
+			getServerVersionService(client, data, webview);
 			break;
 
 		case 'prompts/list':
-			listPrompts(client, webview);
+			listPromptsService(client, data, webview);
 			break;
 
 		case 'prompts/get':
-			getPrompt(client, data, webview);
+			getPromptService(client, data, webview);
 			break;
 
 		case 'resources/list':
-			listResources(client, webview);
+			listResourcesService(client, data, webview);
 			break;
 
-
 		case 'resources/templates/list':
-			listResourceTemplates(client, webview);
+			listResourceTemplatesService(client, data, webview);
 			break;
 
 		case 'resources/read':
-			readResource(client, data, webview);
+			readResourceService(client, data, webview);
 			break;
 
-        case 'tools/list':
-            listTools(client, webview);
-            break;
+		case 'tools/list':
+			listToolsService(client, data, webview);
+			break;
 
 		case 'tools/call':
-			callTool(client, data, webview);
+			callToolService(client, data, webview);
 			break;
 
 		case 'ping':
-			ping(client, webview);
+			pingService(client, data, webview);
 			break;
 
-        case 'setting/save':
-            settingSaveHandler(client, data, webview);
-            break;
-		
-        case 'setting/load':
-            settingLoadHandler(client, webview);
-            break;
+		case 'setting/save':
+			settingSaveService(client, data, webview);
+			break;
+
+		case 'setting/load':
+			settingLoadService(client, data, webview);
+			break;
 
 		case 'panel/save':
-			panelSaveHandler(client, data, webview);
+			panelSaveService(client, data, webview);
 			break;
-		
+
 		case 'panel/load':
-			panelLoadHandler(client, webview);
+			panelLoadService(client, data, webview);
 			break;
-		
+
 		case 'llm/chat/completions':
-			chatCompletionHandler(client, data, webview);
+			chatCompletionService(client, data, webview);
 			break;
-		
+
+		case 'llm/chat/completions/cancel':
+			abortMessageService(client, data, webview);
+			break;
+
 		case 'lookup-env-var':
-			lookupEnvVarHandler(client, data, webview);
+			lookupEnvVarService(client, data, webview);
 			break;
 
 		default:

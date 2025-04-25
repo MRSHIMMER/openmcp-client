@@ -4,7 +4,7 @@ import { PostMessageble } from '../hook/adapter';
 
 let currentStream: AsyncIterable<any> | null = null;
 
-export async function chatCompletionHandler(client: MCPClient | undefined, data: any, webview: PostMessageble) {
+export async function chatCompletionService(client: MCPClient | undefined, data: any, webview: PostMessageble) {
 	if (!client) {
 		const connectResult = {
 			code: 501,
@@ -100,7 +100,7 @@ export async function chatCompletionHandler(client: MCPClient | undefined, data:
 }
 
 // 处理中止消息的函数
-export function handleAbortMessage(webview: PostMessageble) {
+export function abortMessageService(client: MCPClient | undefined, data: any, webview: PostMessageble) {
     if (currentStream) {
         // 标记流已中止
         currentStream = null;

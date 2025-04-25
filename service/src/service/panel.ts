@@ -2,7 +2,7 @@ import { PostMessageble } from '../hook/adapter';
 import { loadConfig, loadTabSaveConfig, saveConfig, saveTabSaveConfig } from '../hook/setting';
 import { MCPClient } from '../hook/client';
 
-export async function panelSaveHandler(client: MCPClient | undefined, data: any, webview: PostMessageble) {
+export async function panelSaveService(client: MCPClient | undefined, data: any, webview: PostMessageble) {
 	try {
 		// 保存配置
 		const serverInfo = client?.getServerVersion();
@@ -26,7 +26,11 @@ export async function panelSaveHandler(client: MCPClient | undefined, data: any,
 	}
 }
 
-export async function panelLoadHandler(client: MCPClient | undefined, webview: PostMessageble) {
+export async function panelLoadService(
+	client: MCPClient | undefined,
+	data: any,
+	webview: PostMessageble
+) {
 	try {
 		// 加载配置
 		const serverInfo = client?.getServerVersion();

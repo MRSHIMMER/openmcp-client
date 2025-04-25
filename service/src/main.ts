@@ -2,7 +2,7 @@ import WebSocket from 'ws';
 import pino from 'pino';
 
 import { messageController } from './controller';
-import { VSCodeWebViewLike } from './adapter';
+import { VSCodeWebViewLike } from './hook/adapter';
 
 export interface VSCodeMessage {
     command: string;

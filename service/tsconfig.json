@@ -10,6 +10,11 @@
         "declaration": true,  // 新增
         "declarationMap": true // 新增
     },
+    "paths": {
+        "@/*": [
+            "src/*"
+        ]
+    },
     "include": ["src/**/*"],
     "exclude": ["node_modules", "src/main.ts"] // 排除 main.ts
 }

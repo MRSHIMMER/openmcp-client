@@ -2,7 +2,7 @@ import { PostMessageble } from "../hook/adapter";
 import { MCPClient } from "../hook/client";
 
 
-export async function lookupEnvVarHandler(client: MCPClient | undefined, data: any, webview: PostMessageble) {
+export async function lookupEnvVarService(client: MCPClient | undefined, data: any, webview: PostMessageble) {
     try {
         const { keys } = data;
 
