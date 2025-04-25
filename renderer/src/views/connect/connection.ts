@@ -80,7 +80,7 @@ export function doConnect() {
             const { code, msg } = data;
             connectionResult.success = (code === 200);
 
-            if (code === 200) {
+            if (code === 200) {                
                 const res = await getServerVersion() as { name: string, version: string };
                 connectionResult.serverInfo.name = res.name || '';
                 connectionResult.serverInfo.version = res.version || '';

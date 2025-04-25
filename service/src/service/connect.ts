@@ -30,7 +30,7 @@ function tryGetRunCommandError(command: string, args: string[] = [], cwd?: strin
 }
 
 export async function connectService(
-    client: MCPClient | undefined,
+    _client: MCPClient | undefined,
     option: MCPOptions,
     webview: PostMessageble
 ) {

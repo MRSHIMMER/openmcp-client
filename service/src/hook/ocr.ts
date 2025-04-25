@@ -1,6 +1,8 @@
 import Tesseract from 'tesseract.js';
 
-async function tesseractOCR(
+
+
+export async function tesseractOCR(
     imagePath: string,
     logger: (message: Tesseract.LoggerMessage) => void,
     lang: string = 'eng+chi_sim'

@@ -13,7 +13,7 @@
 
 <script lang="ts">
 import { defineComponent, ref, watch, nextTick } from 'vue';
-import { debounce } from 'lodash-es';
+import { debounce } from 'lodash';
 
 export default defineComponent({
     name: 'KInputObject',

@@ -18,7 +18,7 @@ export class LocalDB<T extends Entity> {
     private async init() {
         // 默认存储在用户目录的 .openmcp 目录下
         const homedir = os.homedir();
-        const filename = path.join(homedir, '.openmcp', 'db.sqlite');
+        const filename = path.join(homedir, '.openmcp', 'index.db');
         
         this.db = await open({
             filename,

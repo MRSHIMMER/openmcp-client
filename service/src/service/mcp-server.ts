@@ -243,7 +243,7 @@ export async function callToolService(
 			name: option.toolName,
 			arguments: option.toolArgs
 		});
-
+		
 		const result = {
 			code: 200,
 			msg: toolResult
@@ -262,7 +262,7 @@ export async function getServerVersionService(
 	client: MCPClient | undefined,
 	data: any,
 	webview: PostMessageble
-) {
+) {	
 	if (!client) {
 		const connectResult = {
 			code: 501,
