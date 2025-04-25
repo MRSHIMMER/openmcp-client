@@ -93,18 +93,6 @@ export default defineComponent({
             return JSON.stringify(obj1) === JSON.stringify(obj2)
         }
 
-        // 自动调整文本区域高度
-        const adjustTextareaHeight = () => {
-            nextTick(() => {
-                if (textareaRef.value) {
-                    textareaRef.value.style.height = 'auto'
-                    textareaRef.value.style.height = `${textareaRef.value.scrollHeight}px`
-                }
-            })
-        }
-
-        watch(inputValue, adjustTextareaHeight, { immediate: true })
-
         const handleKeydown = (event: KeyboardEvent) => {
             if (event.key === '{') {
                 event.preventDefault();

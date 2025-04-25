@@ -2,7 +2,7 @@ interface TypeAble {
     type: string;
 }
 
-export function getDefaultValue(property: TypeAble) {    
+export function getDefaultValue(property: TypeAble): any {    
     if (property.type === 'number' || property.type === 'integer') {
         return 0;
     } else if (property.type === 'boolean') {

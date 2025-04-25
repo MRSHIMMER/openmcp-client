@@ -43,23 +43,18 @@ export class TaskLoop {
         try {
             const toolName = toolCall.function.name;
             const toolArgs = JSON.parse(toolCall.function.arguments);
-            const toolResponse = await callTool(toolName, toolArgs);
+            const toolResponse = await callTool(toolName, toolArgs);            
             
             if (!toolResponse.isError) {
-                const content = JSON.stringify(toolResponse.content);
+                // const content = JSON.stringify(toolResponse.content);
                 return {
-                    content,
-                    state: MessageState.Success,
-
+                    content: toolResponse.content,
+                    state: MessageState.Success
                 };
             } else {
-                this.onError({
-                    state: MessageState.ToolCall,
-                    msg: `工具调用失败: ${toolResponse.content}`
-                });
-                console.error(toolResponse.content);
+
                 return {
-                    content: toolResponse.content.toString(),
+                    content: toolResponse.content,
                     state: MessageState.ToolCall
                 }
             }
@@ -70,10 +65,24 @@ export class TaskLoop {
                 msg: `工具调用失败: ${(error as Error).message}`
             });
             console.error(error);
+            
             return {
-                content: (error as Error).message,
+                content: [{
+                    type: 'error',
+                    text: this.parseErrorObject(error)
+                }],
                 state: MessageState.ToolCall
             }
+        }
+    }
+
+    private parseErrorObject(error: any): string {
+        if (typeof error === 'string') {
+            return error;
+        } else if (typeof error === 'object') {
+            return JSON.stringify(error, null, 2);   
+        } else {
+            return error.toString();
         }
     }
 
@@ -271,7 +280,11 @@ export class TaskLoop {
                 });
 
                 const toolCallResult = await this.handleToolCalls(this.streamingToolCalls.value);
-                if (toolCallResult) {
+
+                console.log(toolCallResult);
+                
+                
+                if (toolCallResult.content) {
                     const toolCall = this.streamingToolCalls.value[0];
 
                     tabStorage.messages.push({

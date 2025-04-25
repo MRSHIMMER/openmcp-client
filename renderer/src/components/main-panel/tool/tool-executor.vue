@@ -35,7 +35,6 @@
                         v-model="tabStorage.formData[name]"
                     />
 
-
                     <k-input-object
                         v-else-if="property.type === 'object'"
                         v-model="tabStorage.formData[name]"

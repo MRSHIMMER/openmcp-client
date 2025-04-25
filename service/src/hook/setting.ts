@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
 import { llms } from './llm';
-import { IServerVersion } from './controller/connect';
+import { IServerVersion } from './client';
 
 export let VSCODE_WORKSPACE = '';
 

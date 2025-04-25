@@ -11,7 +11,7 @@ export const toolsManager = reactive<{
 
 export interface ToolStorage {
     currentToolName: string;
-    lastToolCallResponse?: ToolCallResponse;
+    lastToolCallResponse?: ToolCallResponse | string;
     formData: Record<string, any>;
 }
 
@@ -23,7 +23,7 @@ export function callTool(toolName: string, toolArgs: Record<string, any>) {
             console.log(data.msg);
 
             if (data.code !== 200) {
-                reject(new Error(data.msg + ''));
+                resolve(data.msg);
             } else {
                 resolve(data.msg);
             }

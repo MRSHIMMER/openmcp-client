@@ -1,8 +1,8 @@
 
-import { PostMessageble } from '../adapter';
-import { connect, MCPClient, type MCPOptions } from './connect';
+import { PostMessageble } from '../hook/adapter';
+import { connect, MCPClient, type MCPOptions } from '../hook/client';
 import { lookupEnvVarHandler } from './env-var';
-import { callTool, getPrompt, getServerVersion, listPrompts, listResources, listResourceTemplates, listTools, readResource } from './handler';
+import { callTool, getPrompt, getServerVersion, listPrompts, listResources, listResourceTemplates, listTools, readResource } from './mcp-server';
 import { chatCompletionHandler } from './llm';
 import { panelLoadHandler, panelSaveHandler } from './panel';
 import { settingLoadHandler, settingSaveHandler } from './setting';

@@ -5,8 +5,11 @@
                 <div v-for="(message, index) in renderMessages" :key="index"
                     :class="['message-item', message.role.split('/')[0]]"
                 >
-                    <div class="message-avatar" v-if="message.role.startsWith('assistant')">
+                    <div class="message-avatar" v-if="message.role === 'assistant/content'">
                         <span class="iconfont icon-robot"></span>
+                    </div>
+                    <div class="message-avatar" v-else-if="message.role === 'assistant/tool_calls'">
+                        <span class="iconfont icon-tool"></span>
                     </div>
 
                     <!-- 用户输入的部分 -->
@@ -27,22 +30,7 @@
 
                 <!-- 正在加载的部分实时解析 markdown -->
                 <div v-if="isLoading" class="message-item assistant">
-                    <div class="message-avatar">
-                        <span class="iconfont icon-chat"></span>
-                    </div>
-                    <div class="message-content">
-                        <div class="message-role">
-                            Agent
-                            <span class="message-reminder">
-                                正在生成答案
-                                <span class="tool-loading iconfont icon-double-loading">
-                                </span>
-                            </span>
-                        </div>
-                        <div class="message-text">
-                            <span v-html="waitingMarkdownToHtml(streamingContent)"></span>
-                        </div>
-                    </div>
+                    <Message.StreamingBox :streaming-content="streamingContent" />
                 </div>
             </div>
         </el-scrollbar>
@@ -84,25 +72,15 @@ import { ElMessage, ScrollbarInstance } from 'element-plus';
 import { tabs } from '../panel';
 import { ChatMessage, ChatStorage, IRenderMessage, MessageState, ToolCall } from './chat';
 
-import Setting from './setting.vue';
-
-// 引入 markdown.ts 中的函数
-import { markdownToHtml } from './markdown';
 import { TaskLoop } from './task-loop';
 import { llmManager, llms } from '@/views/setting/llm';
 
 import * as Message from './message';
+import Setting from './setting.vue';
 
 defineComponent({ name: 'chat' });
 
 const { t } = useI18n();
-
-function waitingMarkdownToHtml(content: string) {
-    if (content) {
-        return markdownToHtml(content);
-    }
-    return '<span class="typing-cursor">|</span>';
-}
 
 const props = defineProps({
     tabId: {
@@ -358,6 +336,7 @@ onUnmounted(() => {
 
 .message-avatar {
     margin-right: 12px;
+    margin-top: 7px;
 }
 
 .message-content {

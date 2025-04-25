@@ -7,7 +7,7 @@
         </span>
 
 		<p>
-			OpenMCP Client 0.0.4 由 OpenMCP@<a href="https://www.zhihu.com/people/can-meng-zhong-de-che-xian">锦恢</a> 开发
+			OpenMCP Client 0.0.5 由 OpenMCP@<a href="https://www.zhihu.com/people/can-meng-zhong-de-che-xian">锦恢</a> 开发
 		</p>
 		
 		<p>

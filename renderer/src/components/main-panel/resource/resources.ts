@@ -13,7 +13,7 @@ export const resourcesManager = reactive<{
 export interface ResourceStorage {
     currentResourceName: string;
     lastResourceReadResponse?: ResourcesReadResponse;
-    formData: Record<string, number | string | boolean>;
+    formData: Record<string, any>;
 }
 
 /**

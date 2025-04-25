@@ -1,5 +1,5 @@
-import { PostMessageble } from "../adapter";
-import { MCPClient } from "./connect";
+import { PostMessageble } from "../hook/adapter";
+import { MCPClient } from "../hook/client";
 
 export function ping(client: MCPClient | undefined, webview: PostMessageble) {
 	if (!client) {

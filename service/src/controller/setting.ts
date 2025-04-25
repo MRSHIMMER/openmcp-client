@@ -1,6 +1,6 @@
-import { PostMessageble } from '../adapter';
-import { loadConfig, saveConfig } from '../util';
-import { MCPClient } from './connect';
+import { PostMessageble } from '../hook/adapter';
+import { loadConfig, saveConfig } from '../hook/setting';
+import { MCPClient } from '../hook/client';
 
 export async function settingSaveHandler(client: MCPClient | undefined, data: any, webview: PostMessageble) {
     try {

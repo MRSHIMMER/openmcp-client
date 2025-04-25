@@ -1,5 +1,5 @@
 {
-  "currentIndex": 0,
+  "currentIndex": 1,
   "tabs": [
     {
       "name": "交互测试",
@@ -171,7 +171,7 @@
       "storage": {
         "currentToolName": "get_weather_by_city_code",
         "formData": {
-          "city_code": 101210101
+          "city_code": 0
         },
         "lastToolCallResponse": {
           "content": [

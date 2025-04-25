@@ -1,4 +1,4 @@
-import { ToolItem } from "@/hook/type";
+import { ToolCallContent, ToolItem } from "@/hook/type";
 import { Ref, ref } from "vue";
 
 import type { OpenAI } from 'openai';
@@ -24,14 +24,25 @@ export interface IExtraInfo {
     [key: string]: any;
 }
 
-export interface ChatMessage {
-    role: 'user' | 'assistant' | 'system' | 'tool';
+export interface ToolMessage {
+    role: 'tool';
+    content: ToolCallContent[];
+    tool_call_id?: string
+    name?: string // 工具名称，当 role 为 tool
+    tool_calls?: ToolCall[],
+    extraInfo: IExtraInfo
+}
+
+export interface TextMessage {
+    role: 'user' | 'assistant' | 'system';
     content: string;
     tool_call_id?: string
     name?: string // 工具名称，当 role 为 tool
     tool_calls?: ToolCall[],
     extraInfo: IExtraInfo
 }
+
+export type ChatMessage = ToolMessage | TextMessage;
 
 // 新增状态和工具数据
 interface EnableToolItem {
@@ -69,7 +80,7 @@ export const allTools = ref<ToolItem[]>([]);
 export interface IRenderMessage {
     role: 'user' | 'assistant/content' | 'assistant/tool_calls' | 'tool';
     content: string;
-    toolResult?: string;
+    toolResult?: ToolCallContent[];
     tool_calls?: ToolCall[];
     showJson?: Ref<boolean>;
     extraInfo: IExtraInfo;

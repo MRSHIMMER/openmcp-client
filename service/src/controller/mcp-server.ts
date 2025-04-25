@@ -1,5 +1,5 @@
-import { PostMessageble } from "../adapter";
-import { MCPClient } from "./connect";
+import { PostMessageble } from "../hook/adapter";
+import { MCPClient } from "../hook/client";
 
 // ==================== 接口定义 ====================
 export interface GetPromptOption {

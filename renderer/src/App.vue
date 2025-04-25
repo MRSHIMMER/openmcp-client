@@ -15,7 +15,7 @@ import MainPanel from '@/components/main-panel/index.vue';
 import { setDefaultCss } from './hook/css';
 import { greenLog, pinkLog } from './views/setting/util';
 import { acquireVsCodeApi, useMessageBridge } from './api/message-bridge';
-import { connectionArgs, connectionMethods, doConnect, launchConnect } from './views/connect/connection';
+import { connectionArgs, connectionMethods, doConnect, launchConnect, loadEnvVar } from './views/connect/connection';
 import { loadSetting } from './hook/setting';
 import { loadPanels } from './hook/panel';
 
@@ -29,12 +29,15 @@ bridge.addCommandListener('hello', data => {
 
 
 function initDebug() {
-	connectionArgs.commandString = 'node C:/Users/K/code/servers/src/puppeteer/dist/index.js';
+	connectionArgs.commandString = 'node /Users/bytedance/projects/mcp/servers/src/puppeteer/dist/index.js';
 	connectionMethods.current = 'STDIO';
 
 	setTimeout(async () => {
 		// 初始化 设置
 		loadSetting();
+
+		// 初始化环境变量
+		loadEnvVar();
 
 		// 尝试连接
 		await doConnect();
@@ -55,6 +58,9 @@ async function initProduce() {
 
 	// 初始化 设置
 	loadSetting();
+
+	// 初始化环境变量
+	loadEnvVar();
 
 	// 尝试连接
 	await launchConnect();

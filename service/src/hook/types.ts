@@ -1,3 +1,12 @@
+// server/src/types.ts
+export interface IMessage {
+    type: string;
+    data: Record<string, unknown>;
+    timestamp?: number;
+}
+
+export type MessageHandler = (message: IMessage) => void;
+
 // ==================== 基础类型定义 ====================
 export interface SchemaProperty {
 	title: string;

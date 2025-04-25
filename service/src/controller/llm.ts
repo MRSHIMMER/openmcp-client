@@ -1,6 +1,6 @@
 import { OpenAI } from 'openai';
-import { MCPClient } from './connect';
-import { PostMessageble } from '../adapter';
+import { MCPClient } from '../hook/client';
+import { PostMessageble } from '../hook/adapter';
 
 let currentStream: AsyncIterable<any> | null = null;
 

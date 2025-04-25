@@ -25,3 +25,4 @@ config.json
 setting.json
 
 tabs.example-servers/puppeteer.json
+*.traineddata

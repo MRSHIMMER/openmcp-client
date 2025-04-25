@@ -81,6 +81,7 @@ export interface PromptsGetResponse {
 export interface ToolCallContent {
     type: string;
     text: string;
+	[key: string]: any;
 }
 
 export interface ToolCallResponse {

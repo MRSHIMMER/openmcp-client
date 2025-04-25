@@ -42,51 +42,13 @@
 
 
 <script setup lang="ts">
-import { defineComponent, onMounted, ref } from 'vue';
+import { defineComponent, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { connectionEnv, connectionResult, EnvItem, envVarStatus } from './connection';
-import { useMessageBridge } from '@/api/message-bridge';
+import { connectionEnv, EnvItem, handleEnvSwitch } from './connection';
 
 defineComponent({ name: 'env-var' });
 
 const { t } = useI18n();
-const bridge = useMessageBridge();
-
-function lookupEnvVar(varNames: string[]) {
-	console.log('enter');
-	
-	return new Promise<string[] | undefined>((resolve, reject) => {
-		bridge.addCommandListener('lookup-env-var', data => {
-			const { code, msg } = data;
-			
-			if (code === 200) {
-				connectionResult.logString.push({
-					type: 'info',
-					message: '预设环境变量同步完成'
-				});
-
-				resolve(msg);
-			} else {
-				connectionResult.logString.push({
-					type: 'error',
-					message: '预设环境变量同步失败: ' + msg
-				});
-
-				resolve(undefined);
-			}
-		}, { once: true });
-
-		console.log(varNames);
-		
-		
-		bridge.postMessage({
-			command: 'lookup-env-var',
-			data: {
-				keys: varNames
-			}
-		})
-	});
-}
 
 /**
  * @description 添加环境变量
@@ -125,46 +87,6 @@ function deleteEnvVar(option: EnvItem) {
 
 
 const envEnabled = ref(true);
-
-async function handleEnvSwitch(enabled: boolean) {
-	const presetVars = ['HOME', 'LOGNAME', 'PATH', 'SHELL', 'TERM', 'USER'];
-
-	if (enabled) {
-		const values = await lookupEnvVar(presetVars);
-
-		if (values) {
-			// 将 key values 合并进 connectionEnv.data 中
-			// 若已有相同的 key, 则替换 value
-			for (let i = 0; i < presetVars.length; i++) {
-				const key = presetVars[i];
-				const value = values[i];
-				const sameNameItems = connectionEnv.data.filter(item => item.key === key);
-				if (sameNameItems.length > 0) {
-					const conflictItem = sameNameItems[0];
-					conflictItem.value = value;
-				} else {
-					connectionEnv.data.push({
-						key: key, value: value
-					});
-				}
-			}
-		}
-	} else {
-		// 清空 connectionEnv.data 中所有 key 为 presetVars 的项
-		const reserveItems = connectionEnv.data.filter(item => !presetVars.includes(item.key));
-		connectionEnv.data = reserveItems;
-	}
-}
-
-onMounted(() => {
-	setTimeout(() => {
-		if (envVarStatus.launched) {
-			return;
-		}
-		handleEnvSwitch(envEnabled.value);
-		envVarStatus.launched = true;
-	}, 200);
-});
 
 </script>
 

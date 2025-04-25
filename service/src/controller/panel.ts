@@ -1,6 +1,6 @@
-import { PostMessageble } from '../adapter';
-import { loadConfig, loadTabSaveConfig, saveConfig, saveTabSaveConfig } from '../util';
-import { MCPClient } from './connect';
+import { PostMessageble } from '../hook/adapter';
+import { loadConfig, loadTabSaveConfig, saveConfig, saveTabSaveConfig } from '../hook/setting';
+import { MCPClient } from '../hook/client';
 
 export async function panelSaveHandler(client: MCPClient | undefined, data: any, webview: PostMessageble) {
 	try {

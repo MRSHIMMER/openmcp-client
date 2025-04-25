@@ -18,7 +18,7 @@
 		<el-tooltip :content="t('tool-use')" placement="top">
 			<div class="setting-button" :class="{ 'active': availableToolsNum > 0 }" size="small"
 			@click="toggleTools">
-			<span class="iconfont icon-tool badge-outer" v-if="availableToolsNum > 0">
+			<span class="iconfont icon-tool badge-outer">
 				<span class="badge-inner">
 					{{ availableToolsNum }}
 				</span>

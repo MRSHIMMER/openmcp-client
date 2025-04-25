@@ -1,8 +1,7 @@
 <template>
     <div class="message-role">
-        Agent
         <span class="message-reminder" v-if="!props.message.toolResult">
-            正在使用工具
+            Agent 正在使用工具
             <span class="tool-loading iconfont icon-double-loading">
             </span>
         </span>
@@ -16,7 +15,6 @@
                 <template #title>
                     <div class="tool-calls">
                         <div class="tool-call-header">
-                            <span class="tool-type">{{ 'tool use' }}</span>
                             <span class="tool-name">{{ props.message.tool_calls[0].function.name }}</span>
                             <el-button size="small" @click="createTest(props.message.tool_calls[0])">
                                 <span class="iconfont icon-send"></span>
@@ -34,24 +32,30 @@
 
                     <!-- 工具调用结果 -->
                     <div v-if="props.message.toolResult">
-                        <div class="tool-call-header">
-                            <span class="tool-name" :class="{ 'error': !isValidJson }">
-                                {{ isValidJson ? '响应': '错误' }}
+                        <div class="tool-call-header result">
+                            <span class="tool-name" :class="{ 'error': !isValid }">
+                                {{ isValid ? '响应': '错误' }}
+
+                                <el-button v-if="!isValid" size="small"
+                                    @click="gotoIssue()"
+                                >
+                                    反馈
+                                </el-button>
                             </span>
-                            <span style="width: 200px;" class="tools-dialog-container" v-if="isValidJson">
+                            <span style="width: 200px;" class="tools-dialog-container" v-if="isValid">
                                 <el-switch v-model="props.message.showJson!.value" inline-prompt active-text="JSON"
                                     inactive-text="Text" style="margin-left: 10px; width: 200px;"
                                     :inactive-action-style="'backgroundColor: var(--sidebar)'" />
                             </span>
                         </div>
-                        <div class="tool-result" v-if="isValidJson">
+                        <div class="tool-result" v-if="isValid">
                             <div v-if="props.message.showJson!.value" class="tool-result-content">
                                 <div class="inner">
-                                    <div v-html="jsonResultToHtml(props.message.toolResult)"></div>
+                                    <div v-html="toHtml(props.message.toolResult)"></div>
                                 </div>
                             </div>
                             <span v-else>
-                                <div v-for="(item, index) in JSON.parse(props.message.toolResult)" :key="index"
+                                <div v-for="(item, index) in props.message.toolResult" :key="index"
                                     class="response-item"
                                 >
                                     <el-scrollbar width="100%">
@@ -68,19 +72,23 @@
                                 </div>
                             </span>
                         </div>
-                        <div v-else class="tool-result" :class="{ 'error': !isValidJson }">
-                            <div class="tool-result-content">
-                                <div class="inner">
-                                    {{ props.message.toolResult }}
-                                </div>
+                        <div v-else class="tool-result" :class="{ 'error': !isValid }">
+                            <div class="tool-result-content"
+                                v-for="(error, index) of collectErrors"
+                                :key="index"
+                            >
+                                {{ error }}
                             </div>
                         </div>
                     </div>
+
+
+                    <MessageMeta :message="message" />
+
                 </div>
             </el-collapse-item>
         </el-collapse>
     </div>
-    <MessageMeta :message="message" />
 </template>
 
 <script setup lang="ts">
@@ -90,6 +98,7 @@ import MessageMeta from './message-meta.vue';
 import { markdownToHtml } from '../markdown';
 import { createTest } from '@/views/setting/llm';
 import { IRenderMessage, MessageState } from '../chat';
+import { ToolCallContent } from '@/hook/type';
 
 const props = defineProps({
     message: {
@@ -112,19 +121,51 @@ watch(
     }
 );
 
-const jsonResultToHtml = (jsonString: string) => {
-    const formattedJson = JSON.stringify(JSON.parse(jsonString), null, 2);
+const toHtml = (toolResult: ToolCallContent[]) => {
+    const formattedJson = JSON.stringify(toolResult, null, 2);
     const html = markdownToHtml('```json\n' + formattedJson + '\n```');
     return html;
 };
 
-
-const isValidJson = computed(() => {
+const jsonResultToHtml = (jsonResult: string) => {
     try {
-        JSON.parse(props.message.toolResult || '');
+        const formattedJson = JSON.stringify(JSON.parse(jsonResult), null, 2);
+        const html = markdownToHtml('```json\n' + formattedJson + '\n```');
+        return html;   
+    } catch (error) {
+        const html = markdownToHtml('```json\n' + jsonResult + '\n```');
+        return html; 
+    }
+}
+
+function gotoIssue() {
+    window.open('https://github.com/LSTM-Kirigaya/openmcp-client/issues', '_blank');
+}
+
+const isValid = computed(() => {
+    try {
+        const item = props.message.toolResult![0];
+        if (item.type === 'error') {
+            return false;
+        }
         return true;
     } catch {
         return false;
+    }
+});
+
+const collectErrors = computed(() => {
+    const errorMessages = [];
+    try {
+        const errorResults = props.message.toolResult!.filter(item => item.type === 'error');
+        console.log(errorResults);
+        
+        for (const errorResult of errorResults) {
+            errorMessages.push(errorResult.text);
+        }
+        return errorMessages;
+    } catch {
+        return errorMessages;
     }
 });
 
@@ -140,9 +181,16 @@ const isValidJson = computed(() => {
     border-left: 3px solid var(--el-color-error);
 }
 
-.tool-calls {
-    margin-top: 10px;
+.message-text .el-collapse-item__header {
+    display: flex;
+    align-items: center;
+    height: fit-content;
 }
+
+.message-text .el-collapse-item__content {
+    padding-bottom: 5px;
+}
+
 
 .tool-call-item {
     margin-bottom: 10px;
@@ -151,6 +199,9 @@ const isValidJson = computed(() => {
 .tool-call-header {
     display: flex;
     align-items: center;
+}
+
+.tool-call-header.result {
     margin-top: 10px;
 }
 

@@ -1,5 +1,5 @@
 export { messageController } from './controller';
-export { VSCodeWebViewLike } from './adapter';
-export { setVscodeWorkspace } from './util';
+export { VSCodeWebViewLike } from './hook/adapter';
+export { setVscodeWorkspace } from './hook/setting';
 // TODO: 更加规范
 export { client } from './controller';
