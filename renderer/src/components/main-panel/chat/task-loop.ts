@@ -170,7 +170,6 @@ export class TaskLoop {
         });
     }
 
-
     public makeChatData(tabStorage: ChatStorage): ChatCompletionCreateParamsBase {
         const baseURL = llms[llmManager.currentModelIndex].baseUrl;
         const apiKey = llms[llmManager.currentModelIndex].userToken;
@@ -189,6 +188,14 @@ export class TaskLoop {
         // 如果超出了 tabStorage.settings.contextLength, 则删除最早的消息
         const loadMessages = tabStorage.messages.slice(- tabStorage.settings.contextLength);
         userMessages.push(...loadMessages);
+
+        // 过滤一下 userMessages，现在的大部分模型只支持 text, image_url and video_url 这三种类型的数据
+        const postProcessMessages = [];
+        for (const msg of userMessages) {
+            if (msg.role === 'tool') {
+                
+            }
+        }
 
         // 增加一个id用于锁定状态
         const id = crypto.randomUUID();
