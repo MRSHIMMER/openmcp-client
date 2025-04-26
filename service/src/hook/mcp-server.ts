@@ -2,28 +2,20 @@ import * as os from 'os';
 import * as path from 'path';
 import * as fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
+import { diskStorage } from './db';
 
 export function saveBase64ImageData(
     base64String: string,
     mimeType: string
 ): string {
-    const homedir = os.homedir();
-    const imageStorageFolder = path.join(homedir, '.openmcp', 'storage');
-    
-    // 确保存储目录存在
-    if (!fs.existsSync(imageStorageFolder)) {
-        fs.mkdirSync(imageStorageFolder, { recursive: true });
-    }
 
     // 从 base64 字符串中提取数据部分
     const base64Data = base64String.replace(/^data:.+;base64,/, '');
 
     // 生成唯一文件名
     const fileName = `${uuidv4()}.${mimeType.split('/')[1]}`;
-    const filePath = path.join(imageStorageFolder, fileName);
 
-    // 将 base64 数据写入文件
-    fs.writeFileSync(filePath, base64Data, { encoding: 'base64' });
+    diskStorage.setSync(fileName, base64Data, { encoding: 'base64' });
 
     return fileName;
 }

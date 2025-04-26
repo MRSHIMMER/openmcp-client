@@ -1,7 +1,5 @@
 import Tesseract from 'tesseract.js';
 
-
-
 export async function tesseractOCR(
     imagePath: string,
     logger: (message: Tesseract.LoggerMessage) => void,
@@ -21,4 +19,12 @@ export async function tesseractOCR(
         console.error('OCR error:', error);
     }
     return '无法识别图片';
+}
+
+export async function ocr(
+    filename: string,
+    logger: (message: Tesseract.LoggerMessage) => void,
+    lang: string = 'eng+chi_sim'
+) {
+    
 }
