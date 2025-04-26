@@ -1,6 +1,7 @@
 import { OpenAI } from 'openai';
 import { MCPClient } from '../hook/client';
 import { PostMessageble } from '../hook/adapter';
+import { postProcessMessages } from '../hook/llm';
 
 let currentStream: AsyncIterable<any> | null = null;
 
@@ -27,6 +28,7 @@ export async function chatCompletionService(client: MCPClient | undefined, data:
         	tools = undefined;
         }
         
+        postProcessMessages(messages);
 
         const stream = await client.chat.completions.create({
             model,

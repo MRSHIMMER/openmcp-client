@@ -38,7 +38,6 @@ import { ChatStorage, IRenderMessage } from '../chat';
 
 import KCuteTextarea from '@/components/k-cute-textarea/index.vue';
 import { ElMessage } from 'element-plus';
-import { markdownToHtml } from '../markdown';
 
 const props = defineProps({
     message: {

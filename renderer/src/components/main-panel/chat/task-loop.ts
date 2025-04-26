@@ -95,6 +95,7 @@ export class TaskLoop {
 
     private handleChunkDeltaToolCalls(chunk: ChatCompletionChunk) {
         const toolCall = chunk.choices[0]?.delta?.tool_calls?.[0];
+        
         if (toolCall) {
             const currentCall = this.streamingToolCalls.value[toolCall.index];
 

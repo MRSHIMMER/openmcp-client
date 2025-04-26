@@ -1,12 +1,14 @@
 {
-  "currentIndex": 1,
+  "currentIndex": 2,
   "tabs": [
     {
       "name": "资源",
       "icon": "icon-file",
       "type": "blank",
       "componentIndex": 0,
-      "storage": {}
+      "storage": {
+        "formData": {}
+      }
     },
     {
       "name": "工具",
@@ -14,7 +16,105 @@
       "type": "blank",
       "componentIndex": 2,
       "storage": {
-        "currentToolName": "image_crawler"
+        "currentToolName": "image_crawler",
+        "formData": {}
+      }
+    },
+    {
+      "name": "交互测试",
+      "icon": "icon-robot",
+      "type": "blank",
+      "componentIndex": 3,
+      "storage": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "帮我找几张 明日方舟 m3 的图片",
+            "extraInfo": {
+              "created": 1745687338279,
+              "state": "success",
+              "serverName": "deepseek"
+            }
+          },
+          {
+            "role": "assistant",
+            "content": "",
+            "tool_calls": [
+              {
+                "id": "call_0_ccaf0a55-06d5-4db0-82ac-62ca44cfa812",
+                "index": 0,
+                "type": "function",
+                "function": {
+                  "name": "image_crawler",
+                  "arguments": "{\"key_word\":\"明日方舟 m3\",\"image_num\":5}"
+                }
+              }
+            ],
+            "extraInfo": {
+              "created": 1745687343346,
+              "state": "success",
+              "serverName": "deepseek"
+            }
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "call_0_ccaf0a55-06d5-4db0-82ac-62ca44cfa812",
+            "content": [
+              {
+                "type": "text",
+                "text": "[ImageResult(url='https://c-img.18183.com/images/2023/06/14/beedbfb9dc8312034e008d31cef057aa.png@!te5', title='', source='bing'), ImageResult(url='https://c-img.18183.com/images/2023/06/14/dbd58facae1dc77dcc15f3099b312e19.png@!te5', title='', source='bing'), ImageResult(url='https://media.9game.cn/gamebase/2021/6/2/227331281.jpg', title='', source='bing'), ImageResult(url='https://media.9game.cn/gamebase/ieu-gdc-pre-process/images/20231208/13/29/b0765f37ad86ebe8d09a2274ab590fa0.jpg', title='', source='bing'), ImageResult(url='https://i0.hdslb.com/bfs/article/847d632ae30d6ef39498e17fa390d6bb064bf6fc.jpg', title='', source='bing')]"
+              }
+            ],
+            "extraInfo": {
+              "created": 1745687344413,
+              "state": "success",
+              "serverName": "deepseek",
+              "usage": {
+                "prompt_tokens": 169,
+                "completion_tokens": 32,
+                "total_tokens": 201,
+                "prompt_tokens_details": {
+                  "cached_tokens": 128
+                },
+                "prompt_cache_hit_tokens": 128,
+                "prompt_cache_miss_tokens": 41
+              }
+            }
+          },
+          {
+            "role": "assistant",
+            "content": "我找到了几张关于“明日方舟 M3”的图片，以下是它们的链接：\n\n1. [图片链接](https://c-img.18183.com/images/2023/06/14/beedbfb9dc8312034e008d31cef057aa.png@!te5)\n2. [图片链接](https://c-img.18183.com/images/2023/06/14/dbd58facae1dc77dcc15f3099b312e19.png@!te5)\n3. [图片链接](https://media.9game.cn/gamebase/2021/6/2/227331281.jpg)\n4. [图片链接](https://media.9game.cn/gamebase/ieu-gdc-pre-process/images/20231208/13/29/b0765f37ad86ebe8d09a2274ab590fa0.jpg)\n5. [图片链接](https://i0.hdslb.com/bfs/article/847d632ae30d6ef39498e17fa390d6bb064bf6fc.jpg)\n\n你可以点击链接查看或下载这些图片。如果需要更多图片或其他帮助，请告诉我！",
+            "extraInfo": {
+              "created": 1745687357235,
+              "state": "success",
+              "serverName": "deepseek",
+              "usage": {
+                "prompt_tokens": 454,
+                "completion_tokens": 250,
+                "total_tokens": 704,
+                "prompt_tokens_details": {
+                  "cached_tokens": 128
+                },
+                "prompt_cache_hit_tokens": 128,
+                "prompt_cache_miss_tokens": 326
+              }
+            }
+          }
+        ],
+        "settings": {
+          "modelIndex": 0,
+          "enableTools": [
+            {
+              "name": "image_crawler",
+              "description": "根据关键词从指定搜索引擎爬取图片",
+              "enabled": true
+            }
+          ],
+          "enableWebSearch": false,
+          "temperature": 0.7,
+          "contextLength": 10,
+          "systemPrompt": ""
+        }
       }
     }
   ]
