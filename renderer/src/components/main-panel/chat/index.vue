@@ -14,23 +14,23 @@
 
                     <!-- 用户输入的部分 -->
                     <div class="message-content" v-if="message.role === 'user'">
-                        <Message.User :message="message" />
+                        <Message.User :message="message" :tab-id="props.tabId" />
                     </div>
 
                     <!-- 助手返回的内容部分 -->
                     <div class="message-content" v-else-if="message.role === 'assistant/content'">
-                        <Message.Assistant :message="message" />
+                        <Message.Assistant :message="message" :tab-id="props.tabId" />
                     </div>
 
                     <!-- 助手调用的工具部分 -->
                     <div class="message-content" v-else-if="message.role === 'assistant/tool_calls'">
-                        <Message.Toolcall :message="message" />
+                        <Message.Toolcall :message="message" :tab-id="props.tabId" />
                     </div>
                 </div>
 
                 <!-- 正在加载的部分实时解析 markdown -->
                 <div v-if="isLoading" class="message-item assistant">
-                    <Message.StreamingBox :streaming-content="streamingContent" />
+                    <Message.StreamingBox :streaming-content="streamingContent" :tab-id="props.tabId" />
                 </div>
             </div>
         </el-scrollbar>
@@ -52,8 +52,12 @@
                 <div class="input-wrapper">
                     <Setting :tabId="tabId" />
 
-                    <el-input v-model="userInput" type="textarea" :rows="inputHeightLines" :maxlength="2000"
-                        placeholder="输入消息..." @keydown.enter="handleKeydown" resize="none" class="chat-input" />
+                    <KCuteTextarea
+                        v-model="userInput"
+                        placeholder="输入消息..."
+                        :customClass="'chat-input'"
+                        @press-enter="handleSend()"
+                    />
 
                     <el-button type="primary" @click="isLoading ? handleAbort() : handleSend()" class="send-button">
                         <span v-if="!isLoading" class="iconfont icon-send"></span>
@@ -77,6 +81,9 @@ import { llmManager, llms } from '@/views/setting/llm';
 
 import * as Message from './message';
 import Setting from './setting.vue';
+import KCuteTextarea from '@/components/k-cute-textarea/index.vue';
+
+import { provide } from 'vue';
 
 defineComponent({ name: 'chat' });
 
@@ -93,10 +100,6 @@ const tab = tabs.content[props.tabId];
 const tabStorage = tab.storage as ChatStorage;
 
 const userInput = ref('');
-const inputHeightLines = computed(() => {
-    const currentLines = userInput.value.split('\n').length;
-    return Math.min(12, Math.max(5, currentLines));
-});
 
 // 创建 messages
 if (!tabStorage.messages) {
@@ -165,14 +168,6 @@ const updateScrollHeight = () => {
     }
 };
 
-const handleKeydown = (event: KeyboardEvent) => {
-    if (event.key === 'Enter' && !event.shiftKey) {
-        event.preventDefault();
-        handleSend();
-    }
-    // Shift+Enter 允许自然换行
-};
-
 
 const autoScroll = ref(true);
 const scrollbarRef = ref<ScrollbarInstance>();
@@ -218,13 +213,12 @@ watch(streamingToolCalls, () => {
 
 let loop: TaskLoop | undefined = undefined;
 
-const handleSend = () => {
-    if (!userInput.value.trim() || isLoading.value) return;
+const handleSend = (newMessage?: string) => {
+    const userMessage = newMessage || userInput.value.trim();
+    if (!userMessage || isLoading.value) return;
 
     autoScroll.value = true;
     isLoading.value = true;
-
-    const userMessage = userInput.value.trim();
 
     loop = new TaskLoop(streamingContent, streamingToolCalls);
 
@@ -277,6 +271,8 @@ const handleAbort = () => {
         ElMessage.info('请求已中止');
     }
 };
+
+provide('handleSend', handleSend);
 
 onMounted(() => {
     updateScrollHeight();
@@ -357,9 +353,10 @@ onUnmounted(() => {
 .user .message-text {
     margin-top: 10px;
     margin-bottom: 10px;
+    width: 100%;
 }
 
-.user .message-text>span {
+.user .message-text > span {
     border-radius: .9em;
     background-color: var(--main-light-color);
     padding: 10px 15px;
@@ -419,7 +416,7 @@ onUnmounted(() => {
     height: auto;
     padding: 8px 12px;
     font-size: 20px;
-    border-radius: .5em;
+    border-radius: 1.2em !important;
 }
 
 :deep(.chat-settings) {

@@ -16,6 +16,10 @@ const props = defineProps({
     message: {
         type: Object,
         required: true
+    },
+    tabId: {
+        type: Number,
+        required: true
     }
 });
 

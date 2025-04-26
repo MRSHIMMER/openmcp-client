@@ -104,3 +104,4 @@ export function getToolSchema(enableTools: EnableToolItem[]) {
 	}
     return toolsSchema;
 }
+

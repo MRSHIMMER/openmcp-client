@@ -83,7 +83,7 @@ export function messageController(command: string, data: any, webview: PostMessa
 			chatCompletionService(client, data, webview);
 			break;
 
-		case 'llm/chat/completions/cancel':
+		case 'llm/chat/completions/abort':
 			abortMessageService(client, data, webview);
 			break;
 

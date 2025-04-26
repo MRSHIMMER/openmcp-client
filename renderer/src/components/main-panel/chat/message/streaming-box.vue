@@ -25,6 +25,10 @@ const props = defineProps({
     streamingContent: {
         type: String,
         required: true
+    },
+    tabId: {
+        type: Number,
+        required: true
     }
 });
 

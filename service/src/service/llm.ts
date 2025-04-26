@@ -104,15 +104,15 @@ export function abortMessageService(client: MCPClient | undefined, data: any, we
     if (currentStream) {
         // 标记流已中止
         currentStream = null;
-        // 发送中止消息给前端
-        webview.postMessage({
-            command: 'llm/chat/completions/abort',
-            data: {
-                code: 200,
-                msg: {
-                    success: true
-                }
-            }
-        });
     }
+
+    webview.postMessage({
+        command: 'llm/chat/completions/abort',
+        data: {
+            code: 200,
+            msg: {
+                success: true
+            }
+        }
+    });
 }

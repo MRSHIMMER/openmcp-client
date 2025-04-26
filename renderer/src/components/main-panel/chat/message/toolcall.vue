@@ -104,6 +104,10 @@ const props = defineProps({
     message: {
         type: Object as PropType<IRenderMessage>,
         required: true
+    },
+    tabId: {
+        type: Number,
+        required: true
     }
 });
 
