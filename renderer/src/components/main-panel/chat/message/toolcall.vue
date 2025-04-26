@@ -15,7 +15,11 @@
                 <template #title>
                     <div class="tool-calls">
                         <div class="tool-call-header">
-                            <span class="tool-name">{{ props.message.tool_calls[0].function.name }}</span>
+                            <span class="tool-name">
+                                <span class="iconfont icon-tool"></span>
+
+                                {{ props.message.tool_calls[0].function.name }}
+                            </span>
                             <el-button size="small" @click="createTest(props.message.tool_calls[0])">
                                 <span class="iconfont icon-send"></span>
                             </el-button>
@@ -177,12 +181,17 @@ const collectErrors = computed(() => {
 
 <style>
 .message-text.tool_calls {
-    border-left: 3px solid var(--main-color);
-    padding-left: 10px;
+    border: 1px solid var(--main-color);
+    border-radius: .5em;
+    padding: 3px 10px;
 }
 
 .message-text.tool_calls.fail {
-    border-left: 3px solid var(--el-color-error);
+    border: 1px solid var(--el-color-error);
+}
+
+.message-text.tool_calls.fail .tool-name {
+    color: var(--el-color-error);
 }
 
 .message-text .el-collapse-item__header {
@@ -217,10 +226,12 @@ const collectErrors = computed(() => {
     display: flex;
     align-items: center;
     height: 26px;
+    display: flex;
+    align-items: center;
 }
 
-.tool-name.error {
-    color: var(--el-color-error);
+.tool-name .iconfont {
+    margin-right: 5px;
 }
 
 .tool-type {

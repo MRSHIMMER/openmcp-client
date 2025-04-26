@@ -3,13 +3,12 @@
         <el-scrollbar ref="scrollbarRef" :height="'90%'" @scroll="handleScroll" v-if="renderMessages.length > 0 || isLoading">
             <div class="message-list" :ref="el => messageListRef = el">
                 <div v-for="(message, index) in renderMessages" :key="index"
-                    :class="['message-item', message.role.split('/')[0]]"
+                    :class="['message-item', message.role.split('/')[0], message.role.split('/')[1]]"
                 >
                     <div class="message-avatar" v-if="message.role === 'assistant/content'">
                         <span class="iconfont icon-robot"></span>
                     </div>
                     <div class="message-avatar" v-else-if="message.role === 'assistant/tool_calls'">
-                        <span class="iconfont icon-tool"></span>
                     </div>
 
                     <!-- 用户输入的部分 -->
@@ -379,6 +378,10 @@ onUnmounted(() => {
 .assistant {
     text-align: left;
     margin-top: 30px;
+}
+
+.assistant.tool_calls {
+    margin-top: 5px;
 }
 
 .chat-footer {
