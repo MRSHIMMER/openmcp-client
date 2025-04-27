@@ -77,6 +77,8 @@ export function createOcrWorker(filename: string, webview: PostMessageble): OcrW
     };
 
     const imagePath = diskStorage.getStoragePath(filename);
+    console.log(imagePath);
+    
     const fut = tesseractOCR(imagePath, logger);
 
     fut.then((text) => {

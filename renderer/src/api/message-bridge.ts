@@ -123,6 +123,7 @@ class MessageBridge {
 		if (!this.handlers.has(command)) {
 			this.handlers.set(command, new Set<CommandHandler>());
 		}
+		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 		const commandHandlers = this.handlers.get(command)!;
 
 		const wrapperCommandHandler = option.once ? (data: any) => {

@@ -132,11 +132,11 @@ export class ClientController {
             arguments: option.toolArgs
         });
 
-        console.log(JSON.stringify(toolResult, null, 2));
+        // console.log(JSON.stringify(toolResult, null, 2));
         
         postProcessMcpToolcallResponse(toolResult, webview);
 
-        console.log(JSON.stringify(toolResult, null, 2));
+        // console.log(JSON.stringify(toolResult, null, 2));
         
 
         return {

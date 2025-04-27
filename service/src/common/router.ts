@@ -4,6 +4,7 @@ import { LlmController } from "../llm/llm.controller";
 import { ClientController } from "../mcp/client.controller";
 import { ConnectController } from "../mcp/connect.controller";
 import { client } from "../mcp/connect.service";
+import { OcrController } from "../mcp/ocr.controller";
 import { PanelController } from "../panel/panel.controller";
 import { SettingController } from "../setting/setting.controller";
 
@@ -12,7 +13,8 @@ export const ModuleControllers = [
     ClientController,
     LlmController,
     PanelController,
-    SettingController
+    SettingController,
+    OcrController
 ];
 
 export async function routeMessage(command: string, data: any, webview: PostMessageble) {

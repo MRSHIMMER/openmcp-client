@@ -68,7 +68,10 @@ export class TaskLoop {
                 console.log(toolResponse);
                 
                 return {
-                    content: toolResponse,
+                    content: [{
+                        type: 'error',
+                        text: toolResponse
+                    }],
                     state: MessageState.ToolCall
                 }
             } else if (!toolResponse.isError) {
@@ -314,7 +317,7 @@ export class TaskLoop {
                 if (toolCallResult.state === MessageState.ParseJsonError) {
                     // 如果是因为解析 JSON 错误，则重新开始
                     tabStorage.messages.pop();
-                    redLog('解析 JSON 错误 ' + this.streamingToolCalls.value[0].function.arguments);
+                    redLog('解析 JSON 错误 ' + this.streamingToolCalls.value[0]?.function?.arguments);
                     continue;
                 }
 

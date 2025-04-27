@@ -67,7 +67,8 @@
                                 >
                                     <ToolcallResultItem
                                         :item="item"
-                                        @update:item="value => updateToolCallResultItem(value, index)"    
+                                        @update:item="value => updateToolCallResultItem(value, index)"
+                                        @update:ocr-done="value => collposePanel()"
                                     />
                                 </div>
                             </span>
@@ -113,18 +114,37 @@ const props = defineProps({
     }
 });
 
+const hasOcr = computed(() => {
+    for (const item of props.message.toolResult || []) {
+        const metaInfo = item._meta || {};
+        const { ocr = false } = metaInfo;
+        if (ocr) {
+            return true;
+        }
+    }
+    return false;
+});
+
 const activeNames = ref<string[]>(props.message.toolResult ? [''] : ['tool']);
 
 watch(
     () => props.message.toolResult,
-    (value, oldValue) => {
+    (value, _) => {
+        if (hasOcr.value) {
+            return;
+        }
+
         if (value) {
-            setTimeout(() => {
-                activeNames.value = [''];
-            }, 1000);
+            collposePanel();
         }
     }
 );
+
+function collposePanel() {
+    setTimeout(() => {
+        activeNames.value = [''];
+    }, 1000);
+}
 
 /**
  * @description 将工具调用结果转换成 html

@@ -1,3 +1,5 @@
+import { useMessageBridge } from "@/api/message-bridge";
+
 export function getCurrentTime() {
     // 创建一个Date对象
     const date = new Date();
@@ -19,4 +21,71 @@ export function getCurrentTime() {
     // 拼接成字符串
     const timeStr = year + "年" + month + "月" + day + "日" + " " + hour + ":" + minute;
     return timeStr;
+}
+
+
+export function getBase64StringByFilename(filename: string) {
+    const bridge = useMessageBridge();
+
+    return new Promise<string>(resolve => {
+        bridge.addCommandListener('ocr/get-ocr-image', data => {
+            const { code, msg = {} } = data;
+            resolve(msg.base64String);
+        }, { once: true});
+
+        bridge.postMessage({
+            command: 'ocr/get-ocr-image',
+            data: {
+                filename
+            }
+        });
+    });
+}
+
+const blobUrlCache = new Map<string, string>();
+
+export async function getBlobUrlByFilename(filename: string) {
+    // 检查缓存中是否存在该文件
+    if (blobUrlCache.has(filename)) {
+        return blobUrlCache.get(filename);
+    }
+
+    const base64String = await getBase64StringByFilename(filename);        
+
+    if (!base64String) {
+        return '';
+    }
+
+    // 根据文件后缀获取 mimeType
+    const extension = filename.split('.').pop()?.toLowerCase();
+    let mimeType = 'image/png'; // 默认值
+    switch (extension) {
+        case 'jpg':
+        case 'jpeg':
+            mimeType = 'image/jpeg';
+            break;
+        case 'gif':
+            mimeType = 'image/gif';
+            break;
+        case 'webp':
+            mimeType = 'image/webp';
+            break;
+        case 'bmp':
+            mimeType = 'image/bmp';
+            break;
+        case 'svg':
+            mimeType = 'image/svg+xml';
+            break;
+    }
+    const byteCharacters = atob(base64String);
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+    const blob = new Blob([byteArray], { type: mimeType });
+    const blobUrl = URL.createObjectURL(blob);
+    // 将结果存入缓存
+    blobUrlCache.set(filename, blobUrl);
+    return blobUrl;
 }
