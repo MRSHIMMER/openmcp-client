@@ -1,12 +1,14 @@
-
-import { PostMessageble } from '../hook/adapter';
-import { connect, MCPClient, type MCPOptions } from '../hook/client';
 import { spawnSync } from 'node:child_process';
+import { RequestClientType } from '../common';
+import { connect } from './client.service';
+import { RestfulResponse } from '../common/index.dto';
+import { McpOptions } from './client.dto';
 
-// TODO: 支持更多的 client
-export let client: MCPClient | undefined = undefined;
 
-function tryGetRunCommandError(command: string, args: string[] = [], cwd?: string): string | null {
+// TODO: 更多的 client
+export let client: RequestClientType = undefined;
+
+export function tryGetRunCommandError(command: string, args: string[] = [], cwd?: string): string | null {
     try {
 		console.log('current command', command);
 		console.log('current args', args);
@@ -30,10 +32,9 @@ function tryGetRunCommandError(command: string, args: string[] = [], cwd?: strin
 }
 
 export async function connectService(
-    _client: MCPClient | undefined,
-    option: MCPOptions,
-    webview: PostMessageble
-) {
+    _client: RequestClientType,
+    option: McpOptions
+): Promise<RestfulResponse> {
 	try {
 		console.log('ready to connect', option);
 		
@@ -42,7 +43,8 @@ export async function connectService(
 			code: 200,
 			msg: 'Connect to OpenMCP successfully\nWelcome back, Kirigaya'
 		};
-		webview.postMessage({ command: 'connect', data: connectResult });
+		
+        return connectResult;
 	} catch (error) {
 
 		// TODO: 这边获取到的 error 不够精致，如何才能获取到更加精准的错误
@@ -61,6 +63,7 @@ export async function connectService(
 			code: 500,
 			msg: errorMsg
 		};
-		webview.postMessage({ command: 'connect', data: connectResult });
+
+        return connectResult;
 	}
 }

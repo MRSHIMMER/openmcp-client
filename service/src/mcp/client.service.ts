@@ -2,38 +2,18 @@ import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
-import { Implementation } from "@modelcontextprotocol/sdk/types";
-
-// 定义连接类型
-type ConnectionType = 'STDIO' | 'SSE';  
-
-type McpTransport = StdioClientTransport | SSEClientTransport;
-export type IServerVersion = Implementation | undefined;
-
-// 定义命令行参数接口
-export interface MCPOptions {
-    connectionType: ConnectionType;
-    // STDIO 特定选项
-    command?: string;
-    args?: string[];
-    // SSE 特定选项
-    url?: string;
-    cwd?: string;
-    // 通用客户端选项
-    clientName?: string;
-    clientVersion?: string;
-}
+import { McpOptions, McpTransport, IServerVersion } from './client.dto';
 
 // 增强的客户端类
-export class MCPClient {
+export class McpClient {
     private client: Client;
     private transport?: McpTransport;
-    private options: MCPOptions;
+    private options: McpOptions;
     private serverVersion: IServerVersion;
 
     private transportStdErr: string = '';
 
-    constructor(options: MCPOptions) {
+    constructor(options: McpOptions) {
         this.options = options;
         this.serverVersion = undefined;
 
@@ -144,8 +124,8 @@ export class MCPClient {
 }
 
 // Connect 函数实现
-export async function connect(options: MCPOptions): Promise<MCPClient> {
-    const client = new MCPClient(options);
+export async function connect(options: McpOptions): Promise<McpClient> {
+    const client = new McpClient(options);
     await client.connect();
     return client;
 }

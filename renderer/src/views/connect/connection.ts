@@ -55,7 +55,7 @@ export function makeEnv() {
 type ConnectionType = 'STDIO' | 'SSE';
 
 // 定义命令行参数接口
-export interface MCPOptions {
+export interface McpOptions {
     connectionType: ConnectionType;
     // STDIO 特定选项
     command?: string;
@@ -70,7 +70,7 @@ export interface MCPOptions {
 }
 
 export function doConnect() {
-    let connectOption: MCPOptions;
+    let connectOption: McpOptions;
     const bridge = useMessageBridge();
     const env = makeEnv();
 
@@ -313,7 +313,7 @@ async function launchSSE() {
             resolve(void 0);
         }, { once: true });
 
-        const connectOption: MCPOptions = {
+        const connectOption: McpOptions = {
             connectionType: 'SSE',
             url: connectionArgs.urlString,
             clientName: 'openmcp.connect.sse',

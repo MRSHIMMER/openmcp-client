@@ -1,7 +1,7 @@
 import WebSocket from 'ws';
 import pino from 'pino';
 
-import { messageController } from './controller';
+import { routeMessage } from './common/router';
 import { VSCodeWebViewLike } from './hook/adapter';
 
 export interface VSCodeMessage {
@@ -23,7 +23,7 @@ const logger = pino({
 });
 
 export type MessageHandler = (message: VSCodeMessage) => void;
-const wss = new WebSocket.Server({ port: 8080 });
+const wss = new (WebSocket as any).Server({ port: 8080 });
 
 wss.on('connection', ws => {
 
@@ -44,6 +44,6 @@ wss.on('connection', ws => {
         logger.info(`command: [${message.command || 'No Command'}]`);
 
         const { command, data } = message;
-        messageController(command, data, webview);
+        routeMessage(command, data, webview);
     });
 });

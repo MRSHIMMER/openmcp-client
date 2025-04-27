@@ -1,5 +1,3 @@
-import { OpenAI } from 'openai';
-
 export const llms = [
 	{
 		id: 'deepseek',
@@ -86,57 +84,3 @@ export const llms = [
 		userModel: 'moonshot-v1-8k'
 	}
 ];
-
-type MyMessageType = OpenAI.Chat.ChatCompletionMessageParam & {
-	extraInfo?: any;
-}
-
-type MyToolMessageType = OpenAI.Chat.ChatCompletionToolMessageParam & {
-	extraInfo?: any;
-}
-
-function postProcessToolMessages(message: MyToolMessageType) {
-	if (typeof message.content === 'string') {
-		return;
-	}
-
-	for (const content of message.content) {
-		const contentType = content.type as string;
-		const rawContent = content as any;
-
-		if (contentType === 'image') {
-			delete rawContent._meta;
-			
-			rawContent.type = 'text';
-			
-			// 从缓存中提取图像数据
-			rawContent.text = '图片已被删除';
-		}
-	}
-
-	message.content = JSON.stringify(message.content);
-}
-
-export function postProcessMessages(messages: MyMessageType[]) {
-	for (const message of messages) {
-		// 去除 extraInfo 属性
-		delete message.extraInfo;
-
-		switch (message.role) {
-			case 'user':
-				break;
-			case 'assistant':
-				break;
-			
-			case 'system':
-
-				break;
-
-			case 'tool':
-				postProcessToolMessages(message);
-				break;
-			default:
-				break;
-		}
-	}
-}
