@@ -6,7 +6,7 @@
             </span>
         </span>
     </div>
-    <div class="message-text tool_calls" :class="{ 'fail': props.message.toolResult && props.message.extraInfo.state != MessageState.Success }">
+    <div class="message-text tool_calls" :class="[currentMessageLevel]">
         <div v-if="props.message.content" v-html="markdownToHtml(props.message.content)"></div>
 
         <el-collapse v-model="activeNames" v-if="props.message.tool_calls">
@@ -37,9 +37,9 @@
                     <!-- 工具调用结果 -->
                     <div v-if="props.message.toolResult">
                         <div class="tool-call-header result">
-                            <span class="tool-name" :class="{ 'error': !isValid }">
+                            <span class="tool-name">
+                                <span :class="`iconfont icon-${currentMessageLevel}`"></span>
                                 {{ isValid ? '响应': '错误' }}
-
                                 <el-button v-if="!isValid" size="small"
                                     @click="gotoIssue()"
                                 >
@@ -76,7 +76,7 @@
                                 </div>
                             </span>
                         </div>
-                        <div v-else class="tool-result" :class="{ 'error': !isValid }">
+                        <div v-else class="tool-result">
                             <div class="tool-result-content"
                                 v-for="(error, index) of collectErrors"
                                 :key="index"
@@ -162,6 +162,16 @@ const isValid = computed(() => {
     }
 });
 
+const currentMessageLevel = computed(() => {
+    if (!isValid.value) {
+        return 'error';
+    }
+    if (props.message.extraInfo.state != MessageState.Success) {
+        return 'warning';
+    }
+    return 'info';
+})
+
 const collectErrors = computed(() => {
     const errorMessages = [];
     try {
@@ -186,13 +196,30 @@ const collectErrors = computed(() => {
     padding: 3px 10px;
 }
 
-.message-text.tool_calls.fail {
+.message-text.tool_calls.warning {
+    border: 1px solid var(--el-color-warning);
+}
+
+.message-text.tool_calls.warning .tool-name {
+    color: var(--el-color-warning);
+}
+
+.message-text.tool_calls.warning .tool-result {
+	background-color: rgba(230, 162, 60, 0.5);
+}
+
+.message-text.tool_calls.error {
     border: 1px solid var(--el-color-error);
 }
 
-.message-text.tool_calls.fail .tool-name {
+.message-text.tool_calls.error .tool-name {
     color: var(--el-color-error);
 }
+
+.message-text.tool_calls.error .tool-result {
+	background-color: rgba(245, 108, 108, 0.5);
+}
+
 
 .message-text .el-collapse-item__header {
     display: flex;
@@ -263,10 +290,6 @@ const collectErrors = computed(() => {
     padding: 8px;
     background-color: var(--el-fill-color-light);
     border-radius: 4px;
-}
-
-.tool-result.error {
-	background-color: rgba(245, 108, 108, 0.5);
 }
 
 .tool-text {

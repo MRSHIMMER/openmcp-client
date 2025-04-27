@@ -3,6 +3,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
 import { diskStorage } from './db';
+import { PostMessageble } from './adapter';
 
 export function saveBase64ImageData(
     base64String: string,
@@ -51,26 +52,50 @@ interface ToolCallResponse {
     toolResult?: any;
 }
 
-export function postProcessToolcallResponse(response: ToolCallResponse): ToolCallResponse {
+async function handleImage(
+    content: ToolCallContent,
+    webview: PostMessageble
+) {
+    if (content.data && content.mimeType) {
+        const fileName = saveBase64ImageData(content.data, content.mimeType);
+        content.data = fileName;
+        content._meta = {
+            ocr: true,
+            status: 'pending'
+        };
+
+        // 加入工作线程
+        
+    }
+}
+
+
+/**
+ * @description 对 mcp server 返回的结果进行预处理
+ * 对于特殊结果构造工作线程解析成文本或者其他格式的数据（比如 image url）
+ * 0.x.x 受限于技术，暂时将所有结果转化成文本
+ * @param response 
+ * @returns 
+ */
+export function postProcessMcpToolcallResponse(
+    response: ToolCallResponse,
+    webview: PostMessageble
+): ToolCallResponse {
     if (response.isError) {
         // 如果是错误响应，将其转换为错误信息
         return response;
     }
 
     // 将 content 中的图像 base64 提取出来，并保存到本地
-    if (response.content) {
-        response.content.forEach((content) => {
-            if (content.type === 'image') {
-                // TODO: check here
-                if (content.data && content.mimeType) {
-                    const fileName = saveBase64ImageData(content.data, content.mimeType);
-                    content.data = fileName;
-                    content._meta = {
-                        ocr: true
-                    };
-                }
-            }
-        })
+    for (const content of response.content || []) {
+        switch (content.type) {
+            case 'image':
+                handleImage(content, webview);
+                break;
+        
+            default:
+                break;
+        }
     }
 
     return response;

@@ -331,7 +331,7 @@ onUnmounted(() => {
 
 .message-avatar {
     margin-right: 12px;
-    margin-top: 7px;
+    margin-top: 1px;
 }
 
 .message-content {

@@ -1,5 +1,7 @@
 import Tesseract from 'tesseract.js';
 
+
+
 export async function tesseractOCR(
     imagePath: string,
     logger: (message: Tesseract.LoggerMessage) => void,
