@@ -1,5 +1,6 @@
 import { Controller, RequestClientType } from "../common";
 import { PostMessageble } from "../hook/adapter";
+import { postProcessMcpToolcallResponse } from "./client.service";
 
 export class ClientController {
 
@@ -130,6 +131,14 @@ export class ClientController {
             name: option.toolName,
             arguments: option.toolArgs
         });
+
+        console.log(JSON.stringify(toolResult, null, 2));
+        
+        postProcessMcpToolcallResponse(toolResult, webview);
+
+        console.log(JSON.stringify(toolResult, null, 2));
+        
+
         return {
             code: 200,
             msg: toolResult

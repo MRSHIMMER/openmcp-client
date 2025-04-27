@@ -11,7 +11,6 @@
 
         <el-collapse v-model="activeNames" v-if="props.message.tool_calls">
             <el-collapse-item name="tool">
-
                 <template #title>
                     <div class="tool-calls">
                         <div class="tool-call-header">
@@ -52,27 +51,24 @@
                                     :inactive-action-style="'backgroundColor: var(--sidebar)'" />
                             </span>
                         </div>
+
                         <div class="tool-result" v-if="isValid">
+                            <!-- 展示 JSON -->
                             <div v-if="props.message.showJson!.value" class="tool-result-content">
                                 <div class="inner">
                                     <div v-html="toHtml(props.message.toolResult)"></div>
                                 </div>
                             </div>
+
+                            <!-- 展示富文本 -->
                             <span v-else>
                                 <div v-for="(item, index) in props.message.toolResult" :key="index"
                                     class="response-item"
                                 >
-                                    <el-scrollbar width="100%">
-                                        <div v-if="item.type === 'text'" class="tool-text">
-                                            {{ item.text }}
-                                        </div>
-                                        
-                                        <div v-else-if="item.type === 'image'" class="tool-image">
-                                            <img :src="`data:${item.mimeType};base64,${item.data}`" style="max-width: 70%;" />
-                                        </div>
-
-                                        <div v-else class="tool-other">{{ JSON.stringify(item) }}</div>
-                                    </el-scrollbar>
+                                    <ToolcallResultItem
+                                        :item="item"
+                                        @update:item="value => updateToolCallResultItem(value, index)"    
+                                    />
                                 </div>
                             </span>
                         </div>
@@ -96,13 +92,15 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, ref, watch, PropType, computed } from 'vue';
+import { defineProps, ref, watch, PropType, computed, defineEmits } from 'vue';
 
 import MessageMeta from './message-meta.vue';
 import { markdownToHtml } from '../markdown';
 import { createTest } from '@/views/setting/llm';
 import { IRenderMessage, MessageState } from '../chat';
 import { ToolCallContent } from '@/hook/type';
+
+import ToolcallResultItem from './toolcall-result-item.vue';
 
 const props = defineProps({
     message: {
@@ -114,7 +112,6 @@ const props = defineProps({
         required: true
     }
 });
-
 
 const activeNames = ref<string[]>(props.message.toolResult ? [''] : ['tool']);
 
@@ -129,6 +126,10 @@ watch(
     }
 );
 
+/**
+ * @description 将工具调用结果转换成 html
+ * @param toolResult 
+ */
 const toHtml = (toolResult: ToolCallContent[]) => {
     const formattedJson = JSON.stringify(toolResult, null, 2);
     const html = markdownToHtml('```json\n' + formattedJson + '\n```');
@@ -186,6 +187,12 @@ const collectErrors = computed(() => {
         return errorMessages;
     }
 });
+
+const emit = defineEmits(['update:tool-result']);
+
+function updateToolCallResultItem(value: any, index: number) {
+    emit('update:tool-result', value, index);
+}
 
 </script>
 

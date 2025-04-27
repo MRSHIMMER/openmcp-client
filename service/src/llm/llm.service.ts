@@ -2,6 +2,9 @@ import { PostMessageble } from "../hook/adapter";
 import { OpenAI } from "openai";
 import { MyMessageType, MyToolMessageType } from "./llm.dto";
 import { RestfulResponse } from "../common/index.dto";
+import { ocrDB } from "../hook/db";
+import { ToolCallContent } from "../mcp/client.dto";
+import { ocrWorkerStorage } from "../mcp/ocr.service";
 
 export let currentStream: AsyncIterable<any> | null = null;
 
@@ -20,7 +23,7 @@ export async function streamingChatCompletion(
         tools = undefined;
     }
     
-    postProcessMessages(messages);
+    await postProcessMessages(messages);
 
     const stream = await client.chat.completions.create({
         model,
@@ -99,45 +102,66 @@ export function abortMessageService(data: any, webview: PostMessageble): Restful
     }
 }
 
-function postProcessToolMessages(message: MyToolMessageType) {
+async function postProcessToolMessages(message: MyToolMessageType) {
 	if (typeof message.content === 'string') {
 		return;
 	}
 
 	for (const content of message.content) {
 		const contentType = content.type as string;
-		const rawContent = content as any;
+		const rawContent = content as ToolCallContent;
 
-		if (contentType === 'image') {
-			delete rawContent._meta;
-			
+		if (contentType === 'image') {			
 			rawContent.type = 'text';
 			
-			// 从缓存中提取图像数据
-			rawContent.text = '图片已被删除';
+			// 此时图片只会存在三个状态
+            // 1. 图片在 ocrDB 中
+            // 2. 图片的 OCR 仍然在进行中
+            // 3. 图片已被删除
+
+
+            // rawContent.data 就是 filename
+            const result = await ocrDB.findById(rawContent.data);
+            if (result) {
+                rawContent.text = result.text || '';            
+            } else if (rawContent._meta) {
+                const workerId = rawContent._meta.workerId;
+                const worker = ocrWorkerStorage.get(workerId);
+                if (worker) {
+                    const text = await worker.fut;
+                    rawContent.text = text;
+                }
+            } else {
+                rawContent.text = '无效的图片';
+            }
+
+            delete rawContent._meta;
 		}
 	}
 
 	message.content = JSON.stringify(message.content);
 }
 
-export function postProcessMessages(messages: MyMessageType[]) {
+export async function postProcessMessages(messages: MyMessageType[]) {
 	for (const message of messages) {
 		// 去除 extraInfo 属性
 		delete message.extraInfo;
 
 		switch (message.role) {
 			case 'user':
-				break;
+
+                break;
+
 			case 'assistant':
-				break;
+
+                break;
 			
 			case 'system':
 
 				break;
 
 			case 'tool':
-				postProcessToolMessages(message);
+				await postProcessToolMessages(message);
 				break;
 			default:
 				break;

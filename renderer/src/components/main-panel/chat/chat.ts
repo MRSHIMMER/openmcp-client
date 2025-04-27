@@ -13,7 +13,8 @@ export enum MessageState {
     Abort = 'abort',
     ToolCall = 'tool call failed',
     None = 'none',
-    Success = 'success'
+    Success = 'success',
+    ParseJsonError = 'parse json error'
 }
 
 export interface IExtraInfo {

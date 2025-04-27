@@ -35,3 +35,19 @@ export interface McpOptions {
     clientName?: string;
     clientVersion?: string;
 }
+
+export interface ToolCallContent {
+    type: string;
+    text?: string;
+    data?: any;
+    mimeType?: string;
+    _meta?: any;
+    [key: string]: any;
+}
+
+export interface ToolCallResponse {
+    _meta?: any;
+    content?: ToolCallContent[];
+    isError?: boolean;
+    toolResult?: any;
+}

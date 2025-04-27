@@ -123,6 +123,10 @@ class DiskStorage {
         fs.writeFileSync(filePath, data, options);
     }
 
+    public getStoragePath(filename: string): string {
+        return path.join(this.#storageHome, filename);
+    }
+
     public deleteSync(filename: string): void {
         const filePath = path.join(this.#storageHome, filename);
         if (fs.existsSync(filePath)) {
@@ -139,7 +143,7 @@ interface SettingItem extends Entity {
 interface OcrItem extends Entity {
     filename: string;
     text?: string;
-    textCreateTime: number;
+    createTime: number;
 }
 
 export const diskStorage = new DiskStorage();

@@ -5,6 +5,7 @@ import { useMessageBridge } from "@/api/message-bridge";
 import type { OpenAI } from 'openai';
 import { callTool } from "../tool/tools";
 import { llmManager, llms } from "@/views/setting/llm";
+import { pinkLog, redLog } from "@/views/setting/util";
 
 export type ChatCompletionChunk = OpenAI.Chat.Completions.ChatCompletionChunk;
 export type ChatCompletionCreateParamsBase = OpenAI.Chat.Completions.ChatCompletionCreateParams & { id?: string };
@@ -40,13 +41,38 @@ export class TaskLoop {
     private async handleToolCalls(toolCalls: ToolCall[]) {
         // TODO: 调用多个工具并返回调用结果？
         const toolCall = toolCalls[0];
+
+        let toolName: string;
+        let toolArgs: Record<string, any>;
+
         try {
-            const toolName = toolCall.function.name;
-            const toolArgs = JSON.parse(toolCall.function.arguments);
-            const toolResponse = await callTool(toolName, toolArgs);            
-            
-            if (!toolResponse.isError) {
-                // const content = JSON.stringify(toolResponse.content);
+            toolName = toolCall.function.name;
+            toolArgs = JSON.parse(toolCall.function.arguments);
+        } catch (error) {
+            return {
+                content: [{
+                    type: 'error',
+                    text: this.parseErrorObject(error)
+                }],
+                state: MessageState.ParseJsonError
+            };
+        }
+
+
+        try {
+            const toolResponse = await callTool(toolName, toolArgs);
+
+            console.log(toolResponse);
+
+            if (typeof toolResponse === 'string') {
+                console.log(toolResponse);
+                
+                return {
+                    content: toolResponse,
+                    state: MessageState.ToolCall
+                }
+            } else if (!toolResponse.isError) {
+
                 return {
                     content: toolResponse.content,
                     state: MessageState.Success
@@ -65,7 +91,7 @@ export class TaskLoop {
                 msg: `工具调用失败: ${(error as Error).message}`
             });
             console.error(error);
-            
+
             return {
                 content: [{
                     type: 'error',
@@ -190,14 +216,6 @@ export class TaskLoop {
         const loadMessages = tabStorage.messages.slice(- tabStorage.settings.contextLength);
         userMessages.push(...loadMessages);
 
-        // 过滤一下 userMessages，现在的大部分模型只支持 text, image_url and video_url 这三种类型的数据
-        const postProcessMessages = [];
-        for (const msg of userMessages) {
-            if (msg.role === 'tool') {
-                
-            }
-        }
-
         // 增加一个id用于锁定状态
         const id = crypto.randomUUID();
 
@@ -286,13 +304,38 @@ export class TaskLoop {
                         serverName: llms[llmManager.currentModelIndex].id || 'unknown'
                     }
                 });
+                
+                pinkLog('调用工具数量：' + this.streamingToolCalls.value.length);
 
                 const toolCallResult = await this.handleToolCalls(this.streamingToolCalls.value);
 
                 console.log(toolCallResult);
-                
-                
-                if (toolCallResult.content) {
+
+                if (toolCallResult.state === MessageState.ParseJsonError) {
+                    // 如果是因为解析 JSON 错误，则重新开始
+                    tabStorage.messages.pop();
+                    redLog('解析 JSON 错误 ' + this.streamingToolCalls.value[0].function.arguments);
+                    continue;
+                }
+
+                if (toolCallResult.state === MessageState.Success) {
+                    const toolCall = this.streamingToolCalls.value[0];
+
+                    tabStorage.messages.push({
+                        role: 'tool',
+                        tool_call_id: toolCall.id || toolCall.function.name,
+                        content: toolCallResult.content,
+                        extraInfo: {
+                            created: Date.now(),
+                            state: toolCallResult.state,
+                            serverName: llms[llmManager.currentModelIndex].id || 'unknown',
+                            usage: this.completionUsage
+                        }
+                    });
+                }
+
+
+                if (toolCallResult.state === MessageState.ToolCall) {
                     const toolCall = this.streamingToolCalls.value[0];
 
                     tabStorage.messages.push({

@@ -23,7 +23,10 @@
 
                     <!-- 助手调用的工具部分 -->
                     <div class="message-content" v-else-if="message.role === 'assistant/tool_calls'">
-                        <Message.Toolcall :message="message" :tab-id="props.tabId" />
+                        <Message.Toolcall
+                            :message="message" :tab-id="props.tabId"
+                            @update:tool-result="(value, index) => (message.toolResult || [])[index] = value"
+                        />
                     </div>
                 </div>
 

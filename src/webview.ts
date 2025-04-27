@@ -97,7 +97,7 @@ export function revealOpenMcpWebviewPanel(
                 break;
 
             default:
-                OpenMCPService.messageController(command, data, panel.webview);                
+                OpenMCPService.routeMessage(command, data, panel.webview);                
                 break;
         }
 

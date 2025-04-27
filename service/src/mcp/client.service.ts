@@ -2,7 +2,9 @@ import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
-import { McpOptions, McpTransport, IServerVersion } from './client.dto';
+import { McpOptions, McpTransport, IServerVersion, ToolCallResponse, ToolCallContent } from './client.dto';
+import { PostMessageble } from "../hook/adapter";
+import { createOcrWorker, saveBase64ImageData } from "./ocr.service";
 
 // 增强的客户端类
 export class McpClient {
@@ -10,8 +12,6 @@ export class McpClient {
     private transport?: McpTransport;
     private options: McpOptions;
     private serverVersion: IServerVersion;
-
-    private transportStdErr: string = '';
 
     constructor(options: McpOptions) {
         this.options = options;
@@ -34,7 +34,6 @@ export class McpClient {
 
     // 连接方法
     public async connect(): Promise<void> {
-        this.transportStdErr = '';
 
         // 根据连接类型创建传输层
         switch (this.options.connectionType) {
@@ -128,4 +127,54 @@ export async function connect(options: McpOptions): Promise<McpClient> {
     const client = new McpClient(options);
     await client.connect();
     return client;
+}
+
+async function handleImage(
+    content: ToolCallContent,
+    webview: PostMessageble
+) {
+    if (content.data && content.mimeType) {
+        const filename = saveBase64ImageData(content.data, content.mimeType);
+        content.data = filename;
+    
+        // 加入工作线程
+        const worker = createOcrWorker(filename, webview);
+    
+        content._meta = {
+            ocr: true,
+            workerId: worker.id
+        };
+    }
+}
+
+
+/**
+ * @description 对 mcp server 返回的结果进行预处理
+ * 对于特殊结果构造工作线程解析成文本或者其他格式的数据（比如 image url）
+ * 0.x.x 受限于技术，暂时将所有结果转化成文本
+ * @param response 
+ * @returns 
+ */
+export function postProcessMcpToolcallResponse(
+    response: ToolCallResponse,
+    webview: PostMessageble
+): ToolCallResponse {
+    if (response.isError) {
+        // 如果是错误响应，将其转换为错误信息
+        return response;
+    }
+
+    // 将 content 中的图像 base64 提取出来，并保存到本地
+    for (const content of response.content || []) {
+        switch (content.type) {
+            case 'image':
+                handleImage(content, webview);
+                break;
+        
+            default:
+                break;
+        }
+    }
+
+    return response;
 }
