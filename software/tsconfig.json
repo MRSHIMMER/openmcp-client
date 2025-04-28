@@ -6,9 +6,7 @@
         "esModuleInterop": true,
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true,
-        "outDir": "./dist",
-        "declaration": true,
-        "declarationMap": true
+        "outDir": "./dist"
     },
     "include": ["src/**/*.ts"], // 确保包含所有 .ts 文件
     "exclude": ["node_modules"]

@@ -4,10 +4,10 @@
 	"description": "",
 	"main": "dist/main.js",
 	"scripts": {
-		"start": "electron .",
+		"start": "tsc; electron .",
 		"build": "webpack --config webpack.config.js",
 		"watch": "webpack --watch --config webpack.config.js",
-		"dist": "electron-builder"
+		"dist": "tsc; electron-builder"
 	},
 	"author": {
 		"name": "LSTM-Kirigaya",
@@ -27,16 +27,14 @@
 	},
 	"devDependencies": {
 		"@types/ws": "^8.18.1",
-		"electron": "^28.1.0",
-		"electron-builder": "^26.0.12",
-		"ts-loader": "^9.5.1",
-		"typescript": "^5.6.3",
-		"webpack": "^5.99.5",
-		"webpack-cli": "^5.1.4"
+		"electron": "^35.2.1",
+		"typescript": "^5.6.3"
 	},
 	"build": {
-		"appId": "com.example.openmcp",
+		"appId": "com.electron.openmcp",
 		"productName": "OpenMCP",
+		"asar": true,
+		"asarUnpack": "*.node",
 		"directories": {
 			"output": "dist"
 		},
