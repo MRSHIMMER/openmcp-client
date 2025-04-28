@@ -82,7 +82,7 @@ import { TaskLoop } from './task-loop';
 import { llmManager, llms } from '@/views/setting/llm';
 
 import * as Message from './message';
-import Setting from './setting.vue';
+import Setting from './options/setting.vue';
 import KCuteTextarea from '@/components/k-cute-textarea/index.vue';
 
 import { provide } from 'vue';

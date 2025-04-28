@@ -23,25 +23,6 @@ export function getCurrentTime() {
     return timeStr;
 }
 
-
-export function getBase64StringByFilename(filename: string) {
-    const bridge = useMessageBridge();
-
-    return new Promise<string>(resolve => {
-        bridge.addCommandListener('ocr/get-ocr-image', data => {
-            const { code, msg = {} } = data;
-            resolve(msg.base64String);
-        }, { once: true});
-
-        bridge.postMessage({
-            command: 'ocr/get-ocr-image',
-            data: {
-                filename
-            }
-        });
-    });
-}
-
 const blobUrlCache = new Map<string, string>();
 
 export async function getBlobUrlByFilename(filename: string) {
@@ -50,7 +31,13 @@ export async function getBlobUrlByFilename(filename: string) {
         return blobUrlCache.get(filename);
     }
 
-    const base64String = await getBase64StringByFilename(filename);        
+    const bridge = useMessageBridge();
+    const res = await bridge.commandRequest('ocr/get-ocr-image', { filename });
+    if (res?.code !== 200) {
+        return '';
+    }
+
+    const base64String = res?.msg?.base64String;
 
     if (!base64String) {
         return '';

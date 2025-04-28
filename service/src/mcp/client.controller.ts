@@ -72,6 +72,7 @@ export class ClientController {
 
     @Controller('resources/templates/list')
     async listResourceTemplates(client: RequestClientType, data: any, webview: PostMessageble) {
+        
         if (!client) {
             return {
                 code: 501,

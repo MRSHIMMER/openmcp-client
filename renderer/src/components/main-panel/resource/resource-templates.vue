@@ -75,7 +75,7 @@ onMounted(() => {
 
 		const targetResource = resourcesManager.templates.find(template => template.name === tabStorage.currentResourceName);
         if (targetResource === undefined) {
-            tabStorage.currentResourceName = resourcesManager.templates[0].name;
+            tabStorage.currentResourceName = resourcesManager.templates[0]?.name;
             tabStorage.lastResourceReadResponse = undefined;
         }
 	}, { once: false });

@@ -8,7 +8,7 @@
 
 <script setup lang="ts">
 import { defineProps } from 'vue';
-import { markdownToHtml } from '../markdown';
+import { markdownToHtml } from '../markdown/markdown';
 
 import MessageMeta from './message-meta.vue';
 

@@ -7,6 +7,11 @@ export interface VSCodeMessage {
 	callbackId?: string;
 }
 
+export interface RestFulResponse {
+	code: number;
+	msg: any;
+}
+
 export type MessageHandler = (message: VSCodeMessage) => void;
 export type CommandHandler = (data: any) => void;
 
@@ -135,6 +140,25 @@ class MessageBridge {
 		return () => commandHandlers.delete(wrapperCommandHandler);
 	}
 
+	/**
+	 * @description do as axios does
+	 * @param command 
+	 * @param data 
+	 * @returns 
+	 */
+	public commandRequest(command: string, data?: any) {
+		return new Promise<RestFulResponse>((resolve, reject) => {
+			this.addCommandListener(command, (data) => {
+				resolve(data as RestFulResponse);
+			}, { once: true });
+
+			this.postMessage({
+				command,
+				data
+			});
+		});
+	}
+
 	public destroy() {
 		this.ws?.close();
 		this.handlers.clear();
@@ -151,6 +175,7 @@ export function useMessageBridge() {
 	return {
 		postMessage: bridge.postMessage.bind(bridge),
 		addCommandListener: bridge.addCommandListener.bind(bridge),
+		commandRequest: bridge.commandRequest.bind(bridge),
 		isConnected: bridge.isConnected
 	};
 }

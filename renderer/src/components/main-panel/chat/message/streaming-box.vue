@@ -19,7 +19,7 @@
 
 <script setup lang="ts">
 import { defineProps } from 'vue';
-import { markdownToHtml } from '../markdown';
+import { markdownToHtml } from '../markdown/markdown';
 
 const props = defineProps({
     streamingContent: {

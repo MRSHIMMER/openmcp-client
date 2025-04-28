@@ -40,7 +40,7 @@ import { defineComponent, defineProps, computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { tabs } from '../panel';
 import { ToolStorage } from './tools';
-import { markdownToHtml } from '../chat/markdown';
+import { markdownToHtml } from '../chat/markdown/markdown';
 
 defineComponent({ name: 'tool-logger' });
 const { t } = useI18n();
