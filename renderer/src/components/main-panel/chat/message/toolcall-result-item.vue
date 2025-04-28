@@ -5,25 +5,32 @@
         </div>
 
         <div v-else-if="props.item.type === 'image'" class="tool-image">
-            <div class="media-item">
-                <img :src="thumbnail" alt="screenshot"/>
+            <div class="media-item" @click="showFullImage">
+                <img :src="thumbnail" alt="screenshot" />
                 <span class="float-container">
-                    <span class="iconfont icon-image"></span>
+                    
+                    <!-- 后处理结束后显示的部分 -->
+                    <span class="iconfont icon-image" v-if="finishProcess"></span>
+
+                    <!-- 后处理时显示的部分 -->
+                    <el-progress v-else
+                        class="progress"
+                        :percentage="progress"
+                        :stroke-width="5"
+                        type="circle"
+                        :width="80"
+                        color="var(--main-color)"    
+                    >
+                        <template #default="{ percentage }">
+                            <div class="progress-label">
+                                <span class="percentage-value">{{ percentage }}%</span>
+                                <span class="percentage-label">{{ progressText }}</span>
+                            </div>
+                        </template>
+                    </el-progress>
+
                 </span>
             </div>
-
-            <span v-if="!finishProcess">
-                <el-progress
-                    class="progress"
-                    :percentage="progress"
-                    :stroke-width="3"
-                >
-                    <template #default="{ percentage }">
-                        <span class="percentage-label">{{ progressText }}</span>
-                        <span class="percentage-value">{{ percentage }}%</span>
-                    </template>
-                </el-progress>
-            </span>
         </div>
 
         <div v-else class="tool-other">{{ JSON.stringify(props.item) }}</div>
@@ -62,7 +69,7 @@ if (ocr) {
         const { id, progress: p = 1.0, status = 'finish' } = data;
         if (id === workerId) {
             progressText.value = status;
-            progress.value = Math.min(Math.ceil(Math.max(p * 100 ,0)), 100);
+            progress.value = Math.min(Math.ceil(Math.max(p * 100, 0)), 100);
         }
     }, { once: false });
 
@@ -88,12 +95,47 @@ if (props.item.data) {
     console.log(props.item.data);
     getBlobUrlByFilename(props.item.data).then(url => {
         console.log(url);
-        
+
         if (url) {
             thumbnail.value = url;
         }
     });
 }
+
+const showFullImage = () => {
+    const img = new Image();
+    img.src = thumbnail.value;
+    img.onload = () => {
+        const overlay = document.createElement('div');
+        overlay.style.position = 'fixed';
+        overlay.style.top = '0';
+        overlay.style.left = '0';
+        overlay.style.width = '100%';
+        overlay.style.height = '100%';
+        overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+        overlay.style.zIndex = '9999';
+        overlay.style.display = 'flex';
+        overlay.style.justifyContent = 'center';
+        overlay.style.alignItems = 'center';
+        overlay.onclick = () => document.body.removeChild(overlay);
+
+        const imgContainer = document.createElement('div');
+        imgContainer.style.maxWidth = '90vw';
+        imgContainer.style.maxHeight = '90vh';
+        imgContainer.style.overflow = 'auto';
+
+        const fullImg = new Image();
+        fullImg.src = thumbnail.value;
+        fullImg.style.width = 'auto';
+        fullImg.style.height = 'auto';
+        fullImg.style.maxWidth = '100%';
+        fullImg.style.maxHeight = '100%';
+
+        imgContainer.appendChild(fullImg);
+        overlay.appendChild(imgContainer);
+        document.body.appendChild(overlay);
+    };
+};
 
 </script>
 
@@ -104,10 +146,6 @@ if (props.item.data) {
 
 .tool-image .progress {
     margin-top: 10px;
-}
-
-.percentage-label {
-    margin-right: 10px;
 }
 
 .tool-image .media-item {
@@ -130,7 +168,7 @@ if (props.item.data) {
     overflow: hidden;
 }
 
-.tool-image .media-item > img {
+.tool-image .media-item>img {
     position: absolute;
     top: 50%;
     height: 100%;
@@ -145,12 +183,31 @@ if (props.item.data) {
     top: 0;
     width: 100px;
     height: 100px;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.6);
     opacity: 1;
     display: flex;
     justify-content: center;
     align-items: center;
     transition: var(--animation-3s);
+}
+
+.progress-label {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.percentage-label {
+    max-width: 50px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.percentage-value {
+    font-size: 14px;
+    font-weight: bold;
 }
 
 .tool-image .media-item .float-container .iconfont {
@@ -161,4 +218,11 @@ if (props.item.data) {
     opacity: 1;
 }
 
+.media-item {
+    cursor: pointer;
+}
+
+.media-item:hover {
+    opacity: 0.9;
+}
 </style>

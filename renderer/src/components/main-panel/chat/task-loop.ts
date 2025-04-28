@@ -312,7 +312,7 @@ export class TaskLoop {
 
                 const toolCallResult = await this.handleToolCalls(this.streamingToolCalls.value);
 
-                console.log(toolCallResult);
+                console.log('toolCallResult', toolCallResult);
 
                 if (toolCallResult.state === MessageState.ParseJsonError) {
                     // 如果是因为解析 JSON 错误，则重新开始

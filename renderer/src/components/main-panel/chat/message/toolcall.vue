@@ -45,7 +45,7 @@
                                     反馈
                                 </el-button>
                             </span>
-                            <span style="width: 200px;" class="tools-dialog-container" v-if="isValid">
+                            <span style="width: 200px;" class="tools-dialog-container" v-if="currentMessageLevel === 'info'">
                                 <el-switch v-model="props.message.showJson!.value" inline-prompt active-text="JSON"
                                     inactive-text="Text" style="margin-left: 10px; width: 200px;"
                                     :inactive-action-style="'backgroundColor: var(--sidebar)'" />

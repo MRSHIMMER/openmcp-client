@@ -2,6 +2,7 @@ import { useMessageBridge } from "@/api/message-bridge";
 import { pinkLog } from "@/views/setting/util";
 import { debugModes, tabs } from "@/components/main-panel/panel";
 import { markRaw, ref, nextTick } from "vue";
+import { v4 as uuidv4 } from 'uuid';
 
 interface SaveTabItem {
 	name: string;
@@ -48,6 +49,7 @@ export function loadPanels() {
 					const component = tab.componentIndex >= 0? markRaw(debugModes[tab.componentIndex]) : undefined;
 		
 					tabs.content.push({
+						id: uuidv4(),
 						name: tab.name,
 						icon: tab.icon,
 						type: tab.type,
@@ -57,7 +59,7 @@ export function loadPanels() {
 					});
 				}
 		
-				tabs.activeIndex = persistTab.currentIndex;
+				tabs.activeIndex = persistTab.currentIndex;				
 			}
 	
 			panelLoaded.value = true;
@@ -76,7 +78,7 @@ export function safeSavePanels() {
 	clearTimeout(debounceHandler);
 	debounceHandler = setTimeout(() => {
 		savePanels();
-	}, 1000);
+	}, 100);
 }
 
 export function savePanels(saveHandler?: () => void) {

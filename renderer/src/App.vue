@@ -29,8 +29,8 @@ bridge.addCommandListener('hello', data => {
 
 
 function initDebug() {
-	// connectionArgs.commandString = 'node /Users/bytedance/projects/mcp/servers/src/puppeteer/dist/index.js';
-	connectionArgs.commandString = 'node C:/Users/K/code/servers/src/puppeteer/dist/index.js';
+	connectionArgs.commandString = 'node /Users/bytedance/projects/mcp/servers/src/puppeteer/dist/index.js';
+	// connectionArgs.commandString = 'node C:/Users/K/code/servers/src/puppeteer/dist/index.js';
 	// connectionArgs.commandString = 'uv run mcp run bing-picture.py';
 	connectionArgs.cwd = '../servers';
 	connectionMethods.current = 'STDIO';
@@ -107,4 +107,8 @@ onMounted(() => {
     max-width: 300px;
 }
 
+
+.icon-chat:before {
+	font-weight: 1000;
+}
 </style>
