@@ -145,5 +145,6 @@
     "multi-dialog": "Conversation multi-tours",
     "press-and-run": "Tapez une question pour commencer le test",
     "connect-sigature": "Signature de connexion",
-    "finish-refresh": "Actualisation terminée"
+    "finish-refresh": "Actualisation terminée",
+    "add-system-prompt.name-placeholder": "Titre de l'invite personnalisée"
 }

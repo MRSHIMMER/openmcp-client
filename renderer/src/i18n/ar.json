@@ -145,5 +145,6 @@
     "multi-dialog": "محادثة متعددة الجولات",
     "press-and-run": "اكتب سؤالاً لبدء الاختبار",
     "connect-sigature": "توقيع الاتصال",
-    "finish-refresh": "تم التحديث"
+    "finish-refresh": "تم التحديث",
+    "add-system-prompt.name-placeholder": "عنوان prompt المخصص"
 }

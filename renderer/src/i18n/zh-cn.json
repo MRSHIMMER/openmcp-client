@@ -145,5 +145,6 @@
     "multi-dialog": "多轮对话",
     "press-and-run": "键入问题以开始测试",
     "connect-sigature": "连接签名",
-    "finish-refresh": "完成刷新"
+    "finish-refresh": "完成刷新",
+    "add-system-prompt.name-placeholder": "输入自定义 prompt 的标题"
 }

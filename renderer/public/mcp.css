@@ -65,7 +65,6 @@ body::-webkit-scrollbar {
 }
 
 .el-textarea__inner {
-    border-radius: .9em !important;
     padding: 10px !important;
     box-shadow: 0 0 0 1px var(--main-color) !important;
 }

@@ -145,5 +145,6 @@
     "multi-dialog": "Многораундовый разговор",
     "press-and-run": "Введите вопрос, чтобы начать тест",
     "connect-sigature": "Подпись соединения",
-    "finish-refresh": "Обновление завершено"
+    "finish-refresh": "Обновление завершено",
+    "add-system-prompt.name-placeholder": "Заголовок пользовательского prompt"
 }

@@ -35,10 +35,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, inject } from 'vue';
+import { ref, computed, inject, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { ChatStorage, getToolSchema } from '../chat';
+import { allTools, ChatStorage, getToolSchema } from '../chat';
 import { markdownToHtml } from '../markdown/markdown';
+import { useMessageBridge } from '@/api/message-bridge';
 
 const { t } = useI18n();
 
@@ -79,6 +80,22 @@ const disableAllTools = () => {
         tool.enabled = false;
     });
 };
+
+onMounted(async () => {
+    const bridge = useMessageBridge();
+    const res = await bridge.commandRequest('tools/list');
+    if (res.code === 200) {
+        allTools.value = res.msg.tools || [];
+        tabStorage.settings.enableTools = [];
+		for (const tool of allTools.value) {
+			tabStorage.settings.enableTools.push({
+				name: tool.name,
+				description: tool.description,
+				enabled: true
+			});
+		}
+    }
+});
 
 </script>
 

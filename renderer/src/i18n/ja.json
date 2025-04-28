@@ -145,5 +145,6 @@
     "multi-dialog": "マルチターン会話",
     "press-and-run": "テストを開始するには質問を入力してください",
     "connect-sigature": "接続署名",
-    "finish-refresh": "更新が完了しました"
+    "finish-refresh": "更新が完了しました",
+    "add-system-prompt.name-placeholder": "カスタムプロンプトのタイトル"
 }

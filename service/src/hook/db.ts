@@ -146,7 +146,13 @@ interface OcrItem extends Entity {
     createTime: number;
 }
 
+interface SystemPromptItem extends Entity {
+    name: string;
+    content: string;
+}
+
 export const diskStorage = new DiskStorage();
 
 export const settingDB = new LocalDB<SettingItem>('setting');
 export const ocrDB = new LocalDB<OcrItem>('ocr');
+export const systemPromptDB = new LocalDB<SystemPromptItem>('systemPrompt');

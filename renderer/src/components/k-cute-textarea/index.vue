@@ -7,6 +7,7 @@
         :placeholder="placeholder"
         :resize="resize"
         :class="customClass"
+        class="k-cute-textarea"
         @keydown.enter="handleKeydown"
         @compositionstart="handleCompositionStart"
         @compositionend="handleCompositionEnd"
@@ -68,3 +69,11 @@ const handleCompositionEnd = () => {
     isComposing.value = false;
 };
 </script>
+
+<style>
+.k-cute-textarea textarea {
+    border-radius: .9em;
+}
+
+
+</style>
