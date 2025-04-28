@@ -1,0 +1,60 @@
+{
+	"name": "openmcp-electron",
+	"version": "0.0.1",
+	"description": "",
+	"main": "dist/main.js",
+	"scripts": {
+		"start": "electron .",
+		"build": "webpack --config webpack.config.js",
+		"watch": "webpack --watch --config webpack.config.js",
+		"dist": "electron-builder"
+	},
+	"author": {
+		"name": "LSTM-Kirigaya",
+		"email": "1193466151@qq.com"
+	},
+	"dependencies": {
+		"@modelcontextprotocol/sdk": "^1.10.2",
+		"axios": "^1.7.7",
+		"bson": "^6.8.0",
+		"openai": "^4.93.0",
+		"pako": "^2.1.0",
+		"sqlite": "^5.1.1",
+		"sqlite3": "^5.1.7",
+		"tesseract.js": "^6.0.1",
+		"uuid": "^11.1.0",
+		"ws": "^8.18.1"
+	},
+	"devDependencies": {
+		"@types/ws": "^8.18.1",
+		"electron": "^28.1.0",
+		"electron-builder": "^26.0.12",
+		"ts-loader": "^9.5.1",
+		"typescript": "^5.6.3",
+		"webpack": "^5.99.5",
+		"webpack-cli": "^5.1.4"
+	},
+	"build": {
+		"appId": "com.example.openmcp",
+		"productName": "OpenMCP",
+		"directories": {
+			"output": "dist"
+		},
+		"files": [
+			"dist/**/*",
+			"resources/**/*"
+		],
+		"mac": {
+			"target": "dmg",
+			"icon": "resources/icons/icon.icns"
+		},
+		"win": {
+			"target": "nsis",
+			"icon": "resources/icons/icon.ico"
+		},
+		"linux": {
+			"target": "AppImage",
+			"icon": "resources/icons/icon.png"
+		}
+	}
+}
