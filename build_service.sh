@@ -8,4 +8,9 @@ mkdir -p ./resources
 (cd ./service && npm run build && mv ./dist ../resources/service) &
 
 wait
+
+mkdir -p ./software/resources
+rm -rf ./software/resources
+cp -r ./resources ./software/
+
 echo "finish building services in ./resources"

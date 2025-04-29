@@ -36,7 +36,7 @@ wss.on('connection', (ws: any) => {
     });
 
     // 注册消息接受的管线
-    webview.onDidReceiveMessage(message => {
+    webview.onDidReceiveMessage((message: any) => {
         console.info(`command: [${message.command || 'No Command'}]`);
 
         const { command, data } = message;

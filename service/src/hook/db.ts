@@ -1,5 +1,4 @@
-import sqlite3 from 'sqlite3';
-import { open } from 'sqlite';
+import Datastore from '@seald-io/nedb';
 import * as os from 'os';
 import * as path from 'path';
 import * as fs from 'fs';
@@ -20,60 +19,46 @@ export class LocalDB<T extends Entity> {
 
     private async init() {
         const homedir = os.homedir();
-        const filename = path.join(homedir, '.openmcp', 'index.db');
+        const dbPath = path.join(homedir, '.openmcp', 'nedb');
 
+        if (!fs.existsSync(dbPath)) {
+            fs.mkdirSync(dbPath, { recursive: true });
+        }
+
+        const filename = path.join(dbPath, `${this.tableName}.db`);
+        
         if (!dbConnections[filename]) {
-            dbConnections[filename] = await open({
+            dbConnections[filename] = new Datastore({
                 filename,
-                driver: sqlite3.Database
+                autoload: true,
+                timestampData: true
             });
         }
 
         this.db = dbConnections[filename];
-
-        await this.db.exec(`
-            CREATE TABLE IF NOT EXISTS ${this.tableName} (
-                id TEXT PRIMARY KEY,
-                data TEXT NOT NULL
-            )
-        `);
+        await this.db.ensureIndex({ fieldName: 'id', unique: true });
     }
 
     async insert(entity: T): Promise<void> {
-        await this.db.run(
-            `INSERT OR REPLACE INTO ${this.tableName} (id, data) VALUES (?, ?)`,
-            entity.id,
-            JSON.stringify(entity)
-        );
+        await this.db.update({ id: entity.id }, entity, { upsert: true });
     }
 
     async findById(id: string | number): Promise<T | undefined> {
-        const row = await this.db.get(
-            `SELECT data FROM ${this.tableName} WHERE id = ?`,
-            id
-        );
-        return row ? JSON.parse(row.data) : undefined;
+        return await this.db.findOne({ id });
     }
 
     async findAll(): Promise<T[]> {
-        const rows = await this.db.all(
-            `SELECT data FROM ${this.tableName}`
-        );
-        return rows.map((row: any) => JSON.parse(row.data));
+        return await this.db.find({});
     }
 
     async delete(id: string | number): Promise<void> {
-        await this.db.run(
-            `DELETE FROM ${this.tableName} WHERE id = ?`,
-            id
-        );
+        await this.db.remove({ id });
     }
 
     async close(): Promise<void> {
-        await this.db.close();
+        // NeDB 不需要显式关闭
     }
 }
-
 
 class DiskStorage {
     #storageHome: string;
