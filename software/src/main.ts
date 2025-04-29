@@ -6,16 +6,17 @@ let mainWindow: BrowserWindow
 
 function createWindow(): void {
 	mainWindow = new BrowserWindow({
-		width: 1200,
 		height: 800,
+		useContentSize: true,
+		width: 1200,
 		webPreferences: {
 			nodeIntegration: true,
 			contextIsolation: false
-		}
+		},
+		autoHideMenuBar: true
 	})
 
 	mainWindow.loadFile('resources/renderer/index.html')
-	mainWindow.webContents.openDevTools()
 }
 
 const wss = new (WebSocket as any).Server({ port: 8080 });
