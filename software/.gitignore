@@ -11,3 +11,6 @@ resources
 .idea
 resources
 setting.json
+*.traineddata
+release
+tabs.example-servers/puppeteer.json

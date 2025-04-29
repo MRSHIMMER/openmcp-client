@@ -14,6 +14,7 @@
 	},
 	"dependencies": {
 		"@modelcontextprotocol/sdk": "^1.10.2",
+		"@seald-io/nedb": "^4.1.1",
 		"axios": "^1.7.7",
 		"bson": "^6.8.0",
 		"openai": "^4.93.0",
@@ -25,6 +26,7 @@
 	"devDependencies": {
 		"@types/ws": "^8.18.1",
 		"electron": "35.0.0",
+    	"electron-builder": "^24.13.3",
 		"typescript": "^5.6.3"
 	},
 	"build": {
@@ -33,11 +35,12 @@
 		"asar": true,
 		"asarUnpack": "*.node",
 		"directories": {
-			"output": "dist"
+			"output": "release"
 		},
 		"files": [
 			"dist/**/*",
-			"resources/**/*"
+			"resources/**/*",
+			"icons/**/*"
 		],
 		"dmg": {
 			"contents": [
@@ -56,23 +59,23 @@
 		"mac": {
 			"notarize": false,
 			"target": {
-			  "target": "default",
-			  "arch": [
-				"arm64",
-				"x64"
-			  ]
+				"target": "default",
+				"arch": [
+					"arm64",
+					"x64"
+				]
 			},
 			"type": "distribution",
 			"hardenedRuntime": true,
-			"icon": "resources/icons/icon.icns"
+			"icon": "icons/icon.icns"
 		},
 		"win": {
 			"target": "nsis",
-			"icon": "resources/icons/icon.ico"
+			"icon": "icons/icon.ico"
 		},
 		"linux": {
 			"target": "AppImage",
-			"icon": "resources/icons/icon.png"
+			"icon": "icons/icon.png"
 		}
 	}
 }
