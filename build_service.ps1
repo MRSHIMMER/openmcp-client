@@ -25,4 +25,9 @@ $serviceJob = Start-Job -ScriptBlock {
 $rendererJob | Wait-Job | Receive-Job
 $serviceJob | Wait-Job | Receive-Job
 
+# 将 resources 目录复制到 software/resources
+New-Item -ItemType Directory -Path ./software/resources -Force
+Remove-Item -Recurse -Force ./software/resources/* -ErrorAction SilentlyContinue
+Copy-Item -Recurse -Path ./resources -Destination ./software/ -Force
+
 Write-Output "finish building services in ./resources"

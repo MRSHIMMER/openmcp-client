@@ -1,7 +1,7 @@
 import { useMessageBridge } from '@/api/message-bridge';
 import { reactive } from 'vue';
 import { pinkLog } from '../setting/util';
-import { ElMessage } from 'element-plus';
+import { arrowMiddleware, ElMessage } from 'element-plus';
 import { ILaunchSigature } from '@/hook/type';
 
 export const connectionMethods = reactive({
@@ -69,121 +69,79 @@ export interface McpOptions {
     clientVersion?: string;
 }
 
-export function doConnect() {
-    let connectOption: McpOptions;
-    const bridge = useMessageBridge();
-    const env = makeEnv();
-
-    return new Promise((resolve, reject) => {
-        // 监听 connect
-        bridge.addCommandListener('connect', async data => {
-            const { code, msg } = data;
-            connectionResult.success = (code === 200);
-
-            if (code === 200) {                
-                const res = await getServerVersion() as { name: string, version: string };
-                connectionResult.serverInfo.name = res.name || '';
-                connectionResult.serverInfo.version = res.version || '';
-                connectionResult.logString.push({
-                    type: 'info',
-                    message: msg
-                });
-
-            } else {
-                ElMessage({
-                    type: 'error',
-                    message: msg
-                });
-                connectionResult.logString.push({
-                    type: 'error',
-                    message: msg
-                });
-            }
-
-            resolve(void 0);
-        }, { once: true });
-
-        if (connectionMethods.current === 'STDIO') {
-
-            if (connectionArgs.commandString.length === 0) {
-                return;
-            }
-
-            const commandComponents = connectionArgs.commandString.split(/\s+/g);
-            const command = commandComponents[0];
-            commandComponents.shift();
-
-            connectOption = {
-                connectionType: 'STDIO',
-                command: command,
-                cwd: connectionArgs.cwd,
-                args: commandComponents,
-                env: env,
-                clientName: 'openmcp.connect.stdio',
-                clientVersion: '0.0.1'
-            }
-
-        } else {
-            const url = connectionArgs.urlString;
-
-            if (url.length === 0) {
-                return;
-            }
-
-            connectOption = {
-                connectionType: 'SSE',
-                url: url,
-                env: env,
-                clientName: 'openmcp.connect.sse',
-                clientVersion: '0.0.1'
-            }
-        }
-
-        bridge.postMessage({
-            command: 'connect',
-            data: connectOption
-        });
-    });
-}
-
-/**
- * @description vscode 中初始化启动
- */
-export async function launchConnect(option: { updateCommandString?: boolean } = {}) {
-    // 本地开发只用 IPC 进行启动
-    // 后续需要考虑到不同的连接方式
-
+export async function doWebConnect(option: { updateCommandString?: boolean } = {}) {
     const {
+        // updateCommandString 为 true 代表是初始化阶段
         updateCommandString = true
     } = option;
 
-    connectionMethods.current = 'STDIO';
+    if (updateCommandString) {
+        pinkLog('请求启动参数');
+        const connectionItem = await getLaunchSignature('web/launch-signature');
 
-    pinkLog('请求启动参数');
-    const connectionItem = await getLaunchSignature();
-
-    if (connectionItem.type === 'stdio') {
-        if (updateCommandString) {
+        if (connectionItem.type ==='stdio') {
+            connectionMethods.current = 'STDIO';
             connectionArgs.commandString = connectionItem.commandString;
             connectionArgs.cwd = connectionItem.cwd;
 
             if (connectionArgs.commandString.length === 0) {
                 return;
             }
-        }
-        
-        await launchStdio();
-
-    } else {
-        if (updateCommandString) {
+        } else {
+            connectionMethods.current = 'SSE';
             connectionArgs.urlString = connectionItem.url;
+            
             if (connectionArgs.urlString.length === 0) {
                 return;
             }
         }
+    }
 
+    if (connectionMethods.current === 'STDIO') {
+        await launchStdio();
+    } else {
         await launchSSE();
+    }
+}
 
+/**
+ * @description vscode 中初始化启动
+ */
+export async function doVscodeConnect(option: { updateCommandString?: boolean } = {}) {
+    // 本地开发只用 IPC 进行启动
+    // 后续需要考虑到不同的连接方式
+
+    const {
+        // updateCommandString 为 true 代表是初始化阶段
+        updateCommandString = true
+    } = option;
+
+    if (updateCommandString) {
+        pinkLog('请求启动参数');
+        const connectionItem = await getLaunchSignature('vscode/launch-signature');
+
+        if (connectionItem.type ==='stdio') {
+            connectionMethods.current = 'STDIO';
+            connectionArgs.commandString = connectionItem.commandString;
+            connectionArgs.cwd = connectionItem.cwd;
+
+            if (connectionArgs.commandString.length === 0) {
+                return;
+            }
+        } else {
+            connectionMethods.current = 'SSE';
+            connectionArgs.urlString = connectionItem.url;
+            
+            if (connectionArgs.urlString.length === 0) {
+                return;
+            }
+        }
+    }
+
+    if (connectionMethods.current === 'STDIO') {
+        await launchStdio();
+    } else {
+        await launchSSE();
     }
 }
 
@@ -191,158 +149,136 @@ async function launchStdio() {
     const bridge = useMessageBridge();
     const env = makeEnv();
 
-    return new Promise<void>((resolve, reject) => {
-        // 监听 connect
-        bridge.addCommandListener('connect', async data => {
-            const { code, msg } = data;
-            connectionResult.success = (code === 200);
+    const commandComponents = connectionArgs.commandString.split(/\s+/g);
+    const command = commandComponents[0];
+    commandComponents.shift();
 
-            if (code === 200) {
-                connectionResult.logString.push({
-                    type: 'info',
-                    message: msg
-                });                
+    const connectOption = {
+        connectionType: 'STDIO',
+        command: command,
+        args: commandComponents,
+        cwd: connectionArgs.cwd,
+        clientName: 'openmcp.connect.stdio',
+        clientVersion: '0.0.1',
+        env
+    };
 
-                const res = await getServerVersion() as { name: string, version: string };
-                connectionResult.serverInfo.name = res.name || '';
-                connectionResult.serverInfo.version = res.version || '';
+    const { code, msg } = await bridge.commandRequest('connect', connectOption);
 
-                // 同步信息到 vscode
-                const commandComponents = connectionArgs.commandString.split(/\s+/g);
-                const command = commandComponents[0];
-                commandComponents.shift();
+    connectionResult.success = (code === 200);
 
-                const clientStdioConnectionItem = {
-                    serverInfo: connectionResult.serverInfo,
-                    connectionType: 'STDIO',
-                    name: 'openmcp.connect.stdio',
-                    command: command,
-                    args: commandComponents,
-                    cwd: connectionArgs.cwd,
-                    env
-                };
+    if (code === 200) {
+        connectionResult.logString.push({
+            type: 'info',
+            message: msg
+        });                
 
-                bridge.postMessage({
-                    command: 'vscode/update-connection-sigature',
-                    data: JSON.parse(JSON.stringify(clientStdioConnectionItem))
-                });
+        const res = await getServerVersion() as { name: string, version: string };
+        connectionResult.serverInfo.name = res.name || '';
+        connectionResult.serverInfo.version = res.version || '';
 
-            } else {
-                connectionResult.logString.push({
-                    type: 'error',
-                    message: msg
-                });
-
-                ElMessage({
-                    type: 'error',
-                    message: msg
-                });
-            }
-
-            resolve(void 0);
-        }, { once: true });
-
-
+        // 同步信息到 vscode
         const commandComponents = connectionArgs.commandString.split(/\s+/g);
         const command = commandComponents[0];
         commandComponents.shift();
 
-        const connectOption = {
+        const clientStdioConnectionItem = {
+            serverInfo: connectionResult.serverInfo,
             connectionType: 'STDIO',
+            name: 'openmcp.connect.stdio',
             command: command,
             args: commandComponents,
             cwd: connectionArgs.cwd,
-            clientName: 'openmcp.connect.stdio',
-            clientVersion: '0.0.1',
             env
         };
 
         bridge.postMessage({
-            command: 'connect',
-            data: connectOption
+            command: 'vscode/update-connection-sigature',
+            data: JSON.parse(JSON.stringify(clientStdioConnectionItem))
         });
-    });
+
+    } else {
+        connectionResult.logString.push({
+            type: 'error',
+            message: msg
+        });
+
+        ElMessage({
+            type: 'error',
+            message: msg
+        });
+    }
 }
 
 async function launchSSE() {
     const bridge = useMessageBridge();
     const env = makeEnv();
 
-    return new Promise<void>((resolve, reject) => {
-        // 监听 connect
-        bridge.addCommandListener('connect', async data => {
-            const { code, msg } = data;
-            connectionResult.success = (code === 200);
+    const connectOption: McpOptions = {
+        connectionType: 'SSE',
+        url: connectionArgs.urlString,
+        clientName: 'openmcp.connect.sse',
+        clientVersion: '0.0.1',
+        env
+    };
 
-            if (code === 200) {
-                connectionResult.logString.push({
-                    type: 'info',
-                    message: msg
-                });
+    const { code, msg } = await bridge.commandRequest('connect', connectOption);
 
-                const res = await getServerVersion() as { name: string, version: string };
-                connectionResult.serverInfo.name = res.name || '';
-                connectionResult.serverInfo.version = res.version || '';
-                
-                // 同步信息到 vscode
-                const clientSseConnectionItem = {
-                    serverInfo: connectionResult.serverInfo,
-                    connectionType: 'SSE',
-                    name: 'openmcp.connect.sse',
-                    url: connectionArgs.urlString,
-                    oauth: connectionArgs.oauth,
-                    env: env
-                };
-                bridge.postMessage({
-                    command: 'vscode/update-connection-sigature',
-                    data: JSON.parse(JSON.stringify(clientSseConnectionItem))
-                });
+    connectionResult.success = (code === 200);
 
-            } else {
-                connectionResult.logString.push({
-                    type: 'error',
-                    message: msg
-                });
+    if (code === 200) {
+        connectionResult.logString.push({
+            type: 'info',
+            message: msg
+        });
 
-                ElMessage({
-                    type: 'error',
-                    message: msg
-                });
-            }
-
-            resolve(void 0);
-        }, { once: true });
-
-        const connectOption: McpOptions = {
+        const res = await getServerVersion() as { name: string, version: string };
+        connectionResult.serverInfo.name = res.name || '';
+        connectionResult.serverInfo.version = res.version || '';
+        
+        // 同步信息到 vscode
+        const clientSseConnectionItem = {
+            serverInfo: connectionResult.serverInfo,
             connectionType: 'SSE',
+            name: 'openmcp.connect.sse',
             url: connectionArgs.urlString,
-            clientName: 'openmcp.connect.sse',
-            clientVersion: '0.0.1',
-            env
+            oauth: connectionArgs.oauth,
+            env: env
         };
 
         bridge.postMessage({
-            command: 'connect',
-            data: connectOption
+            command: 'vscode/update-connection-sigature',
+            data: JSON.parse(JSON.stringify(clientSseConnectionItem))
         });
-    });
+
+    } else {
+        connectionResult.logString.push({
+            type: 'error',
+            message: msg
+        });
+
+        ElMessage({
+            type: 'error',
+            message: msg
+        });
+    }
 }
 
 
 
-function getLaunchSignature() {
+function getLaunchSignature(signatureName: string) {
     return new Promise<ILaunchSigature>((resolve, reject) => {
         // 与 vscode 进行同步
         const bridge = useMessageBridge();
 
-        bridge.addCommandListener('vscode/launch-signature', data => {
+        bridge.addCommandListener(signatureName, data => {
             pinkLog('收到启动参数');
             resolve(data.msg);
 
         }, { once: true });
 
         bridge.postMessage({
-            command: 'vscode/launch-signature',
+            command: signatureName,
             data: {}
         });
     })

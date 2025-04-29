@@ -29,7 +29,7 @@ import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 
-import { connectionResult, doConnect, launchConnect } from './connection';
+import { connectionResult, doWebConnect, doVscodeConnect } from './connection';
 
 import ConnectionMethod from './connection-method.vue';
 import ConnectionArgs from './connection-args.vue';
@@ -47,9 +47,9 @@ async function suitableConnect() {
 	isLoading.value = true;
 
 	if (acquireVsCodeApi === undefined) {
-		await doConnect();
+		await doWebConnect({ updateCommandString: false });
 	} else {
-		await launchConnect({ updateCommandString: false });
+		await doVscodeConnect({ updateCommandString: false });
 	}
 
 	isLoading.value = false;

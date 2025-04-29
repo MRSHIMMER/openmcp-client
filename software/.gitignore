@@ -13,4 +13,5 @@ resources
 setting.json
 *.traineddata
 release
+tabs.*
 tabs.example-servers/puppeteer.json
