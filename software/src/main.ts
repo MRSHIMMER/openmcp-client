@@ -1,6 +1,7 @@
-import { app, BrowserWindow } from 'electron';
-import WebSocket from 'ws';
+import { app, BrowserWindow, ipcMain } from 'electron';
 import * as OpenMCPService from '../resources/service';
+import * as path from 'path';
+import { ElectronIPCLike, getInitConnectionOption, ILaunchSigature, updateConnectionOption } from './util';
 
 let mainWindow: BrowserWindow
 
@@ -10,21 +11,15 @@ function createWindow(): void {
 		useContentSize: true,
 		width: 1200,
 		webPreferences: {
-			nodeIntegration: true,
-			contextIsolation: false
+            nodeIntegration: true,
+            contextIsolation: true,
+            preload: path.join(__dirname, 'preload.js')
 		},
-		autoHideMenuBar: true
-	})
+		autoHideMenuBar: true,
+        icon: path.join(__dirname, '..', 'icons', 'icon.png')
+	});
 
-	mainWindow.loadFile('resources/renderer/index.html')
-}
-
-const wss = new (WebSocket as any).Server({ port: 8080 });
-
-wss.on('connection', (ws: any) => {
-
-    // 仿造 webview 进行统一接口访问
-    const webview = new OpenMCPService.VSCodeWebViewLike(ws);
+    const webview = new ElectronIPCLike(mainWindow.webContents);
 
     // 先发送成功建立的消息
     webview.postMessage({
@@ -35,17 +30,58 @@ wss.on('connection', (ws: any) => {
         }
     });
 
+    const option = getInitConnectionOption();
+
     // 注册消息接受的管线
-    webview.onDidReceiveMessage((message: any) => {
+    webview.onDidReceiveMessage((message: any) => {        
         console.info(`command: [${message.command || 'No Command'}]`);
 
         const { command, data } = message;
-        OpenMCPService.routeMessage(command, data, webview);
+
+        switch (command) {
+            case 'electron/launch-signature':
+                const launchResultMessage: ILaunchSigature = option.type === 'stdio' ?
+                    {
+                        type: 'stdio',
+                        commandString: option.command + ' ' + option.args.join(' '),
+                        cwd: option.cwd || ''
+                    } :
+                    {
+                        type: 'sse',
+                        url: option.url,
+                        oauth: option.oauth || ''
+                    };
+            
+                const launchResult = {
+                    code: 200,
+                    msg: launchResultMessage
+                };
+
+                webview.postMessage({
+                    command: 'electron/launch-signature',
+                    data: launchResult
+                });
+
+                break;
+            
+            case 'electron/update-connection-sigature':
+                updateConnectionOption(data);
+                break;
+        
+            default:
+                OpenMCPService.routeMessage(command, data, webview);
+                break;
+        }
     });
-});
+
+
+    const indexPath = path.join(__dirname, '..', 'resources/renderer/index.html');
+	mainWindow.loadFile(indexPath);
+}
 
 app.whenReady().then(() => {
-	createWindow()
+
+	createWindow();
 
 	app.on('activate', function () {
 		if (BrowserWindow.getAllWindows().length === 0) createWindow()

@@ -29,15 +29,14 @@ import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 
-import { connectionResult, doWebConnect, doVscodeConnect } from './connection';
+import { connectionResult, doConnect } from './connection';
 
 import ConnectionMethod from './connection-method.vue';
 import ConnectionArgs from './connection-args.vue';
 import EnvVar from './env-var.vue';
 
 import ConnectionLog from './connection-log.vue';
-
-import { acquireVsCodeApi } from '@/api/message-bridge';
+import { getPlatform } from '@/api/platform';
 
 defineComponent({ name: 'connect' });
 
@@ -46,11 +45,9 @@ const isLoading = ref(false);
 async function suitableConnect() {
 	isLoading.value = true;
 
-	if (acquireVsCodeApi === undefined) {
-		await doWebConnect({ updateCommandString: false });
-	} else {
-		await doVscodeConnect({ updateCommandString: false });
-	}
+	const plaform = getPlatform();
+
+	await doConnect({ namespace: plaform, updateCommandString: false })
 
 	isLoading.value = false;
 }

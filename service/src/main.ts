@@ -108,7 +108,6 @@ wss.on('connection', ws => {
         }
     });
 
-
     const option = getInitConnectionOption();
 
     // 注册消息接受的管线

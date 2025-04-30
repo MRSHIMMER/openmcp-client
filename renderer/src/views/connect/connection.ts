@@ -3,6 +3,7 @@ import { reactive } from 'vue';
 import { pinkLog } from '../setting/util';
 import { arrowMiddleware, ElMessage } from 'element-plus';
 import { ILaunchSigature } from '@/hook/type';
+import { OpenMcpSupportPlatform } from '@/api/platform';
 
 export const connectionMethods = reactive({
     current: 'STDIO',
@@ -69,15 +70,21 @@ export interface McpOptions {
     clientVersion?: string;
 }
 
-export async function doWebConnect(option: { updateCommandString?: boolean } = {}) {
+export async function doConnect(
+    option: {
+        namespace: OpenMcpSupportPlatform
+        updateCommandString?: boolean
+    }
+) {
     const {
         // updateCommandString 为 true 代表是初始化阶段
+        namespace,
         updateCommandString = true
     } = option;
 
     if (updateCommandString) {
         pinkLog('请求启动参数');
-        const connectionItem = await getLaunchSignature('web/launch-signature');
+        const connectionItem = await getLaunchSignature(namespace + '/launch-signature');
 
         if (connectionItem.type ==='stdio') {
             connectionMethods.current = 'STDIO';
@@ -98,54 +105,13 @@ export async function doWebConnect(option: { updateCommandString?: boolean } = {
     }
 
     if (connectionMethods.current === 'STDIO') {
-        await launchStdio();
+        await launchStdio(namespace);
     } else {
-        await launchSSE();
+        await launchSSE(namespace);
     }
 }
 
-/**
- * @description vscode 中初始化启动
- */
-export async function doVscodeConnect(option: { updateCommandString?: boolean } = {}) {
-    // 本地开发只用 IPC 进行启动
-    // 后续需要考虑到不同的连接方式
-
-    const {
-        // updateCommandString 为 true 代表是初始化阶段
-        updateCommandString = true
-    } = option;
-
-    if (updateCommandString) {
-        pinkLog('请求启动参数');
-        const connectionItem = await getLaunchSignature('vscode/launch-signature');
-
-        if (connectionItem.type ==='stdio') {
-            connectionMethods.current = 'STDIO';
-            connectionArgs.commandString = connectionItem.commandString;
-            connectionArgs.cwd = connectionItem.cwd;
-
-            if (connectionArgs.commandString.length === 0) {
-                return;
-            }
-        } else {
-            connectionMethods.current = 'SSE';
-            connectionArgs.urlString = connectionItem.url;
-            
-            if (connectionArgs.urlString.length === 0) {
-                return;
-            }
-        }
-    }
-
-    if (connectionMethods.current === 'STDIO') {
-        await launchStdio();
-    } else {
-        await launchSSE();
-    }
-}
-
-async function launchStdio() {
+async function launchStdio(namespace: string) {
     const bridge = useMessageBridge();
     const env = makeEnv();
 
@@ -193,7 +159,7 @@ async function launchStdio() {
         };
 
         bridge.postMessage({
-            command: 'vscode/update-connection-sigature',
+            command: namespace + '/update-connection-sigature',
             data: JSON.parse(JSON.stringify(clientStdioConnectionItem))
         });
 
@@ -210,7 +176,7 @@ async function launchStdio() {
     }
 }
 
-async function launchSSE() {
+async function launchSSE(namespace: string) {
     const bridge = useMessageBridge();
     const env = makeEnv();
 
@@ -247,7 +213,7 @@ async function launchSSE() {
         };
 
         bridge.postMessage({
-            command: 'vscode/update-connection-sigature',
+            command: namespace + '/update-connection-sigature',
             data: JSON.parse(JSON.stringify(clientSseConnectionItem))
         });
 
@@ -265,23 +231,11 @@ async function launchSSE() {
 }
 
 
+async function getLaunchSignature(signatureName: string) {
+    const bridge = useMessageBridge();
+    const { code, msg } = await bridge.commandRequest(signatureName);
 
-function getLaunchSignature(signatureName: string) {
-    return new Promise<ILaunchSigature>((resolve, reject) => {
-        // 与 vscode 进行同步
-        const bridge = useMessageBridge();
-
-        bridge.addCommandListener(signatureName, data => {
-            pinkLog('收到启动参数');
-            resolve(data.msg);
-
-        }, { once: true });
-
-        bridge.postMessage({
-            command: signatureName,
-            data: {}
-        });
-    })
+    return msg;
 }
 
 export function doReconnect() {

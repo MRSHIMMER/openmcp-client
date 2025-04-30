@@ -15,7 +15,6 @@ export interface WebSocketResponse {
 
 export interface PostMessageble {
     postMessage(message: any): void;
-    onDidReceiveMessage(callback: MessageHandler): { dispose: () => void };
 }
 
 // 监听器回调类型
