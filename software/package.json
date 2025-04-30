@@ -31,7 +31,7 @@
 	},
 	"build": {
 		"appId": "com.electron.openmcp",
-		"productName": "OpenMCP",
+		"productName": "OpenMCP Desktop",
 		"asar": true,
 		"asarUnpack": "*.node",
 		"directories": {

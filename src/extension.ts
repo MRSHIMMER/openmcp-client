@@ -1,10 +1,10 @@
 import * as vscode from 'vscode';
-import * as fspath from 'path';
 
 import * as OpenMCPService from '../resources/service';
 import { getDefaultLanunchSigature, getLaunchCWD, revealOpenMcpWebviewPanel } from './webview';
-import { ConnectionViewItem, registerSidebar } from './sidebar';
-import { getWorkspaceConnectionConfigItemByPath, ISSEConnectionItem, IStdioConnectionItem } from './global';
+import { registerSidebar } from './sidebar';
+import { getWorkspaceConnectionConfigItemByPath } from './global';
+import type { ConnectionViewItem } from './sidebar/common';
 
 export function activate(context: vscode.ExtensionContext) {
     console.log('activate openmcp');
@@ -21,8 +21,14 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.commands.registerCommand('openmcp.sidebar.workspace-connection.revealWebviewPanel', (view: ConnectionViewItem) => {
             const item = view.item;
             revealOpenMcpWebviewPanel(context, item.filePath || item.name, item);
-        })
-    );
+        }
+    ));
+
+    context.subscriptions.push(
+        vscode.commands.registerCommand('openmcp.sidebar.workspace-connection.deleteConnection', (view: ConnectionViewItem) => {
+            deleteConnection(context, view);
+        }
+    ));
     
     context.subscriptions.push(
         vscode.commands.registerCommand('openmcp.showOpenMCP', async (uri: vscode.Uri) => {

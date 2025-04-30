@@ -17,6 +17,7 @@ service/**
 test/**
 servers/**
 scripts/**
+software/**
 *.sh
 *.ps1
 

@@ -104,6 +104,11 @@ class DiskStorage {
     }
 
     public setSync(filename: string, data: string | Buffer, options?: fs.WriteFileOptions): void {
+
+        if (!fs.existsSync(this.#storageHome)) {
+            fs.mkdirSync(this.#storageHome, { recursive: true });
+        }
+
         const filePath = path.join(this.#storageHome, filename);
         fs.writeFileSync(filePath, data, options);
     }

@@ -82,7 +82,7 @@ class MessageBridge {
 
 		this.postMessage = (message) => {
 			if (this.ws?.readyState === WebSocket.OPEN) {
-				console.log('send', { command: message.command });
+				console.log('send', message);
 				this.ws.send(JSON.stringify(message));
 			}
 		};

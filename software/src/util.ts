@@ -2,6 +2,7 @@
 import { ipcMain } from 'electron';
 import * as fs from 'fs';
 import * as path from 'path';
+import * as os from 'os';
 
 export class ElectronIPCLike {
     private webContents: Electron.WebContents;
@@ -49,8 +50,17 @@ export function refreshConnectionOption(envPath: string) {
     return defaultOption;
 }
 
+function getEnvPath() {
+    const homepath = os.homedir();
+    const envPathDir = path.join(homepath, '.openmcp', 'desktop');
+    if (!fs.existsSync(envPathDir)) {
+        fs.mkdirSync(envPathDir, { recursive: true });
+    }
+    return path.join(envPathDir, '.env');
+}
+
 export function getInitConnectionOption() {
-    const envPath = path.join(__dirname, '..', '.env');
+    const envPath = getEnvPath();
 
     if (!fs.existsSync(envPath)) {
         return refreshConnectionOption(envPath);
@@ -66,7 +76,7 @@ export function getInitConnectionOption() {
 }
 
 export function updateConnectionOption(data: any) {
-    const envPath = path.join(__dirname, '..', '.env');
+    const envPath = getEnvPath();
     
     if (data.connectionType === 'STDIO') {
         const connectionItem = {

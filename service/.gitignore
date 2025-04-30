@@ -24,6 +24,6 @@ pnpm-debug.log*
 config.json
 setting.json
 
-tabs.example-servers/puppeteer.json
 *.traineddata
 .env
+tabs.example-servers_puppeteer.json

@@ -77,6 +77,10 @@ function createWindow(): void {
 
     const indexPath = path.join(__dirname, '..', 'resources/renderer/index.html');
 	mainWindow.loadFile(indexPath);
+
+    setTimeout(() => {
+        mainWindow.webContents.openDevTools();
+    }, 1000);
 }
 
 app.whenReady().then(() => {

@@ -42,9 +42,28 @@
                 }
             },
             {
+                "command": "openmcp.sidebar.workspace-connection.deleteConnection",
+                "title": "删除连接",
+                "category": "openmcp",
+                "icon": "$(trash)"
+            },
+            {
                 "command": "openmcp.sidebar.workspace-connection.refresh",
                 "title": "刷新",
-                "category": "openmcp"
+                "category": "openmcp",
+                "icon": "$(refresh)"
+            },
+            {
+                "command": "openmcp.sidebar.workspace-connection.addConnection",
+                "title": "添加连接",
+                "category": "openmcp",
+                "icon": "$(add)"
+            },
+            {
+                "command": "openmcp.sidebar.workspace-connection.openConfiguration",
+                "title": "打开配置",
+                "category": "openmcp",
+                "icon": "$(gear)"
             }
         ],
         "menus": {
@@ -55,10 +74,35 @@
                     "when": "editorLangId == python || editorLangId == javascript || editorLangId == typescript || editorLangId == java || editorLangId == csharp"
                 }
             ],
+            "view/title": [
+                {
+                    "command": "openmcp.sidebar.workspace-connection.refresh",
+                    "group": "navigation",
+                    "when": "view == openmcp.sidebar-view.workspace-connection"
+                },
+                {
+                    "command": "openmcp.sidebar.workspace-connection.addConnection",
+                    "group": "navigation",
+                    "when": "view == openmcp.sidebar-view.workspace-connection"
+                },
+                {
+                    "command": "openmcp.sidebar.workspace-connection.openConfiguration",
+                    "group": "navigation",
+                    "when": "view == openmcp.sidebar-view.workspace-connection"
+                }
+            ],
             "view/item/context": [
                 {
                     "command": "openmcp.sidebar.workspace-connection.revealWebviewPanel",
                     "group": "inline@1",
+                    "when": "view == openmcp.sidebar-view.workspace-connection",
+                    "args": {
+                        "view": "${viewItem}"
+                    }
+                },
+                {
+                    "command": "openmcp.sidebar.workspace-connection.deleteConnection",
+                    "group": "inline@2",
                     "when": "view == openmcp.sidebar-view.workspace-connection",
                     "args": {
                         "view": "${viewItem}"
@@ -102,6 +146,7 @@
     },
     "dependencies": {
         "@modelcontextprotocol/sdk": "^1.10.2",
+		"@seald-io/nedb": "^4.1.1",
         "axios": "^1.7.7",
         "bson": "^6.8.0",
         "openai": "^4.93.0",

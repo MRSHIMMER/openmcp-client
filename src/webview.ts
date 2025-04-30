@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as fspath from 'path';
-import { IConnectionItem, ILaunchSigature, panels, updateWorkspaceConnectionConfig } from './global';
+import { getWorkspaceConnectionConfig, getWorkspacePath, IConnectionItem, ILaunchSigature, panels, saveWorkspaceConnectionConfig, updateWorkspaceConnectionConfig } from './global';
 import * as OpenMCPService from '../resources/service';
 
 

@@ -12,7 +12,11 @@ const DEFAULT_TABS: SaveTab = {
 
 function getTabSavePath(serverInfo: IServerVersion) {
     const { name = 'untitle', version = '0.0.0' } = serverInfo || {};
-    const tabSaveName = `tabs.${name}.json`;
+
+    // 过滤所有不能成为路径的字符
+    const escapeName = name.replace(/[\\/:*?"<>|]/g, '_');
+
+    const tabSaveName = `tabs.${escapeName}.json`;
 
     // 如果是 vscode 插件下，则修改为 ~/.vscode/openmcp.json
     if (VSCODE_WORKSPACE) {
