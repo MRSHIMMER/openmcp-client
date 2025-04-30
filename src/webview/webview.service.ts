@@ -1,9 +1,8 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as fspath from 'path';
-import { getWorkspaceConnectionConfig, getWorkspacePath, IConnectionItem, ILaunchSigature, panels, saveWorkspaceConnectionConfig, updateWorkspaceConnectionConfig } from './global';
-import * as OpenMCPService from '../resources/service';
-
+import { IConnectionItem, ILaunchSigature, panels, updateWorkspaceConnectionConfig } from '../global';
+import * as OpenMCPService from '../../resources/service';
 
 export function getWebviewContent(context: vscode.ExtensionContext, panel: vscode.WebviewPanel): string | undefined {
     const viewRoot = fspath.join(context.extensionPath, 'resources', 'renderer');
@@ -114,7 +113,7 @@ export function revealOpenMcpWebviewPanel(
     return panel;
 }
 
-export function getDefaultLanunchSigature(path: string, cwd: string) {
+export function getDefaultLanunchSignature(path: string, cwd: string) {
     const relativePath = fspath.relative(cwd, path);
 
     if (relativePath.endsWith('.py')) {

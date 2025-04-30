@@ -10,15 +10,17 @@ export interface CustomDescriptor<T> {
 }
 
 export interface IRegisterCommandItem {
-    handler: (context: ExtensionContext, ...args: any[]) => void;
+    handler: (context: ExtensionContext, ...args: any[]) => any;
     options?: any;
+    target: any;
+    propertyKey: string;
 }
 
 export type CommandHandlerDescriptor = CustomDescriptor<IRegisterCommandItem['handler']>;
 
 export interface IRegisterTreeDataProviderItem<T> {
-    provider: TreeDataProvider<T>;
+    providerConstructor: TreeDataProviderConstructor<T>;
     options?: any;
 }
 
-export type TreeDataProviderDescriptor<T> = CustomDescriptor<IRegisterTreeDataProviderItem<T>['provider']>;
+export type TreeDataProviderConstructor<T> = new (context: ExtensionContext, ...args: any[]) => TreeDataProvider<T>;

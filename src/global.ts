@@ -81,17 +81,27 @@ export function getConnectionConfig() {
     return connection;
 }
 
+/**
+ * @description 获取工作区的连接信息，默认是 {workspace}/.vscode/openmcp_connection.json
+ * @returns 
+ */
+export function getWorkspaceConnectionConfigPath() {
+    const workspace = getWorkspacePath();
+    const configDir = fspath.join(workspace, '.vscode');
+    const connectionConfig = fspath.join(configDir, CONNECTION_CONFIG_NAME);
+    return connectionConfig;
+}
 
 /**
  * @description 获取工作区的连接信息，工作区的连接文件的路径都是相对路径，以 {workspace} 开头
  * @param workspace 
  */
 export function getWorkspaceConnectionConfig() {
-    const workspace = getWorkspacePath();
-
     if (_workspaceConnectionConfig) {
         return _workspaceConnectionConfig;
     }
+
+    const workspace = getWorkspacePath();
     const configDir = fspath.join(workspace, '.vscode');
     const connectionConfig = fspath.join(configDir, CONNECTION_CONFIG_NAME);
 

@@ -1,6 +1,8 @@
 import * as vscode from 'vscode';
 import { SidebarItem } from './common';
+import { RegisterTreeDataProvider } from '../common';
 
+@RegisterTreeDataProvider('openmcp.sidebar.help')
 export class HelpProvider implements vscode.TreeDataProvider<SidebarItem> {
 
     constructor(private context: vscode.ExtensionContext) {
