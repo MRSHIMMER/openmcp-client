@@ -2,6 +2,7 @@ import { useMessageBridge } from "@/api/message-bridge";
 import { llmManager, llms } from "@/views/setting/llm";
 import { pinkLog } from "@/views/setting/util";
 import I18n from '@/i18n/index';
+import { userHasReadGuide } from "@/components/guide/tour";
 
 export async function loadSetting() {
     const bridge = useMessageBridge();
@@ -22,6 +23,23 @@ export async function loadSetting() {
             llms.push(element);
         });
     }
+}
+
+export async function getTour() {
+    const bridge = useMessageBridge();
+    const { code, msg } = await bridge.commandRequest('setting/get-tour');
+    
+    if (code === 200) {
+        pinkLog('获取引导状态成功');
+        userHasReadGuide.value = msg.userHasReadGuide || false;
+    }
+}
+
+export async function setTour() {
+    const bridge = useMessageBridge();
+    const { code, msg } = await bridge.commandRequest('setting/set-tour', {
+        userHasReadGuide: userHasReadGuide.value
+    });
 }
 
 export function saveSetting(saveHandler?: () => void) {

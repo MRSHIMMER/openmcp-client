@@ -1,7 +1,9 @@
 <template>
 	<div class="debug-welcome">
 		<span>{{ t('choose-a-project-debug') }}</span>
-		<div class="welcome-container">
+		<div class="welcome-container"
+			:ref="el => welcomeRef = el"
+		>
 			<!-- TODO: 支持更多的 server -->
 			<span
 				class="debug-option"
@@ -25,6 +27,7 @@ import { defineComponent, markRaw, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { connectionResult } from '../connect/connection';
 import { ElMessage } from 'element-plus';
+import { welcomeRef } from './welcome';
 
 defineComponent({ name: 'welcome' });
 

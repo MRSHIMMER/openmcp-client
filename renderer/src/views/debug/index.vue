@@ -1,5 +1,5 @@
 <template>
-	<div style="height: 100%;">
+	<div style="height: 100%;" id="debug-container">
 		<Welcome v-show="!haveActiveTab"></Welcome>
 		
 		<!-- 如果存在激活标签页，则根据标签页进行渲染 -->

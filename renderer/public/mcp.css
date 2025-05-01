@@ -204,6 +204,13 @@ a {
 	background-position: center;
 }
 
+.openmcp-image {
+	background-image: url('./images/openmcp.png');
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center;
+}
+
 .el-button:hover {
     color: var(--foreground) !important;
 }

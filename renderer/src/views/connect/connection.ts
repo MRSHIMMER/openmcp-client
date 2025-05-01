@@ -1,5 +1,5 @@
 import { useMessageBridge } from '@/api/message-bridge';
-import { reactive } from 'vue';
+import { reactive, ref } from 'vue';
 import { pinkLog } from '../setting/util';
 import { arrowMiddleware, ElMessage } from 'element-plus';
 import { ILaunchSigature } from '@/hook/type';
@@ -18,6 +18,9 @@ export const connectionMethods = reactive({
         }
     ]
 });
+
+export const connectionSettingRef = ref<any>(null);
+export const connectionLogRef = ref<any>(null);
 
 export const connectionArgs = reactive({
     commandString: '',

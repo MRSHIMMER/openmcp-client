@@ -1,6 +1,8 @@
 <template>
 	<div class="sidebar-item-container">
-		<div v-for="(item, index) of sidebarItems" :key="index">
+		<div v-for="(item, index) of sidebarItems" :key="index"
+			:id="`sidebar-${item.ident}`"
+		>
 			<el-tooltip :content="t(item.ident)" placement="right">
 				<div class="sidebar-option-item" :class="{ 'active': isActive(item.ident) }"
 					@click="gotoOption(item.ident)">

@@ -6,17 +6,12 @@ import { IConfig } from './setting.dto';
 import { llms } from '../hook/llm';
 
 function getConfigurationPath() {
-    // 如果是 vscode 插件下，则修改为 ~/.openmcp/config.json
-    if (VSCODE_WORKSPACE) {
-        // 在 VSCode 插件环境下
-        const homeDir = os.homedir();
-        const configDir = path.join(homeDir, '.openmcp');
-        if (!fs.existsSync(configDir)) {
-            fs.mkdirSync(configDir, { recursive: true });
-        }
-        return path.join(configDir, 'setting.json');
+    const homeDir = os.homedir();
+    const configDir = path.join(homeDir, '.openmcp');
+    if (!fs.existsSync(configDir)) {
+        fs.mkdirSync(configDir, { recursive: true });
     }
-    return 'setting.json';
+    return path.join(configDir, 'setting.json');
 }
 
 function getDefaultLanguage() {
@@ -73,5 +68,31 @@ export function saveSetting(config: Partial<IConfig>): void {
     } catch (error) {
         console.error('Error saving config file:', error);
         throw error;
+    }
+}
+
+export function getTour() {
+    const configPath = getConfigurationPath();
+    const KEY = path.join(path.dirname(configPath), 'KEY');
+    console.log(KEY);
+    
+    if (!fs.existsSync(KEY)) {
+        return {
+            userHasReadGuide: false
+        };
+    }
+    return {
+        userHasReadGuide: true
+    };
+}
+
+export function setTour(userHasReadGuide: boolean): void {
+    const configPath = getConfigurationPath();
+    const KEY = path.join(path.dirname(configPath), 'KEY');
+    if (userHasReadGuide) {
+        const key = `直面恐惧，创造未来
+Face your fears, create the future
+恐怖に直面し、未来を創り出す`;
+        fs.writeFileSync(KEY, key, 'utf-8');
     }
 }

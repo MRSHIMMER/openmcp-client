@@ -2,6 +2,8 @@
 	<div class="main">
 		<Sidebar></Sidebar>
 		<MainPanel></MainPanel>
+
+		<Tour v-if="!userHasReadGuide"/>
 	</div>
 </template>
 
@@ -15,10 +17,12 @@ import MainPanel from '@/components/main-panel/index.vue';
 import { setDefaultCss } from './hook/css';
 import { greenLog, pinkLog } from './views/setting/util';
 import { useMessageBridge } from './api/message-bridge';
-import { connectionArgs, connectionMethods, doConnect, loadEnvVar } from './views/connect/connection';
-import { loadSetting } from './hook/setting';
+import { doConnect, loadEnvVar } from './views/connect/connection';
+import { getTour, loadSetting } from './hook/setting';
 import { loadPanels } from './hook/panel';
 import { getPlatform } from './api/platform';
+import Tour from '@/components/guide/tour.vue';
+import { userHasReadGuide } from './components/guide/tour';
 
 const bridge = useMessageBridge();
 
@@ -27,7 +31,6 @@ bridge.addCommandListener('hello', data => {
 	greenLog(`${data.name}`);
 	greenLog(`version: ${data.version}`);
 }, { once: true });
-
 
 const route = useRoute();
 const router = useRouter();
@@ -62,6 +65,9 @@ onMounted(async () => {
 
 	// 设置环境变量
 	loadEnvVar();
+
+	// 获取引导状态
+	getTour();
 
 	// 尝试进行初始化连接
 	await doConnect({

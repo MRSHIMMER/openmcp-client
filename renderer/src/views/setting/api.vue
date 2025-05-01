@@ -1,5 +1,7 @@
 <template>
-	<div class="setting-section">
+	<div class="setting-section"
+		:ref="el => llmSettingRef = el"
+	>
 		<h2 class="api-title">
 			{{ "API" }}
 		</h2>
@@ -47,12 +49,15 @@
 		<br>
 
 		<div class="setting-save-container">
-			<el-button type="success" @click="addNewServer">
+			<el-button
+				id="add-new-server-button"
+				type="success" @click="addNewServer">
 				{{ t("add-new-server") }}
 			</el-button>
 
 			<el-button
 				type="primary"
+				id="test-llm-button"
 				@click="makeSimpleTalk"
 				:loading="simpleTestResult.start"
 			>
@@ -60,7 +65,11 @@
 				{{ t('test') }}
 			</el-button>
 
-			<el-button type="primary" @click="saveLlmSetting">
+			<el-button
+				type="primary"
+				id="save-llm-button"
+				@click="saveLlmSetting"
+			>
 				<span class="iconfont icon-save"></span>
 				{{ t('save') }}
 			</el-button>
@@ -110,7 +119,7 @@ import { pinkLog } from './util';
 
 import ConnectInterfaceOpenai from './connect-interface-openai.vue';
 import ConnectTest from './connect-test.vue';
-import { makeSimpleTalk, simpleTestResult } from './api';
+import { llmSettingRef, makeSimpleTalk, simpleTestResult } from './api';
 
 defineComponent({ name: 'api' });
 const { t } = useI18n();

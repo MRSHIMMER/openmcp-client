@@ -1,5 +1,6 @@
 <template>
 	<div class="connected-status-container"
+		id="connected-status-container"
 		@click.stop="toggleConnectionPanel()"
 	>
 		<span class="mcp-server-info">

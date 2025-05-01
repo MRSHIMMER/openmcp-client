@@ -1,7 +1,9 @@
 <template>
 	<el-scrollbar>
 		<div class="connection-container">
-		<div class="connect-panel-container">
+		<div class="connect-panel-container"
+			:ref="el => connectionSettingRef = el"
+		>
 			<ConnectionMethod></ConnectionMethod>
 			<ConnectionArgs></ConnectionArgs>
 			<EnvVar></EnvVar>
@@ -15,7 +17,9 @@
 			</div>
 		</div>
 
-		<div class="connect-panel-container">
+		<div class="connect-panel-container"
+			:ref="el => connectionLogRef = el"
+		>
 			<ConnectionLog></ConnectionLog>
 		</div>
 	</div>
@@ -29,7 +33,7 @@ import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 
-import { connectionResult, doConnect } from './connection';
+import { connectionLogRef, connectionResult, connectionSettingRef, doConnect } from './connection';
 
 import ConnectionMethod from './connection-method.vue';
 import ConnectionArgs from './connection-args.vue';

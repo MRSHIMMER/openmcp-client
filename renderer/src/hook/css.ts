@@ -15,7 +15,6 @@ export function setDefaultCss() {
     document.body.style.setProperty('--el-border-color-light', 'var(--sidebar)');
     document.body.style.setProperty('--el-border-color-lighter', 'var(--sidebar)');
     document.body.style.setProperty('--el-bg-color-overlay', 'var(--sidebar)');
-    document.body.style.setProperty('--el-color-info-light-9', 'var(--main-color)');
     document.body.style.setProperty('--el-color-info', 'var(--foreground)');
     document.body.style.setProperty('--el-color-info-light-8', 'var(--main-color)');
     document.body.style.setProperty('--el-fill-color-light', 'var(--sidebar-item-selected)');

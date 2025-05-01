@@ -3,6 +3,8 @@ import { TaskLoop } from '@/components/main-panel/chat/task-loop';
 import { llmManager } from './llm';
 import { reactive, ref } from 'vue';
 
+export const llmSettingRef = ref<any>(null);
+
 export const simpleTestResult = reactive<{
     done: boolean,
     start: boolean,

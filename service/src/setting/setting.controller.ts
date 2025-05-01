@@ -1,6 +1,6 @@
 import { Controller, RequestClientType } from "../common";
 import { PostMessageble } from "../hook/adapter";
-import { loadSetting, saveSetting } from "./setting.service";
+import { getTour, loadSetting, saveSetting, setTour } from "./setting.service";
 
 export class SettingController {
 
@@ -17,6 +17,8 @@ export class SettingController {
 
     @Controller('setting/load')
     async loadSetting(client: RequestClientType, data: any, webview: PostMessageble) {
+        console.log('enter loading');
+        
         const config = loadSetting();
         return {
             code: 200,
@@ -24,4 +26,30 @@ export class SettingController {
         }
     }
 
+    @Controller('setting/set-tour')
+    async setTourController(client: RequestClientType, data: any, webview: PostMessageble) {
+        
+        const { userHasReadGuide } = data;
+
+        setTour(userHasReadGuide);
+
+        return {
+            code: 200,
+            msg: 'setTour success'
+        }
+    }
+
+    @Controller('setting/get-tour')
+    async getTourController(client: RequestClientType, data: any, webview: PostMessageble) {
+        console.log('enter');
+        
+        const { userHasReadGuide } = getTour();
+
+        return {
+            code: 200,
+            msg:{
+                userHasReadGuide
+            }
+        }
+    }
 }
