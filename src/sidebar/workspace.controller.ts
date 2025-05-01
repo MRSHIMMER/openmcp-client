@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { RegisterCommand, RegisterTreeDataProvider } from '../common';
-import { getWorkspaceConnectionConfig, getWorkspaceConnectionConfigPath, getWorkspacePath, panels, saveWorkspaceConnectionConfig } from '../global';
+import { getWorkspaceConnectionConfig, getWorkspaceConnectionConfigPath, getWorkspacePath, saveWorkspaceConnectionConfig } from '../global';
 import { ConnectionViewItem } from './common';
 import { revealOpenMcpWebviewPanel } from '../webview/webview.service';
 import { acquireUserCustomConnection, deleteUserConnection } from './workspace.service';

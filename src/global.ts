@@ -6,7 +6,6 @@ import * as fs from 'fs';
 export type FsPath = string;
 export const panels = new Map<FsPath, vscode.WebviewPanel>();
 
-
 export interface IStdioConnectionItem {
     type: 'stdio';
     name: string;
@@ -131,6 +130,27 @@ export function getWorkspaceConnectionConfig() {
 
     _workspaceConnectionConfig = connection;
     return connection;
+}
+
+export function getInstalledConnectionConfigPath() {
+    const homeDir = os.homedir();
+    const configDir = fspath.join(homeDir, '.openmcp');
+    const connectionConfig = fspath.join(configDir, CONNECTION_CONFIG_NAME);
+    return connectionConfig;
+}
+
+/**
+ * @description 保存连接信息到全局配置文件，这个部分和「安装的连接」对应
+ * @returns 
+ */
+export function saveConnectionConfig() {
+    if (!_connectionConfig) {
+        return;
+    }
+
+    const connectionConfig = getInstalledConnectionConfigPath();
+
+    fs.writeFileSync(connectionConfig, JSON.stringify(_connectionConfig, null, 2), 'utf-8');
 }
 
 export function saveWorkspaceConnectionConfig(workspace: string) {

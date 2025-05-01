@@ -1,10 +1,54 @@
-import { getWorkspaceConnectionConfig, getWorkspacePath, IConnectionItem, panels, saveWorkspaceConnectionConfig } from "../global";
+import { getConnectionConfig, IConnectionItem, panels, saveConnectionConfig } from "../global";
 
 import * as vscode from 'vscode';
 
+export async function deleteInstalledConnection(item: IConnectionItem) {
+    // 弹出确认对话框
+    const confirm = await vscode.window.showWarningMessage(
+        `确定要删除连接 "${item.name}" 吗？`,
+        { modal: true },
+        '确定'
+    );
 
+    if (confirm !== '确定') {
+        return; // 用户取消删除
+    }
 
-export async function acquireUserCustomConnection(): Promise<IConnectionItem | undefined> {
+    const installedConnection = getConnectionConfig();
+
+    // 从配置中移除该连接项
+    const index = installedConnection.items.indexOf(item);
+    if (index !== -1) {
+        installedConnection.items.splice(index, 1);
+
+        // 保存更新后的配置
+        saveConnectionConfig();
+
+        // 刷新侧边栏视图
+        vscode.commands.executeCommand('openmcp.sidebar.installed-connection.refresh');
+        panels.delete(item.name);
+        // 如果该连接有对应的webview面板，则关闭它
+        if (panels.has(item.filePath || item.name)) {
+            const panel = panels.get(item.filePath || item.name);
+            panel?.dispose();
+        }
+    }
+}
+
+export async function validateAndGetCommandPath(command: string, cwd?: string): Promise<string> {
+    const { exec } = require('child_process');
+    const { promisify } = require('util');
+    const execAsync = promisify(exec);
+
+    try {
+        const { stdout } = await execAsync(`which ${command.split(' ')[0]}`, { cwd });
+        return stdout.trim();
+    } catch (error) {
+        throw new Error(`无法找到命令: ${command.split(' ')[0]}`);
+    }
+}
+
+export async function acquireInstalledConnection(): Promise<IConnectionItem | undefined> {
     // 让用户选择连接类型
     const connectionType = await vscode.window.showQuickPick(['stdio', 'sse'], {
         placeHolder: '请选择连接类型'
@@ -81,49 +125,3 @@ export async function acquireUserCustomConnection(): Promise<IConnectionItem | u
     }
 }
 
-export async function deleteUserConnection(item: IConnectionItem) {
-    // 弹出确认对话框
-    const confirm = await vscode.window.showWarningMessage(
-        `确定要删除连接 "${item.name}" 吗？`,
-        { modal: true },
-        '确定'
-    );
-
-    if (confirm !== '确定') {
-        return; // 用户取消删除
-    }
-
-    const workspaceConnectionConfig = getWorkspaceConnectionConfig();
-
-    // 从配置中移除该连接项
-    const index = workspaceConnectionConfig.items.indexOf(item);
-    if (index !== -1) {
-        workspaceConnectionConfig.items.splice(index, 1);
-
-        // 保存更新后的配置
-        const workspacePath = getWorkspacePath();
-        saveWorkspaceConnectionConfig(workspacePath);
-
-        // 刷新侧边栏视图
-        vscode.commands.executeCommand('openmcp.sidebar.workspace-connection.refresh');
-        panels.delete(item.name);
-        // 如果该连接有对应的webview面板，则关闭它
-        if (panels.has(item.filePath || item.name)) {
-            const panel = panels.get(item.filePath || item.name);
-            panel?.dispose();
-        }
-    }
-}
-
-export async function validateAndGetCommandPath(command: string, cwd?: string): Promise<string> {
-    const { exec } = require('child_process');
-    const { promisify } = require('util');
-    const execAsync = promisify(exec);
-
-    try {
-        const { stdout } = await execAsync(`which ${command.split(' ')[0]}`, { cwd });
-        return stdout.trim();
-    } catch (error) {
-        throw new Error(`无法找到命令: ${command.split(' ')[0]}`);
-    }
-}
