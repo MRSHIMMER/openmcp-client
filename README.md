@@ -12,7 +12,7 @@
 
 ## OpenMCP
 
-一款用于 MCP 服务端调试的一体化 vscode/trae 插件。
+一款用于 MCP 服务端调试的一体化 vscode/trae/cursor 插件。
 
 集成 Inspector + MCP 客户端基础功能，开发测试一体化。
 

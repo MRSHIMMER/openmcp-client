@@ -97,6 +97,12 @@
                 "title": "打开配置",
                 "category": "openmcp",
                 "icon": "$(gear)"
+            },
+            {
+                "command": "openmcp.hook.test-ocr",
+                "title": "测试 OCR",
+                "category": "openmcp",
+                "icon": "$(test)"
             }
         ],
         "menus": {

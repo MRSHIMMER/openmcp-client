@@ -147,5 +147,7 @@
     "connect-sigature": "Подпись соединения",
     "finish-refresh": "Обновление завершено",
     "add-system-prompt.name-placeholder": "Заголовок пользовательского prompt",
-    "enter-message-dot": "Введите сообщение..."
+    "enter-message-dot": "Введите сообщение...",
+    "generate-answer": "Генерация ответа",
+    "choose-presetting": "Выбрать预设"
 }

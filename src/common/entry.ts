@@ -4,12 +4,14 @@ import { HelpProvider } from '../sidebar/help.controller';
 import { McpWorkspaceConnectProvider } from '../sidebar/workspace.controller';
 import { McpInstalledConnectProvider } from '../sidebar/installed.controller';
 import { WebviewController } from '../webview/webview.controller';
+import { HookController } from '../hook/hook.controller';
 
 export const InstallModules = [
     McpWorkspaceConnectProvider,
     McpInstalledConnectProvider,
     HelpProvider,
-    WebviewController
+    WebviewController,
+    HookController
 ];
 
 const registerSingles = new Map<string, any>();

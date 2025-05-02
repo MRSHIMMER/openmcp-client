@@ -6,7 +6,7 @@
         <div class="message-role">
             Agent
             <span class="message-reminder">
-                正在生成答案
+                {{ t('generate-answer') }}
                 <span class="tool-loading iconfont icon-double-loading">
                 </span>
             </span>
@@ -19,7 +19,10 @@
 
 <script setup lang="ts">
 import { defineProps } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { markdownToHtml } from '../markdown/markdown';
+
+const { t } = useI18n();
 
 const props = defineProps({
     streamingContent: {

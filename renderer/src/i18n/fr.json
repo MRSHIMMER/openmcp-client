@@ -147,5 +147,7 @@
     "connect-sigature": "Signature de connexion",
     "finish-refresh": "Actualisation terminée",
     "add-system-prompt.name-placeholder": "Titre de l'invite personnalisée",
-    "enter-message-dot": "Entrez un message..."
+    "enter-message-dot": "Entrez un message...",
+    "generate-answer": "Génération de la réponse",
+    "choose-presetting": "Sélectionner un préréglage"
 }

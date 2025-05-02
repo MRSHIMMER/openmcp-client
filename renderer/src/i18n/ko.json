@@ -147,5 +147,7 @@
     "connect-sigature": "연결 서명",
     "finish-refresh": "새로 고침 완료",
     "add-system-prompt.name-placeholder": "사용자 지정 프롬프트 제목",
-    "enter-message-dot": "메시지를 입력하세요..."
+    "enter-message-dot": "메시지를 입력하세요...",
+    "generate-answer": "답변 생성 중",
+    "choose-presetting": "프리셋 선택"
 }

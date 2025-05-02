@@ -147,5 +147,7 @@
     "connect-sigature": "接続署名",
     "finish-refresh": "更新が完了しました",
     "add-system-prompt.name-placeholder": "カスタムプロンプトのタイトル",
-    "enter-message-dot": "メッセージを入力..."
+    "enter-message-dot": "メッセージを入力...",
+    "generate-answer": "回答を生成中",
+    "choose-presetting": "プリセットを選択"
 }

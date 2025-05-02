@@ -6,6 +6,7 @@ import { diskStorage, ocrDB } from '../hook/db';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
+import { RUNNING_CWD } from '../hook/setting';
 
 export const ocrWorkerStorage = new Map<string, OcrWorker>();
 
@@ -46,12 +47,17 @@ export async function tesseractOCR(
     logger: (message: Tesseract.LoggerMessage) => void,
     lang: string = 'eng+chi_sim'
 ) {
+    
     try {
         const { data: { text } } = await Tesseract.recognize(
             imagePath,
             lang,
             {
-                logger
+                logger,
+                langPath: './',
+                gzip: false,
+                cacheMethod: 'cache',
+                cachePath: RUNNING_CWD
             }
         );
 
@@ -67,6 +73,10 @@ export function createOcrWorker(filename: string, webview: PostMessageble): OcrW
     const workerId = uuidv4();
 
     const logger = (message: Tesseract.LoggerMessage) => {
+        console.log('report ocr status');
+        console.log(message);
+        
+        
         webview.postMessage({
             command: 'ocr/worker/log',
             data: {

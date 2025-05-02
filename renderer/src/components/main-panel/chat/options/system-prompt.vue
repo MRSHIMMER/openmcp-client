@@ -9,7 +9,8 @@
     <el-dialog v-model="showSystemPromptDialog" :title="t('system-prompt')" width="600px">
 
         <div v-if="!showAdd">
-            <el-select v-model="tabStorage.settings.systemPrompt" placeholder="选择预设"
+            <el-select v-model="tabStorage.settings.systemPrompt"
+                :placeholder="t('choose-presetting')"
                 style="width: 100%; margin-bottom: 20px;">
 
                 <el-option v-for="prompt in systemPrompts"
@@ -59,10 +60,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, inject, watch, onMounted } from 'vue';
+import { ref, computed, inject, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { ChatStorage } from '../chat';
-import { systemPrompts, saveSystemPrompts, setSystemPrompt, loadSystemPrompts, deleteSystemPrompt } from './system-prompt';
+import { systemPrompts, setSystemPrompt, loadSystemPrompts, deleteSystemPrompt } from './system-prompt';
 import { ElMessage } from 'element-plus';
 import { debounce } from 'lodash';
 

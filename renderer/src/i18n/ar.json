@@ -147,5 +147,7 @@
     "connect-sigature": "توقيع الاتصال",
     "finish-refresh": "تم التحديث",
     "add-system-prompt.name-placeholder": "عنوان prompt المخصص",
-    "enter-message-dot": "أدخل الرسالة..."
+    "enter-message-dot": "أدخل الرسالة...",
+    "generate-answer": "جارٍ إنشاء الإجابة",
+    "choose-presetting": "اختر الإعداد المسبق"
 }

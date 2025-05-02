@@ -147,5 +147,7 @@
     "connect-sigature": "Verbindungssignatur",
     "finish-refresh": "Aktualisierung abgeschlossen",
     "add-system-prompt.name-placeholder": "Titel für benutzerdefinierte Eingabeaufforderung",
-    "enter-message-dot": "Nachricht eingeben..."
+    "enter-message-dot": "Nachricht eingeben...",
+    "generate-answer": "Antwort wird generiert",
+    "choose-presetting": "Voreinstellung auswählen"
 }

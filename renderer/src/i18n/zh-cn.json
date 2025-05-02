@@ -147,5 +147,7 @@
     "connect-sigature": "连接签名",
     "finish-refresh": "完成刷新",
     "add-system-prompt.name-placeholder": "输入自定义 prompt 的标题",
-    "enter-message-dot": "输入消息..."
+    "enter-message-dot": "输入消息...",
+    "generate-answer": "正在生成答案",
+    "choose-presetting": "选择预设"
 }

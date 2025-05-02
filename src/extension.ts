@@ -9,7 +9,9 @@ export function activate(context: vscode.ExtensionContext) {
     // 获取当前打开的项目的路径
     const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
     const workspace = workspaceFolder?.uri.fsPath || '';
+
     OpenMCPService.setVscodeWorkspace(workspace);
+    OpenMCPService.setRunningCWD(context.extensionPath);
 
     launch(context);
 }
