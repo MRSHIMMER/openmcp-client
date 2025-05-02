@@ -14,8 +14,9 @@ export class HookController {
             console.log('test ocr begin');
 
             const cachePath = context.extensionPath;
-            const workerPath = path.join(cachePath, 'resources', 'ocr', 'tesseract-core.js');
-            const corePath = path.join(cachePath, 'resources', 'ocr', 'tesseract-core.wasm');
+            const workerPath = path.join(cachePath, 'resources', 'ocr', 'worker.js');
+            const corePath = path.join(cachePath, 'resources', 'ocr');
+            const langPath = path.join(cachePath,'resources', 'ocr');
 
             console.log('workerPath', workerPath);
             console.log('corePath', corePath);
@@ -26,10 +27,8 @@ export class HookController {
                 'eng+chi_sim',
                 {
                     logger: (m) => console.log(m),
-                    langPath: './',
+                    langPath,
                     gzip: false,
-                    cacheMethod: 'cache',
-                    cachePath,
                     workerPath,
                     corePath 
                 }

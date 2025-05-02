@@ -47,17 +47,23 @@ export async function tesseractOCR(
     logger: (message: Tesseract.LoggerMessage) => void,
     lang: string = 'eng+chi_sim'
 ) {
-    
+    const ocrHome = path.join(RUNNING_CWD, 'resources', 'ocr');
+
+    if (!ocrHome) {
+        console.log('ocr 目录不存在');
+        return '安装包已经损坏';
+    }
+
     try {
         const { data: { text } } = await Tesseract.recognize(
             imagePath,
             lang,
             {
                 logger,
-                langPath: './',
                 gzip: false,
-                cacheMethod: 'cache',
-                cachePath: RUNNING_CWD
+                langPath: ocrHome,
+                corePath: ocrHome,
+                workerPath: path.join(ocrHome, 'worker.js'),
             }
         );
 

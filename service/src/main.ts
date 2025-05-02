@@ -5,6 +5,7 @@ import { routeMessage } from './common/router';
 import { VSCodeWebViewLike } from './hook/adapter';
 import path from 'node:path';
 import * as fs from 'node:fs';
+import { setRunningCWD } from './hook/setting';
 
 export interface VSCodeMessage {
     command: string;
@@ -93,6 +94,9 @@ function updateConnectionOption(data: any) {
         fs.writeFileSync(envPath, JSON.stringify(connectionItem, null, 4));
     }
 }
+
+const devHome = path.join(__dirname, '..', '..');
+setRunningCWD(devHome);
 
 wss.on('connection', ws => {
 
