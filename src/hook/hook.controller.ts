@@ -8,21 +8,29 @@ export class HookController {
 
     @RegisterCommand('openmcp.hook.test-ocr')
     async testOcr(context: vscode.ExtensionContext) {
-        const testImage = path.join(context.extensionPath, 'icons/openmcp.resource.png');
-        
-        const { data: { text } } = await Tesseract.recognize(
-            testImage,
-            'eng+chi_sim',
-            {
-                logger: (m) => console.log(m),
-                langPath: './',
-                gzip: false,
-                cacheMethod: 'cache',
-                cachePath: context.extensionPath
-            }
-        );
+        try {
+            const testImage = path.join(context.extensionPath, 'icons/openmcp.resource.png');
 
-        vscode.window.showInformationMessage('ocr result: ' + text);
+            console.log('test ocr begin');
+
+            console.log('cachePath', context.extensionPath);
+            
+            const { data: { text } } = await Tesseract.recognize(
+                testImage,
+                'eng+chi_sim',
+                {
+                    logger: (m) => console.log(m),
+                    langPath: './',
+                    gzip: false,
+                    cacheMethod: 'cache',
+                    cachePath: context.extensionPath
+                }
+            );
+    
+            console.log('ocr result: ' + text);
+        } catch (error) {
+            vscode.window.showErrorMessage(error as string);
+        }
     }
 
 }
