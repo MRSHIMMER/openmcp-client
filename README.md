@@ -14,8 +14,6 @@
 
 一款用于 MCP 服务端调试的一体化 vscode/trae/cursor 插件。
 
-<video src="https://github.com/LSTM-Kirigaya/mcp-server-template/raw/refs/heads/main/video/introduction.mp4"></video>
-
 集成 Inspector + MCP 客户端基础功能，开发测试一体化。
 
 ![](./icons/openmcp.welcome.png)
@@ -27,6 +25,10 @@
 测试完成的工具可以放入 「交互测试」 模块之间进行大模型交互测试。
 
 ![](./icons/openmcp.chatbot.png)
+
+完整的项目级管理面板，更加方便的进行项目和全局的 mcp 项目管理。
+
+![](./icons/openmcp.management.png)
 
 支持多种大模型
 
