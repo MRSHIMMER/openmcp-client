@@ -1,4 +1,4 @@
-import { getConnectionConfig, IConnectionItem, panels, saveConnectionConfig } from "../global";
+import { getConnectionConfig, IConnectionItem, panels, saveConnectionConfig, getFirstValidPathFromCommand } from "../global";
 
 import * as vscode from 'vscode';
 
@@ -51,7 +51,8 @@ export async function validateAndGetCommandPath(command: string, cwd?: string): 
 export async function acquireInstalledConnection(): Promise<IConnectionItem | undefined> {
     // 让用户选择连接类型
     const connectionType = await vscode.window.showQuickPick(['stdio', 'sse'], {
-        placeHolder: '请选择连接类型'
+        placeHolder: '请选择连接类型',
+        canPickMany: false
     });
 
     if (!connectionType) {
@@ -88,13 +89,16 @@ export async function acquireInstalledConnection(): Promise<IConnectionItem | un
         const command = commands[0];
         const args = commands.slice(1);
 
+        const filePath = await getFirstValidPathFromCommand(commandString, cwd || '');        
+        
         // 保存连接配置
         return {
             type: 'stdio',
             name: `stdio-${Date.now()}`,
             command: command,
             args,
-            cwd: cwd || ''
+            cwd: cwd || '',
+            filePath: filePath,
         };
 
     } else if (connectionType === 'sse') {

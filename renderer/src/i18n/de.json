@@ -146,5 +146,6 @@
     "press-and-run": "Geben Sie eine Frage ein, um den Test zu starten",
     "connect-sigature": "Verbindungssignatur",
     "finish-refresh": "Aktualisierung abgeschlossen",
-    "add-system-prompt.name-placeholder": "Titel für benutzerdefinierte Eingabeaufforderung"
+    "add-system-prompt.name-placeholder": "Titel für benutzerdefinierte Eingabeaufforderung",
+    "enter-message-dot": "Nachricht eingeben..."
 }

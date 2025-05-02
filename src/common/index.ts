@@ -5,11 +5,7 @@ export const registerTreeDataProviders = new Map<string, IRegisterTreeDataProvid
 
 export function RegisterCommand(command: string, options?: any) {
     return function (target: any, propertyKey: string, descriptor: CommandHandlerDescriptor) {
-        const handler = descriptor.value;
-
-        console.log(propertyKey);
-        console.log(descriptor);
-        
+        const handler = descriptor.value;        
         
         if (handler) {
             registerCommands.push([command, { handler, target, propertyKey, options }]);

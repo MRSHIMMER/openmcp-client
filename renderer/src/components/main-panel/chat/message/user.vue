@@ -9,7 +9,7 @@
         
         <KCuteTextarea v-else
             v-model="userInput"
-            placeholder="输入消息..."
+            :placeholder="t('enter-message-dot')"
             @press-enter="handleKeydown"
         />
         <div class="message-actions" v-if="!isEditing">
@@ -38,6 +38,9 @@ import { ChatStorage, IRenderMessage } from '../chat';
 
 import KCuteTextarea from '@/components/k-cute-textarea/index.vue';
 import { ElMessage } from 'element-plus';
+
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
 
 const props = defineProps({
     message: {

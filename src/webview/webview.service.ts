@@ -1,19 +1,19 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as fspath from 'path';
-import { IConnectionItem, ILaunchSigature, panels, updateWorkspaceConnectionConfig } from '../global';
+import { IConnectionItem, ILaunchSigature, panels, updateInstalledConnectionConfig, updateWorkspaceConnectionConfig } from '../global';
 import * as OpenMCPService from '../../resources/service';
 
 export function getWebviewContent(context: vscode.ExtensionContext, panel: vscode.WebviewPanel): string | undefined {
     const viewRoot = fspath.join(context.extensionPath, 'resources', 'renderer');
     const htmlIndexPath = fspath.join(viewRoot, 'index.html');
-    const html = fs.readFileSync(htmlIndexPath, { encoding: 'utf-8' })?.replace(/(<link.+?href="|<script.+?src="|<img.+?src=")(.+?)"/g, (m, $1, $2) => {
+    const html = fs.readFileSync(htmlIndexPath, { encoding: 'utf-8' })?.replace(/(<link.+?href="|<script.+?src="|<img.+?src="|url\()(.+?)(\)|")/g, (m, $1, $2) => {
         const absLocalPath = fspath.resolve(viewRoot, $2);        
         const webviewUri = panel.webview.asWebviewUri(vscode.Uri.file(absLocalPath));
 
         const replaceHref = $1 + webviewUri?.toString() + '"';
         return replaceHref;
-    });
+    });    
     return html;
 }
 
@@ -26,6 +26,7 @@ export function getLaunchCWD(context: vscode.ExtensionContext, uri: vscode.Uri) 
 
 export function revealOpenMcpWebviewPanel(
     context: vscode.ExtensionContext,
+    type: 'workspace' | 'installed',
     panelKey: string,
     option: IConnectionItem = {
         type: 'stdio',
@@ -92,7 +93,11 @@ export function revealOpenMcpWebviewPanel(
                 break;
             
             case 'vscode/update-connection-sigature':
-                updateWorkspaceConnectionConfig(panelKey, data);
+                if (type === 'installed') {
+                    updateInstalledConnectionConfig(panelKey, data);
+                } else {
+                    updateWorkspaceConnectionConfig(panelKey, data);
+                }
                 break;
 
             default:

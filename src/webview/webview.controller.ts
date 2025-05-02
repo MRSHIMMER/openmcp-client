@@ -18,7 +18,7 @@ export class WebviewController {
                 return;
             }
 
-            revealOpenMcpWebviewPanel(context, uri.fsPath, {
+            revealOpenMcpWebviewPanel(context, 'workspace', uri.fsPath, {
                 type: 'stdio',
                 name: 'OpenMCP',
                 command: sigature.command,
@@ -26,7 +26,7 @@ export class WebviewController {
                 cwd
             });
         } else {
-            revealOpenMcpWebviewPanel(context, uri.fsPath, connectionItem);
+            revealOpenMcpWebviewPanel(context, 'workspace', uri.fsPath, connectionItem);
         }
 
     }

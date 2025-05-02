@@ -146,5 +146,6 @@
     "press-and-run": "輸入問題以開始測試",
     "connect-sigature": "連接簽名",
     "finish-refresh": "刷新完成",
-    "add-system-prompt.name-placeholder": "自定義提示的標題"
+    "add-system-prompt.name-placeholder": "自定義提示的標題",
+    "enter-message-dot": "輸入訊息..."
 }

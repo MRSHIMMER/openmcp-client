@@ -56,7 +56,7 @@
 
                     <KCuteTextarea
                         v-model="userInput"
-                        placeholder="输入消息..."
+                        :placeholder="t('enter-message-dot')"
                         :customClass="'chat-input'"
                         @press-enter="handleSend()"
                     />

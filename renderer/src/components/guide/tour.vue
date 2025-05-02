@@ -232,7 +232,8 @@
                 <TourTitle>终章？</TourTitle>
             </template>
             <div class="tour-common-text">
-                <pre><code>(base) <span style="color: greenyellow">➜</span>  <span style="color: #6AC2CF">.openmcp</span> <span style="color: #6BC34B">cat</span> <span style="color: #D357DB">KEY</span>
+                <pre><code style="color: unset !important; background-color: unset !important;"
+                >(base) <span style="color: greenyellow">➜</span>  <span style="color: #6AC2CF">.openmcp</span> <span style="color: #6BC34B">cat</span> <span style="color: #D357DB">KEY</span>
 直面恐惧，创造未来
 Face your fears, create the future
 恐怖に直面し、未来を創り出</code></pre>
@@ -281,5 +282,10 @@ function finishTour() {
     border-radius: .5em;
     padding: 5px;
     margin: 5px 0;
+}
+
+.tour-common-text code {
+    color: unset!important;
+    background-color: unset!important;
 }
 </style>

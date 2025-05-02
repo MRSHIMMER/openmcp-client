@@ -146,5 +146,6 @@
     "press-and-run": "Type a question to start the test",
     "connect-sigature": "Connection signature",
     "finish-refresh": "Refresh completed",
-    "add-system-prompt.name-placeholder": "Title for custom prompt"
+    "add-system-prompt.name-placeholder": "Title for custom prompt",
+    "enter-message-dot": "Enter message..."
 }

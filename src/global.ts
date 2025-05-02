@@ -250,6 +250,59 @@ export function updateWorkspaceConnectionConfig(
     }
 }
 
+export function updateInstalledConnectionConfig(
+    absPath: string,
+    data: (ClientStdioConnectionItem | ClientSseConnectionItem) & { serverInfo: ServerInfo }
+) {
+    const connectionItem = getInstalledConnectionConfigItemByPath(absPath);
+    const installedConnectionConfig = getConnectionConfig();
+
+    // 如果存在，删除老的 connectionItem
+    if (connectionItem) {
+        const index = installedConnectionConfig.items.indexOf(connectionItem);
+        if (index !== -1) {
+            installedConnectionConfig.items.splice(index, 1);
+        }
+    }
+
+    if (data.connectionType === 'STDIO') {
+        const connectionItem: IStdioConnectionItem = {
+            type: 'stdio',
+            name: data.serverInfo.name,
+            version: data.serverInfo.version,
+            command: data.command,
+            args: data.args,
+            cwd: data.cwd.replace(/\\/g, '/'),
+            env: data.env,
+            filePath: absPath.replace(/\\/g, '/')
+        };
+
+        console.log('get connectionItem: ', connectionItem);
+        
+
+        // 插入到第一个
+        installedConnectionConfig.items.unshift(connectionItem);
+        saveConnectionConfig();
+        vscode.commands.executeCommand('openmcp.sidebar.installed-connection.refresh');
+
+    } else {
+        const connectionItem: ISSEConnectionItem = {
+            type: 'sse',
+            name: data.serverInfo.name,
+            version: data.serverInfo.version,
+            url: data.url,
+            oauth: data.oauth,
+            filePath: absPath.replace(/\\/g, '/')
+        };
+
+        // 插入到第一个
+        installedConnectionConfig.items.unshift(connectionItem);
+        saveConnectionConfig();
+        vscode.commands.executeCommand('openmcp.sidebar.installed-connection.refresh');
+    }
+}
+
+
 function normaliseConnectionFilePath(item: IConnectionItem, workspace: string) {
     if (item.filePath) {
         if (item.filePath.startsWith('{workspace}')) {
@@ -283,5 +336,51 @@ export function getWorkspaceConnectionConfigItemByPath(absPath: string) {
         }
     }
 
+    return undefined;
+}
+
+/**
+ * @description 根据输入的文件路径，获取该文件的 mcp 连接签名
+ * @param absPath 
+ */
+export function getInstalledConnectionConfigItemByPath(absPath: string) {
+    const installedConnectionConfig = getConnectionConfig();
+
+    const normaliseAbsPath = absPath.replace(/\\/g, '/');
+    for (const item of installedConnectionConfig.items) {
+        const filePath = (item.filePath || '').replace(/\\/g, '/');
+        if (filePath === normaliseAbsPath) {
+            return item;
+        }
+    }
+
+    return undefined;
+}
+
+
+export async function getFirstValidPathFromCommand(command: string, cwd: string): Promise<string | undefined> {
+    // 分割命令字符串
+    const parts = command.split(' ');
+    
+    // 遍历命令部分，寻找第一个可能是路径的部分
+    for (let i = 1; i < parts.length; i++) {
+        const part = parts[i];
+        
+        // 跳过以 '-' 开头的参数
+        if (part.startsWith('-')) continue;
+        
+        // 处理相对路径
+        let fullPath = part;
+        if (!fspath.isAbsolute(part)) {
+            fullPath = fspath.join(cwd, part);
+        }
+
+        console.log(fullPath);
+
+        if (fs.existsSync(fullPath)) {
+            return fullPath;
+        }
+    }
+    
     return undefined;
 }

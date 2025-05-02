@@ -1,4 +1,4 @@
-import { getWorkspaceConnectionConfig, getWorkspacePath, IConnectionItem, panels, saveWorkspaceConnectionConfig } from "../global";
+import { getFirstValidPathFromCommand, getWorkspaceConnectionConfig, getWorkspacePath, IConnectionItem, panels, saveWorkspaceConnectionConfig } from "../global";
 
 import * as vscode from 'vscode';
 
@@ -43,6 +43,7 @@ export async function acquireUserCustomConnection(): Promise<IConnectionItem | u
         const commands = commandString.split(' ');
         const command = commands[0];
         const args = commands.slice(1);
+        const filePath = await getFirstValidPathFromCommand(commandString, cwd || '');
 
         // 保存连接配置
         return {
@@ -50,7 +51,8 @@ export async function acquireUserCustomConnection(): Promise<IConnectionItem | u
             name: `stdio-${Date.now()}`,
             command: command,
             args,
-            cwd: cwd || ''
+            cwd: cwd || '',
+            filePath
         };
 
     } else if (connectionType === 'sse') {

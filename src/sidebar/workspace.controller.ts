@@ -33,7 +33,7 @@ export class McpWorkspaceConnectProvider implements vscode.TreeDataProvider<Conn
     @RegisterCommand('revealWebviewPanel')
     public revealWebviewPanel(context: vscode.ExtensionContext, view: ConnectionViewItem) {
         const item = view.item;
-        revealOpenMcpWebviewPanel(context, item.filePath || item.name, item);
+        revealOpenMcpWebviewPanel(context, 'workspace', item.filePath || item.name, item);
     }
 
     @RegisterCommand('refresh')

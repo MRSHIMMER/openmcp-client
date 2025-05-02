@@ -3,6 +3,7 @@ import { RegisterCommand, RegisterTreeDataProvider } from '../common';
 import { ConnectionViewItem } from './common';
 import { getConnectionConfig, getInstalledConnectionConfigPath, saveConnectionConfig } from '../global';
 import { acquireInstalledConnection, deleteInstalledConnection } from './installed.service';
+import { revealOpenMcpWebviewPanel } from '../webview/webview.service';
 
 @RegisterTreeDataProvider('openmcp.sidebar.installed-connection')
 export class McpInstalledConnectProvider implements vscode.TreeDataProvider<ConnectionViewItem> {
@@ -29,6 +30,11 @@ export class McpInstalledConnectProvider implements vscode.TreeDataProvider<Conn
         return Promise.resolve(sidebarItems);
     }
 
+    @RegisterCommand('revealWebviewPanel')
+    public revealWebviewPanel(context: vscode.ExtensionContext, view: ConnectionViewItem) {
+        const item = view.item;
+        revealOpenMcpWebviewPanel(context, 'installed', item.filePath || item.name, item);
+    }
 
     @RegisterCommand('refresh')
     public refresh(context: vscode.ExtensionContext): void {

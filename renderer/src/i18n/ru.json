@@ -146,5 +146,6 @@
     "press-and-run": "Введите вопрос, чтобы начать тест",
     "connect-sigature": "Подпись соединения",
     "finish-refresh": "Обновление завершено",
-    "add-system-prompt.name-placeholder": "Заголовок пользовательского prompt"
+    "add-system-prompt.name-placeholder": "Заголовок пользовательского prompt",
+    "enter-message-dot": "Введите сообщение..."
 }

@@ -2,7 +2,7 @@
     "name": "openmcp",
     "displayName": "OpenMCP",
     "description": "An all in one MCP Client/TestTool",
-    "version": "0.0.5",
+    "version": "0.0.6",
     "publisher": "kirigaya",
     "author": {
         "name": "kirigaya",
@@ -64,6 +64,15 @@
                 "title": "打开配置",
                 "category": "openmcp",
                 "icon": "$(gear)"
+            },
+            {
+                "command": "openmcp.sidebar.installed-connection.revealWebviewPanel",
+                "title": "连接",
+                "category": "openmcp",
+                "icon": {
+                    "light": "./icons/light/protocol.svg",
+                    "dark": "./icons/dark/protocol.svg"
+                }
             },
             {
                 "command": "openmcp.sidebar.installed-connection.deleteConnection",
@@ -134,7 +143,7 @@
                 {
                     "command": "openmcp.sidebar.workspace-connection.revealWebviewPanel",
                     "group": "inline@1",
-                    "when": "view == openmcp.sidebar.workspace-connection || view == openmcp.sidebar.installed-connection",
+                    "when": "view == openmcp.sidebar.workspace-connection",
                     "args": {
                         "view": "${viewItem}"
                     }
@@ -143,6 +152,14 @@
                     "command": "openmcp.sidebar.workspace-connection.deleteConnection",
                     "group": "inline@2",
                     "when": "view == openmcp.sidebar.workspace-connection",
+                    "args": {
+                        "view": "${viewItem}"
+                    }
+                },
+                {
+                    "command": "openmcp.sidebar.installed-connection.revealWebviewPanel",
+                    "group": "inline@1",
+                    "when": "view == openmcp.sidebar.installed-connection",
                     "args": {
                         "view": "${viewItem}"
                     }
