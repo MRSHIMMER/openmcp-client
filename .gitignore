@@ -4,9 +4,10 @@ node_modules
 .vscode-test/
 *.vsix
 .env
-resources
+openmcp-sdk
 .DS_Store
 .exe
 
 .idea
-*.traineddata
+resources/ocr/*.js
+resources/ocr/*.wasm

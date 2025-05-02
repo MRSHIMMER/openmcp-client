@@ -2,10 +2,10 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as fspath from 'path';
 import { IConnectionItem, ILaunchSigature, panels, updateInstalledConnectionConfig, updateWorkspaceConnectionConfig } from '../global';
-import * as OpenMCPService from '../../resources/service';
+import * as OpenMCPService from '../../openmcp-sdk/service';
 
 export function getWebviewContent(context: vscode.ExtensionContext, panel: vscode.WebviewPanel): string | undefined {
-    const viewRoot = fspath.join(context.extensionPath, 'resources', 'renderer');
+    const viewRoot = fspath.join(context.extensionPath, 'openmcp-sdk', 'renderer');
     const htmlIndexPath = fspath.join(viewRoot, 'index.html');
     const html = fs.readFileSync(htmlIndexPath, { encoding: 'utf-8' })?.replace(/(<link.+?href="|<script.+?src="|<img.+?src="|url\()(.+?)(\)|")/g, (m, $1, $2) => {
         const absLocalPath = fspath.resolve(viewRoot, $2);        
@@ -58,7 +58,7 @@ export function revealOpenMcpWebviewPanel(
     // 设置HTML内容
     const html = getWebviewContent(context, panel); 
     panel.webview.html = html || '';
-    panel.iconPath = vscode.Uri.file(fspath.join(context.extensionPath, 'resources', 'renderer', 'images', 'openmcp.png'));     
+    panel.iconPath = vscode.Uri.file(fspath.join(context.extensionPath, 'openmcp-sdk', 'renderer', 'images', 'openmcp.png'));     
 
     // 处理来自webview的消息
     panel.webview.onDidReceiveMessage(message => {

@@ -1,16 +1,16 @@
 #!/bin/bash
 
-mkdir -p ./resources
-rm -rf ./resources/
-mkdir -p ./resources
+mkdir -p ./openmcp-sdk
+rm -rf ./openmcp-sdk/
+mkdir -p ./openmcp-sdk
 
-(cd ./renderer && npm run build && mv ./dist ../resources/renderer) &
-(cd ./service && npm run build && mv ./dist ../resources/service) &
+(cd ./renderer && npm run build && mv ./dist ../openmcp-sdk/renderer) &
+(cd ./service && npm run build && mv ./dist ../openmcp-sdk/service) &
 
 wait
 
-mkdir -p ./software/resources
-rm -rf ./software/resources
-cp -r ./resources ./software/
+mkdir -p ./software/openmcp-sdk
+rm -rf ./software/openmcp-sdk
+cp -r ./openmcp-sdk ./software/
 
-echo "finish building services in ./resources"
+echo "finish building services in ./openmcp-sdk"

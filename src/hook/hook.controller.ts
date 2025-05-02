@@ -13,6 +13,12 @@ export class HookController {
 
             console.log('test ocr begin');
 
+            const cachePath = context.extensionPath;
+            const workerPath = path.join(cachePath, 'resources', 'ocr', 'tesseract-core.js');
+            const corePath = path.join(cachePath, 'resources', 'ocr', 'tesseract-core.wasm');
+
+            console.log('workerPath', workerPath);
+            console.log('corePath', corePath);
             console.log('cachePath', context.extensionPath);
             
             const { data: { text } } = await Tesseract.recognize(
@@ -23,7 +29,9 @@ export class HookController {
                     langPath: './',
                     gzip: false,
                     cacheMethod: 'cache',
-                    cachePath: context.extensionPath
+                    cachePath,
+                    workerPath,
+                    corePath 
                 }
             );
     

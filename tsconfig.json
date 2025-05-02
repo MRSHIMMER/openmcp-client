@@ -9,9 +9,9 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "experimentalDecorators": true,
-    // 允许访问 resources 目录
+    // 允许访问 openmcp-sdk 目录
     "paths": {
-            "@resources/*": ["./resources/*"]
+            "@openmcp-sdk/*": ["./openmcp-sdk/*"]
         }
     },
     "include": ["src/**/*"],

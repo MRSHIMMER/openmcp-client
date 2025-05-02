@@ -1,5 +1,5 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
-import * as OpenMCPService from '../resources/service';
+import * as OpenMCPService from '../openmcp-sdk/service';
 import * as path from 'path';
 import { ElectronIPCLike, getInitConnectionOption, ILaunchSigature, updateConnectionOption } from './util';
 
@@ -75,7 +75,7 @@ function createWindow(): void {
     });
 
 
-    const indexPath = path.join(__dirname, '..', 'resources/renderer/index.html');
+    const indexPath = path.join(__dirname, '..', 'openmcp-sdk/renderer/index.html');
 	mainWindow.loadFile(indexPath);
 
     setTimeout(() => {
