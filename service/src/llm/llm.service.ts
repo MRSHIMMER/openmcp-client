@@ -24,7 +24,7 @@ export async function streamingChatCompletion(
     }
     
     await postProcessMessages(messages);
-
+    
     const stream = await client.chat.completions.create({
         model,
         messages,
@@ -57,6 +57,9 @@ export async function streamingChatCompletion(
             });
             break;
         }
+
+        console.log(chunk);
+        
         
         if (chunk.choices) {
             const chunkResult = {

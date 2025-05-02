@@ -1,5 +1,5 @@
 import { getConnectionConfig, IConnectionItem, panels, saveConnectionConfig, getFirstValidPathFromCommand } from "../global";
-
+import { exec, spawn } from 'node:child_process';
 import * as vscode from 'vscode';
 
 export async function deleteInstalledConnection(item: IConnectionItem) {
@@ -35,16 +35,18 @@ export async function deleteInstalledConnection(item: IConnectionItem) {
     }
 }
 
-export async function validateAndGetCommandPath(command: string, cwd?: string): Promise<string> {
-    const { exec } = require('child_process');
-    const { promisify } = require('util');
-    const execAsync = promisify(exec);
-
+export async function validateAndGetCommandPath(commandString: string, cwd?: string): Promise<string> {
     try {
-        const { stdout } = await execAsync(`which ${command.split(' ')[0]}`, { cwd });
-        return stdout.trim();
+        const commands = commandString.split(' ');
+        const command = commands[0];
+        const args = commands.slice(1);
+        const process = spawn(command, args || [], { shell: true, cwd });
+        process.disconnect();
+
+        return '';
     } catch (error) {
-        throw new Error(`无法找到命令: ${command.split(' ')[0]}`);
+        console.log(error);
+        throw new Error(`无法找到命令: ${commandString.split(' ')[0]}`);
     }
 }
 
@@ -89,6 +91,8 @@ export async function acquireInstalledConnection(): Promise<IConnectionItem | un
         const command = commands[0];
         const args = commands.slice(1);
 
+        console.log('Command:', command);
+        
         const filePath = await getFirstValidPathFromCommand(commandString, cwd || '');        
         
         // 保存连接配置

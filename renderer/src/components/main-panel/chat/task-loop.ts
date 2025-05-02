@@ -6,6 +6,7 @@ import type { OpenAI } from 'openai';
 import { callTool } from "../tool/tools";
 import { llmManager, llms } from "@/views/setting/llm";
 import { pinkLog, redLog } from "@/views/setting/util";
+import { ElMessage } from "element-plus";
 
 export type ChatCompletionChunk = OpenAI.Chat.Completions.ChatCompletionChunk;
 export type ChatCompletionCreateParamsBase = OpenAI.Chat.Completions.ChatCompletionCreateParams & { id?: string };
@@ -200,9 +201,19 @@ export class TaskLoop {
         });
     }
 
-    public makeChatData(tabStorage: ChatStorage): ChatCompletionCreateParamsBase {
+    public makeChatData(tabStorage: ChatStorage): ChatCompletionCreateParamsBase | undefined {
         const baseURL = llms[llmManager.currentModelIndex].baseUrl;
-        const apiKey = llms[llmManager.currentModelIndex].userToken;
+        const apiKey = llms[llmManager.currentModelIndex].userToken || '';
+        
+        if (apiKey.trim() === '') {
+            
+            if (tabStorage.messages.length > 0 && tabStorage.messages[tabStorage.messages.length - 1].role === 'user') {
+                tabStorage.messages.pop();
+                ElMessage.error('请先设置 API Key');
+            }
+            return undefined;
+        }
+    
         const model = llms[llmManager.currentModelIndex].userModel;
         const temperature = tabStorage.settings.temperature;
         const tools = getToolSchema(tabStorage.settings.enableTools);
@@ -288,6 +299,11 @@ export class TaskLoop {
 
             // 构造 chatData
             const chatData = this.makeChatData(tabStorage);
+
+            if (!chatData) {
+                this.onDone();
+                break;
+            }
 
             this.currentChatId = chatData.id!;
 

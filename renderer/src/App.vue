@@ -24,6 +24,8 @@ import { getPlatform } from './api/platform';
 import Tour from '@/components/guide/tour.vue';
 import { userHasReadGuide } from './components/guide/tour';
 
+import { ElLoading } from 'element-plus';
+
 const bridge = useMessageBridge();
 
 // 监听所有消息
@@ -36,6 +38,13 @@ const route = useRoute();
 const router = useRouter();
 
 onMounted(async () => {
+	const loading = ElLoading.service({
+		fullscreen: true,
+		lock: true,
+		text: 'Loading',
+		background: 'rgba(0, 0, 0, 0.7)'
+	});
+
 	// 初始化 css
 	setDefaultCss();
 
@@ -78,6 +87,7 @@ onMounted(async () => {
 	// loading panels
 	await loadPanels();
 
+	loading.close();
 });
 
 </script>
