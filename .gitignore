@@ -11,3 +11,5 @@ openmcp-sdk
 .idea
 resources/ocr/*.js
 resources/ocr/*.wasm
+resources/renderer
+resources/service
