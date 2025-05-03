@@ -14,6 +14,11 @@
 
 一款用于 MCP 服务端调试的一体化 vscode/trae/cursor 插件。
 
+<video src="https://github.com/user-attachments/assets/ab214d58-b77c-4bd3-8b6e-55552f4036ff" width="100%"></video>
+
+<video src="https://github.com/user-attachments/assets/c17a4ad7-83b4-47ff-8627-85b57ad18940" width="100%"></video>
+
+
 集成 Inspector + MCP 客户端基础功能，开发测试一体化。
 
 ![](./icons/openmcp.welcome.png)
