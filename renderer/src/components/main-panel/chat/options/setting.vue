@@ -3,7 +3,7 @@
 		<Model />
 		<SystemPrompt />
 		<ToolUse />
-		<Prompt v-model="val" />
+		<Prompt v-model="modelValue" />
 		<Websearch />
 		<Temperature />
 		<ContextLength />
@@ -11,7 +11,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, provide, ref } from 'vue';
+import { defineProps, defineEmits, provide, ref, computed } from 'vue';
 import { llmManager } from '@/views/setting/llm';
 import { tabs } from '../../panel';
 import type { ChatSetting, ChatStorage } from '../chat';
@@ -35,7 +35,17 @@ const props = defineProps({
 	}
 });
 
-const val = ref('');
+const emits = defineEmits(['update:modelValue']);
+
+const modelValue = computed({
+	get() {
+		return props.modelValue;
+	},
+	set(value) {
+		emits('update:modelValue', value);
+	}
+});
+
 
 const tab = tabs.content[props.tabId];
 const tabStorage = tab.storage as ChatStorage & { settings: ChatSetting };

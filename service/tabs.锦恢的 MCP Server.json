@@ -1,5 +1,5 @@
 {
-  "currentIndex": 1,
+  "currentIndex": 0,
   "tabs": [
     {
       "name": "交互测试",
@@ -9,50 +9,7 @@
       "storage": {
         "messages": [],
         "settings": {
-          "modelIndex": 15,
-          "enableTools": [
-            {
-              "name": "add",
-              "description": "对两个数字进行实数域的加法",
-              "enabled": true
-            },
-            {
-              "name": "multiply",
-              "description": "对两个数字进行实数域的乘法运算",
-              "enabled": true
-            },
-            {
-              "name": "is_even",
-              "description": "判断一个整数是否为偶数",
-              "enabled": true
-            },
-            {
-              "name": "capitalize",
-              "description": "将字符串首字母大写",
-              "enabled": true
-            },
-            {
-              "name": "get_weather_by_city_code",
-              "description": "根据城市天气预报的城市编码 (int)，获取指定城市的天气信息",
-              "enabled": true
-            }
-          ],
-          "enableWebSearch": false,
-          "temperature": 0.7,
-          "contextLength": 20,
-          "systemPrompt": ""
-        }
-      }
-    },
-    {
-      "name": "交互测试",
-      "icon": "icon-robot",
-      "type": "blank",
-      "componentIndex": 3,
-      "storage": {
-        "messages": [],
-        "settings": {
-          "modelIndex": 15,
+          "modelIndex": 0,
           "enableTools": [
             {
               "name": "add",

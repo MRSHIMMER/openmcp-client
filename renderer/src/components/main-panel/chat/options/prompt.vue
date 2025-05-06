@@ -59,6 +59,8 @@ function whenGetPromptResponse(msg: PromptsGetResponse) {
     try {
         const content = msg.messages[0].content;
 
+        selectPrompt.value = undefined;
+
         if (content) {
             emits('update:modelValue', props.modelValue + content);
         }
