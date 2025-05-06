@@ -47,11 +47,22 @@ const renderRichText = (items: RichTextItem[]) => {
 
 const handleInput = (event: Event) => {
     if (editor.value) {
-        console.log(editor.value);
-        
         const items: RichTextItem[] = [];
-        // 解析编辑器内容并转换为 RichTextItem[]
-        // ... 实现解析逻辑
+        const nodes = editor.value.childNodes;
+        nodes.forEach(node => {
+            if (node.nodeType === Node.TEXT_NODE) {
+                items.push({ type: 'text', text: node.textContent || '' });
+            } else if (node.nodeType === Node.ELEMENT_NODE) {
+                const element = node as HTMLElement;
+                if (element.classList.contains('rich-item-prompt')) {
+                    items.push({ type: 'prompt', text: element.textContent || '' });
+                } else if (element.classList.contains('rich-item-resource')) {
+                    items.push({ type: 'resource', text: element.textContent || '' });
+                } else {
+                    items.push({ type: 'text', text: element.textContent || '' });
+                }
+            }
+        });
         emit('update:modelValue', items);
     }
 };
