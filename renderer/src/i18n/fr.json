@@ -149,5 +149,7 @@
     "add-system-prompt.name-placeholder": "Titre de l'invite personnalisée",
     "enter-message-dot": "Entrez un message...",
     "generate-answer": "Génération de la réponse",
-    "choose-presetting": "Sélectionner un préréglage"
+    "choose-presetting": "Sélectionner un préréglage",
+    "cwd": "Répertoire d'exécution",
+    "mcp-server-timeout": "Temps d'appel maximum de l'outil MCP"
 }

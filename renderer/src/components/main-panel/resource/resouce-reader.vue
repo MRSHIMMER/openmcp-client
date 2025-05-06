@@ -122,21 +122,28 @@ const resetForm = () => {
     responseData.value = undefined;
 }
 
+function getUri() {
+    if (tabStorage.currentType === 'template') {
+        const fillFn = currentResource.value.fill;    
+        const uri = fillFn(tabStorage.formData);
+        return uri;
+    }
+
+    const targetResource = resourcesManager.resources.find(resources => resources.name === tabStorage.currentResourceName);
+    return targetResource?.uri;
+}
+
 // 提交表单
-function handleSubmit() {
-    const fillFn = currentResource.value.fill;    
-    const uri = fillFn(tabStorage.formData);
-
+async function handleSubmit() {
+    const uri = getUri();
+    console.log(uri);
+    
     const bridge = useMessageBridge();
-
-    bridge.addCommandListener('resources/read', (data: CasualRestAPI<ResourcesReadResponse>) => {
-        tabStorage.lastResourceReadResponse = data.msg;
-    }, { once: true });
-
-    bridge.postMessage({
-        command: 'resources/read',
-        data: { resourceUri: uri }
-    });
+    const { code, msg } = await bridge.commandRequest('resources/read', { resourceUri: uri });
+    
+    if (code === 200) {
+        tabStorage.lastResourceReadResponse = msg;
+    }
 }
 
 // 监听资源变化重置表单

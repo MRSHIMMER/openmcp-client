@@ -94,7 +94,7 @@ onMounted(async () => {
 
 <style>
 .main {
-	height: calc(100vh - 50px);
+	height: calc(100vh - 5px);
 	display: flex;
 	justify-content: center;
 }

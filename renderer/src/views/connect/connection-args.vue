@@ -6,13 +6,13 @@
             <el-form :model="connectionArgs" :rules="rules" ref="stdioForm">
                 <el-form-item prop="commandString">
                     <div class="input-with-label">
-                        <span class="input-label">命令</span>
+                        <span class="input-label">{{ t("command") }}</span>
                         <el-input v-model="connectionArgs.commandString" placeholder="mcp run <your script>"></el-input>
                     </div>
                 </el-form-item>
                 <el-form-item prop="cwd">
                     <div class="input-with-label">
-                        <span class="input-label">执行目录</span>
+                        <span class="input-label">{{ t('cwd') }}</span>
                         <el-input v-model="connectionArgs.cwd" placeholder="cwd, 可为空"></el-input>
                     </div>
                 </el-form-item>

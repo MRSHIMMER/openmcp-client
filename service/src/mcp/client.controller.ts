@@ -97,6 +97,8 @@ export class ClientController {
         }
 
         const resource = await client.readResource(option.resourceUri);
+        console.log(resource);
+        
         return {
             code: 200,
             msg: resource
@@ -130,7 +132,8 @@ export class ClientController {
 
         const toolResult = await client.callTool({
             name: option.toolName,
-            arguments: option.toolArgs
+            arguments: option.toolArgs,
+            callToolOption: option.callToolOption
         });
 
         // console.log(JSON.stringify(toolResult, null, 2));

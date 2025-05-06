@@ -142,9 +142,15 @@ const resetForm = () => {
 };
 
 async function handleExecute() {
-    if (!currentTool.value) return;    
-    const toolResponse = await callTool(tabStorage.currentToolName, tabStorage.formData);
-    tabStorage.lastToolCallResponse = toolResponse;
+    if (!currentTool.value) return;
+    loading.value = true;
+    try {
+        tabStorage.lastToolCallResponse = undefined;
+        const toolResponse = await callTool(tabStorage.currentToolName, tabStorage.formData);
+        tabStorage.lastToolCallResponse = toolResponse;
+    } finally {
+        loading.value = false;
+    }
 }
 
 watch(() => tabStorage.currentToolName, () => {

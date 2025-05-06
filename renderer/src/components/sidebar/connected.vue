@@ -2,6 +2,7 @@
 	<div class="connected-status-container"
 		id="connected-status-container"
 		@click.stop="toggleConnectionPanel()"
+		:class="{ 'connected': connectionResult.success }"
 	>
 		<span class="mcp-server-info">
 			<el-tooltip
@@ -14,12 +15,14 @@
 			</el-tooltip>
 		</span>
 		<span class="connect-status">
-			<span
-				class="status-circle"
-				:class="statusColorStyle"
-				>
+			<span v-if="connectionResult.success">
+				<span class="iconfont icon-connect"></span>
+				<span class="iconfont icon-dui"></span>
 			</span>
-			<span class="status-string">{{ statusString }}</span>
+			<span v-else>
+				<span class="iconfont icon-connect"></span>
+				<span class="iconfont icon-cuo"></span>
+			</span>
 		</span>
 			
 	</div>
@@ -34,22 +37,6 @@ import { connectionResult } from '@/views/connect/connection';
 defineComponent({ name: 'connected' });
 
 const { t } = useI18n();
-
-const statusString = computed(() => {
-	if (connectionResult.success) {
-		return t('connected');
-	} else {
-		return t('disconnected');
-	}
-});
-
-const statusColorStyle = computed(() => {
-	if (connectionResult.success) {
-		return 'connected-color';
-	} else {
-		return 'disconnected-color';
-	}
-});
 
 const fullDisplayServerName = computed(() => {
 	return connectionResult.serverInfo.name + '/' + connectionResult.serverInfo.version;
@@ -88,9 +75,13 @@ function toggleConnectionPanel() {
 </script>
 
 <style>
+.connected .status-circle {
+	background-color: var(--el-color-success) !important;
+}
 
-.connected-color {
-	background-color: #21DA49;
+.connected .connect-status {
+	border: 1px solid var(--el-color-success) !important;
+	color: var(--el-color-success) !important;
 }
 
 .disconnected-color {
@@ -100,8 +91,8 @@ function toggleConnectionPanel() {
 .status-circle {
 	height: 12px;
 	width: 12px;
-	margin-right: 8px;
 	border-radius: 99%;
+	background-color: var(--main-color);
 	box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
 }
 
@@ -123,7 +114,13 @@ function toggleConnectionPanel() {
 .connected-status-container .connect-status {
 	display: flex;
 	align-items: center;
-	margin-top: 20px;
+	justify-content: space-between;
+	margin-top: 10px;
+	border-radius: .5em;
+	padding: 5px 10px;
+	width: 30px;
+	border: 1px solid var(--main-color);
+	color: var(--main-color);
 }
 
 .connected-status-container:hover {
@@ -148,7 +145,10 @@ function toggleConnectionPanel() {
 .mcp-server-info .name {
 	font-size: 14px;
 	font-weight: 600;
-	max-width: 60px;
+	width: 30px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	white-space: wrap;
 	background-color: #f39a6d;
 	padding: 5px 12px;

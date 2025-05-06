@@ -149,5 +149,7 @@
     "add-system-prompt.name-placeholder": "عنوان prompt المخصص",
     "enter-message-dot": "أدخل الرسالة...",
     "generate-answer": "جارٍ إنشاء الإجابة",
-    "choose-presetting": "اختر الإعداد المسبق"
+    "choose-presetting": "اختر الإعداد المسبق",
+    "cwd": "دليل التنفيذ",
+    "mcp-server-timeout": "أطول وقت لاستدعاء أداة MCP"
 }

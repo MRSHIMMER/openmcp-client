@@ -38,7 +38,7 @@ if (!tabStorage.settings) {
 		enableTools: [],
 		enableWebSearch: false,
 		temperature: 0.7,
-		contextLength: 10,
+		contextLength: 20,
 		systemPrompt: ''
 	} as ChatSetting;
 }

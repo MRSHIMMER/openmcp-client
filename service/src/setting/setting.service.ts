@@ -25,7 +25,7 @@ function getDefaultLanguage() {
 const DEFAULT_CONFIG: IConfig = {
     MODEL_INDEX: 0,
     LLM_INFO: llms,
-    LANG: getDefaultLanguage()
+    LANG: getDefaultLanguage(),    MCP_TIMEOUT_SEC: 60
 };
 
 

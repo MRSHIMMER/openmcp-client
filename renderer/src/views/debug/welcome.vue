@@ -139,6 +139,7 @@ function chooseDebugMode(index: number) {
 
 .debug-welcome {
 	user-select: none;
+	height: 80%;
 }
 
 .debug-option.disable {

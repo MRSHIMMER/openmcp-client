@@ -149,5 +149,7 @@
     "add-system-prompt.name-placeholder": "Заголовок пользовательского prompt",
     "enter-message-dot": "Введите сообщение...",
     "generate-answer": "Генерация ответа",
-    "choose-presetting": "Выбрать预设"
+    "choose-presetting": "Выбрать预设",
+    "cwd": "Каталог выполнения",
+    "mcp-server-timeout": "Максимальное время вызова инструмента MCP"
 }

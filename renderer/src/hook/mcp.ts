@@ -1,3 +1,5 @@
+import { reactive } from "vue";
+
 interface TypeAble {
     type: string;
 }
@@ -28,3 +30,7 @@ export function normaliseJavascriptType(type: string) {
             return 'string';
     }
 }
+
+export const mcpSetting = reactive({
+    timeout: 60,
+});

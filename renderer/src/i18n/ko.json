@@ -149,5 +149,7 @@
     "add-system-prompt.name-placeholder": "사용자 지정 프롬프트 제목",
     "enter-message-dot": "메시지를 입력하세요...",
     "generate-answer": "답변 생성 중",
-    "choose-presetting": "프리셋 선택"
+    "choose-presetting": "프리셋 선택",
+    "cwd": "실행 디렉터리",
+    "mcp-server-timeout": "MCP 도구 최대 호출 시간"
 }

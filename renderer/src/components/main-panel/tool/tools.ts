@@ -1,4 +1,5 @@
 import { useMessageBridge } from '@/api/message-bridge';
+import { mcpSetting } from '@/hook/mcp';
 import { ToolsListResponse, ToolCallResponse, CasualRestAPI } from '@/hook/type';
 import { pinkLog } from '@/views/setting/util';
 import { reactive } from 'vue';
@@ -36,7 +37,10 @@ export function callTool(toolName: string, toolArgs: Record<string, any>) {
             command: 'tools/call',
             data: {
                 toolName,
-                toolArgs: JSON.parse(JSON.stringify(toolArgs))
+                toolArgs: JSON.parse(JSON.stringify(toolArgs)),
+                callToolOption: {
+                    timeout: mcpSetting.timeout * 1000
+                }
             }
         });
     });

@@ -149,5 +149,7 @@
     "add-system-prompt.name-placeholder": "Title for custom prompt",
     "enter-message-dot": "Enter message...",
     "generate-answer": "Generating answer",
-    "choose-presetting": "Select preset"
+    "choose-presetting": "Select preset",
+    "cwd": "Execution directory",
+    "mcp-server-timeout": "Maximum call time of MCP tool"
 }

@@ -1,10 +1,18 @@
 <template>
+    <h3 class="resource-template">
+		<code>resources/templates/list</code>
+		<span
+			class="iconfont icon-restart"
+			@click="reloadResources({ first: false })"
+		></span>
+	</h3>
+
 	<div class="resource-template-container-scrollbar">
-		<el-scrollbar height="500px">
+		<el-scrollbar height="500px" v-if="resourcesManager.templates.length > 0">
 			<div class="resource-template-container">
 				<div
 					class="item"
-                    :class="{ 'active': tabStorage.currentResourceName === template.name }"
+                    :class="{ 'active': tabStorage.currentType === 'template' && tabStorage.currentResourceName === template.name }"
 					v-for="template of resourcesManager.templates"
 					:key="template.name"
                     @click="handleClick(template)"
@@ -14,21 +22,16 @@
 				</div>
 			</div>
 		</el-scrollbar>
+		<div v-else style="padding: 10px;">
+			empty
+		</div>
 	</div>
-    <div class="resource-template-function-container">
-        <el-button
-            type="primary"
-            @click="reloadResources({ first: false })"
-        >
-            {{ t('refresh') }}
-        </el-button>
-    </div>
 </template>
 
 <script setup lang="ts">
 import { useMessageBridge } from '@/api/message-bridge';
 import { CasualRestAPI, ResourceTemplate, ResourceTemplatesListResponse } from '@/hook/type';
-import { onMounted, onUnmounted, defineProps } from 'vue';
+import { onMounted, onUnmounted, defineProps, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { resourcesManager, ResourceStorage } from './resources';
 import { tabs } from '../panel';
@@ -63,6 +66,7 @@ function reloadResources(option: { first: boolean }) {
 }
 
 function handleClick(template: ResourceTemplate) {
+	tabStorage.currentType = 'template';
     tabStorage.currentResourceName = template.name;
     tabStorage.lastResourceReadResponse = undefined;
 }
@@ -73,11 +77,13 @@ onMounted(() => {
     commandCancel = bridge.addCommandListener('resources/templates/list', (data: CasualRestAPI<ResourceTemplatesListResponse>) => {
 		resourcesManager.templates = data.msg.resourceTemplates || [];
 
-		const targetResource = resourcesManager.templates.find(template => template.name === tabStorage.currentResourceName);
-        if (targetResource === undefined) {
-            tabStorage.currentResourceName = resourcesManager.templates[0]?.name;
-            tabStorage.lastResourceReadResponse = undefined;
-        }
+		if (tabStorage.currentType === 'template') {
+			const targetResource = resourcesManager.templates.find(template => template.name === tabStorage.currentResourceName);
+			if (targetResource === undefined) {
+				tabStorage.currentResourceName = resourcesManager.templates[0]?.name;
+				tabStorage.lastResourceReadResponse = undefined;
+			}
+		}
 	}, { once: false });
 
     reloadResources({ first: true });
@@ -88,10 +94,23 @@ onUnmounted(() => {
         commandCancel();
     }
 })
-
 </script>
 
 <style>
+h3.resource-template {
+    display: flex;
+    align-items: center;
+}
+
+h3.resource-template .iconfont.icon-restart {
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+h3.resource-template .iconfont.icon-restart:hover {
+    color: var(--main-color);
+}
+
 .resource-template-container-scrollbar {
 	background-color: var(--background);
     margin-bottom: 10px;

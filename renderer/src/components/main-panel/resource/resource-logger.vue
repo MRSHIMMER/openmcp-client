@@ -20,7 +20,20 @@
             >
                 <template v-if="!showRawJson">
                     <span v-for="(content, index) of tabStorage.lastResourceReadResponse?.contents || []" :key="index">
-                        {{ content.text }}
+                        <span v-if="content.mimeType === 'image/png'">
+                            <img
+                                class="resource-list-image"
+                                :src="getImageBlobUrlByBase64(content.blob || '', content.mimeType)"
+                                :alt="content.text"
+                                style="max-width: 100%; max-height: 300px;"
+                            />
+                        </span>
+                        <span v-if="content.mimeType === 'image/jpeg'">
+
+                        </span>
+                        <span v-else>
+                            {{ content.text }}
+                        </span>
                     </span>
                 </template>
                 <template v-else>
@@ -36,6 +49,7 @@ import { defineComponent, defineProps, computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { tabs } from '../panel';
 import { ResourceStorage } from './resources';
+import { getImageBlobUrlByBase64 } from '@/hook/util';
 
 defineComponent({ name: 'resource-logger' });
 const { t } = useI18n();
@@ -100,5 +114,9 @@ const formattedJson = computed(() => {
     font-size: 15px;
     line-height: 1.5;
     background-color: var(--sidebar);
+}
+
+.resource-list-image {
+    cursor: unset;
 }
 </style>

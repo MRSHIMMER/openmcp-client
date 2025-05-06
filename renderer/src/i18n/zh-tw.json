@@ -149,5 +149,7 @@
     "add-system-prompt.name-placeholder": "自定義提示的標題",
     "enter-message-dot": "輸入訊息...",
     "generate-answer": "正在生成答案",
-    "choose-presetting": "選擇預設"
+    "choose-presetting": "選擇預設",
+    "cwd": "執行目錄",
+    "mcp-server-timeout": "MCP工具最長調用時間"
 }

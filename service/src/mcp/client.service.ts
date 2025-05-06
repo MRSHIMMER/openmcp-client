@@ -41,7 +41,8 @@ export class McpClient {
                 this.transport = new StdioClientTransport({
                     command: this.options.command || '',
                     args: this.options.args || [],
-                    cwd: this.options.cwd || process.cwd()
+                    cwd: this.options.cwd || process.cwd(),
+                    stderr: 'pipe'
                 });
 
                 break;
@@ -117,8 +118,10 @@ export class McpClient {
     }
 
     // 调用工具
-    public async callTool(options: { name: string; arguments: Record<string, any> }) {
-        return await this.client.callTool(options);
+    public async callTool(options: { name: string; arguments: Record<string, any>, callToolOption?: any }) {
+
+        const { callToolOption, ...methodArgs } = options;
+        return await this.client.callTool(methodArgs, undefined, callToolOption);
     }
 }
 

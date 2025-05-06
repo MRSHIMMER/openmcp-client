@@ -70,20 +70,19 @@ function setActiveTab(index: number) {
 
 <style>
 .main-panel-container {
-	display: flex;
 	justify-content: center;
 	flex-direction: column;
 	width: 100%;
 	min-width: 800px;
 	height: 100%;
-	margin-left: 20px;
+	margin-left: 5px;
 }
 
 .main-panel {
 	background-color: var(--sidebar);
 	border-radius: 1.2em;
 	width: 100%;
-	height: 90%;
+	height: calc(100% - 35px);
 }
 
 .scroll-tabs-container {
@@ -92,13 +91,13 @@ function setActiveTab(index: number) {
 }
 
 .tabs-container {
-	height: 78px;
+	height: 30px;
 	width: 90%;
 	background-color: var(--background);
 	display: flex;
 	align-items: center;
     user-select: none;
-	padding: 0 10px;
+	margin-bottom: 5px;
 }
 
 .tabs-container .el-scrollbar {
@@ -107,12 +106,12 @@ function setActiveTab(index: number) {
 
 .tabs-container .tab {
 	white-space: nowrap;
-	margin: 5px;
-    font-size: 13px;
+	margin-right: 5px;
+    font-size: 12px;
     width: 120px;
 	border-radius: .5em;
 	background-color: var(--sidebar);
-	padding: 10px;
+	padding: 3px 10px;
 	display: flex;
 	align-items: center;
 	transition: var(--animation-3s);
@@ -160,11 +159,9 @@ function setActiveTab(index: number) {
 
 .tabs-container .add-button {
 	cursor: pointer;
-	font-size: 20px;
+	font-size: 15px;
 	margin-left: 5px;
 	border-radius: .5em;
-	height: 35px;
-	width: 35px;
 	display: flex;
 	align-items: center;
 	justify-content: center;

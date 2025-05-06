@@ -3,6 +3,7 @@ import { llmManager, llms } from "@/views/setting/llm";
 import { pinkLog } from "@/views/setting/util";
 import I18n from '@/i18n/index';
 import { userHasReadGuide } from "@/components/guide/tour";
+import { mcpSetting } from "./mcp";
 
 export async function loadSetting() {
     const bridge = useMessageBridge();
@@ -14,10 +15,11 @@ export async function loadSetting() {
 
     } else {
         const persistConfig = data.msg;
-        pinkLog('配置加载成功');
+        pinkLog('配置加载成功');        
 
-        llmManager.currentModelIndex = persistConfig.MODEL_INDEX;
-        I18n.global.locale.value = persistConfig.LANG;
+        llmManager.currentModelIndex = persistConfig.MODEL_INDEX || 0;
+        I18n.global.locale.value = persistConfig.LANG || 'zh';
+        mcpSetting.timeout = persistConfig.MCP_TIMEOUT_SEC || 60;
 
         persistConfig.LLM_INFO.forEach((element: any) => {
             llms.push(element);
@@ -48,7 +50,8 @@ export function saveSetting(saveHandler?: () => void) {
     const saveConfig = {
         MODEL_INDEX: llmManager.currentModelIndex,
         LLM_INFO: JSON.parse(JSON.stringify(llms)),
-        LANG: I18n.global.locale.value
+        LANG: I18n.global.locale.value,
+        MCP_TIMEOUT_SEC: mcpSetting.timeout
     };
 
     bridge.addCommandListener('setting/save', data => {

@@ -6,11 +6,14 @@
                 <span class="iconfont icon-file"></span>
                 {{ t("resources") + t("module") }}
             </h2>
-            <h3><code>resources/templates/list</code></h3>
-            
-            <ResourceTemplates
+
+            <ResourceListTemplates
                 :tab-id="props.tabId"
-            ></ResourceTemplates>
+            ></ResourceListTemplates>
+
+            <ResourceList
+                :tab-id="props.tabId"
+            ></ResourceList>
 
         </div>
         <div class="right">
@@ -29,7 +32,10 @@
 <script setup lang="ts">
 import { defineProps } from 'vue';
 import { useI18n } from 'vue-i18n';
-import ResourceTemplates from './resource-templates.vue';
+
+import ResourceListTemplates from './resource-list-templates.vue';
+import ResourceList from './resource-list.vue';
+
 import ResourceReader from './resouce-reader.vue';
 import ResourceLogger from './resource-logger.vue';
 
@@ -41,8 +47,6 @@ const props = defineProps({
         required: true
     }
 });
-
-
 
 </script>
 

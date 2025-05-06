@@ -14,6 +14,19 @@
 				</el-select>
 			</div>
 		</div>
+
+		<div class="setting-option">
+			<span>
+				<span class="iconfont icon-timeout"></span>
+				<span class="option-title">{{ t('mcp-server-timeout') }} (sec)</span>
+			</span>
+			<div style="width: 200px;">
+				<el-slider
+					v-model="mcpSetting.timeout"
+					:min="10" :max="10000" :step="1"
+					@change="safeSaveSetting" />
+			</div>
+		</div>
 	</div>
 </template>
 
@@ -21,6 +34,8 @@
 import { defineComponent, ref } from 'vue';
 import { languageSetting } from './language';
 import { useI18n } from 'vue-i18n';
+import { mcpSetting } from '@/hook/mcp';
+import { debounce } from 'lodash';
 import { saveSetting } from '@/hook/setting';
 
 defineComponent({ name: 'appearance' });
@@ -29,15 +44,25 @@ const { t, locale } = useI18n();
 
 const currentLanguage = ref('简体中文');
 
+
+
 function onlanguagechange(code: string) {
+	console.log('enter lang change');
+	
 	const option = languageSetting.options.find(item => item.value === code);
 	if (option) {
 		currentLanguage.value = option.text;
 	}
 	// languageDialogShow.value = true;
 
-	saveSetting();	
+	saveSetting();
 }
+
+const safeSaveSetting = debounce(() => {
+	saveSetting();
+}, 10);
+
+
 </script>
 
 <style></style>

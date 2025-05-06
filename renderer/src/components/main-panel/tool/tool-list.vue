@@ -15,6 +15,11 @@
             </div>
         </el-scrollbar>
     </div>
+
+    <div>
+        <!-- resources/list -->
+    </div>
+
     <div class="tool-list-function-container">
         <el-button
             type="primary"

@@ -149,5 +149,7 @@
     "add-system-prompt.name-placeholder": "Titel für benutzerdefinierte Eingabeaufforderung",
     "enter-message-dot": "Nachricht eingeben...",
     "generate-answer": "Antwort wird generiert",
-    "choose-presetting": "Voreinstellung auswählen"
+    "choose-presetting": "Voreinstellung auswählen",
+    "cwd": "Ausführungsverzeichnis",
+    "mcp-server-timeout": "Maximale Aufrufzeit des MCP-Tools"
 }

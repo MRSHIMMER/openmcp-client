@@ -35,6 +35,8 @@ function clickLogo() {
 .simple-logo {
 	height: 73px;
 	display: flex;
+	align-items: center;
+
 	flex-direction: column;
 	user-select: none;
 	-webkit-user-drag: none;
@@ -47,7 +49,7 @@ function clickLogo() {
 }
 
 .simple-logo .iconfont {
-	font-size: 48px;
+	font-size: 38px;
 }
 
 </style>

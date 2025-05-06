@@ -64,6 +64,12 @@ export async function getBlobUrlByFilename(filename: string) {
             mimeType = 'image/svg+xml';
             break;
     }
+    
+    const blobUrl = getImageBlobUrlByBase64(base64String, mimeType, filename);
+    return blobUrl;
+}
+
+export function getImageBlobUrlByBase64(base64String: string, mimeType: string, cacheKey?: string) {
     const byteCharacters = atob(base64String);
     const byteNumbers = new Array(byteCharacters.length);
     for (let i = 0; i < byteCharacters.length; i++) {
@@ -73,6 +79,8 @@ export async function getBlobUrlByFilename(filename: string) {
     const blob = new Blob([byteArray], { type: mimeType });
     const blobUrl = URL.createObjectURL(blob);
     // 将结果存入缓存
-    blobUrlCache.set(filename, blobUrl);
+    if (cacheKey) {
+        blobUrlCache.set(cacheKey, blobUrl);
+    }
     return blobUrl;
 }

@@ -21,6 +21,8 @@ export interface Content {
 	uri: string;
 	mimeType: string;
 	text: string;
+	blob?: string;
+	[key: string]: any;
 }
 
 export interface MessageContent {
@@ -59,12 +61,18 @@ export interface ResourceTemplate {
 	description: string;
 }
 
+export interface Resources {
+	uri: string;
+	name: string;
+	mimeType: string;
+}
+
 export interface ResourceTemplatesListResponse {
 	resourceTemplates: ResourceTemplate[]
 }
 
 export interface ResourcesListResponse {
-	resources: any[]; // 根据示例返回空数组，可进一步定义具体类型
+	resources: Resources[]
 }
 
 export interface ResourcesReadResponse {
