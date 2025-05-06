@@ -6,7 +6,6 @@
                     <span class="iconfont icon-chat"></span>
                     提示词模块
                 </h2>
-                <h3><code>prompts/list</code></h3>
 
                 <PromptTemplates :tab-id="props.tabId"></PromptTemplates>
 

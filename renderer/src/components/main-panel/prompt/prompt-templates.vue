@@ -1,4 +1,12 @@
 <template>
+    <h3 class="resource-template">
+		<code>prompts/list</code>
+		<span
+			@click="reloadPrompts({ first: false })"
+			class="iconfont icon-restart"
+		></span>
+	</h3>
+
 	<div class="prompt-template-container-scrollbar">
 		<el-scrollbar height="500px">
 			<div class="prompt-template-container">
@@ -15,14 +23,6 @@
 			</div>
 		</el-scrollbar>
 	</div>
-    <div class="prompt-template-function-container">
-        <el-button
-            type="primary"
-            @click="reloadPrompts({ first: false })"
-        >
-            {{ t('refresh') }}
-        </el-button>
-    </div>
 </template>
 
 <script setup lang="ts">

@@ -1,4 +1,12 @@
 <template>
+    <h3 class="resource-template">
+        <code>tools/list</code>
+        <span
+            class="iconfont icon-restart"
+            @click="reloadTools({ first: false })"
+        ></span>
+    </h3>
+
     <div class="tool-list-container-scrollbar">
         <el-scrollbar height="500px">
             <div class="tool-list-container">
@@ -18,15 +26,6 @@
 
     <div>
         <!-- resources/list -->
-    </div>
-
-    <div class="tool-list-function-container">
-        <el-button
-            type="primary"
-            @click="reloadTools({ first: false })"
-        >
-            {{ t('refresh') }}
-        </el-button>
     </div>
 </template>
 

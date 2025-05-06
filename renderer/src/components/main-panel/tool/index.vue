@@ -6,8 +6,6 @@
                     <span class="iconfont icon-tool"></span>
                     工具模块
                 </h2>
-                <h3><code>tools/list</code></h3>
-
                 <ToolList :tab-id="props.tabId"></ToolList>
 
             </div>
