@@ -151,5 +151,6 @@
     "generate-answer": "답변 생성 중",
     "choose-presetting": "프리셋 선택",
     "cwd": "실행 디렉터리",
-    "mcp-server-timeout": "MCP 도구 최대 호출 시간"
+    "mcp-server-timeout": "MCP 도구 최대 호출 시간",
+    "return": "돌아가기"
 }

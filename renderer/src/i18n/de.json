@@ -151,5 +151,6 @@
     "generate-answer": "Antwort wird generiert",
     "choose-presetting": "Voreinstellung auswählen",
     "cwd": "Ausführungsverzeichnis",
-    "mcp-server-timeout": "Maximale Aufrufzeit des MCP-Tools"
+    "mcp-server-timeout": "Maximale Aufrufzeit des MCP-Tools",
+    "return": "Zurück"
 }

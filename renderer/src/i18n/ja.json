@@ -151,5 +151,6 @@
     "generate-answer": "回答を生成中",
     "choose-presetting": "プリセットを選択",
     "cwd": "実行ディレクトリ",
-    "mcp-server-timeout": "MCPツールの最大呼び出し時間"
+    "mcp-server-timeout": "MCPツールの最大呼び出し時間",
+    "return": "戻る"
 }

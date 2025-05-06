@@ -3,6 +3,7 @@
 		<Model />
 		<SystemPrompt />
 		<ToolUse />
+		<Prompt v-model="val" />
 		<Websearch />
 		<Temperature />
 		<ContextLength />
@@ -10,7 +11,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, provide } from 'vue';
+import { defineProps, provide, ref } from 'vue';
 import { llmManager } from '@/views/setting/llm';
 import { tabs } from '../../panel';
 import type { ChatSetting, ChatStorage } from '../chat';
@@ -18,16 +19,23 @@ import type { ChatSetting, ChatStorage } from '../chat';
 import Model from './model.vue';
 import SystemPrompt from './system-prompt.vue';
 import ToolUse from './tool-use.vue';
+import Prompt from './prompt.vue';
 import Websearch from './websearch.vue';
 import Temperature from './temperature.vue';
 import ContextLength from './context-length.vue';
 
 const props = defineProps({
+	modelValue: {
+		type: String,
+		required: true
+	},
 	tabId: {
 		type: Number,
 		required: true
 	}
 });
+
+const val = ref('');
 
 const tab = tabs.content[props.tabId];
 const tabStorage = tab.storage as ChatStorage & { settings: ChatSetting };

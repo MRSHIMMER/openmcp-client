@@ -52,7 +52,7 @@
         <footer class="chat-footer" ref="footerRef">
             <div class="input-area">
                 <div class="input-wrapper">
-                    <Setting :tabId="tabId" />
+                    <Setting :tabId="tabId" v-model="userInput" />
 
                     <KCuteTextarea
                         v-model="userInput"

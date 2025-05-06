@@ -151,5 +151,6 @@
     "generate-answer": "جارٍ إنشاء الإجابة",
     "choose-presetting": "اختر الإعداد المسبق",
     "cwd": "دليل التنفيذ",
-    "mcp-server-timeout": "أطول وقت لاستدعاء أداة MCP"
+    "mcp-server-timeout": "أطول وقت لاستدعاء أداة MCP",
+    "return": "عودة"
 }

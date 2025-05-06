@@ -32,12 +32,12 @@
 </template>
 
 <script setup lang="ts">
-import { defineComponent, defineProps, watch, ref, computed } from 'vue';
+import { defineComponent, defineProps, defineEmits, watch, ref, computed, reactive } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { FormInstance, FormRules } from 'element-plus';
 import { tabs } from '../panel';
-import { parsePromptTemplate, promptsManager, PromptStorage } from './prompts';
-import { CasualRestAPI, PromptsGetResponse } from '@/hook/type';
+import { promptsManager, PromptStorage } from './prompts';
+import { PromptsGetResponse } from '@/hook/type';
 import { useMessageBridge } from '@/api/message-bridge';
 import { getDefaultValue, normaliseJavascriptType } from '@/hook/mcp';
 
@@ -49,11 +49,26 @@ const props = defineProps({
     tabId: {
         type: Number,
         required: true
+    },
+    currentPromptName: {
+        type: String,
+        required: false
     }
 });
 
-const tab = tabs.content[props.tabId];
-const tabStorage = tab.storage as PromptStorage;
+const emits = defineEmits(['prompt-get-response']);
+
+let tabStorage: PromptStorage;
+
+if (props.tabId >= 0) {
+    tabStorage = tabs.content[props.tabId].storage as PromptStorage;
+} else {
+    tabStorage = reactive({
+        currentPromptName: props.currentPromptName || '',
+        formData: {},
+        lastPromptGetResponse: undefined
+    });
+}
 
 if (!tabStorage.formData) {
     tabStorage.formData = {};
@@ -108,7 +123,6 @@ const initFormData = () => {
             newSchemaDataForm[param.name] = tabStorage.formData[param.name];
         }
     });
-
 }
 
 const resetForm = () => {
@@ -116,24 +130,25 @@ const resetForm = () => {
     responseData.value = undefined;
 }
 
-function handleSubmit() {
+async function handleSubmit() {
     const bridge = useMessageBridge();
 
-    bridge.addCommandListener('prompts/get', (data: CasualRestAPI<PromptsGetResponse>) => {
-        tabStorage.lastPromptGetResponse = data.msg;
-    }, { once: true });
-
-    bridge.postMessage({
-        command: 'prompts/get',
-        data: { promptId: currentPrompt.value.name, args: JSON.parse(JSON.stringify(tabStorage.formData)) }
+    const { code, msg } = await bridge.commandRequest('prompts/get', {
+        promptId: currentPrompt.value.name,
+        args: JSON.parse(JSON.stringify(tabStorage.formData))
     });
+
+    tabStorage.lastPromptGetResponse = msg;
+    
+    emits('prompt-get-response', msg);
 }
 
-watch(() => tabStorage.currentPromptName, () => {
-    initFormData();
-    resetForm();
-}, { immediate: true });
-
+if (props.tabId >= 0) {
+    watch(() => tabStorage.currentPromptName, () => {
+        initFormData();
+        resetForm();
+    }, { immediate: true });
+}
 </script>
 
 <style>

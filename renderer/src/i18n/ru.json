@@ -151,5 +151,6 @@
     "generate-answer": "Генерация ответа",
     "choose-presetting": "Выбрать预设",
     "cwd": "Каталог выполнения",
-    "mcp-server-timeout": "Максимальное время вызова инструмента MCP"
+    "mcp-server-timeout": "Максимальное время вызова инструмента MCP",
+    "return": "Назад"
 }

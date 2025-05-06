@@ -151,5 +151,6 @@
     "generate-answer": "Generating answer",
     "choose-presetting": "Select preset",
     "cwd": "Execution directory",
-    "mcp-server-timeout": "Maximum call time of MCP tool"
+    "mcp-server-timeout": "Maximum call time of MCP tool",
+    "return": "Back"
 }

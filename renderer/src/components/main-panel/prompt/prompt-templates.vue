@@ -12,7 +12,7 @@
 			<div class="prompt-template-container">
 				<div
 					class="item"
-                    :class="{ 'active': tabStorage.currentPromptName === template.name }"
+                    :class="{ 'active': props.tabId >= 0 && tabStorage.currentPromptName === template.name }"
 					v-for="template of promptsManager.templates"
 					:key="template.name"
                     @click="handleClick(template)"
@@ -28,7 +28,7 @@
 <script setup lang="ts">
 import { useMessageBridge } from '@/api/message-bridge';
 import { CasualRestAPI, PromptTemplate, PromptsListResponse } from '@/hook/type';
-import { onMounted, onUnmounted, defineProps } from 'vue';
+import { onMounted, onUnmounted, defineProps, defineEmits, reactive } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { promptsManager, PromptStorage } from './prompts';
 import { tabs } from '../panel';
@@ -44,8 +44,20 @@ const props = defineProps({
     }
 });
 
-const tab = tabs.content[props.tabId];
-const tabStorage = tab.storage as PromptStorage;
+const emits = defineEmits([ 'prompt-selected' ]);
+
+let tabStorage: PromptStorage;
+
+if (props.tabId >= 0) {
+	const tab = tabs.content[props.tabId];
+	tabStorage = tab.storage as PromptStorage;
+} else {
+	tabStorage = reactive({
+		currentPromptName: '',
+		formData: {},
+		lastPromptGetResponse: undefined
+	});
+}
 
 function reloadPrompts(option: { first: boolean }) {    
     bridge.postMessage({
@@ -62,9 +74,11 @@ function reloadPrompts(option: { first: boolean }) {
     }
 }
 
-function handleClick(template: PromptTemplate) {
-    tabStorage.currentPromptName = template.name;
+function handleClick(prompt: PromptTemplate) {
+    tabStorage.currentPromptName = prompt.name;
     tabStorage.lastPromptGetResponse = undefined;
+
+    emits('prompt-selected', prompt);
 }
 
 let commandCancel: (() => void);
