@@ -70,6 +70,12 @@ export async function getBlobUrlByFilename(filename: string) {
 }
 
 export function getImageBlobUrlByBase64(base64String: string, mimeType: string, cacheKey?: string) {
+
+    // 检查缓存中是否存在该文件
+    if (cacheKey && blobUrlCache.has(cacheKey)) {
+        return blobUrlCache.get(cacheKey);
+    }
+
     const byteCharacters = atob(base64String);
     const byteNumbers = new Array(byteCharacters.length);
     for (let i = 0; i < byteCharacters.length; i++) {

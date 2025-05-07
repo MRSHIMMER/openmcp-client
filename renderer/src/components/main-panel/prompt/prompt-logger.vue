@@ -13,7 +13,7 @@
                 />
             </span>
         </span>
-        <el-scrollbar height="350px">
+        <el-scrollbar>
             <div
                 class="output-content"
                 contenteditable="false"

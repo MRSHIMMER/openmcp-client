@@ -1,5 +1,5 @@
-import { ChatStorage } from '@/components/main-panel/chat/chat';
-import { TaskLoop } from '@/components/main-panel/chat/task-loop';
+import { ChatStorage } from '@/components/main-panel/chat/chat-box/chat';
+import { TaskLoop } from '@/components/main-panel/chat/core/task-loop';
 import { llmManager } from './llm';
 import { reactive, ref } from 'vue';
 

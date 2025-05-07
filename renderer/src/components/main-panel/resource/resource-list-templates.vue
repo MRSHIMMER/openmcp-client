@@ -12,7 +12,7 @@
 			<div class="resource-template-container">
 				<div
 					class="item"
-                    :class="{ 'active': tabStorage.currentType === 'template' && tabStorage.currentResourceName === template.name }"
+                    :class="{ 'active': props.tabId >= 0 && tabStorage.currentType === 'template' && tabStorage.currentResourceName === template.name }"
 					v-for="template of resourcesManager.templates"
 					:key="template.name"
                     @click="handleClick(template)"
@@ -31,7 +31,7 @@
 <script setup lang="ts">
 import { useMessageBridge } from '@/api/message-bridge';
 import { CasualRestAPI, ResourceTemplate, ResourceTemplatesListResponse } from '@/hook/type';
-import { onMounted, onUnmounted, defineProps, ref } from 'vue';
+import { onMounted, onUnmounted, defineProps, ref, reactive } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { resourcesManager, ResourceStorage } from './resources';
 import { tabs } from '../panel';
@@ -47,8 +47,19 @@ const props = defineProps({
     }
 });
 
-const tab = tabs.content[props.tabId];
-const tabStorage = tab.storage as ResourceStorage;
+let tabStorage: ResourceStorage;
+
+if (props.tabId >= 0) {
+    const tab = tabs.content[props.tabId];
+    tabStorage = tab.storage as ResourceStorage;
+} else {
+    tabStorage = reactive({
+        currentType:'template',
+        currentResourceName: '',
+        formData: {},
+        lastResourceReadResponse: undefined
+    });
+}
 
 function reloadResources(option: { first: boolean }) {    
     bridge.postMessage({

@@ -32,7 +32,7 @@
 <script setup lang="ts">
 import { defineComponent, defineProps, ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { makeUsageStatistic } from '../usage';
+import { makeUsageStatistic } from '@/components/main-panel/chat/core/usage';
 
 defineComponent({ name: 'message-meta' });
 

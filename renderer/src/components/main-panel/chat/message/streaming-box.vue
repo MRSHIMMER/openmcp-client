@@ -20,7 +20,7 @@
 <script setup lang="ts">
 import { defineProps } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { markdownToHtml } from '../markdown/markdown';
+import { markdownToHtml } from '@/components/main-panel/chat/markdown/markdown';
 
 const { t } = useI18n();
 

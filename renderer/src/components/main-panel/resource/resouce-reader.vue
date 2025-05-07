@@ -4,17 +4,15 @@
     </div>
     <div class="resource-reader-container">
         <el-form :model="tabStorage.formData" :rules="formRules" ref="formRef" label-position="top">
-            <el-form-item v-for="param in currentResource?.params" :key="param.name"
-                :label="param.name" :prop="param.name">
+            <el-form-item v-for="param in currentResource?.params" :key="param.name" :label="param.name"
+                :prop="param.name">
                 <!-- 根据不同类型渲染不同输入组件 -->
                 <el-input v-if="param.type === 'string'" v-model="tabStorage.formData[param.name]"
-                    :placeholder="param.placeholder || `请输入${param.name}`"
-                    @keydown.enter.prevent="handleSubmit" />
+                    :placeholder="param.placeholder || `请输入${param.name}`" @keydown.enter.prevent="handleSubmit" />
 
                 <el-input-number v-else-if="param.type === 'number'" v-model="tabStorage.formData[param.name]"
-                    :placeholder="param.placeholder || `请输入${param.name}`"
-                    @keydown.enter.prevent="handleSubmit" />
-                    
+                    :placeholder="param.placeholder || `请输入${param.name}`" @keydown.enter.prevent="handleSubmit" />
+
                 <el-switch v-else-if="param.type === 'boolean'" v-model="tabStorage.formData[param.name]" />
             </el-form-item>
 
@@ -31,7 +29,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineComponent, defineProps, watch, ref, computed } from 'vue';
+import { defineComponent, defineProps, watch, ref, computed, reactive, defineEmits } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { FormInstance, FormRules } from 'element-plus';
 import { tabs } from '../panel';
@@ -48,11 +46,28 @@ const props = defineProps({
     tabId: {
         type: Number,
         required: true
+    },
+    currentResourceName: {
+        type: String,
+        required: false
     }
 });
 
-const tab = tabs.content[props.tabId];
-const tabStorage = tab.storage as ResourceStorage;
+const emits = defineEmits(['resource-get-response']);
+
+let tabStorage: ResourceStorage;
+
+if (props.tabId >= 0) {
+    const tab = tabs.content[props.tabId];
+    tabStorage = tab.storage as ResourceStorage;
+} else {
+    tabStorage = reactive({
+        currentType: 'resource',
+        currentResourceName: props.currentResourceName || '',
+        formData: {},
+        lastResourceReadResponse: undefined
+    });
+}
 
 if (!tabStorage.formData) {
     tabStorage.formData = {};
@@ -66,12 +81,12 @@ const responseData = ref<ResourcesReadResponse>();
 // 当前 resource 的模板参数
 const currentResource = computed(() => {
     const template = resourcesManager.templates.find(template => template.name === tabStorage.currentResourceName);
-    const { params, fill } = parseResourceTemplate(template?.uriTemplate || ''); 
+    const { params, fill } = parseResourceTemplate(template?.uriTemplate || '');
 
     const viewParams = params.map(param => ({
         name: param,
         type: 'string',
-        placeholder: t('enter') +' ' + param,
+        placeholder: t('enter') + ' ' + param,
         required: true
     }));
 
@@ -97,20 +112,17 @@ const formRules = computed<FormRules>(() => {
     return rules;
 });
 
-
-
-
 // 初始化表单数据
 const initFormData = () => {
     if (!currentResource.value?.params) return;
-    
+
     const newSchemaDataForm: Record<string, number | boolean | string> = {};
 
     currentResource.value.params.forEach(param => {
         newSchemaDataForm[param.name] = getDefaultValue(param);
         const originType = normaliseJavascriptType(typeof tabStorage.formData[param.name]);
 
-        if (tabStorage.formData[param.name]!== undefined && originType === param.type) {
+        if (tabStorage.formData[param.name] !== undefined && originType === param.type) {
             newSchemaDataForm[param.name] = tabStorage.formData[param.name];
         }
     })
@@ -124,33 +136,36 @@ const resetForm = () => {
 
 function getUri() {
     if (tabStorage.currentType === 'template') {
-        const fillFn = currentResource.value.fill;    
+        const fillFn = currentResource.value.fill;
         const uri = fillFn(tabStorage.formData);
         return uri;
     }
 
-    const targetResource = resourcesManager.resources.find(resources => resources.name === tabStorage.currentResourceName);
+    const currentResourceName = props.tabId >= 0 ? tabStorage.currentResourceName : props.currentResourceName;
+
+    const targetResource = resourcesManager.resources.find(resources => resources.name === currentResourceName);
+    
     return targetResource?.uri;
 }
 
 // 提交表单
 async function handleSubmit() {
     const uri = getUri();
-    console.log(uri);
-    
+
     const bridge = useMessageBridge();
     const { code, msg } = await bridge.commandRequest('resources/read', { resourceUri: uri });
     
-    if (code === 200) {
-        tabStorage.lastResourceReadResponse = msg;
-    }
+    tabStorage.lastResourceReadResponse = msg;
+
+    emits('resource-get-response', msg);
 }
 
-// 监听资源变化重置表单
-watch(() => tabStorage.currentResourceName, () => {
-    initFormData();
-    resetForm();
-}, { immediate: true });
+if (props.tabId >= 0) {
+    watch(() => tabStorage.currentResourceName, () => {
+        initFormData();
+        resetForm();
+    }, { immediate: true });
+}
 
 </script>
 

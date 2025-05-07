@@ -96,9 +96,9 @@
 import { defineProps, ref, watch, PropType, computed, defineEmits } from 'vue';
 
 import MessageMeta from './message-meta.vue';
-import { markdownToHtml } from '../markdown/markdown';
+import { markdownToHtml } from '@/components/main-panel/chat/markdown/markdown';
 import { createTest } from '@/views/setting/llm';
-import { IRenderMessage, MessageState } from '../chat';
+import { IRenderMessage, MessageState } from '../chat-box/chat';
 import { ToolCallContent } from '@/hook/type';
 
 import ToolcallResultItem from './toolcall-result-item.vue';

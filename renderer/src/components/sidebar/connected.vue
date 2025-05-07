@@ -149,7 +149,9 @@ function toggleConnectionPanel() {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	white-space: wrap;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 	background-color: #f39a6d;
 	padding: 5px 12px;
 	border-radius: .5em;

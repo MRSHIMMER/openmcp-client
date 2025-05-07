@@ -167,9 +167,6 @@ watch(() => tabStorage.currentToolName, () => {
     margin-bottom: 15px;
 }
 
-.tool-executor-container {
-
-}
 
 .tool-executor-container .el-switch .el-switch__action {
     background-color: var(--main-color);

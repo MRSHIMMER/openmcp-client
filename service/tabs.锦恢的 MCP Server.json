@@ -2,46 +2,36 @@
   "currentIndex": 0,
   "tabs": [
     {
-      "name": "交互测试",
-      "icon": "icon-robot",
+      "name": "资源",
+      "icon": "icon-file",
       "type": "blank",
-      "componentIndex": 3,
+      "componentIndex": 0,
       "storage": {
-        "messages": [],
-        "settings": {
-          "modelIndex": 0,
-          "enableTools": [
+        "formData": {},
+        "currentType": "resource",
+        "currentResourceName": "network_log",
+        "lastResourceReadResponse": {
+          "contents": [
             {
-              "name": "add",
-              "description": "对两个数字进行实数域的加法",
-              "enabled": true
-            },
-            {
-              "name": "multiply",
-              "description": "对两个数字进行实数域的乘法运算",
-              "enabled": true
-            },
-            {
-              "name": "is_even",
-              "description": "判断一个整数是否为偶数",
-              "enabled": true
-            },
-            {
-              "name": "capitalize",
-              "description": "将字符串首字母大写",
-              "enabled": true
-            },
-            {
-              "name": "get_weather_by_city_code",
-              "description": "根据城市天气预报的城市编码 (int)，获取指定城市的天气信息",
-              "enabled": true
+              "uri": "network://log",
+              "mimeType": "text/plain",
+              "text": "Response from ..."
             }
-          ],
-          "enableWebSearch": false,
-          "temperature": 0.7,
-          "contextLength": 20,
-          "systemPrompt": ""
+          ]
         }
+      }
+    },
+    {
+      "name": "工具",
+      "icon": "icon-tool",
+      "type": "blank",
+      "componentIndex": 2,
+      "storage": {
+        "formData": {
+          "a": 0,
+          "b": 0
+        },
+        "currentToolName": "add"
       }
     }
   ]

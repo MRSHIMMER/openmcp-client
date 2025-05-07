@@ -3,7 +3,8 @@
 		<Model />
 		<SystemPrompt />
 		<ToolUse />
-		<Prompt v-model="modelValue" />
+		<Prompt />
+		<Resource />
 		<Websearch />
 		<Temperature />
 		<ContextLength />
@@ -11,15 +12,16 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, defineEmits, provide, ref, computed } from 'vue';
+import { defineProps, defineEmits, provide, PropType, computed } from 'vue';
 import { llmManager } from '@/views/setting/llm';
-import { tabs } from '../../panel';
+import { tabs } from '@/components/main-panel/panel';
 import type { ChatSetting, ChatStorage } from '../chat';
 
 import Model from './model.vue';
 import SystemPrompt from './system-prompt.vue';
 import ToolUse from './tool-use.vue';
 import Prompt from './prompt.vue';
+import Resource from './resource.vue';
 import Websearch from './websearch.vue';
 import Temperature from './temperature.vue';
 import ContextLength from './context-length.vue';
@@ -70,9 +72,9 @@ provide('tabStorage', tabStorage);
 	display: flex;
 	gap: 2px;
 	padding: 8px 0;
-	background-color: var(--sidebar);
 	width: fit-content;
 	border-radius: 99%;
+	left: 5px;
 	bottom: 0px;
 	z-index: 10;
 	position: absolute;
@@ -212,6 +214,7 @@ provide('tabStorage', tabStorage);
 	border-radius: 50%;
 	padding: 2px 6px;
 	font-size: 10px;
+	z-index: 10;
 	top: -16px;
 	right: -18px;
 	box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);

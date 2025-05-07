@@ -1,9 +1,9 @@
 /* eslint-disable */
 import { Ref } from "vue";
-import { ToolCall, ChatStorage, getToolSchema, MessageState } from "./chat";
+import { ToolCall, ChatStorage, getToolSchema, MessageState } from "../chat-box/chat";
 import { useMessageBridge } from "@/api/message-bridge";
 import type { OpenAI } from 'openai';
-import { callTool } from "../tool/tools";
+import { callTool } from "../../tool/tools";
 import { llmManager, llms } from "@/views/setting/llm";
 import { pinkLog, redLog } from "@/views/setting/util";
 import { ElMessage } from "element-plus";

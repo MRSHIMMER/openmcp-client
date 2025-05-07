@@ -40,52 +40,29 @@
             <div>
                 <!-- <span class="iconfont icon-openmcp"></span> -->
                 <span>{{ t('press-and-run') }}
-
                     <span style="padding: 5px 15px; border-radius: .5em; background-color: var(--background);">
                         <span class="iconfont icon-send"></span>
                     </span>
-
                 </span>
             </div>
         </div>
 
-        <footer class="chat-footer" ref="footerRef">
-            <div class="input-area">
-                <div class="input-wrapper">
-                    <Setting :tabId="tabId" v-model="userInput" />
-
-                    <KCuteTextarea
-                        v-model="userInput"
-                        :placeholder="t('enter-message-dot')"
-                        :customClass="'chat-input'"
-                        @press-enter="handleSend()"
-                    />
-
-                    <el-button type="primary" @click="isLoading ? handleAbort() : handleSend()" class="send-button">
-                        <span v-if="!isLoading" class="iconfont icon-send"></span>
-                        <span v-else class="iconfont icon-stop"></span>
-                    </el-button>
-                </div>
-            </div>
-        </footer>
+        <ChatBox
+            :ref="el => footerRef = el"
+            :tab-id="props.tabId"
+        />
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, defineComponent, defineProps, onUnmounted, computed, nextTick, watch } from 'vue';
+import { ref, onMounted, defineComponent, defineProps, onUnmounted, computed, nextTick, watch, provide } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { ElMessage, ScrollbarInstance } from 'element-plus';
 import { tabs } from '../panel';
-import { ChatMessage, ChatStorage, IRenderMessage, MessageState, ToolCall } from './chat';
-
-import { TaskLoop } from './task-loop';
-import { llmManager, llms } from '@/views/setting/llm';
-
+import { ChatMessage, ChatStorage, IRenderMessage, MessageState, ToolCall } from './chat-box/chat';
 import * as Message from './message';
-import Setting from './options/setting.vue';
-import KCuteTextarea from '@/components/k-cute-textarea/index.vue';
+import ChatBox from './chat-box/index.vue';
 
-import { provide } from 'vue';
 
 defineComponent({ name: 'chat' });
 
@@ -100,8 +77,6 @@ const props = defineProps({
 
 const tab = tabs.content[props.tabId];
 const tabStorage = tab.storage as ChatStorage;
-
-const userInput = ref('');
 
 // 创建 messages
 if (!tabStorage.messages) {
@@ -158,18 +133,19 @@ const streamingToolCalls = ref<ToolCall[]>([]);
 
 const chatContainerRef = ref<any>(null);
 const messageListRef = ref<any>(null);
+const footerRef = ref<any>(null);
 
-const footerRef = ref<HTMLElement>();
 const scrollHeight = ref('500px');
 
-const updateScrollHeight = () => {
+function updateScrollHeight() {
     if (chatContainerRef.value && footerRef.value) {
         const containerHeight = chatContainerRef.value.clientHeight;
         const footerHeight = footerRef.value.clientHeight;
         scrollHeight.value = `${containerHeight - footerHeight}px`;
     }
-};
+}
 
+provide('updateScrollHeight', updateScrollHeight);
 
 const autoScroll = ref(true);
 const scrollbarRef = ref<ScrollbarInstance>();
@@ -184,8 +160,13 @@ const handleScroll = ({ scrollTop, scrollHeight, clientHeight }: {
     autoScroll.value = scrollTop + clientHeight >= scrollHeight - 10;
 };
 
+provide('streamingContent', streamingContent);
+provide('streamingToolCalls', streamingToolCalls);
+provide('isLoading', isLoading);
+provide('autoScroll', autoScroll);
+
 // 修改 scrollToBottom 方法
-const scrollToBottom = async () => {
+async function scrollToBottom() {
     if (!scrollbarRef.value || !messageListRef.value) return;
 
     await nextTick(); // 等待 DOM 更新
@@ -198,7 +179,9 @@ const scrollToBottom = async () => {
     } catch (error) {
         console.error('Scroll to bottom failed:', error);
     }
-};
+}
+
+provide('scrollToBottom', scrollToBottom);
 
 // 添加对 streamingContent 的监听
 watch(streamingContent, () => {
@@ -213,78 +196,6 @@ watch(streamingToolCalls, () => {
     }
 }, { deep: true });
 
-let loop: TaskLoop | undefined = undefined;
-
-const handleSend = (newMessage?: string) => {
-    const userMessage = newMessage || userInput.value.trim();
-    if (!userMessage || isLoading.value) return;
-
-    autoScroll.value = true;
-    isLoading.value = true;
-
-    loop = new TaskLoop(streamingContent, streamingToolCalls);
-
-    loop.registerOnError((error) => {
-
-        ElMessage({
-            message: error.msg,
-            type: 'error',
-            duration: 3000
-        });
-        
-        if (error.state === MessageState.ReceiveChunkError) {
-            tabStorage.messages.push({
-                role: 'assistant',
-                content: error.msg,
-                extraInfo: {
-                    created: Date.now(),
-                    state: error.state,
-                    serverName: llms[llmManager.currentModelIndex].id || 'unknown'
-                }
-            });
-        }
-
-        isLoading.value = false;
-    });
-
-    loop.registerOnChunk(() => {
-        scrollToBottom();
-    });
-
-    loop.registerOnDone(() => {
-        isLoading.value = false;
-        scrollToBottom();
-    });
-
-    loop.registerOnEpoch(() => {
-        isLoading.value = true;
-        scrollToBottom();
-    });
-
-
-    loop.start(tabStorage, userMessage);
-    userInput.value = '';
-};
-
-const handleAbort = () => {
-    if (loop) {
-        loop.abort();
-        isLoading.value = false;
-        ElMessage.info('请求已中止');
-    }
-};
-
-provide('handleSend', handleSend);
-
-onMounted(() => {
-    updateScrollHeight();
-    window.addEventListener('resize', updateScrollHeight);
-    scrollToBottom();
-});
-
-onUnmounted(() => {
-    window.removeEventListener('resize', updateScrollHeight);
-});
 
 </script>
 
@@ -385,67 +296,6 @@ onUnmounted(() => {
 
 .assistant.tool_calls {
     margin-top: 5px;
-}
-
-.chat-footer {
-    padding: 16px;
-    border-top: 1px solid var(--el-border-color);
-    flex-shrink: 0;
-    position: absolute;
-    height: fit-content !important;
-    bottom: 0;
-    width: 100%;
-}
-
-.input-area {
-    max-width: 800px;
-    margin: 0 auto;
-    position: relative;
-}
-
-.input-wrapper {
-    position: relative;
-}
-
-.chat-input {
-    padding-right: 80px;
-}
-
-.chat-input textarea {
-    border-radius: .5em;
-}
-
-.send-button {
-    position: absolute !important;
-    right: 8px !important;
-    bottom: 8px !important;
-    height: auto;
-    padding: 8px 12px;
-    font-size: 20px;
-    border-radius: 1.2em !important;
-}
-
-:deep(.chat-settings) {
-    position: absolute;
-    left: 0;
-    bottom: 0px;
-    z-index: 1;
-}
-
-.typing-cursor {
-    animation: blink 1s infinite;
-}
-
-@keyframes blink {
-
-    0%,
-    100% {
-        opacity: 1;
-    }
-
-    50% {
-        opacity: 0;
-    }
 }
 
 .message-text p,

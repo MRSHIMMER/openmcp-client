@@ -1,4 +1,4 @@
-import { IExtraInfo } from "./chat";
+import { IExtraInfo } from "../chat-box/chat";
 
 export interface UsageStatistic {
     input: number;

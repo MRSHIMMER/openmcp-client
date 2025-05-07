@@ -44,7 +44,7 @@ import { getBlobUrlByFilename } from '@/hook/util';
 import { defineComponent, PropType, defineProps, ref, defineEmits } from 'vue';
 
 defineComponent({ name: 'toolcall-result-item' });
-const emit = defineEmits(['update:item', 'update:ocr-done']);
+const emits = defineEmits(['update:item', 'update:ocr-done']);
 
 const props = defineProps({
     item: {
@@ -73,16 +73,20 @@ if (ocr) {
         }
     }, { once: false });
 
-    bridge.addCommandListener('ocr/worker/done', () => {
+    bridge.addCommandListener('ocr/worker/done', data => {
+        if (data.id !== workerId) {
+            return;
+        }
+
         progress.value = 1;
         finishProcess.value = true;
 
         if (props.item._meta) {
             const { _meta, ...rest } = props.item;
-            emit('update:item', { ...rest });
+            emits('update:item', { ...rest });
         }
 
-        emit('update:ocr-done');
+        emits('update:ocr-done');
 
         cancel();
     }, { once: true });

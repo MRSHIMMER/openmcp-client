@@ -38,7 +38,7 @@
 import { ref, computed, inject, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { allTools, ChatStorage, getToolSchema } from '../chat';
-import { markdownToHtml } from '../markdown/markdown';
+import { markdownToHtml } from '@/components/main-panel/chat/markdown/markdown';
 import { useMessageBridge } from '@/api/message-bridge';
 
 const { t } = useI18n();

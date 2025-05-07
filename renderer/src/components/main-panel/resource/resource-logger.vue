@@ -13,7 +13,7 @@
                 />
             </span>
         </span>
-        <el-scrollbar height="350px">
+        <el-scrollbar>
             <div
                 class="output-content"
                 contenteditable="false"
@@ -104,7 +104,7 @@ const formattedJson = computed(() => {
 .resource-logger .output-content {
     border-radius: .5em;
     padding: 15px;
-    min-height: 300px;
+    min-height: 600px;
     height: fit-content;
     font-family: var(--code-font-family);
     white-space: pre-wrap;

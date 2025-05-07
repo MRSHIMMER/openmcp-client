@@ -65,6 +65,9 @@ export interface Resources {
 	uri: string;
 	name: string;
 	mimeType: string;
+	text?: string;
+	blob?: string;
+	[key: string]: any;
 }
 
 export interface ResourceTemplatesListResponse {
