@@ -2,14 +2,12 @@
 	"name": "@openmcp/service",
 	"version": "0.0.1",
 	"description": "",
-	"main": "./dist/index.js",
-	"types": "./dist/index.d.ts",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
     "type": "commonjs",
-    "exports": {
-        ".": "./src/index.ts"
-    },
 	"scripts": {
-		"serve": "ts-node-dev --respawn --transpile-only src/main.ts",
+        "postinstall": "npm run build",
+		"dev": "ts-node-dev --respawn --transpile-only src/main.ts",
 		"build": "tsc",
 		"build:watch": "tsc --watch",
 		"start": "node dist/main.js",
