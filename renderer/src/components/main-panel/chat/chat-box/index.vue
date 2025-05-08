@@ -65,6 +65,23 @@ const chatContext = inject('chatContext') as any;
 
 chatContext.handleSend = handleSend;
 
+function clearErrorMessage(errorMessage: string) {
+    try {
+        const errorObject = JSON.parse(errorMessage);
+        if (errorObject.error) {
+            return errorObject.error;
+        }
+        if (errorObject.message) {
+            return errorObject.message;
+        }
+        if (errorObject.msg) {
+            return errorObject.msg;
+        }
+    } catch (error) {
+        return errorMessage;
+    }
+}
+
 function handleSend(newMessage?: string) {    
     // 将富文本信息转换成纯文本信息
     const userMessage = newMessage || userInput.value;
@@ -79,13 +96,16 @@ function handleSend(newMessage?: string) {
     loop = new TaskLoop(streamingContent, streamingToolCalls);
 
     loop.registerOnError((error) => {
-
-        ElMessage.error(error.msg);
+        console.log('error.msg');
+        console.log(error.msg);
+        
+        const errorMessage = clearErrorMessage(error.msg);
+        ElMessage.error(errorMessage);
         
         if (error.state === MessageState.ReceiveChunkError) {
             tabStorage.messages.push({
                 role: 'assistant',
-                content: error.msg,
+                content: errorMessage,
                 extraInfo: {
                     created: Date.now(),
                     state: error.state,

@@ -7,6 +7,7 @@ import { callTool } from "../../tool/tools";
 import { llmManager, llms } from "@/views/setting/llm";
 import { pinkLog, redLog } from "@/views/setting/util";
 import { ElMessage } from "element-plus";
+import { handleToolCalls } from "./handle-tool-calls";
 
 export type ChatCompletionChunk = OpenAI.Chat.Completions.ChatCompletionChunk;
 export type ChatCompletionCreateParamsBase = OpenAI.Chat.Completions.ChatCompletionCreateParams & { id?: string };
@@ -42,87 +43,6 @@ export class TaskLoop {
         private readonly taskOptions: TaskLoopOptions = { maxEpochs: 20, maxJsonParseRetry: 3 },
     ) {
 
-    }
-
-    private async handleToolCalls(toolCalls: ToolCall[]) {
-        // TODO: 调用多个工具并返回调用结果？
-        
-        const toolCall = toolCalls[0];
-
-        console.log('debug toolcall');
-        console.log(toolCalls);
-
-        let toolName: string;
-        let toolArgs: Record<string, any>;
-
-        try {
-            toolName = toolCall.function.name;
-            toolArgs = JSON.parse(toolCall.function.arguments);
-        } catch (error) {
-            return {
-                content: [{
-                    type: 'error',
-                    text: this.parseErrorObject(error)
-                }],
-                state: MessageState.ParseJsonError
-            };
-        }
-
-
-        try {
-            const toolResponse = await callTool(toolName, toolArgs);
-
-            console.log(toolResponse);
-
-            if (typeof toolResponse === 'string') {
-                console.log(toolResponse);
-                
-                return {
-                    content: [{
-                        type: 'error',
-                        text: toolResponse
-                    }],
-                    state: MessageState.ToolCall
-                }
-            } else if (!toolResponse.isError) {
-
-                return {
-                    content: toolResponse.content,
-                    state: MessageState.Success
-                };
-            } else {
-
-                return {
-                    content: toolResponse.content,
-                    state: MessageState.ToolCall
-                }
-            }
-
-        } catch (error) {
-            this.onError({
-                state: MessageState.ToolCall,
-                msg: `工具调用失败: ${(error as Error).message}`
-            });
-            console.error(error);
-
-            return {
-                content: [{
-                    type: 'error',
-                    text: this.parseErrorObject(error)
-                }],
-                state: MessageState.ToolCall
-            }
-        }
-    }
-
-    private parseErrorObject(error: any): string {
-        if (typeof error === 'string') {
-            return error;
-        } else if (typeof error === 'object') {
-            return JSON.stringify(error, null, 2);   
-        } else {
-            return error.toString();
-        }
     }
 
     private handleChunkDeltaContent(chunk: ChatCompletionChunk) {
@@ -199,12 +119,7 @@ export class TaskLoop {
                 });
             }, { once: true });
 
-            console.log('register error handler');
-
             const errorHandler = this.bridge.addCommandListener('llm/chat/completions/error', data => {
-                
-                console.log('enter error report');
-
                 this.onError({
                     state: MessageState.ReceiveChunkError,
                     msg: data.msg || '请求模型服务时发生错误'
@@ -218,6 +133,8 @@ export class TaskLoop {
                 });
 
             }, { once: true });
+
+            console.log(chatData);
 
             this.bridge.postMessage({
                 command: 'llm/chat/completions',
@@ -360,59 +277,58 @@ export class TaskLoop {
                 
                 pinkLog('调用工具数量：' + this.streamingToolCalls.value.length);
 
-                const toolCallResult = await this.handleToolCalls(this.streamingToolCalls.value);
-
-                console.log('toolCallResult', toolCallResult);
-
-                if (toolCallResult.state === MessageState.ParseJsonError) {
-                    // 如果是因为解析 JSON 错误，则重新开始
-                    tabStorage.messages.pop();
-                    jsonParseErrorRetryCount ++;
-
-                    redLog('解析 JSON 错误 ' + this.streamingToolCalls.value[0]?.function?.arguments);
-
-                    // 如果因为 JSON 错误而失败太多，就只能中断了
-                    if (jsonParseErrorRetryCount >= this.taskOptions.maxJsonParseRetry) {
+                for (const toolCall of this.streamingToolCalls.value || []) {
+                    const toolCallResult = await handleToolCalls(toolCall);
+    
+                    if (toolCallResult.state === MessageState.ParseJsonError) {
+                        // 如果是因为解析 JSON 错误，则重新开始
+                        tabStorage.messages.pop();
+                        jsonParseErrorRetryCount ++;
+    
+                        redLog('解析 JSON 错误 ' + toolCall?.function?.arguments);
+    
+                        // 如果因为 JSON 错误而失败太多，就只能中断了
+                        if (jsonParseErrorRetryCount >= this.taskOptions.maxJsonParseRetry) {
+                            tabStorage.messages.push({
+                                role: 'assistant',
+                                content: `解析 JSON 错误，无法继续调用工具 (累计错误次数 ${this.taskOptions.maxJsonParseRetry})`,
+                                extraInfo: {
+                                    created: Date.now(),
+                                    state: toolCallResult.state,
+                                    serverName: llms[llmManager.currentModelIndex].id || 'unknown',
+                                    usage: undefined
+                                }
+                            });
+                            break;
+                        }
+                    } else if (toolCallResult.state === MessageState.Success) {
                         tabStorage.messages.push({
-                            role: 'assistant',
-                            content: `解析 JSON 错误，无法继续调用工具 (累计错误次数 ${this.taskOptions.maxJsonParseRetry})`,
+                            role: 'tool',
+                            index: toolCall.index || 0,
+                            tool_call_id: toolCall.id || toolCall.function.name,
+                            content: toolCallResult.content,
                             extraInfo: {
                                 created: Date.now(),
                                 state: toolCallResult.state,
                                 serverName: llms[llmManager.currentModelIndex].id || 'unknown',
-                                usage: undefined
+                                usage: this.completionUsage
                             }
                         });
-                        break;
+                    } else if (toolCallResult.state === MessageState.ToolCall) {
+    
+                        tabStorage.messages.push({
+                            role: 'tool',
+                            index: toolCall.index || 0,
+                            tool_call_id: toolCall.id || toolCall.function.name,
+                            content: toolCallResult.content,
+                            extraInfo: {
+                                created: Date.now(),
+                                state: toolCallResult.state,
+                                serverName: llms[llmManager.currentModelIndex].id || 'unknown',
+                                usage: this.completionUsage
+                            }
+                        });
                     }
-                } else if (toolCallResult.state === MessageState.Success) {
-                    const toolCall = this.streamingToolCalls.value[0];
-
-                    tabStorage.messages.push({
-                        role: 'tool',
-                        tool_call_id: toolCall.id || toolCall.function.name,
-                        content: toolCallResult.content,
-                        extraInfo: {
-                            created: Date.now(),
-                            state: toolCallResult.state,
-                            serverName: llms[llmManager.currentModelIndex].id || 'unknown',
-                            usage: this.completionUsage
-                        }
-                    });
-                } else if (toolCallResult.state === MessageState.ToolCall) {
-                    const toolCall = this.streamingToolCalls.value[0];
-
-                    tabStorage.messages.push({
-                        role: 'tool',
-                        tool_call_id: toolCall.id || toolCall.function.name,
-                        content: toolCallResult.content,
-                        extraInfo: {
-                            created: Date.now(),
-                            state: toolCallResult.state,
-                            serverName: llms[llmManager.currentModelIndex].id || 'unknown',
-                            usage: this.completionUsage
-                        }
-                    });
                 }
 
             } else if (this.streamingContent.value) {

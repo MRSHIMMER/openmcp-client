@@ -25,7 +25,7 @@
                     <div class="message-content" v-else-if="message.role === 'assistant/tool_calls'">
                         <Message.Toolcall
                             :message="message" :tab-id="props.tabId"
-                            @update:tool-result="(value, index) => (message.toolResult || [])[index] = value"
+                            @update:tool-result="(value, toolIndex, index) => message.toolResults[toolIndex][index] = value"
                         />
                     </div>
                 </div>
@@ -97,6 +97,7 @@ const renderMessages = computed(() => {
                 messages.push({
                     role: 'assistant/tool_calls',
                     content: message.content,
+                    toolResults: Array(message.tool_calls.length).fill([]),
                     tool_calls: message.tool_calls,
                     showJson: ref(false),
                     extraInfo: {
@@ -116,8 +117,16 @@ const renderMessages = computed(() => {
             // 如果是工具，则合并进入 之前 assistant 一起渲染
             const lastAssistantMessage = messages[messages.length - 1];
             if (lastAssistantMessage.role === 'assistant/tool_calls') {
-                lastAssistantMessage.toolResult = message.content;
-                lastAssistantMessage.extraInfo.state = message.extraInfo.state;
+                lastAssistantMessage.toolResults[message.index] = message.content;
+
+                if (lastAssistantMessage.extraInfo.state === MessageState.Unknown) {
+                    lastAssistantMessage.extraInfo.state = message.extraInfo.state;
+                } else if (lastAssistantMessage.extraInfo.state === MessageState.Success
+                    || message.extraInfo.state !== MessageState.Success
+                ) {
+                    lastAssistantMessage.extraInfo.state = message.extraInfo.state;
+                }
+                
                 lastAssistantMessage.extraInfo.usage = lastAssistantMessage.extraInfo.usage || message.extraInfo.usage;
             }
         }

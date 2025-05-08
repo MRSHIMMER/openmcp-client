@@ -27,6 +27,7 @@ export interface IExtraInfo {
 
 export interface ToolMessage {
     role: 'tool';
+    index: number;
     content: ToolCallContent[];
     tool_call_id?: string
     name?: string // 工具名称，当 role 为 tool
@@ -95,14 +96,23 @@ export type RichTextItem = PromptTextItem | ResourceTextItem | TextItem;
 
 export const allTools = ref<ToolItem[]>([]);
 
-export interface IRenderMessage {
-    role: 'user' | 'assistant/content' | 'assistant/tool_calls' | 'tool';
+export interface ICommonRenderMessage {
+    role: 'user' | 'assistant/content';
     content: string;
-    toolResult?: ToolCallContent[];
-    tool_calls?: ToolCall[];
     showJson?: Ref<boolean>;
     extraInfo: IExtraInfo;
 }
+
+export interface IToolRenderMessage {
+    role: 'assistant/tool_calls';
+    content: string;
+    toolResults: ToolCallContent[][];
+    tool_calls: ToolCall[];
+    showJson?: Ref<boolean>;
+    extraInfo: IExtraInfo;   
+}
+
+export type IRenderMessage = ICommonRenderMessage | IToolRenderMessage;
 
 export function getToolSchema(enableTools: EnableToolItem[]) {
     const toolsSchema = [];

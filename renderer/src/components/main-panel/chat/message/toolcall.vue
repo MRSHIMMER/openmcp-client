@@ -1,6 +1,6 @@
 <template>
     <div class="message-role">
-        <span class="message-reminder" v-if="!props.message.toolResult">
+        <span class="message-reminder" v-if="callingTools">
             Agent 正在使用工具
             <span class="tool-loading iconfont icon-double-loading">
             </span>
@@ -26,58 +26,77 @@
                     </div>
                 </template>
 
-                <div>
-                    <div class="tool-arguments">
-                        <div class="inner">
-                            <div v-html="jsonResultToHtml(props.message.tool_calls[0].function.arguments)"></div>
+                <div v-for="(toolResult, toolIndex) in props.message.toolResults" :key="toolIndex"
+                    class="toolcall-item">
+
+                    <div class="tool-calls" v-if="toolIndex > 0">
+                        <div class="tool-call-header">
+                            <span class="tool-name">
+                                <span class="iconfont icon-tool"></span>
+
+                                {{ props.message.tool_calls[toolIndex].function.name }}
+                            </span>
+                            <el-button size="small" @click="createTest(props.message.tool_calls[toolIndex])">
+                                <span class="iconfont icon-send"></span>
+                            </el-button>
                         </div>
                     </div>
 
+                    <div class="tool-arguments">
+                        <el-scrollbar width="100%">
+                            <div class="inner">
+                                <div v-html="jsonResultToHtml(props.message.tool_calls[toolIndex].function.arguments)">
+                                </div>
+                            </div>
+                        </el-scrollbar>
+                    </div>
+
                     <!-- 工具调用结果 -->
-                    <div v-if="props.message.toolResult">
+                    <div v-if="toolResult.length > 0">
                         <div class="tool-call-header result">
-                            <span class="tool-name">
+
+                            <span class="tool-name" v-if="isValid(toolResult)">
+                                <span :class="`iconfont icon-info`"></span>
+                                {{ t("response") }}
+                            </span>
+                            <span class="tool-name" v-else>
                                 <span :class="`iconfont icon-${currentMessageLevel}`"></span>
-                                {{ isValid ? t("response") : t('error') }}
-                                <el-button v-if="!isValid" size="small"
-                                    @click="gotoIssue()"
-                                >
+                                {{ isValid(toolResult) ? t("response") : t('error') }}
+                                <el-button size="small" @click="gotoIssue()">
                                     {{ t('feedback') }}
                                 </el-button>
                             </span>
-                            <span style="width: 200px;" class="tools-dialog-container" v-if="currentMessageLevel === 'info'">
+
+
+                            <span style="width: 200px;" class="tools-dialog-container"
+                                v-if="currentMessageLevel === 'info'">
                                 <el-switch v-model="props.message.showJson!.value" inline-prompt active-text="JSON"
                                     inactive-text="Text" style="margin-left: 10px; width: 200px;"
                                     :inactive-action-style="'backgroundColor: var(--sidebar)'" />
                             </span>
                         </div>
 
-                        <div class="tool-result" v-if="isValid">
+                        <div class="tool-result" v-if="isValid(toolResult)">
                             <!-- 展示 JSON -->
                             <div v-if="props.message.showJson!.value" class="tool-result-content">
                                 <div class="inner">
-                                    <div v-html="toHtml(props.message.toolResult)"></div>
+                                    <div v-html="toHtml(props.message.toolResults[toolIndex])"></div>
                                 </div>
                             </div>
 
                             <!-- 展示富文本 -->
                             <span v-else>
-                                <div v-for="(item, index) in props.message.toolResult" :key="index"
-                                    class="response-item"
-                                >
-                                    <ToolcallResultItem
-                                        :item="item"
-                                        @update:item="value => updateToolCallResultItem(value, index)"
-                                        @update:ocr-done="value => collposePanel()"
-                                    />
+                                <div v-for="(item, index) in props.message.toolResults[toolIndex]" :key="index"
+                                    class="response-item">
+                                    <ToolcallResultItem :item="item"
+                                        @update:item="value => updateToolCallResultItem(value, toolIndex, index)"
+                                        @update:ocr-done="value => collposePanel()" />
                                 </div>
                             </span>
                         </div>
                         <div v-else class="tool-result">
-                            <div class="tool-result-content"
-                                v-for="(error, index) of collectErrors"
-                                :key="index"
-                            >
+                            <div class="tool-result-content" v-for="(error, index) of collectErrors(toolResult)"
+                                :key="index">
                                 {{ error }}
                             </div>
                         </div>
@@ -91,17 +110,12 @@
                         </div>
                         <div class="tool-result-content">
                             <div class="progress">
-                                <el-progress
-                                    :percentage="100"
-                                    :format="() => ''"
-                                    :indeterminate="true"
-                                    text-inside
-                                />
+                                <el-progress :percentage="100" :format="() => ''" :indeterminate="true" text-inside />
                             </div>
                         </div>
                     </div>
 
-                    <MessageMeta :message="message" />
+                    <MessageMeta v-if="toolIndex === props.message.toolResults.length - 1" :message="message" />
 
                 </div>
             </el-collapse-item>
@@ -110,13 +124,13 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, ref, watch, PropType, computed, defineEmits, inject, Ref } from 'vue';
+import { defineProps, ref, watch, PropType, computed, defineEmits } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 import MessageMeta from './message-meta.vue';
 import { markdownToHtml } from '@/components/main-panel/chat/markdown/markdown';
 import { createTest } from '@/views/setting/llm';
-import { IRenderMessage, MessageState } from '../chat-box/chat';
+import { IToolRenderMessage, MessageState } from '../chat-box/chat';
 import { ToolCallContent } from '@/hook/type';
 
 import ToolcallResultItem from './toolcall-result-item.vue';
@@ -125,7 +139,7 @@ const { t } = useI18n();
 
 const props = defineProps({
     message: {
-        type: Object as PropType<IRenderMessage>,
+        type: Object as PropType<IToolRenderMessage>,
         required: true
     },
     tabId: {
@@ -135,20 +149,38 @@ const props = defineProps({
 });
 
 const hasOcr = computed(() => {
-    for (const item of props.message.toolResult || []) {
-        const metaInfo = item._meta || {};
-        const { ocr = false } = metaInfo;
-        if (ocr) {
-            return true;
+
+    if (props.message.role === 'assistant/tool_calls') {
+        for (const toolResult of props.message.toolResults) {
+            for (const item of toolResult) {
+                const metaInfo = item._meta || {};
+                const { ocr = false } = metaInfo;
+                if (ocr) {
+                    return true;
+                }
+            }
         }
     }
+
     return false;
 });
 
-const activeNames = ref<string[]>(props.message.toolResult ? [''] : ['tool']);
+
+const callingTools = computed(() => {
+    const emptyToolResult = props.message.toolResults.find(item => item.length === 0);    
+
+    if (emptyToolResult) {
+        return true;
+    }
+
+    return false;
+});
+
+
+const activeNames = ref<string[]>(callingTools.value ? ['tool']: []);
 
 watch(
-    () => props.message.toolResult,
+    () => props.message,
     (value, _) => {
         if (hasOcr.value) {
             return;
@@ -180,10 +212,10 @@ const jsonResultToHtml = (jsonResult: string) => {
     try {
         const formattedJson = JSON.stringify(JSON.parse(jsonResult), null, 2);
         const html = markdownToHtml('```json\n' + formattedJson + '\n```');
-        return html;   
+        return html;
     } catch (error) {
         const html = markdownToHtml('```json\n' + jsonResult + '\n```');
-        return html; 
+        return html;
     }
 }
 
@@ -191,9 +223,10 @@ function gotoIssue() {
     window.open('https://github.com/LSTM-Kirigaya/openmcp-client/issues', '_blank');
 }
 
-const isValid = computed(() => {
+
+function isValid(toolResult: ToolCallContent[]) {
     try {
-        const item = props.message.toolResult![0];
+        const item = toolResult[0];
         if (item.type === 'error') {
             return false;
         }
@@ -201,31 +234,36 @@ const isValid = computed(() => {
     } catch {
         return false;
     }
-});
+}
 
 
 const currentMessageLevel = computed(() => {
-    
+
     // 此时正在等待 mcp server 给出回应
-    if (!props.message.toolResult) {
-        return 'info';
+    for (const toolResult of props.message.toolResults) {
+        if (toolResult.length === 0) {
+            return 'info';
+        }
+
+        if (!isValid(toolResult)) {
+            return 'error';
+        }
     }
 
-    if (!isValid.value) {
-        return 'error';
-    }
-    if (props.message.extraInfo.state != MessageState.Success) {
+    if (props.message.extraInfo.state !== MessageState.Success) {
         return 'warning';
     }
-    return 'info';
-})
 
-const collectErrors = computed(() => {
+    return 'info';
+});
+
+
+function collectErrors(toolResult: ToolCallContent[]) {
     const errorMessages = [];
     try {
-        const errorResults = props.message.toolResult!.filter(item => item.type === 'error');
+        const errorResults = toolResult.filter(item => item.type === 'error');
         console.log(errorResults);
-        
+
         for (const errorResult of errorResults) {
             errorMessages.push(errorResult.text);
         }
@@ -233,12 +271,12 @@ const collectErrors = computed(() => {
     } catch {
         return errorMessages;
     }
-});
+}
 
-const emit = defineEmits(['update:tool-result']);
+const emits = defineEmits(['update:tool-result']);
 
-function updateToolCallResultItem(value: any, index: number) {
-    emit('update:tool-result', value, index);
+function updateToolCallResultItem(value: any, toolIndex: number, index: number) {
+    emits('update:tool-result', value, toolIndex, index);
 }
 
 </script>
@@ -248,9 +286,6 @@ function updateToolCallResultItem(value: any, index: number) {
     border: 1px solid var(--main-color);
     border-radius: .5em;
     padding: 3px 10px;
-}
-
-.tool-result-content .el-progress-bar__outer {
 }
 
 .tool-result-content .progress {
@@ -269,7 +304,7 @@ function updateToolCallResultItem(value: any, index: number) {
 }
 
 .message-text.tool_calls.warning .tool-result {
-	background-color: rgba(230, 162, 60, 0.5);
+    background-color: rgba(230, 162, 60, 0.5);
 }
 
 .message-text.tool_calls.error {
@@ -281,7 +316,7 @@ function updateToolCallResultItem(value: any, index: number) {
 }
 
 .message-text.tool_calls.error .tool-result {
-	background-color: rgba(245, 108, 108, 0.5);
+    background-color: rgba(245, 108, 108, 0.5);
 }
 
 
@@ -295,6 +330,9 @@ function updateToolCallResultItem(value: any, index: number) {
     padding-bottom: 5px;
 }
 
+.toolcall-item .tool-calls {
+    margin-top: 22px;
+}
 
 .tool-call-item {
     margin-bottom: 10px;

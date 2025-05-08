@@ -131,6 +131,10 @@ a {
     height: 5px;
 }
 
+.tool-arguments .openmcp-code-block pre code::-webkit-scrollbar {
+    background: transparent !important;
+}
+
 .tool-arguments .openmcp-code-block pre code {
     background: transparent !important;
 }
