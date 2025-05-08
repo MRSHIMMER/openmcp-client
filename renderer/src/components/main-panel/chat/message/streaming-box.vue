@@ -1,5 +1,5 @@
 <template>
-    <div class="message-avatar">
+    <div class="message-avatar streaming-box">
         <span class="iconfont icon-chat"></span>
     </div>
     <div class="message-content">
@@ -11,7 +11,7 @@
                 </span>
             </span>
         </div>
-        <div class="message-text">
+        <div class="message-text streaming-box">
             <span v-html="waitingMarkdownToHtml(streamingContent)"></span>
         </div>
     </div>

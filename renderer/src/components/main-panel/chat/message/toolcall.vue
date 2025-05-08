@@ -38,11 +38,11 @@
                         <div class="tool-call-header result">
                             <span class="tool-name">
                                 <span :class="`iconfont icon-${currentMessageLevel}`"></span>
-                                {{ isValid ? '响应': '错误' }}
+                                {{ isValid ? t("response") : t('error') }}
                                 <el-button v-if="!isValid" size="small"
                                     @click="gotoIssue()"
                                 >
-                                    反馈
+                                    {{ t('feedback') }}
                                 </el-button>
                             </span>
                             <span style="width: 200px;" class="tools-dialog-container" v-if="currentMessageLevel === 'info'">
@@ -82,7 +82,24 @@
                             </div>
                         </div>
                     </div>
-
+                    <div v-else style="width: 90%">
+                        <div class="tool-call-header result">
+                            <span class="tool-name">
+                                <span :class="`iconfont icon-waiting`"></span>
+                                {{ t('waiting-mcp-server') }}
+                            </span>
+                        </div>
+                        <div class="tool-result-content">
+                            <div class="progress">
+                                <el-progress
+                                    :percentage="100"
+                                    :format="() => ''"
+                                    :indeterminate="true"
+                                    text-inside
+                                />
+                            </div>
+                        </div>
+                    </div>
 
                     <MessageMeta :message="message" />
 
@@ -93,7 +110,8 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, ref, watch, PropType, computed, defineEmits } from 'vue';
+import { defineProps, ref, watch, PropType, computed, defineEmits, inject, Ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 import MessageMeta from './message-meta.vue';
 import { markdownToHtml } from '@/components/main-panel/chat/markdown/markdown';
@@ -102,6 +120,8 @@ import { IRenderMessage, MessageState } from '../chat-box/chat';
 import { ToolCallContent } from '@/hook/type';
 
 import ToolcallResultItem from './toolcall-result-item.vue';
+
+const { t } = useI18n();
 
 const props = defineProps({
     message: {
@@ -183,7 +203,14 @@ const isValid = computed(() => {
     }
 });
 
+
 const currentMessageLevel = computed(() => {
+    
+    // 此时正在等待 mcp server 给出回应
+    if (!props.message.toolResult) {
+        return 'info';
+    }
+
     if (!isValid.value) {
         return 'error';
     }
@@ -221,6 +248,16 @@ function updateToolCallResultItem(value: any, index: number) {
     border: 1px solid var(--main-color);
     border-radius: .5em;
     padding: 3px 10px;
+}
+
+.tool-result-content .el-progress-bar__outer {
+}
+
+.tool-result-content .progress {
+    border-radius: .5em;
+    background-color: var(--el-fill-color-light) !important;
+    padding: 20px 10px;
+    width: 50%;
 }
 
 .message-text.tool_calls.warning {

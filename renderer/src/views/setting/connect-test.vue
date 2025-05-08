@@ -2,22 +2,25 @@
     <div class="connect-test" v-if="simpleTestResult.done || simpleTestResult.error">
         <div class="test-result">
             <div class="result-item" v-if="simpleTestResult.done">
-                <span class="iconfont icon-success"></span>
-                <span>{{ "✅ okey dockey :D" }}</span>
+                <span class="iconfont icon-dui"></span>
+                <span>{{ " okey dockey :D" }}</span>
+                <span v-if="simpleTestResult.tps" class="tps">{{ simpleTestResult.tps }} token/s</span>
+                <span v-else class="tps">{{ t("server-not-support-statistic") }}</span>
             </div>
             <div class="result-item error" v-if="simpleTestResult.error">
-                <span class="iconfont icon-error"></span>
-                <span>{{ '❌ ' + simpleTestResult.error }}</span>
+                <span class="iconfont icon-cuo"></span>
+                <span>{{ ' ' + simpleTestResult.error }}</span>
             </div>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { defineComponent } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { simpleTestResult } from './api';
 
-defineComponent({ name: 'connect-test' });
+const { t } = useI18n();
+
 </script>
 
 <style scoped>
@@ -40,6 +43,14 @@ defineComponent({ name: 'connect-test' });
     gap: 8px;
     color: var(--el-color-success);
     padding: 6px 12px;
+    border-radius: 4px;
+}
+
+.connect-test .tps {
+    margin-left: 5px;
+    color: var(--foreground);
+    background-color: var(--el-fill-color-light);
+    padding: 2px 6px;
     border-radius: 4px;
 }
 

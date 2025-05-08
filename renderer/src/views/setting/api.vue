@@ -38,7 +38,7 @@
 			</div>
 		</div>
 
-		<!-- 根据不同模型展示不同的接入点 -->
+		<!-- TODO: 根据不同模型展示不同的接入点 -->
 		<div v-if="false">
 
 		</div>
@@ -80,7 +80,7 @@
 		<ConnectTest />
 
 		<!-- 当前页面的聊天框 -->
-		<el-dialog v-model="dialogVisible" width="50%" style="min-width: 500px; max-width: 800px;padding: 20px;">
+		<el-dialog v-model="dialogVisible" width="50%" class="api-man-dialog">
 			
 			<br>
 
@@ -286,6 +286,17 @@ function handleCommand(command: {type: string, index: number}) {
 </script>
 
 <style>
+
+.api-man-dialog {
+	min-width: 500px;
+	max-width: 800px;
+	padding: 20px;
+}
+
+.api-man-dialog .el-tag {
+	background-color: var(--main-light-color) !important;
+}
+
 .setting-save-container {
 	margin: 5px;
 }

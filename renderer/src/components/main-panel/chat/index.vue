@@ -165,6 +165,11 @@ provide('streamingToolCalls', streamingToolCalls);
 provide('isLoading', isLoading);
 provide('autoScroll', autoScroll);
 
+const chatContext = {
+    handleSend: undefined
+};
+provide('chatContext', chatContext);
+
 // 修改 scrollToBottom 方法
 async function scrollToBottom() {
     if (!scrollbarRef.value || !messageListRef.value) return;

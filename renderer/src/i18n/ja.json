@@ -152,5 +152,8 @@
     "choose-presetting": "プリセットを選択",
     "cwd": "実行ディレクトリ",
     "mcp-server-timeout": "MCPツールの最大呼び出し時間",
-    "return": "戻る"
+    "return": "戻る",
+    "error": "エラー",
+    "feedback": "フィードバック",
+    "waiting-mcp-server": "MCPサーバーの応答を待機中"
 }

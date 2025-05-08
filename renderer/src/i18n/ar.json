@@ -152,5 +152,8 @@
     "choose-presetting": "اختر الإعداد المسبق",
     "cwd": "دليل التنفيذ",
     "mcp-server-timeout": "أطول وقت لاستدعاء أداة MCP",
-    "return": "عودة"
+    "return": "عودة",
+    "error": "خطأ",
+    "feedback": "تعليقات",
+    "waiting-mcp-server": "في انتظار استجابة خادم MCP"
 }

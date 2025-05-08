@@ -152,5 +152,8 @@
     "choose-presetting": "Выбрать预设",
     "cwd": "Каталог выполнения",
     "mcp-server-timeout": "Максимальное время вызова инструмента MCP",
-    "return": "Назад"
+    "return": "Назад",
+    "error": "Ошибка",
+    "feedback": "Обратная связь",
+    "waiting-mcp-server": "Ожидание ответа от сервера MCP"
 }

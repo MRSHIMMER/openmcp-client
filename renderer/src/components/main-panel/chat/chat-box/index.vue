@@ -61,6 +61,9 @@ const streamingContent = inject('streamingContent') as Ref<string>;
 const streamingToolCalls = inject('streamingToolCalls') as Ref<ToolCall[]>;
 const scrollToBottom = inject('scrollToBottom') as () => Promise<void>;
 const updateScrollHeight = inject('updateScrollHeight') as () => void;
+const chatContext = inject('chatContext') as any;
+
+chatContext.handleSend = handleSend;
 
 function handleSend(newMessage?: string) {    
     // 将富文本信息转换成纯文本信息
@@ -77,11 +80,7 @@ function handleSend(newMessage?: string) {
 
     loop.registerOnError((error) => {
 
-        ElMessage({
-            message: error.msg,
-            type: 'error',
-            duration: 3000
-        });
+        ElMessage.error(error.msg);
         
         if (error.state === MessageState.ReceiveChunkError) {
             tabStorage.messages.push({
@@ -124,8 +123,6 @@ function handleAbort() {
         ElMessage.info('请求已中止');
     }
 }
-
-provide('handleSend', handleSend);
 
 
 onMounted(() => {

@@ -13,7 +13,20 @@ export class LlmController {
             };
         }
 
-        await streamingChatCompletion(data, webview);
+        
+        try {
+            await streamingChatCompletion(data, webview);            
+        } catch (error) {
+            console.log('error' + error);
+            
+            webview.postMessage({
+                command: 'llm/chat/completions/error',
+                data: {
+                    msg: error
+                }
+            });
+        }
+
 
         return {
             code: -1,

@@ -152,5 +152,8 @@
     "choose-presetting": "Voreinstellung auswählen",
     "cwd": "Ausführungsverzeichnis",
     "mcp-server-timeout": "Maximale Aufrufzeit des MCP-Tools",
-    "return": "Zurück"
+    "return": "Zurück",
+    "error": "Fehler",
+    "feedback": "Feedback",
+    "waiting-mcp-server": "Warten auf Antwort vom MCP-Server"
 }

@@ -152,5 +152,8 @@
     "choose-presetting": "選擇預設",
     "cwd": "執行目錄",
     "mcp-server-timeout": "MCP工具最長調用時間",
-    "return": "返回"
+    "return": "返回",
+    "error": "錯誤",
+    "feedback": "反饋",
+    "waiting-mcp-server": "等待MCP伺服器響應"
 }

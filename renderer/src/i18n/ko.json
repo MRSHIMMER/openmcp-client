@@ -152,5 +152,8 @@
     "choose-presetting": "프리셋 선택",
     "cwd": "실행 디렉터리",
     "mcp-server-timeout": "MCP 도구 최대 호출 시간",
-    "return": "돌아가기"
+    "return": "돌아가기",
+    "error": "오류",
+    "feedback": "피드백",
+    "waiting-mcp-server": "MCP 서버 응답 대기 중"
 }

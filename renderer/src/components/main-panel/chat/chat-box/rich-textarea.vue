@@ -10,6 +10,7 @@
             class="rich-editor"
             :placeholder="placeholder"
             @input="handleInput"
+            @paste="handlePaste"
             @keydown.backspace="handleBackspace"
             @keydown.enter="handleKeydown"
             @compositionstart="handleCompositionStart"
@@ -168,6 +169,32 @@ function handleKeydown(event: KeyboardEvent) {
                 selection.addRange(range);
             }
         }
+    }
+}
+
+function handlePaste(event: ClipboardEvent) {
+    event.preventDefault(); // 阻止默认粘贴行为
+    const clipboardData = event.clipboardData;
+    if (clipboardData) {
+        const pastedText = clipboardData.getData('text/plain');
+        const editorElement = editor.value;
+        if (editorElement instanceof HTMLDivElement) {
+            const selection = window.getSelection();
+            if (selection && selection.rangeCount > 0) {
+                const range = selection.getRangeAt(0);
+                range.deleteContents();
+                const textNode = document.createTextNode(pastedText);
+                range.insertNode(textNode);
+                range.setStartAfter(textNode);
+                range.collapse(true);
+                selection.removeAllRanges();
+                selection.addRange(range);
+            }
+        }
+    }
+
+    if (editor.value) {
+        editor.value.dispatchEvent(new Event('input'));
     }
 }
 

@@ -57,9 +57,6 @@ export async function streamingChatCompletion(
             });
             break;
         }
-
-        console.log(chunk);
-        
         
         if (chunk.choices) {
             const chunkResult = {

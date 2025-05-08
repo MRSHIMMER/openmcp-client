@@ -34,7 +34,7 @@
 <script setup lang="ts">
 import { defineProps, ref, PropType, inject } from 'vue';
 import { tabs } from '../../panel';
-import { ChatStorage, IRenderMessage } from '../chat';
+import type { ChatStorage, IRenderMessage } from '../chat-box/chat';
 
 import KCuteTextarea from '@/components/k-cute-textarea/index.vue';
 import { ElMessage } from 'element-plus';
@@ -58,7 +58,7 @@ const tabStorage = tab.storage as ChatStorage;
 const isEditing = ref(false);
 const userInput = ref('');
 
-const handleSend = inject<(newMessage: string | undefined) => void>('handleSend');
+const chatContext = inject('chatContext') as any;
 
 const toggleEdit = () => {
     isEditing.value = !isEditing.value;
@@ -70,10 +70,12 @@ const toggleEdit = () => {
 const handleKeydown = (event: KeyboardEvent) => {
     const index = tabStorage.messages.findIndex(msg => msg.extraInfo === props.message.extraInfo);
     
-    if (index !== -1 && handleSend) {
+    console.log(chatContext);
+    
+    if (index !== -1 && chatContext.handleSend) {
         // 把 index 之后的全部删除（包括 index）
         tabStorage.messages.splice(index);
-        handleSend(userInput.value);
+        chatContext.handleSend(userInput.value);
 
         isEditing.value = false;
     }

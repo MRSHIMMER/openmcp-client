@@ -12,11 +12,16 @@ export type ChatCompletionChunk = OpenAI.Chat.Completions.ChatCompletionChunk;
 export type ChatCompletionCreateParamsBase = OpenAI.Chat.Completions.ChatCompletionCreateParams & { id?: string };
 interface TaskLoopOptions {
     maxEpochs: number;
+    maxJsonParseRetry: number;
 }
 
 interface IErrorMssage {
     state: MessageState,
     msg: string
+}
+
+interface IDoConversationResult {
+    stop: boolean;
 }
 
 /**
@@ -34,14 +39,18 @@ export class TaskLoop {
         private onChunk: (chunk: ChatCompletionChunk) => void = (chunk) => {},
         private onDone: () => void = () => {},
         private onEpoch: () => void = () => {},
-        private readonly taskOptions: TaskLoopOptions = { maxEpochs: 20 },
+        private readonly taskOptions: TaskLoopOptions = { maxEpochs: 20, maxJsonParseRetry: 3 },
     ) {
 
     }
 
     private async handleToolCalls(toolCalls: ToolCall[]) {
         // TODO: 调用多个工具并返回调用结果？
+        
         const toolCall = toolCalls[0];
+
+        console.log('debug toolcall');
+        console.log(toolCalls);
 
         let toolName: string;
         let toolArgs: Record<string, any>;
@@ -131,15 +140,15 @@ export class TaskLoop {
 
             if (currentCall === undefined) {
                 // 新的工具调用开始
-                this.streamingToolCalls.value = [{
+                this.streamingToolCalls.value[toolCall.index] = {
                     id: toolCall.id,
-                    index: 0,
+                    index: toolCall.index,
                     type: 'function',
                     function: {
                         name: toolCall.function?.name || '',
                         arguments: toolCall.function?.arguments || ''
                     }
-                }];
+                };
             } else {
                 // 累积现有工具调用的信息
                 if (currentCall) {
@@ -150,7 +159,7 @@ export class TaskLoop {
                         currentCall.function.name = toolCall.function.name;
                     }
                     if (toolCall.function?.arguments) {
-                        currentCall.function.arguments += toolCall.function.arguments;
+                        currentCall.function.arguments += toolCall.function.arguments;                        
                     }
                 }
             }
@@ -167,16 +176,9 @@ export class TaskLoop {
 
     private doConversation(chatData: ChatCompletionCreateParamsBase) {
 
-        return new Promise<void>((resolve, reject) => {
+        return new Promise<IDoConversationResult>((resolve, reject) => {
             const chunkHandler = this.bridge.addCommandListener('llm/chat/completions/chunk', data => {
-                if (data.code !== 200) {
-                    this.onError({
-                        state: MessageState.ReceiveChunkError,
-                        msg: data.msg || '请求模型服务时发生错误'
-                    });
-                    resolve();
-                    return;
-                }
+                // data.code 一定为 200，否则不会走这个 route
                 const { chunk } = data.msg as { chunk: ChatCompletionChunk };
 
                 // 处理增量的 content 和 tool_calls
@@ -187,11 +189,34 @@ export class TaskLoop {
                 this.onChunk(chunk);
             }, { once: false });
         
-            this.bridge.addCommandListener('llm/chat/completions/done', data => {                
+            const doneHandler = this.bridge.addCommandListener('llm/chat/completions/done', data => {                
                 this.onDone();
                 chunkHandler();
+                errorHandler();
 
-                resolve();
+                resolve({
+                    stop: false
+                });
+            }, { once: true });
+
+            console.log('register error handler');
+
+            const errorHandler = this.bridge.addCommandListener('llm/chat/completions/error', data => {
+                
+                console.log('enter error report');
+
+                this.onError({
+                    state: MessageState.ReceiveChunkError,
+                    msg: data.msg || '请求模型服务时发生错误'
+                });
+
+                chunkHandler();
+                doneHandler();
+
+                resolve({
+                    stop: true
+                });
+
             }, { once: true });
 
             this.bridge.postMessage({
@@ -273,6 +298,10 @@ export class TaskLoop {
         this.onEpoch = handler;
     }
 
+    public setMaxEpochs(maxEpochs: number) {
+        this.taskOptions.maxEpochs = maxEpochs;
+    }
+
     /**
      * @description 开启循环，异步更新 DOM
      */
@@ -287,6 +316,8 @@ export class TaskLoop {
                 serverName: llms[llmManager.currentModelIndex].id || 'unknown'
             }
         });
+
+        let jsonParseErrorRetryCount = 0;
 
         for (let i = 0; i < this.taskOptions.maxEpochs; ++ i) {
 
@@ -308,7 +339,10 @@ export class TaskLoop {
             this.currentChatId = chatData.id!;
 
             // 发送请求
-            await this.doConversation(chatData);
+            const doConverationResult = await this.doConversation(chatData);
+
+            console.log(doConverationResult);
+            
 
             // 如果存在需要调度的工具
             if (this.streamingToolCalls.value.length > 0) {
@@ -333,11 +367,25 @@ export class TaskLoop {
                 if (toolCallResult.state === MessageState.ParseJsonError) {
                     // 如果是因为解析 JSON 错误，则重新开始
                     tabStorage.messages.pop();
-                    redLog('解析 JSON 错误 ' + this.streamingToolCalls.value[0]?.function?.arguments);
-                    continue;
-                }
+                    jsonParseErrorRetryCount ++;
 
-                if (toolCallResult.state === MessageState.Success) {
+                    redLog('解析 JSON 错误 ' + this.streamingToolCalls.value[0]?.function?.arguments);
+
+                    // 如果因为 JSON 错误而失败太多，就只能中断了
+                    if (jsonParseErrorRetryCount >= this.taskOptions.maxJsonParseRetry) {
+                        tabStorage.messages.push({
+                            role: 'assistant',
+                            content: `解析 JSON 错误，无法继续调用工具 (累计错误次数 ${this.taskOptions.maxJsonParseRetry})`,
+                            extraInfo: {
+                                created: Date.now(),
+                                state: toolCallResult.state,
+                                serverName: llms[llmManager.currentModelIndex].id || 'unknown',
+                                usage: undefined
+                            }
+                        });
+                        break;
+                    }
+                } else if (toolCallResult.state === MessageState.Success) {
                     const toolCall = this.streamingToolCalls.value[0];
 
                     tabStorage.messages.push({
@@ -351,10 +399,7 @@ export class TaskLoop {
                             usage: this.completionUsage
                         }
                     });
-                }
-
-
-                if (toolCallResult.state === MessageState.ToolCall) {
+                } else if (toolCallResult.state === MessageState.ToolCall) {
                     const toolCall = this.streamingToolCalls.value[0];
 
                     tabStorage.messages.push({
@@ -385,7 +430,11 @@ export class TaskLoop {
 
             } else {
                 // 一些提示
+                break;
+            }
 
+            // 回答聚合完成后根据 stop 来决定是否提前中断
+            if (doConverationResult.stop) {
                 break;
             }
         }
