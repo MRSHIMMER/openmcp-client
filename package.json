@@ -219,7 +219,8 @@
         "pretest": "npm run compile && npm run lint",
         "lint": "eslint src --ext ts",
         "test": "node ./out/test/runTest.js",
-        "prepare:ocr": "webpack --config webpack/webpack.tesseract.js"
+        "prepare:ocr": "webpack --config webpack/webpack.tesseract.js",
+        "build:task-loop": "webpack --config webpack/webpack.task-loop.js"
     },
     "dependencies": {
         "@modelcontextprotocol/sdk": "^1.10.2",
@@ -238,6 +239,7 @@
         "@types/showdown": "^2.0.0",
         "@types/vscode": "^1.72.0",
         "copy-webpack-plugin": "^13.0.0",
+        "null-loader": "^4.0.1",
         "ts-loader": "^9.5.1",
         "typescript": "^5.4.2",
         "webpack": "^5.99.5",
