@@ -42,7 +42,8 @@ export class McpClient {
                     command: this.options.command || '',
                     args: this.options.args || [],
                     cwd: this.options.cwd || process.cwd(),
-                    stderr: 'pipe'
+                    stderr: 'pipe',
+                    env: this.options.env,
                 });
 
                 break;
@@ -119,8 +120,8 @@ export class McpClient {
 
     // 调用工具
     public async callTool(options: { name: string; arguments: Record<string, any>, callToolOption?: any }) {
-
         const { callToolOption, ...methodArgs } = options;
+        console.log('callToolOption', callToolOption);
         return await this.client.callTool(methodArgs, undefined, callToolOption);
     }
 }

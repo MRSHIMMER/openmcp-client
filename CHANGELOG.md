@@ -8,6 +8,9 @@
 - 修复 bug：流式传输进行 function calling 时，多工具的索引串流导致的 JSON Schema 反序列化失败
 - 修复 bug：大模型返回大量重复错误信息
 - 新特性：支持一次对话同时调用多个工具
+- UI：优化代码高亮的滚动条
+- 新特性：resources/list 协议的内容点击就会直接渲染，无需二次发送
+- 新特性：resources prompts tools 的结果的 json 模式支持高亮
 
 ## [main] 0.0.7
 - 优化页面布局，使得调试窗口可以显示更多内容

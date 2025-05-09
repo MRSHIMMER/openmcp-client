@@ -7,8 +7,11 @@
         </span>
     </div>
     <div class="message-text tool_calls" :class="[currentMessageLevel]">
+        
+        <!-- 工具的消息 -->
         <div v-if="props.message.content" v-html="markdownToHtml(props.message.content)"></div>
 
+        <!-- 工具的调用 -->
         <el-collapse v-model="activeNames" v-if="props.message.tool_calls">
             <el-collapse-item name="tool">
                 <template #title>
@@ -43,12 +46,7 @@
                     </div>
 
                     <div class="tool-arguments">
-                        <el-scrollbar width="100%">
-                            <div class="inner">
-                                <div v-html="jsonResultToHtml(props.message.tool_calls[toolIndex].function.arguments)">
-                                </div>
-                            </div>
-                        </el-scrollbar>
+                        <json-render :json="props.message.tool_calls[toolIndex].function.arguments"/>
                     </div>
 
                     <!-- 工具调用结果 -->
@@ -79,9 +77,7 @@
                         <div class="tool-result" v-if="isValid(toolResult)">
                             <!-- 展示 JSON -->
                             <div v-if="props.message.showJson!.value" class="tool-result-content">
-                                <div class="inner">
-                                    <div v-html="toHtml(props.message.toolResults[toolIndex])"></div>
-                                </div>
+                                <json-render :json="props.message.toolResults[toolIndex]"/>
                             </div>
 
                             <!-- 展示富文本 -->
@@ -120,6 +116,7 @@
                 </div>
             </el-collapse-item>
         </el-collapse>
+    
     </div>
 </template>
 
@@ -134,9 +131,10 @@ import { IToolRenderMessage, MessageState } from '../chat-box/chat';
 import { ToolCallContent } from '@/hook/type';
 
 import ToolcallResultItem from './toolcall-result-item.vue';
+import JsonRender from '@/components/json-render/index.vue';
+
 
 const { t } = useI18n();
-
 const props = defineProps({
     message: {
         type: Object as PropType<IToolRenderMessage>,
@@ -149,7 +147,6 @@ const props = defineProps({
 });
 
 const hasOcr = computed(() => {
-
     if (props.message.role === 'assistant/tool_calls') {
         for (const toolResult of props.message.toolResults) {
             for (const item of toolResult) {
@@ -198,26 +195,6 @@ function collposePanel() {
     }, 1000);
 }
 
-/**
- * @description 将工具调用结果转换成 html
- * @param toolResult 
- */
-const toHtml = (toolResult: ToolCallContent[]) => {
-    const formattedJson = JSON.stringify(toolResult, null, 2);
-    const html = markdownToHtml('```json\n' + formattedJson + '\n```');
-    return html;
-};
-
-const jsonResultToHtml = (jsonResult: string) => {
-    try {
-        const formattedJson = JSON.stringify(JSON.parse(jsonResult), null, 2);
-        const html = markdownToHtml('```json\n' + formattedJson + '\n```');
-        return html;
-    } catch (error) {
-        const html = markdownToHtml('```json\n' + jsonResult + '\n```');
-        return html;
-    }
-}
 
 function gotoIssue() {
     window.open('https://github.com/LSTM-Kirigaya/openmcp-client/issues', '_blank');

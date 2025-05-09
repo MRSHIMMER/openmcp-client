@@ -24,7 +24,7 @@
                     </span>
                 </template>
                 <template v-else>
-                    {{ formattedJson }}
+                    <json-render :json="tabStorage.lastPromptGetResponse"/>
                 </template>
             </div>
         </el-scrollbar>
@@ -36,6 +36,7 @@ import { defineComponent, defineProps, computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { tabs } from '../panel';
 import { PromptStorage } from './prompts';
+import JsonRender from '@/components/json-render/index.vue';
 
 defineComponent({ name: 'prompt-logger' });
 const { t } = useI18n();
@@ -52,13 +53,6 @@ const tabStorage = tab.storage as PromptStorage;
 
 const showRawJson = ref(false);
 
-const formattedJson = computed(() => {
-    try {
-        return JSON.stringify(tabStorage.lastPromptGetResponse, null, 2);
-    } catch {
-        return 'Invalid JSON';
-    }
-});
 </script>
 
 <style>

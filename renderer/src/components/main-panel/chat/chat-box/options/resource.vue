@@ -7,7 +7,7 @@
 
     <el-dialog v-model="showChooseResource" :title="t('resources')" width="400px">
         <div class="resource-template-container-scrollbar" v-if="!selectResource">
-            <ResourceList :tab-id="-1" @resource-selected="resource => selectResource = resource" />
+            <ResourceList :tab-id="-1" @resource-selected="resource => handleResourceSelected(resource)" />
         </div>
         <div v-else>
             <ResourceReader :tab-id="-1" :current-resource-name="selectResource!.name"
@@ -25,13 +25,14 @@
 import { createApp, inject, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { ChatStorage, EditorContext } from '../chat';
-import { ResourcesReadResponse, ResourceTemplate } from '@/hook/type';
+import { Resources, ResourcesReadResponse, ResourceTemplate } from '@/hook/type';
 
 import ResourceList from '@/components/main-panel/resource/resource-list.vue';
 import ResourceReader from '@/components/main-panel/resource/resouce-reader.vue';
 import { ElMessage, ElTooltip, ElProgress, ElPopover } from 'element-plus';
 
 import ResourceChatItem from '../resource-chat-item.vue';
+import { useMessageBridge } from '@/api/message-bridge';
 
 const { t } = useI18n();
 
@@ -54,6 +55,15 @@ function saveCursorPosition() {
                 savedSelection = null;
             }
         }
+    }
+}
+
+async function handleResourceSelected(resource: Resources) {
+    selectResource.value = undefined;
+    const bridge = useMessageBridge();
+    const { code, msg } = await bridge.commandRequest('resources/read', { resourceUri: resource.uri });
+    if (msg) {
+        await whenGetResourceResponse(msg as ResourcesReadResponse);
     }
 }
 

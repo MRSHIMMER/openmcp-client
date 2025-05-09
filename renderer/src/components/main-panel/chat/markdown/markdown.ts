@@ -3,7 +3,7 @@ import MarkdownKatex from './markdown-katex';
 import MarkdownHighlight from './markdown-highlight';
 
 const md = new MarkdownIt({
-    highlight: MarkdownHighlight,
+    highlight: MarkdownHighlight({ needTools: true }),
 });
 
 md.use(MarkdownKatex, {
@@ -18,6 +18,35 @@ export const markdownToHtml = (markdown: string) => {
     return md.render(markdown);
 };
 
+const pureHighLightMd = new MarkdownIt({
+    highlight: MarkdownHighlight({ needTools: false }),
+});
+
 export const copyToClipboard = (text: string) => {
     return navigator.clipboard.writeText(text);
 };
+
+const tryParseJson = (text: string) => {
+    try {
+        return JSON.parse(text);
+    } catch (error) {
+        return text;
+    }
+}
+
+
+const prettifyObj = (obj: object | string) => {
+    const rawObj = typeof obj === 'string' ? tryParseJson(obj) : obj;
+    return JSON.stringify(rawObj, null, 2);
+}
+
+export const renderJson = (obj: object | string | undefined) => {
+    if (!obj) {
+        return '<span>Invalid JSON</span>';
+    }
+
+    const jsonString = prettifyObj(obj);
+    const md = "```json\n" + jsonString + "\n```";
+    const html = pureHighLightMd.render(md);
+    return html;
+}

@@ -37,7 +37,7 @@
                     </span>
                 </template>
                 <template v-else>
-                    {{ formattedJson }}
+                    <json-render :json="tabStorage.lastResourceReadResponse"/>
                 </template>
             </div>
         </el-scrollbar>
@@ -50,6 +50,7 @@ import { useI18n } from 'vue-i18n';
 import { tabs } from '../panel';
 import { ResourceStorage } from './resources';
 import { getImageBlobUrlByBase64 } from '@/hook/util';
+import JsonRender from '@/components/json-render/index.vue';
 
 defineComponent({ name: 'resource-logger' });
 const { t } = useI18n();

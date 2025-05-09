@@ -75,12 +75,18 @@ function reloadResources(option: { first: boolean }) {
     }
 }
 
-function handleClick(resource: Resources) {
+async function handleClick(resource: Resources) {
     tabStorage.currentType = 'resource';
     tabStorage.currentResourceName = resource.name;
     tabStorage.lastResourceReadResponse = undefined;
-
 	emits('resource-selected', resource);
+
+	// 更新资源
+	if (props.tabId >= 0) {
+		const bridge = useMessageBridge();
+		const { code, msg } = await bridge.commandRequest('resources/read', { resourceUri: resource.uri });
+		tabStorage.lastResourceReadResponse = msg;
+	}
 }
 
 let commandCancel: (() => void);

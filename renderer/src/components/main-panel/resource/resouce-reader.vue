@@ -16,12 +16,17 @@
                 <el-switch v-else-if="param.type === 'boolean'" v-model="tabStorage.formData[param.name]" />
             </el-form-item>
 
-            <el-form-item>
+            <el-form-item v-if="tabStorage.currentType === 'template'">
                 <el-button type="primary" :loading="loading" @click="handleSubmit">
                     {{ t('read-resource') }}
                 </el-button>
                 <el-button @click="resetForm">
                     {{ t('reset') }}
+                </el-button>
+            </el-form-item>
+            <el-form-item v-else>
+                <el-button @click="handleSubmit">
+                    {{ t("refresh") }}
                 </el-button>
             </el-form-item>
         </el-form>
@@ -142,9 +147,7 @@ function getUri() {
     }
 
     const currentResourceName = props.tabId >= 0 ? tabStorage.currentResourceName : props.currentResourceName;
-
     const targetResource = resourcesManager.resources.find(resources => resources.name === currentResourceName);
-    
     return targetResource?.uri;
 }
 
@@ -154,9 +157,7 @@ async function handleSubmit() {
 
     const bridge = useMessageBridge();
     const { code, msg } = await bridge.commandRequest('resources/read', { resourceUri: uri });
-    
     tabStorage.lastResourceReadResponse = msg;
-
     emits('resource-get-response', msg);
 }
 

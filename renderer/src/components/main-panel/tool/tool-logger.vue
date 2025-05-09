@@ -26,7 +26,7 @@
 
                     <!-- 展示 json -->
                     <template v-else>
-                        {{ formattedJson }}
+                        <json-render :json="tabStorage.lastToolCallResponse"/>
                     </template>
                 </div>
 
@@ -40,7 +40,7 @@ import { defineComponent, defineProps, computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { tabs } from '../panel';
 import { ToolStorage } from './tools';
-import { useMessageBridge } from '@/api/message-bridge';
+import JsonRender from '@/components/json-render/index.vue';
 
 defineComponent({ name: 'tool-logger' });
 const { t } = useI18n();
@@ -56,17 +56,6 @@ const tab = tabs.content[props.tabId];
 const tabStorage = tab.storage as ToolStorage;
 
 const showRawJson = ref(false);
-
-const formattedJson = computed(() => {
-    try {
-        if (typeof tabStorage.lastToolCallResponse === 'string') {
-            return tabStorage.lastToolCallResponse;
-        }
-        return JSON.stringify(tabStorage.lastToolCallResponse, null, 2);
-    } catch {
-        return 'Invalid JSON';
-    }
-});
 
 </script>
 

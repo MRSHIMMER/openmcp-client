@@ -36,7 +36,6 @@
     max-height: inherit;
     height: inherit;
     display: block;
-    overflow: auto;
     background-color: unset !important;
 }
 
@@ -251,7 +250,6 @@
     max-height: inherit;
     height: inherit;
     display: block;
-    overflow: auto;
     background-color: unset !important;
 }
 

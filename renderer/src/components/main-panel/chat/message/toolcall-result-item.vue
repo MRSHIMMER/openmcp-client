@@ -1,5 +1,5 @@
 <template>
-    <el-scrollbar width="100%">
+    <el-scrollbar width="100%" max-height="300px">
         <div v-if="props.item.type === 'text'" class="tool-text">
             {{ props.item.text }}
         </div>
