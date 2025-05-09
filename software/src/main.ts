@@ -1,5 +1,5 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
-import * as OpenMCPService from '@openmcp/service';
+import * as OpenMCPService from '../openmcp-sdk/service';
 import * as path from 'path';
 import { ElectronIPCLike, getInitConnectionOption, ILaunchSigature, updateConnectionOption } from './util';
 
