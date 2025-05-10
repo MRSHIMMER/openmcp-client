@@ -24,11 +24,9 @@ export class MessageBridge {
 	private handlers = new Map<string, Set<CommandHandler>>();
 	private isConnected: Promise<boolean> | null = null;
 
-	constructor(private wsUrl: string = 'ws://localhost:8080') {
-
-		// 环境检测优先级：
-		// 1. VS Code WebView 环境
-		// 2. 浏览器 WebSocket 环境
+	constructor(
+		private setupSignature: any
+	) {
 
 		const platform = getPlatform();
 
@@ -68,7 +66,14 @@ export class MessageBridge {
 
 	// WebSocket 环境连接
 	private setupWebSocket() {
-		this.ws = new WebSocket(this.wsUrl);
+
+		const wsUrl = this.setupSignature;
+
+		if (typeof wsUrl !== 'string') {
+			throw new Error('setupSignature must be a string');
+		}
+
+		this.ws = new WebSocket(wsUrl);
 
 		this.ws.onmessage = (event) => {
 			try {				
@@ -119,13 +124,19 @@ export class MessageBridge {
 	}
 
 	private setupNodejsListener() {
-		const EventEmitter = require('events');
+		const { EventEmitter } = require('events');
 
-		const eventEmitter = new EventEmitter();
-		
+		const emitter = this.setupSignature;
+		if (!(emitter instanceof EventEmitter)) {
+			throw new Error('setupSignature must be an EventEmitter');
+		}
+
+		emitter.on('message/service', (message: VSCodeMessage) => {
+			this.dispatchMessage(message);
+		});
 
 		this.postMessage = (message) => {
-			eventEmitter.emit('server', message);
+			emitter.emit('message/renderer', message);
 		};
 	}
 
@@ -209,16 +220,14 @@ export class MessageBridge {
 }
 
 // 单例实例
-const messageBridge = new MessageBridge();
+let messageBridge: MessageBridge;
 
 // 向外暴露一个独立函数，保证 MessageBridge 是单例的
 export function useMessageBridge() {
+	if (!messageBridge) {
+		messageBridge = new MessageBridge('ws://localhost:8080');
+	}
 	const bridge = messageBridge;
 
-	return {
-		postMessage: bridge.postMessage.bind(bridge),
-		addCommandListener: bridge.addCommandListener.bind(bridge),
-		commandRequest: bridge.commandRequest.bind(bridge),
-		awaitForWebsockt: bridge.awaitForWebsockt.bind(bridge)
-	};
+	return bridge;
 }

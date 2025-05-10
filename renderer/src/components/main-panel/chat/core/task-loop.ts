@@ -1,18 +1,20 @@
 /* eslint-disable */
 import type { Ref } from "vue";
 import { ToolCall, ChatStorage, getToolSchema, MessageState } from "../chat-box/chat";
-import { useMessageBridge } from "@/api/message-bridge";
+import { useMessageBridge, MessageBridge } from "@/api/message-bridge";
 import type { OpenAI } from 'openai';
 import { llmManager, llms } from "@/views/setting/llm";
 import { pinkLog, redLog } from "@/views/setting/util";
 import { ElMessage } from "element-plus";
 import { handleToolCalls } from "./handle-tool-calls";
+import { getPlatform } from "@/api/platform";
 
 export type ChatCompletionChunk = OpenAI.Chat.Completions.ChatCompletionChunk;
 export type ChatCompletionCreateParamsBase = OpenAI.Chat.Completions.ChatCompletionCreateParams & { id?: string };
 export interface TaskLoopOptions {
     maxEpochs: number;
     maxJsonParseRetry: number;
+    adapter: any;
 }
 
 export interface IErrorMssage {
@@ -29,21 +31,34 @@ export interface IDoConversationResult {
  * @description 对任务循环进行的抽象封装
  */
 export class TaskLoop {
-    private bridge = useMessageBridge();
+    private bridge: MessageBridge;
     private currentChatId = '';
+    private onError: (error: IErrorMssage) => void = (msg) => {};
+    private onChunk: (chunk: ChatCompletionChunk) => void = (chunk) => {};
+    private onDone: () => void = () => {};
+    private onEpoch: () => void = () => {};
     private completionUsage: ChatCompletionChunk['usage'] | undefined;
     private llmConfig: any;
 
     constructor(
         private readonly streamingContent: Ref<string>,
         private readonly streamingToolCalls: Ref<ToolCall[]>,
-        private onError: (error: IErrorMssage) => void = (msg) => {},
-        private onChunk: (chunk: ChatCompletionChunk) => void = (chunk) => {},
-        private onDone: () => void = () => {},
-        private onEpoch: () => void = () => {},
-        private readonly taskOptions: TaskLoopOptions = { maxEpochs: 20, maxJsonParseRetry: 3 },
+        private readonly taskOptions: TaskLoopOptions = { maxEpochs: 20, maxJsonParseRetry: 3, adapter: undefined },
     ) {
-        
+        // 根据当前环境决定是否要开启 messageBridge
+        const platform = getPlatform();
+        if (platform === 'nodejs') {
+
+            const adapter = taskOptions.adapter;
+
+            if (!adapter) {
+                throw new Error('adapter is required');
+            }
+
+            this.bridge = new MessageBridge(adapter.emitter);
+        } else {
+            this.bridge = useMessageBridge();
+        }     
     }
 
     private handleChunkDeltaContent(chunk: ChatCompletionChunk) {

@@ -1,9 +1,10 @@
 import { WebSocket } from 'ws';
+import { EventEmitter } from 'events';
 
 // WebSocket 消息格式
 export interface WebSocketMessage {
     command: string;
-	data: any;
+    data: any;
 }
 
 // 服务器返回的消息格式
@@ -63,3 +64,35 @@ export class VSCodeWebViewLike {
         };
     }
 }
+
+
+export class EventAdapter {
+    public emitter: EventEmitter;
+    private messageHandlers: Set<MessageHandler>;
+
+    constructor(option: any) {
+        this.emitter = new EventEmitter(option);
+        this.messageHandlers = new Set();
+    }
+
+    /**
+     * 发送消息
+     * @param message - 包含 command 和 args 的消息
+     */
+    postMessage(message: WebSocketMessage): void {
+        this.emitter.emit('message/service', message);
+    }
+
+    /**
+     * 接收消息
+     * @param callback - 消息回调
+     * @returns {{ dispose: () => void }} - 可销毁的监听器
+     */
+    onDidReceiveMessage(callback: MessageHandler): { dispose: () => void } {
+        this.messageHandlers.add(callback);
+        return {
+            dispose: () => this.messageHandlers.delete(callback),
+        };
+    }
+}
+
