@@ -10,19 +10,20 @@ import { handleToolCalls } from "./handle-tool-calls";
 
 export type ChatCompletionChunk = OpenAI.Chat.Completions.ChatCompletionChunk;
 export type ChatCompletionCreateParamsBase = OpenAI.Chat.Completions.ChatCompletionCreateParams & { id?: string };
-interface TaskLoopOptions {
+export interface TaskLoopOptions {
     maxEpochs: number;
     maxJsonParseRetry: number;
 }
 
-interface IErrorMssage {
+export interface IErrorMssage {
     state: MessageState,
     msg: string
 }
 
-interface IDoConversationResult {
+export interface IDoConversationResult {
     stop: boolean;
 }
+
 
 /**
  * @description 对任务循环进行的抽象封装
@@ -31,6 +32,7 @@ export class TaskLoop {
     private bridge = useMessageBridge();
     private currentChatId = '';
     private completionUsage: ChatCompletionChunk['usage'] | undefined;
+    private llmConfig: any;
 
     constructor(
         private readonly streamingContent: Ref<string>,
@@ -41,7 +43,7 @@ export class TaskLoop {
         private onEpoch: () => void = () => {},
         private readonly taskOptions: TaskLoopOptions = { maxEpochs: 20, maxJsonParseRetry: 3 },
     ) {
-
+        
     }
 
     private handleChunkDeltaContent(chunk: ChatCompletionChunk) {
@@ -143,8 +145,8 @@ export class TaskLoop {
     }
 
     public makeChatData(tabStorage: ChatStorage): ChatCompletionCreateParamsBase | undefined {
-        const baseURL = llms[llmManager.currentModelIndex].baseUrl;
-        const apiKey = llms[llmManager.currentModelIndex].userToken || '';
+        const baseURL = this.getLlmConfig().baseUrl;
+        const apiKey = this.getLlmConfig().userToken || '';
         
         if (apiKey.trim() === '') {
             
@@ -155,7 +157,7 @@ export class TaskLoop {
             return undefined;
         }
     
-        const model = llms[llmManager.currentModelIndex].userModel;
+        const model = this.getLlmConfig().userModel;
         const temperature = tabStorage.settings.temperature;
         const tools = getToolSchema(tabStorage.settings.enableTools);
 
@@ -219,6 +221,32 @@ export class TaskLoop {
     }
 
     /**
+     * @description 设置当前的 LLM 配置，用于 nodejs 环境运行
+     * @param config 
+     * @example
+     * setLlmConfig({
+     *     id: 'openai',
+     *     baseUrl: 'https://api.openai.com/v1',
+     *     userToken: 'sk-xxx',
+     *     userModel: 'gpt-3.5-turbo',
+     * })
+     */
+    public setLlmConfig(config: any) {
+        this.llmConfig = config;
+    }
+
+    public getLlmConfig() {
+        if (this.llmConfig) {
+            return this.llmConfig;
+        }
+        return llms[llmManager.currentModelIndex];
+    }
+
+    public async connectToService() {
+        
+    }
+
+    /**
      * @description 开启循环，异步更新 DOM
      */
     public async start(tabStorage: ChatStorage, userMessage: string) {
@@ -229,7 +257,7 @@ export class TaskLoop {
             extraInfo: {
                 created: Date.now(),
                 state: MessageState.Success,
-                serverName: llms[llmManager.currentModelIndex].id || 'unknown'
+                serverName: this.getLlmConfig().id || 'unknown'
             }
         });
 
@@ -270,7 +298,7 @@ export class TaskLoop {
                     extraInfo: {
                         created: Date.now(),
                         state: MessageState.Success,
-                        serverName: llms[llmManager.currentModelIndex].id || 'unknown'
+                        serverName: this.getLlmConfig().id || 'unknown'
                     }
                 });
                 
@@ -294,7 +322,7 @@ export class TaskLoop {
                                 extraInfo: {
                                     created: Date.now(),
                                     state: toolCallResult.state,
-                                    serverName: llms[llmManager.currentModelIndex].id || 'unknown',
+                                    serverName: this.getLlmConfig().id || 'unknown',
                                     usage: undefined
                                 }
                             });
@@ -309,7 +337,7 @@ export class TaskLoop {
                             extraInfo: {
                                 created: Date.now(),
                                 state: toolCallResult.state,
-                                serverName: llms[llmManager.currentModelIndex].id || 'unknown',
+                                serverName: this.getLlmConfig().id || 'unknown',
                                 usage: this.completionUsage
                             }
                         });
@@ -323,7 +351,7 @@ export class TaskLoop {
                             extraInfo: {
                                 created: Date.now(),
                                 state: toolCallResult.state,
-                                serverName: llms[llmManager.currentModelIndex].id || 'unknown',
+                                serverName: this.getLlmConfig().id || 'unknown',
                                 usage: this.completionUsage
                             }
                         });
@@ -337,7 +365,7 @@ export class TaskLoop {
                     extraInfo: {
                         created: Date.now(),
                         state: MessageState.Success,
-                        serverName: llms[llmManager.currentModelIndex].id || 'unknown',
+                        serverName: this.getLlmConfig().id || 'unknown',
                         usage: this.completionUsage
                     }
                 });

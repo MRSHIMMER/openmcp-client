@@ -13,4 +13,6 @@ mkdir -p ./software/openmcp-sdk
 rm -rf ./software/openmcp-sdk
 cp -r ./openmcp-sdk ./software/
 
+npm run build:task-loop
+
 echo "finish building services in ./openmcp-sdk"

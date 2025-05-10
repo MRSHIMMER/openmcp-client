@@ -30,4 +30,9 @@ New-Item -ItemType Directory -Path ./software/openmcp-sdk -Force
 Remove-Item -Recurse -Force ./software/openmcp-sdk/* -ErrorAction SilentlyContinue
 Copy-Item -Recurse -Path ./openmcp-sdk -Destination ./software/ -Force
 
+$serviceJob = Start-Job -ScriptBlock {
+    param($workDir)
+    npm run build:task-loop
+} -ArgumentList $currentDir
+
 Write-Output "finish building services in ./openmcp-sdk"

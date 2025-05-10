@@ -39,7 +39,9 @@ const router = createRouter({
 
 
 router.beforeEach((to, from, next) => {
-	if (to.meta.title) {
+	const myDocument = document as any;
+
+	if (to.meta.title && myDocument) {
 		document.title = `OpenMCP | ${to.meta.title}`;
 	}
 	next();

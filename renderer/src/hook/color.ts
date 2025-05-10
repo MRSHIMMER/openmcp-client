@@ -147,8 +147,8 @@ interface GetColorOption {
 
 export class MacroColor {
     private option: ComputedColorOption;
-    private rootStyles: CSSStyleDeclaration;
-    private theme: 'light' | 'dark';
+    private rootStyles?: CSSStyleDeclaration;
+    private theme: 'light' | 'dark' = 'dark';
     public foregroundColor: RgbColor | undefined;
     public backgroundColor: RgbColor | undefined;
     public foregroundColorString: string;
@@ -195,7 +195,7 @@ export class MacroColor {
 
         if (mode === 'svg') {
             // svg 模式下，导出的效果和 webview 渲染效果基本一致，直接导出即可
-            return rootStyles.getPropertyValue(macroName);
+            return rootStyles?.getPropertyValue(macroName) || '#fff';
         }
 
         // pdf 模式需要对黑色主题的几个特殊颜色进行处理，并对所有透明颜色进行混合处理
@@ -208,7 +208,7 @@ export class MacroColor {
                 }
         }
 
-        const colorString = rootStyles.getPropertyValue(macroName);
+        const colorString = rootStyles?.getPropertyValue(macroName) || '#fff';
         if (!colorString) {
             // 如果 macroName 不存在，返回空字符串
             return colorString;

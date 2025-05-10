@@ -60,7 +60,13 @@ export default function highlight(option: HighlightOption = {}) {
     const codeElement = codeBlock.querySelector('code');
     const code = codeElement?.textContent || '';
 
-    navigator.clipboard.writeText(code).then(() => {
+    //  支持 nodejs 下运行
+    const thisWindow = window as any;
+    if (!thisWindow || !thisWindow.navigator || !thisWindow.navigator.clipboard) {
+        return;
+    }
+
+    window.navigator.clipboard.writeText(code).then(() => {
         const originalText = button.textContent;
         button.textContent = '已复制';
         setTimeout(() => {

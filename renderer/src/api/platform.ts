@@ -1,14 +1,16 @@
-export type OpenMcpSupportPlatform = 'web' | 'vscode' | 'electron';
+export type OpenMcpSupportPlatform = 'web' | 'vscode' | 'electron' | 'nodejs';
 
 export const acquireVsCodeApi = (window as any)['acquireVsCodeApi'];
-
 export const electronApi = (window as any)['electronApi'];
+export const isNodejs = (window as any)['nodejs'];
 
 export function getPlatform(): OpenMcpSupportPlatform {
-    if (typeof acquireVsCodeApi !== 'undefined') {
+    if (acquireVsCodeApi) {
         return 'vscode';
-    } else if (typeof electronApi !== 'undefined') {
+    } else if (electronApi) {
         return 'electron';
+    } else if (isNodejs) {
+        return 'nodejs';
     } else {
         return 'web';
     }

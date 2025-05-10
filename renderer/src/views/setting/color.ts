@@ -26,6 +26,11 @@ export function onGeneralColorChange(colorString: string) {
         return;
     }
     const { r, g, b } = color;
+
+    const myDocument = document as any;
+    if (!myDocument) {
+        return;
+    }
     
     document.documentElement.style.setProperty(
         '--main-color', `rgb(${r}, ${g}, ${b})`);

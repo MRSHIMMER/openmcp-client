@@ -1,8 +1,7 @@
 import { useMessageBridge } from '@/api/message-bridge';
 import { reactive, ref } from 'vue';
 import { pinkLog } from '../setting/util';
-import { arrowMiddleware, ElMessage } from 'element-plus';
-import { ILaunchSigature } from '@/hook/type';
+import { ElMessage } from 'element-plus';
 import { OpenMcpSupportPlatform } from '@/api/platform';
 
 export const connectionMethods = reactive({
@@ -172,10 +171,7 @@ async function launchStdio(namespace: string) {
             message: msg
         });
 
-        ElMessage({
-            type: 'error',
-            message: msg
-        });
+        ElMessage.error(msg);
     }
 }
 
@@ -226,10 +222,7 @@ async function launchSSE(namespace: string) {
             message: msg
         });
 
-        ElMessage({
-            type: 'error',
-            message: msg
-        });
+        ElMessage.error(msg);
     }
 }
 

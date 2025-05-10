@@ -1,6 +1,5 @@
 import { pinkLog, redLog } from '@/views/setting/util';
 import { acquireVsCodeApi, electronApi, getPlatform } from './platform';
-import { ref } from 'vue';
 
 export interface VSCodeMessage {
 	command: string;
@@ -20,7 +19,7 @@ interface AddCommandListenerOption {
 	once: boolean // 只调用一次就销毁
 }
 
-class MessageBridge {
+export class MessageBridge {
 	private ws: WebSocket | null = null;
 	private handlers = new Map<string, Set<CommandHandler>>();
 	private isConnected: Promise<boolean> | null = null;
@@ -42,6 +41,11 @@ class MessageBridge {
 			case 'electron':
 				this.setupElectronListener();
 				pinkLog('当前模式: electron');
+				break;
+			
+			case 'nodejs':
+				this.setupNodejsListener();
+				pinkLog('当前模式: nodejs');
 				break;
 			
 			case 'web':
@@ -112,6 +116,17 @@ class MessageBridge {
 			console.log(message);
 			electronApi.sendToMain(message);
 		};		
+	}
+
+	private setupNodejsListener() {
+		const EventEmitter = require('events');
+
+		const eventEmitter = new EventEmitter();
+		
+
+		this.postMessage = (message) => {
+			eventEmitter.emit('server', message);
+		};
 	}
 
 	/**

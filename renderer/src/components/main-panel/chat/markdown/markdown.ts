@@ -23,6 +23,12 @@ const pureHighLightMd = new MarkdownIt({
 });
 
 export const copyToClipboard = (text: string) => {
+    //  支持 nodejs 下运行
+    const thisWindow = window as any;
+    if (!thisWindow || !thisWindow.navigator || !thisWindow.navigator.clipboard) {
+        return;
+    }
+    
     return navigator.clipboard.writeText(text);
 };
 
