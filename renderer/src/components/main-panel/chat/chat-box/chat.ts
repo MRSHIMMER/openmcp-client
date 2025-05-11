@@ -51,6 +51,7 @@ interface EnableToolItem {
 	name: string;
 	description: string;
 	enabled: boolean;
+    inputSchema?: any;
 }
 
 export interface ChatSetting {
@@ -117,17 +118,31 @@ export type IRenderMessage = ICommonRenderMessage | IToolRenderMessage;
 export function getToolSchema(enableTools: EnableToolItem[]) {
     const toolsSchema = [];
 	for (let i = 0; i < enableTools.length; i++) {
-		if (enableTools[i].enabled) {
-			const tool = allTools.value[i];
+        const enableTool = enableTools[i];
+
+        if (enableTool.enabled) {
+
+            if (enableTool.inputSchema) {
+                toolsSchema.push({
+                    type: 'function',
+                    function: {
+                        name: enableTool.name,
+                        description: enableTool.description || "",
+                        parameters: enableTool.inputSchema
+                    }
+                });
+            } else {
+                const tool = allTools.value[i];
 			
-			toolsSchema.push({
-				type: 'function',
-				function: {
-					name: tool.name,
-					description: tool.description || "",
-					parameters: tool.inputSchema
-				}
-			});
+                toolsSchema.push({
+                    type: 'function',
+                    function: {
+                        name: tool.name,
+                        description: tool.description || "",
+                        parameters: tool.inputSchema
+                    }
+                });
+            }
 		}
 	}
     return toolsSchema;

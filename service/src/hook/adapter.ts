@@ -131,11 +131,10 @@ export class TaskLoopAdapter {
     public async listTools() {
         const tools = await client?.listTools();
         if (tools?.tools) {
-            return tools.tools.map((tool) => ({
-                name: tool.name,
-                description: tool.description,
-                enabled: true
-            }));
+            return tools.tools.map((tool) => {
+                const enabledTools = { ...tool, enabled: true };
+                return enabledTools;
+            });
         }
         return [];
     }
