@@ -359,11 +359,11 @@ export class TaskLoop {
                 
                 pinkLog('调用工具数量：' + this.streamingToolCalls.value.length);
 
-                for (const toolCall of this.streamingToolCalls.value || []) {
+                for (let toolCall of this.streamingToolCalls.value || []) {
 
-
-                    const toolCallResult = await handleToolCalls(toolCall);
-                    this.onToolCalled(toolCallResult);
+                    toolCall = this.onToolCall(toolCall);
+                    let toolCallResult = await handleToolCalls(toolCall);
+                    toolCallResult = this.onToolCalled(toolCallResult);
     
                     if (toolCallResult.state === MessageState.ParseJsonError) {
                         // 如果是因为解析 JSON 错误，则重新开始

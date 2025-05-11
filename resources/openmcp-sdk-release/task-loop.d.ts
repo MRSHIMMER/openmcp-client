@@ -104,8 +104,8 @@ export class TaskLoop {
      * @description 注册当工具调用完成时的回调函数，会调用这个方法，可以拦截并修改 toolcall 的输出
      * @param handler 
      */
-    registerOnToolCalled(handler: (toolCallResult: ToolCallResult) => void): void;
-    
+    registerOnToolCalled(handler: (toolCallResult: ToolCallResult) => ToolCallResult): void;
+
     /**
      * @description 注册当工具调用前的回调函数，可以拦截并修改 toolcall 的输入
      * @param handler 
