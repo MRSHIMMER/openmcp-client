@@ -39,7 +39,8 @@ export class TaskLoop {
     private onError: (error: IErrorMssage) => void = (msg) => {};
     private onChunk: (chunk: ChatCompletionChunk) => void = (chunk) => {};
     private onDone: () => void = () => {};
-    private onToolCalled: (toolCallResult: ToolCallResult) => void = (toolCall) => {};
+    private onToolCall: (toolCall: ToolCall) => ToolCall = toolCall => toolCall;
+    private onToolCalled: (toolCallResult: ToolCallResult) => ToolCallResult = toolCallResult => toolCallResult;
     private onEpoch: () => void = () => {};
     private completionUsage: ChatCompletionChunk['usage'] | undefined;
     private llmConfig: any;
@@ -220,6 +221,10 @@ export class TaskLoop {
         this.streamingToolCalls.value = [];
     }
 
+    /**
+     * @description 注册 error 发生时触发的回调函数
+     * @param handler 
+     */
     public registerOnError(handler: (msg: IErrorMssage) => void) {
         this.onError = handler;
     }
@@ -228,15 +233,35 @@ export class TaskLoop {
         this.onChunk = handler;
     }
     
+    /**
+     * @description 注册 chat.completion 完成时触发的回调函数
+     * @param handler 
+     */
     public registerOnDone(handler: () => void) {
         this.onDone = handler;
     }
 
+    /**
+     * @description 注册每一个 epoch 开始时触发的回调函数
+     * @param handler 
+     */
     public registerOnEpoch(handler: () => void) {
         this.onEpoch = handler;
     }
 
-    public registerOnToolCalled(handler: (toolCallResult: ToolCallResult) => void) {
+    /**
+     * @description 注册当工具调用前的回调函数，可以拦截并修改 toolcall 的输入
+     * @param handler 
+     */
+    public registerOnToolCall(handler: (toolCall: ToolCall) => ToolCall) {
+        this.onToolCall = handler;
+    }
+
+    /**
+     * @description 注册当工具调用完成时的回调函数，会调用这个方法，可以拦截并修改 toolcall 的输出
+     * @param handler 
+     */
+    public registerOnToolCalled(handler: (toolCallResult: ToolCallResult) => ToolCallResult) {
         this.onToolCalled = handler;
     }
 
@@ -335,6 +360,8 @@ export class TaskLoop {
                 pinkLog('调用工具数量：' + this.streamingToolCalls.value.length);
 
                 for (const toolCall of this.streamingToolCalls.value || []) {
+
+
                     const toolCallResult = await handleToolCalls(toolCall);
                     this.onToolCalled(toolCallResult);
     

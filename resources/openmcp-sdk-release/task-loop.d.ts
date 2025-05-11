@@ -80,15 +80,46 @@ export class TaskLoop {
     private doConversation;
     makeChatData(tabStorage: any): ChatCompletionCreateParamsBase | undefined;
     abort(): void;
+
+    /**
+     * @description 注册 error 发生时触发的回调函数
+     * @param handler 
+     */
     registerOnError(handler: (msg: IErrorMssage) => void): void;
     registerOnChunk(handler: (chunk: ChatCompletionChunk) => void): void;
+
+    /**
+     * @description 注册 chat.completion 完成时触发的回调函数
+     * @param handler 
+     */
     registerOnDone(handler: () => void): void;
+
+    /**
+     * @description 注册每一个 epoch 开始时触发的回调函数
+     * @param handler 
+     */
     registerOnEpoch(handler: () => void): void;
+
+    /**
+     * @description 注册当工具调用完成时的回调函数，会调用这个方法，可以拦截并修改 toolcall 的输出
+     * @param handler 
+     */
     registerOnToolCalled(handler: (toolCallResult: ToolCallResult) => void): void;
-    setMaxEpochs(maxEpochs: number): void;
+    
+    /**
+     * @description 注册当工具调用前的回调函数，可以拦截并修改 toolcall 的输入
+     * @param handler 
+     */
+    registerOnToolCall(handler: (toolCall: ToolCall) => ToolCall): void;
+
+    /**
+     * @description 获取当前的 LLM 配置
+     */
+    getLlmConfig(): any;
+
     /**
      * @description 设置当前的 LLM 配置，用于 nodejs 环境运行
-     * @param config
+     * @param config 
      * @example
      * setLlmConfig({
      *     id: 'openai',
@@ -98,7 +129,12 @@ export class TaskLoop {
      * })
      */
     setLlmConfig(config: any): void;
-    getLlmConfig(): any;
+
+    /**
+     * @description 设置最大 epoch 次数
+     * @param maxEpochs 
+     */
+    setMaxEpochs(maxEpochs: number): void;
     bindStreaming(content: Ref<string>, toolCalls: Ref<ToolCall[]>): void;
     connectToService(): Promise<void>;
     /**
