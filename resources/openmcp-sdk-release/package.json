@@ -1,0 +1,26 @@
+{
+    "name": "openmcp-sdk",
+    "version": "0.0.1",
+    "description": "openmcp-sdk",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/LSTM-Kirigaya/openmcp-client"
+    },
+    "keywords": [
+        "mcp",
+        "openmcp",
+        "openmcp-sdk",
+        "llm framework",
+        "agent",
+        "ai agent"
+    ],
+    "author": "kirigaya",
+    "license": "Apache-2.0",
+    "bugs": {
+        "url": "https://github.com/LSTM-Kirigaya/openmcp-client/issues"
+    },
+    "homepage": "https://document.kirigaya.cn/blogs/openmcp/main.html"
+}

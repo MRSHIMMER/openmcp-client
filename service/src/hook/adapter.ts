@@ -70,9 +70,13 @@ export class EventAdapter {
     public emitter: EventEmitter;
     private messageHandlers: Set<MessageHandler>;
 
-    constructor(option: any) {
+    constructor(option?: any) {
         this.emitter = new EventEmitter(option);
         this.messageHandlers = new Set();
+
+        this.emitter.on('message/renderer', (message: WebSocketMessage) => {
+            this.messageHandlers.forEach((handler) => handler(message));
+        });
     }
 
     /**
@@ -80,6 +84,8 @@ export class EventAdapter {
      * @param message - 包含 command 和 args 的消息
      */
     postMessage(message: WebSocketMessage): void {
+        console.log('message/renderer', message);
+        
         this.emitter.emit('message/service', message);
     }
 

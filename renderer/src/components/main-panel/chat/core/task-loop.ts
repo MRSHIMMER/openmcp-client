@@ -12,9 +12,9 @@ import { getPlatform } from "@/api/platform";
 export type ChatCompletionChunk = OpenAI.Chat.Completions.ChatCompletionChunk;
 export type ChatCompletionCreateParamsBase = OpenAI.Chat.Completions.ChatCompletionCreateParams & { id?: string };
 export interface TaskLoopOptions {
-    maxEpochs: number;
-    maxJsonParseRetry: number;
-    adapter: any;
+    maxEpochs?: number;
+    maxJsonParseRetry?: number;
+    adapter?: any;
 }
 
 export interface IErrorMssage {
@@ -277,8 +277,9 @@ export class TaskLoop {
         });
 
         let jsonParseErrorRetryCount = 0;
+        const maxEpochs = this.taskOptions.maxEpochs || 20;
 
-        for (let i = 0; i < this.taskOptions.maxEpochs; ++ i) {
+        for (let i = 0; i < maxEpochs; ++ i) {
 
             this.onEpoch();
 
@@ -330,7 +331,7 @@ export class TaskLoop {
                         redLog('解析 JSON 错误 ' + toolCall?.function?.arguments);
     
                         // 如果因为 JSON 错误而失败太多，就只能中断了
-                        if (jsonParseErrorRetryCount >= this.taskOptions.maxJsonParseRetry) {
+                        if (jsonParseErrorRetryCount >= (this.taskOptions.maxJsonParseRetry || 3)) {
                             tabStorage.messages.push({
                                 role: 'assistant',
                                 content: `解析 JSON 错误，无法继续调用工具 (累计错误次数 ${this.taskOptions.maxJsonParseRetry})`,

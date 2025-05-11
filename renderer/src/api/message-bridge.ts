@@ -124,11 +124,11 @@ export class MessageBridge {
 	}
 
 	private setupNodejsListener() {
-		const { EventEmitter } = require('events');
-
+		console.log('setup');
+		
 		const emitter = this.setupSignature;
-		if (!(emitter instanceof EventEmitter)) {
-			throw new Error('setupSignature must be an EventEmitter');
+		if (!emitter.on || !emitter.emit) {
+			return;
 		}
 
 		emitter.on('message/service', (message: VSCodeMessage) => {
