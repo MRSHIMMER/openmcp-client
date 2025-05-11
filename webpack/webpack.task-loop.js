@@ -35,10 +35,15 @@ module.exports = {
         ],
     },
     optimization: {
-        minimize: false, // 禁用代码压缩
+        minimize: true, // Enable code compression
         minimizer: [
             new TerserPlugin({
-                extractComments: false, // 禁用提取许可证文件
+                extractComments: false, // Disable extracting license files
+                terserOptions: {
+                    compress: {
+                        drop_console: true, // Remove all console.* calls
+                    },
+                },
             }),
         ],
     },

@@ -124,7 +124,6 @@ export class MessageBridge {
 	}
 
 	private setupNodejsListener() {
-		console.log('setup');
 		
 		const emitter = this.setupSignature;
 		if (!emitter.on || !emitter.emit) {
