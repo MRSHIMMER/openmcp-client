@@ -1,8 +1,13 @@
-import { ToolCallResponse } from "@/hook/type";
+import { ToolCallContent, ToolCallResponse } from "@/hook/type";
 import { callTool } from "../../tool/tools";
 import { MessageState, ToolCall } from "../chat-box/chat";
 
-export async function handleToolCalls(toolCall: ToolCall) {
+export interface ToolCallResult {
+    state: MessageState;
+    content: ToolCallContent[];
+}
+
+export async function handleToolCalls(toolCall: ToolCall): Promise<ToolCallResult> {
     // 反序列化 streaming 来的参数字符串
     const toolName = toolCall.function.name;
     const argsResult = deserializeToolCallResponse(toolCall.function.arguments);

@@ -221,9 +221,13 @@ export class MessageBridge {
 // 单例实例
 let messageBridge: MessageBridge;
 
+export function createMessageBridge(setupSignature: any) {
+	messageBridge = new MessageBridge(setupSignature);
+}
+
 // 向外暴露一个独立函数，保证 MessageBridge 是单例的
 export function useMessageBridge() {
-	if (!messageBridge) {
+	if (!messageBridge && getPlatform() !== 'nodejs') {
 		messageBridge = new MessageBridge('ws://localhost:8080');
 	}
 	const bridge = messageBridge;

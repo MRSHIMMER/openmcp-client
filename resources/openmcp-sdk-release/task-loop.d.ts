@@ -24,6 +24,17 @@ export interface ToolCall {
     }
 }
 
+export interface ToolCallContent {
+    type: string;
+    text: string;
+	[key: string]: any;
+}
+
+export interface ToolCallResult {
+    state: MessageState;
+    content: ToolCallContent[];
+}
+
 export enum MessageState {
     ServerError = 'server internal error',
     ReceiveChunkError = 'receive chunk error',
@@ -58,6 +69,7 @@ export class TaskLoop {
     private onError;
     private onChunk;
     private onDone;
+    private onToolCalled;
     private onEpoch;
     private completionUsage;
     private llmConfig;
@@ -72,6 +84,7 @@ export class TaskLoop {
     registerOnChunk(handler: (chunk: ChatCompletionChunk) => void): void;
     registerOnDone(handler: () => void): void;
     registerOnEpoch(handler: () => void): void;
+    registerOnToolCalled(handler: (toolCallResult: ToolCallResult) => void): void;
     setMaxEpochs(maxEpochs: number): void;
     /**
      * @description 设置当前的 LLM 配置，用于 nodejs 环境运行

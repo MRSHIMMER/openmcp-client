@@ -1,12 +1,12 @@
 /* eslint-disable */
 import { ref, type Ref } from "vue";
 import { ToolCall, ChatStorage, getToolSchema, MessageState } from "../chat-box/chat";
-import { useMessageBridge, MessageBridge } from "@/api/message-bridge";
+import { useMessageBridge, MessageBridge, createMessageBridge } from "@/api/message-bridge";
 import type { OpenAI } from 'openai';
 import { llmManager, llms } from "@/views/setting/llm";
 import { pinkLog, redLog } from "@/views/setting/util";
 import { ElMessage } from "element-plus";
-import { handleToolCalls } from "./handle-tool-calls";
+import { handleToolCalls, ToolCallResult } from "./handle-tool-calls";
 import { getPlatform } from "@/api/platform";
 
 export type ChatCompletionChunk = OpenAI.Chat.Completions.ChatCompletionChunk;
@@ -39,6 +39,7 @@ export class TaskLoop {
     private onError: (error: IErrorMssage) => void = (msg) => {};
     private onChunk: (chunk: ChatCompletionChunk) => void = (chunk) => {};
     private onDone: () => void = () => {};
+    private onToolCalled: (toolCallResult: ToolCallResult) => void = (toolCall) => {};
     private onEpoch: () => void = () => {};
     private completionUsage: ChatCompletionChunk['usage'] | undefined;
     private llmConfig: any;
@@ -52,17 +53,17 @@ export class TaskLoop {
         // 根据当前环境决定是否要开启 messageBridge
         const platform = getPlatform();
         if (platform === 'nodejs') {
-
             const adapter = taskOptions.adapter;
 
             if (!adapter) {
                 throw new Error('adapter is required');
             }
 
-            this.bridge = new MessageBridge(adapter.emitter);
-        } else {
-            this.bridge = useMessageBridge();
-        }     
+            createMessageBridge(adapter.emitter);
+        }
+
+        // web 环境下 bridge 会自动加载完成
+        this.bridge = useMessageBridge();
     }
 
     private handleChunkDeltaContent(chunk: ChatCompletionChunk) {
@@ -235,6 +236,10 @@ export class TaskLoop {
         this.onEpoch = handler;
     }
 
+    public registerOnToolCalled(handler: (toolCallResult: ToolCallResult) => void) {
+        this.onToolCalled = handler;
+    }
+
     public setMaxEpochs(maxEpochs: number) {
         this.taskOptions.maxEpochs = maxEpochs;
     }
@@ -331,6 +336,7 @@ export class TaskLoop {
 
                 for (const toolCall of this.streamingToolCalls.value || []) {
                     const toolCallResult = await handleToolCalls(toolCall);
+                    this.onToolCalled(toolCallResult);
     
                     if (toolCallResult.state === MessageState.ParseJsonError) {
                         // 如果是因为解析 JSON 错误，则重新开始

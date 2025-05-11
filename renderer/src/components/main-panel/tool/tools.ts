@@ -16,9 +16,9 @@ export interface ToolStorage {
     formData: Record<string, any>;
 }
 
-const bridge = useMessageBridge();
 
 export function callTool(toolName: string, toolArgs: Record<string, any>) {
+    const bridge = useMessageBridge();
     return new Promise<ToolCallResponse>((resolve, reject) => {
         bridge.addCommandListener('tools/call', (data: CasualRestAPI<ToolCallResponse>) => {
             console.log(data.msg);
