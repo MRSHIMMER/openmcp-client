@@ -93,7 +93,8 @@ function handleSend(newMessage?: string) {
     isLoading.value = true;
     autoScroll.value = true;
     
-    loop = new TaskLoop(streamingContent, streamingToolCalls);
+    loop = new TaskLoop();
+    loop.bindStreaming(streamingContent, streamingToolCalls);
 
     loop.registerOnError((error) => {
         console.log('error.msg');

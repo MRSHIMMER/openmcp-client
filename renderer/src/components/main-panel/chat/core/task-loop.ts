@@ -1,5 +1,5 @@
 /* eslint-disable */
-import type { Ref } from "vue";
+import { ref, type Ref } from "vue";
 import { ToolCall, ChatStorage, getToolSchema, MessageState } from "../chat-box/chat";
 import { useMessageBridge, MessageBridge } from "@/api/message-bridge";
 import type { OpenAI } from 'openai';
@@ -32,6 +32,9 @@ export interface IDoConversationResult {
  */
 export class TaskLoop {
     private bridge: MessageBridge;
+    private streamingContent: Ref<string>;
+    private streamingToolCalls: Ref<ToolCall[]>;
+
     private currentChatId = '';
     private onError: (error: IErrorMssage) => void = (msg) => {};
     private onChunk: (chunk: ChatCompletionChunk) => void = (chunk) => {};
@@ -41,10 +44,11 @@ export class TaskLoop {
     private llmConfig: any;
 
     constructor(
-        private readonly streamingContent: Ref<string>,
-        private readonly streamingToolCalls: Ref<ToolCall[]>,
         private readonly taskOptions: TaskLoopOptions = { maxEpochs: 20, maxJsonParseRetry: 3, adapter: undefined },
     ) {
+        this.streamingContent = ref('');
+        this.streamingToolCalls = ref([]);
+
         // 根据当前环境决定是否要开启 messageBridge
         const platform = getPlatform();
         if (platform === 'nodejs') {
@@ -150,7 +154,7 @@ export class TaskLoop {
 
             }, { once: true });
 
-            console.log(chatData);
+            // console.log(chatData);
 
             this.bridge.postMessage({
                 command: 'llm/chat/completions',
@@ -250,6 +254,11 @@ export class TaskLoop {
         this.llmConfig = config;
     }
 
+    public bindStreaming(content: Ref<string>, toolCalls: Ref<ToolCall[]>) {
+        this.streamingContent = content;
+        this.streamingToolCalls = toolCalls;
+    }
+
     public getLlmConfig() {
         if (this.llmConfig) {
             return this.llmConfig;
@@ -301,8 +310,8 @@ export class TaskLoop {
             // 发送请求
             const doConverationResult = await this.doConversation(chatData);
 
+            console.log('[doConverationResult] Response');
             console.log(doConverationResult);
-            
 
             // 如果存在需要调度的工具
             if (this.streamingToolCalls.value.length > 0) {

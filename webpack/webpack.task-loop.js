@@ -45,6 +45,7 @@ module.exports = {
     plugins: [
         new webpack.DefinePlugin({
             window: {
+                nodejs: true,
                 navigator: {
                     userAgent: 2
                 },

@@ -1,5 +1,5 @@
 import { requestHandlerStorage } from ".";
-import { PostMessageble } from "../hook/adapter";
+import type { PostMessageble } from "../hook/adapter";
 import { LlmController } from "../llm/llm.controller";
 import { ClientController } from "../mcp/client.controller";
 import { ConnectController } from "../mcp/connect.controller";

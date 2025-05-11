@@ -26,9 +26,7 @@ export async function makeSimpleTalk() {
     // 使用最简单的 hello 来测试
     const testMessage = 'hello';
 
-    const s1 = ref('');
-    const s2 = ref([]);
-    const loop = new TaskLoop(s1, s2);
+    const loop = new TaskLoop();
 
     const chatStorage: ChatStorage = {
         messages: [],

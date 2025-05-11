@@ -1,5 +1,8 @@
 import { WebSocket } from 'ws';
 import { EventEmitter } from 'events';
+import { routeMessage } from '../common/router';
+import { McpOptions } from '../mcp/client.dto';
+import { client, connectService } from '../mcp/connect.service';
 
 // WebSocket 消息格式
 export interface WebSocketMessage {
@@ -66,7 +69,7 @@ export class VSCodeWebViewLike {
 }
 
 
-export class EventAdapter {
+export class TaskLoopAdapter {
     public emitter: EventEmitter;
     private messageHandlers: Set<MessageHandler>;
 
@@ -77,28 +80,48 @@ export class EventAdapter {
         this.emitter.on('message/renderer', (message: WebSocketMessage) => {
             this.messageHandlers.forEach((handler) => handler(message));
         });
+
+        // 默认需要将监听的消息导入到 routeMessage 中
+        this.onDidReceiveMessage((message) => {
+            const { command, data } = message;        
+            routeMessage(command, data, this);
+        });
+    
     }
 
     /**
-     * 发送消息
+     * @description 发送消息
      * @param message - 包含 command 和 args 的消息
      */
-    postMessage(message: WebSocketMessage): void {
-        console.log('message/renderer', message);
-        
+    public postMessage(message: WebSocketMessage): void {        
         this.emitter.emit('message/service', message);
     }
 
     /**
-     * 接收消息
+     * @description 注册接受消息的句柄
      * @param callback - 消息回调
      * @returns {{ dispose: () => void }} - 可销毁的监听器
      */
-    onDidReceiveMessage(callback: MessageHandler): { dispose: () => void } {
+    public onDidReceiveMessage(callback: MessageHandler): { dispose: () => void } {
         this.messageHandlers.add(callback);
         return {
             dispose: () => this.messageHandlers.delete(callback),
         };
+    }
+
+    /**
+     * @description 连接到 mcp 服务端
+     * @param mcpOption 
+     */
+    public async connectMcpServer(mcpOption: McpOptions) {
+        const res = await connectService(undefined, mcpOption);
+        if (res.code === 200) {
+            console.log('✅ 成功连接 mcp 服务器： '  + res.msg);
+            const version = client?.getServerVersion();
+            console.log(version);
+        } else {
+            console.error('❌ 连接 mcp 服务器失败：' + res.msg);
+        }
     }
 }
 
