@@ -37,6 +37,16 @@ export async function connectService(
 ): Promise<RestfulResponse> {
 	try {
 		console.log('ready to connect', option);
+
+		// 对于特殊表示的路径，进行特殊的支持
+		if (option.args) {
+			option.args = option.args.map(arg => {
+				if (arg.startsWith('~/')) {
+					return arg.replace('~', process.env.HOME || '');
+				}
+				return arg;
+			});
+		}
 		
 		client = await connect(option);
 		const connectResult = {

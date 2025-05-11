@@ -50,8 +50,8 @@ export interface IDoConversationResult {
  * @description 对任务循环进行的抽象封装
  */
 export class TaskLoop {
-    private readonly streamingContent;
-    private readonly streamingToolCalls;
+    private streamingContent;
+    private streamingToolCalls;
     private readonly taskOptions;
     private bridge;
     private currentChatId;
@@ -61,7 +61,7 @@ export class TaskLoop {
     private onEpoch;
     private completionUsage;
     private llmConfig;
-    constructor(streamingContent: Ref<string>, streamingToolCalls: Ref<ToolCall[]>, taskOptions?: TaskLoopOptions);
+    constructor(taskOptions?: TaskLoopOptions);
     private handleChunkDeltaContent;
     private handleChunkDeltaToolCalls;
     private handleChunkUsage;
@@ -86,6 +86,7 @@ export class TaskLoop {
      */
     setLlmConfig(config: any): void;
     getLlmConfig(): any;
+    bindStreaming(content: Ref<string>, toolCalls: Ref<ToolCall[]>): void;
     connectToService(): Promise<void>;
     /**
      * @description 开启循环，异步更新 DOM

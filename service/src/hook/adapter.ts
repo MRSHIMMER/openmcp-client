@@ -123,5 +123,21 @@ export class TaskLoopAdapter {
             console.error('❌ 连接 mcp 服务器失败：' + res.msg);
         }
     }
+
+    /**
+     * @description 获取 mcp 服务器的工具列表
+     * @returns 
+     */
+    public async listTools() {
+        const tools = await client?.listTools();
+        if (tools?.tools) {
+            return tools.tools.map((tool) => ({
+                name: tool.name,
+                description: tool.description,
+                enabled: true
+            }));
+        }
+        return [];
+    }
 }
 
