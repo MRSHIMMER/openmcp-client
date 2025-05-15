@@ -1,4 +1,4 @@
-import { ResourcesReadResponse, ResourceTemplate, Resources } from '@/hook/type';
+import type { ResourcesReadResponse, ResourceTemplate, Resources } from '@/hook/type';
 import { reactive } from 'vue';
 
 

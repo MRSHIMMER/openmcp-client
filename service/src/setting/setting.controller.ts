@@ -17,7 +17,6 @@ export class SettingController {
 
     @Controller('setting/load')
     async loadSetting(client: RequestClientType, data: any, webview: PostMessageble) {
-        console.log('enter loading');
         
         const config = loadSetting();
         return {
@@ -41,7 +40,6 @@ export class SettingController {
 
     @Controller('setting/get-tour')
     async getTourController(client: RequestClientType, data: any, webview: PostMessageble) {
-        console.log('enter');
         
         const { userHasReadGuide } = getTour();
 

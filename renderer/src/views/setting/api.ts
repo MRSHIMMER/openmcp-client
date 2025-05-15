@@ -1,4 +1,4 @@
-import { ChatStorage } from '@/components/main-panel/chat/chat-box/chat';
+import type { ChatStorage } from '@/components/main-panel/chat/chat-box/chat';
 import { TaskLoop } from '@/components/main-panel/chat/core/task-loop';
 import { llmManager } from './llm';
 import { reactive, ref } from 'vue';
@@ -60,7 +60,7 @@ export async function makeSimpleTalk() {
     await loop.start(chatStorage, testMessage);
 
     const costTime = (performance.now() - startTime!) / 1000;
-    const message = chatStorage.messages.at(-1);
+    const message = chatStorage.messages[chatStorage.messages.length - 1];
     console.log(chatStorage.messages);
 
     if (message?.extraInfo) {
@@ -70,5 +70,4 @@ export async function makeSimpleTalk() {
             simpleTestResult.tps = (total / costTime).toFixed(2);
         }
     }
-    
 }

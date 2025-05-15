@@ -1,6 +1,6 @@
 import { useMessageBridge } from '@/api/message-bridge';
 import { mcpSetting } from '@/hook/mcp';
-import { ToolsListResponse, ToolCallResponse, CasualRestAPI } from '@/hook/type';
+import type { ToolsListResponse, ToolCallResponse, CasualRestAPI } from '@/hook/type';
 import { pinkLog } from '@/views/setting/util';
 import { reactive } from 'vue';
 

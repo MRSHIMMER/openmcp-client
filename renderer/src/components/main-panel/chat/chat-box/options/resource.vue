@@ -24,8 +24,8 @@
 <script setup lang="ts">
 import { createApp, inject, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { ChatStorage, EditorContext } from '../chat';
-import { Resources, ResourcesReadResponse, ResourceTemplate } from '@/hook/type';
+import type { ChatStorage, EditorContext } from '../chat';
+import type { Resources, ResourcesReadResponse, ResourceTemplate } from '@/hook/type';
 
 import ResourceList from '@/components/main-panel/resource/resource-list.vue';
 import ResourceReader from '@/components/main-panel/resource/resouce-reader.vue';

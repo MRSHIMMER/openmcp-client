@@ -6,6 +6,7 @@ import { VSCodeWebViewLike } from './hook/adapter';
 import path from 'node:path';
 import * as fs from 'node:fs';
 import { setRunningCWD } from './hook/setting';
+import { exit } from 'node:process';
 
 export interface VSCodeMessage {
     command: string;
@@ -72,6 +73,13 @@ function getInitConnectionOption() {
     }
 }
 
+if (!fs.existsSync(path.join(__dirname, '..', '.env.website.local'))) {
+    console.log('.env.website.local 不存在！');
+    exit(0);
+}
+
+const authPassword = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '.env.website.local'), 'utf-8')).password;
+
 function updateConnectionOption(data: any) {
     const envPath = path.join(__dirname, '..', '.env');
     
@@ -117,7 +125,42 @@ wss.on('connection', (ws: any) => {
     // 注册消息接受的管线
     webview.onDidReceiveMessage(message => {
         logger.info(`command: [${message.command || 'No Command'}]`);
-        const { command, data } = message;
+        const { command, data, password } = message;
+
+        console.log(command, data);
+        
+
+        if (command === 'ciallo') {
+            if (data.password === authPassword) {
+                webview.postMessage({
+                    command,
+                    data: {
+                        code: 200,
+                        msg: 'ciallo'
+                    }
+                });
+            } else {
+                webview.postMessage({
+                    command,
+                    data: {
+                        code: 403,
+                        msg: '没有权限'
+                    }
+                });
+            }
+            return;
+        }
+
+        if (password !== authPassword) {
+            webview.postMessage({
+                command,
+                data: {
+                    code: 403,
+                    msg: '没有权限'
+                }
+            });
+            return;
+        }
 
         switch (command) {
             case 'web/launch-signature':

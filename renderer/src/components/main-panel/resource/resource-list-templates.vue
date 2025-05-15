@@ -30,10 +30,10 @@
 
 <script setup lang="ts">
 import { useMessageBridge } from '@/api/message-bridge';
-import { CasualRestAPI, ResourceTemplate, ResourceTemplatesListResponse } from '@/hook/type';
+import type { CasualRestAPI, ResourceTemplate, ResourceTemplatesListResponse } from '@/hook/type';
 import { onMounted, onUnmounted, defineProps, ref, reactive } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { resourcesManager, ResourceStorage } from './resources';
+import { resourcesManager, type ResourceStorage } from './resources';
 import { tabs } from '../panel';
 import { ElMessage } from 'element-plus';
 

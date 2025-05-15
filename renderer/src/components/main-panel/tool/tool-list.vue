@@ -31,10 +31,10 @@
 
 <script setup lang="ts">
 import { useMessageBridge } from '@/api/message-bridge';
-import { CasualRestAPI, ToolsListResponse } from '@/hook/type';
+import type { CasualRestAPI, ToolsListResponse } from '@/hook/type';
 import { onMounted, onUnmounted, defineProps } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { toolsManager, ToolStorage } from './tools';
+import { toolsManager, type ToolStorage } from './tools';
 import { tabs } from '../panel';
 import { ElMessage } from 'element-plus';
 

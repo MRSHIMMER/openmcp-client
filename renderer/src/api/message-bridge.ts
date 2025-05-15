@@ -1,10 +1,12 @@
 import { pinkLog, redLog } from '@/views/setting/util';
 import { acquireVsCodeApi, electronApi, getPlatform } from './platform';
+import { privilegeStatus } from '@/components/password-dialog/status';
 
 export interface VSCodeMessage {
 	command: string;
 	data?: unknown;
 	callbackId?: string;
+	password?: string;
 }
 
 export interface RestFulResponse {
@@ -92,6 +94,7 @@ export class MessageBridge {
 		this.postMessage = (message) => {
 			if (this.ws?.readyState === WebSocket.OPEN) {
 				console.log('send', message);
+				message.password = privilegeStatus.password;
 				this.ws.send(JSON.stringify(message));
 			}
 		};
@@ -105,7 +108,7 @@ export class MessageBridge {
 		});
 	}
 
-	public async awaitForWebsockt() {
+	public async awaitForWebsocket() {
 		if (this.isConnected) {
 			await this.isConnected;
 		}

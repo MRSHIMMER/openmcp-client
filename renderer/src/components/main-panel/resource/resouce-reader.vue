@@ -38,8 +38,8 @@ import { defineComponent, defineProps, watch, ref, computed, reactive, defineEmi
 import { useI18n } from 'vue-i18n';
 import type { FormInstance, FormRules } from 'element-plus';
 import { tabs } from '../panel';
-import { parseResourceTemplate, resourcesManager, ResourceStorage } from './resources';
-import { CasualRestAPI, ResourcesReadResponse } from '@/hook/type';
+import { parseResourceTemplate, resourcesManager, type ResourceStorage } from './resources';
+import type{ CasualRestAPI, ResourcesReadResponse } from '@/hook/type';
 import { useMessageBridge } from '@/api/message-bridge';
 import { getDefaultValue, normaliseJavascriptType } from '@/hook/mcp';
 

@@ -1,7 +1,7 @@
 import { markRaw, reactive } from 'vue';
 import { createTab, debugModes, tabs } from '@/components/main-panel/panel';
-import { ToolStorage } from '@/components/main-panel/tool/tools';
-import { ToolCall } from '@/components/main-panel/chat/chat-box/chat';
+import type { ToolStorage } from '@/components/main-panel/tool/tools';
+import type { ToolCall } from '@/components/main-panel/chat/chat-box/chat';
 
 import I18n from '@/i18n';
 const { t } = I18n.global;

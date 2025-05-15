@@ -57,6 +57,10 @@ export async function connectService(
         return connectResult;
 	} catch (error) {
 
+		console.log('meet error');
+		console.log(error);
+		
+
 		// TODO: 这边获取到的 error 不够精致，如何才能获取到更加精准的错误
 		// 比如	error: Failed to spawn: `server.py`
   		//		  Caused by: No such file or directory (os error 2)

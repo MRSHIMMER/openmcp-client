@@ -1,12 +1,12 @@
 /* eslint-disable */
 import { ref, type Ref } from "vue";
-import { ToolCall, ChatStorage, getToolSchema, MessageState } from "../chat-box/chat";
+import { type ToolCall, type ChatStorage, getToolSchema, MessageState } from "../chat-box/chat";
 import { useMessageBridge, MessageBridge, createMessageBridge } from "@/api/message-bridge";
 import type { OpenAI } from 'openai';
 import { llmManager, llms } from "@/views/setting/llm";
 import { pinkLog, redLog } from "@/views/setting/util";
 import { ElMessage } from "element-plus";
-import { handleToolCalls, ToolCallResult } from "./handle-tool-calls";
+import { handleToolCalls, type ToolCallResult } from "./handle-tool-calls";
 import { getPlatform } from "@/api/platform";
 
 export type ChatCompletionChunk = OpenAI.Chat.Completions.ChatCompletionChunk;

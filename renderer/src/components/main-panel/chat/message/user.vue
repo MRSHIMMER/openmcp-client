@@ -32,7 +32,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, ref, PropType, inject } from 'vue';
+import { defineProps, ref, type PropType, inject } from 'vue';
 import { tabs } from '../../panel';
 import type { ChatStorage, IRenderMessage } from '../chat-box/chat';
 

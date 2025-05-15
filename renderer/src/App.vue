@@ -4,6 +4,7 @@
 		<MainPanel></MainPanel>
 
 		<Tour v-if="!userHasReadGuide"/>
+		<PasswordDialog v-if="password"/>
 	</div>
 </template>
 
@@ -17,14 +18,13 @@ import MainPanel from '@/components/main-panel/index.vue';
 import { setDefaultCss } from './hook/css';
 import { greenLog, pinkLog } from './views/setting/util';
 import { useMessageBridge } from './api/message-bridge';
-import { doConnect, loadEnvVar } from './views/connect/connection';
-import { getTour, loadSetting } from './hook/setting';
-import { loadPanels } from './hook/panel';
+import { initialise } from './views/connect/connection';
 import { getPlatform } from './api/platform';
 import Tour from '@/components/guide/tour.vue';
 import { userHasReadGuide } from './components/guide/tour';
 
-import { ElLoading } from 'element-plus';
+import PasswordDialog from '@/components/password-dialog/index.vue';
+import { privilegeStatus } from './components/password-dialog/status';
 
 const bridge = useMessageBridge();
 
@@ -37,23 +37,14 @@ bridge.addCommandListener('hello', data => {
 const route = useRoute();
 const router = useRouter();
 
-onMounted(async () => {
-	const loading = ElLoading.service({
-		fullscreen: true,
-		lock: true,
-		text: 'Loading',
-		background: 'rgba(0, 0, 0, 0.7)'
-	});
+const password = Boolean(import.meta.env.VITE_USE_PASSWORD);
+privilegeStatus.allow = !Boolean(password);
 
+onMounted(async () => {
 	// 初始化 css
 	setDefaultCss();
 
-	document.addEventListener('click', () => {
-		Connection.showPanel = false;
-	});
-
 	pinkLog('OpenMCP Client 启动');
-
 	const platform = getPlatform();
 
 	// 跳转到首页
@@ -65,29 +56,18 @@ onMounted(async () => {
 	}
 
 	// 进行桥接
-	await bridge.awaitForWebsockt();
+	await bridge.awaitForWebsocket();
 
-	pinkLog('准备请求设置');
+	// 根据是否需要密码进行后续的选择
+	if (!privilegeStatus.allow) {
+		return;
+	}
 
-	// 加载全局设置
-	loadSetting();
-
-	// 设置环境变量
-	loadEnvVar();
-
-	// 获取引导状态
-	getTour();
-
-	// 尝试进行初始化连接
-	await doConnect({
-		namespace: platform,
-		updateCommandString: true
+	document.addEventListener('click', () => {
+		Connection.showPanel = false;
 	});
 
-	// loading panels
-	await loadPanels();
-
-	loading.close();
+	await initialise();
 });
 
 </script>

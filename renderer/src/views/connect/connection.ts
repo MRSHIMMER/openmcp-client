@@ -1,8 +1,10 @@
 import { useMessageBridge } from '@/api/message-bridge';
 import { reactive, ref } from 'vue';
 import { pinkLog } from '../setting/util';
-import { ElMessage } from 'element-plus';
-import { OpenMcpSupportPlatform } from '@/api/platform';
+import { ElLoading, ElMessage } from 'element-plus';
+import { getPlatform, type OpenMcpSupportPlatform } from '@/api/platform';
+import { getTour, loadSetting } from '@/hook/setting';
+import { loadPanels } from '@/hook/panel';
 
 export const connectionMethods = reactive({
     current: 'STDIO',
@@ -98,7 +100,7 @@ export async function doConnect(
             }
         } else {
             connectionMethods.current = 'SSE';
-            connectionArgs.urlString = connectionItem.url;
+            connectionArgs.urlString = connectionItem.url || '';
             
             if (connectionArgs.urlString.length === 0) {
                 return;
@@ -345,4 +347,37 @@ export async function handleEnvSwitch(enabled: boolean) {
 
 export async function loadEnvVar() {
     return await handleEnvSwitch(true);
+}
+
+export async function initialise() {
+
+	pinkLog('准备请求设置');
+    
+    const loading = ElLoading.service({
+		fullscreen: true,
+		lock: true,
+		text: 'Loading',
+		background: 'rgba(0, 0, 0, 0.7)'
+	});
+    const platform = getPlatform();
+    
+	// 加载全局设置
+	loadSetting();
+
+	// 设置环境变量
+	await loadEnvVar();
+
+	// 获取引导状态
+	await getTour();
+
+	// 尝试进行初始化连接
+	await doConnect({
+		namespace: platform,
+		updateCommandString: true
+	});
+
+	// loading panels
+	await loadPanels();
+
+	loading.close();
 }

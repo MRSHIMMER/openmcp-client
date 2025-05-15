@@ -1,4 +1,4 @@
-import Prism from "./prism";
+import Prism from 'prismjs';
 
 // 定义 escapeHtml 函数
 function escapeHtml(unsafe: string) {

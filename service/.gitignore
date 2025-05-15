@@ -26,4 +26,5 @@ setting.json
 
 *.traineddata
 .env
-tabs.example-servers_puppeteer.json
+tabs.*
+update.sh

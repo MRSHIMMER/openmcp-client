@@ -1,4 +1,4 @@
-import { PromptsGetResponse, PromptTemplate } from '@/hook/type';
+import type { PromptsGetResponse, PromptTemplate } from '@/hook/type';
 import { reactive } from 'vue';
 
 export const promptsManager = reactive<{

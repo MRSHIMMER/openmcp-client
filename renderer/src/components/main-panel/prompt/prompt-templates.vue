@@ -27,10 +27,10 @@
 
 <script setup lang="ts">
 import { useMessageBridge } from '@/api/message-bridge';
-import { CasualRestAPI, PromptTemplate, PromptsListResponse } from '@/hook/type';
+import type { CasualRestAPI, PromptTemplate, PromptsListResponse } from '@/hook/type';
 import { onMounted, onUnmounted, defineProps, defineEmits, reactive } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { promptsManager, PromptStorage } from './prompts';
+import { promptsManager, type PromptStorage } from './prompts';
 import { tabs } from '../panel';
 import { ElMessage } from 'element-plus';
 

@@ -26,8 +26,8 @@
 <script setup lang="ts">
 import { createApp, inject, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { ChatStorage, EditorContext } from '../chat';
-import { PromptsGetResponse, PromptTemplate } from '@/hook/type';
+import type { ChatStorage, EditorContext } from '../chat';
+import type { PromptsGetResponse, PromptTemplate } from '@/hook/type';
 
 import PromptTemplates from '@/components/main-panel/prompt/prompt-templates.vue';
 import PromptReader from '@/components/main-panel/prompt/prompt-reader.vue';

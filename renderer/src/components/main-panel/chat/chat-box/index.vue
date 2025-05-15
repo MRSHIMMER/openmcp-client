@@ -21,12 +21,13 @@
 </template>
 
 <script setup lang="ts">
-import { provide, onMounted, onUnmounted, ref, defineEmits, defineProps, PropType, inject, Ref } from 'vue';
+import { provide, onMounted, onUnmounted, ref, defineEmits, defineProps, type PropType, inject, type Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 import KRichTextarea from './rich-textarea.vue';
 import { tabs } from '../../panel';
-import { ChatMessage, ChatStorage, MessageState, ToolCall, RichTextItem } from './chat';
+import type { ChatMessage, ChatStorage, ToolCall, RichTextItem } from './chat';
+import { MessageState } from './chat';
 
 import { TaskLoop } from '../core/task-loop';
 import { llmManager, llms } from '@/views/setting/llm';

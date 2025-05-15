@@ -57,9 +57,11 @@
 <script setup lang="ts">
 import { ref, onMounted, defineComponent, defineProps, onUnmounted, computed, nextTick, watch, provide } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { ElMessage, ScrollbarInstance } from 'element-plus';
+import { ElMessage, type ScrollbarInstance } from 'element-plus';
 import { tabs } from '../panel';
-import { ChatMessage, ChatStorage, IRenderMessage, MessageState, ToolCall } from './chat-box/chat';
+import type { ChatMessage, ChatStorage, IRenderMessage, ToolCall } from './chat-box/chat';
+import { MessageState } from './chat-box/chat';
+
 import * as Message from './message';
 import ChatBox from './chat-box/index.vue';
 

@@ -1,6 +1,6 @@
-import { ToolCallContent, ToolCallResponse } from "@/hook/type";
+import type { ToolCallContent, ToolCallResponse } from "@/hook/type";
 import { callTool } from "../../tool/tools";
-import { MessageState, ToolCall } from "../chat-box/chat";
+import { MessageState, type ToolCall } from "../chat-box/chat";
 
 export interface ToolCallResult {
     state: MessageState;

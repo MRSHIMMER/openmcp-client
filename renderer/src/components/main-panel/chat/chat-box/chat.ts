@@ -1,5 +1,5 @@
 import type { ToolCallContent, ToolItem } from "@/hook/type";
-import { Ref, ref } from "vue";
+import { type Ref, ref } from "vue";
 
 import type { OpenAI } from 'openai';
 type ChatCompletionChunk = OpenAI.Chat.Completions.ChatCompletionChunk;
