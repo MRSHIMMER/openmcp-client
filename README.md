@@ -151,7 +151,7 @@ B <--mcp--> m(MCP Server)
 ./dev.ps1
 ```
 
-> 端口占用： 8080 (renderer) + 8081 (service)
+> 端口占用： 8282 (renderer) + 8081 (service)
 
 ### Extention Dev
 

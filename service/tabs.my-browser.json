@@ -1,0 +1,58 @@
+{
+  "currentIndex": 0,
+  "tabs": [
+    {
+      "name": "交互测试",
+      "icon": "icon-robot",
+      "type": "blank",
+      "componentIndex": 3,
+      "storage": {
+        "messages": [],
+        "settings": {
+          "modelIndex": 7,
+          "enableTools": [
+            {
+              "name": "k_navigate",
+              "description": "Navigate to a URL",
+              "enabled": true
+            },
+            {
+              "name": "k_screenshot",
+              "description": "Take a screenshot of the current page or a specific element",
+              "enabled": true
+            },
+            {
+              "name": "k_click",
+              "description": "Click an element on the page",
+              "enabled": true
+            },
+            {
+              "name": "k_fill",
+              "description": "Fill out an input field",
+              "enabled": true
+            },
+            {
+              "name": "k_select",
+              "description": "Select an element on the page with Select tag",
+              "enabled": true
+            },
+            {
+              "name": "k_hover",
+              "description": "Hover an element on the page",
+              "enabled": true
+            },
+            {
+              "name": "k_evaluate",
+              "description": "Execute JavaScript in the browser console",
+              "enabled": true
+            }
+          ],
+          "enableWebSearch": false,
+          "temperature": 0.7,
+          "contextLength": 20,
+          "systemPrompt": ""
+        }
+      }
+    }
+  ]
+}

@@ -109,7 +109,7 @@ export async function acquireInstalledConnection(): Promise<IConnectionItem | un
         // 获取 url
         const url = await vscode.window.showInputBox({
             prompt: '请输入连接的 URL',
-            placeHolder: '例如: https://127.0.0.1:8080'
+            placeHolder: '例如: https://127.0.0.1:8282'
         });
 
         if (!url) {

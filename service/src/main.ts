@@ -26,7 +26,7 @@ const logger = pino({
 });
 
 export type MessageHandler = (message: VSCodeMessage) => void;
-const wss = new (WebSocket as any).Server({ port: 8080 });
+const wss = new (WebSocket as any).Server({ port: 8282 });
 
 interface IStdioLaunchSignature {
     type: 'stdio';

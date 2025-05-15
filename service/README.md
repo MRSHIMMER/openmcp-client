@@ -3,7 +3,7 @@
 ```mermaid
 graph LR
 
-renderer <--ws://localhost:8080--> router
+renderer <--ws://localhost:8282--> router
 subgraph service
     router <--setting/save--> app_service
     router <--resources/read--> mcp_service
@@ -39,7 +39,7 @@ post_process --tool response--> storage
 ```mermaid
 graph LR
 
-renderer <--ws://localhost:8080--> llm_service
+renderer <--ws://localhost:8282--> llm_service
 subgraph llm_service_body
     llm_service --type image --> handle_image
     llm_service --type text --> handle_text
