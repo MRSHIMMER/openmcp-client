@@ -39,9 +39,9 @@
 
 <script setup lang="ts">
 import { useMessageBridge } from '@/api/message-bridge';
-import { ToolCallContent } from '@/hook/type';
+import type { ToolCallContent } from '@/hook/type';
 import { getBlobUrlByFilename } from '@/hook/util';
-import { defineComponent, PropType, defineProps, ref, defineEmits } from 'vue';
+import { defineComponent, type PropType, defineProps, ref, defineEmits } from 'vue';
 
 defineComponent({ name: 'toolcall-result-item' });
 const emits = defineEmits(['update:item', 'update:ocr-done']);

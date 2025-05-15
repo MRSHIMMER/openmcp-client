@@ -12,7 +12,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, defineEmits, provide, PropType, computed } from 'vue';
+import { defineProps, defineEmits, provide, computed } from 'vue';
 import { llmManager } from '@/views/setting/llm';
 import { tabs } from '@/components/main-panel/panel';
 import type { ChatSetting, ChatStorage } from '../chat';

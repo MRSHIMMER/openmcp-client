@@ -44,7 +44,7 @@
 <script setup lang="ts">
 import { defineComponent, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { connectionEnv, EnvItem, handleEnvSwitch } from './connection';
+import { connectionEnv, type EnvItem, handleEnvSwitch } from './connection';
 
 defineComponent({ name: 'env-var' });
 

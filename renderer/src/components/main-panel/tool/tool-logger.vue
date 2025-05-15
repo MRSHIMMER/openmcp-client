@@ -39,7 +39,7 @@
 import { defineComponent, defineProps, computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { tabs } from '../panel';
-import { ToolStorage } from './tools';
+import type { ToolStorage } from './tools';
 import JsonRender from '@/components/json-render/index.vue';
 
 defineComponent({ name: 'tool-logger' });

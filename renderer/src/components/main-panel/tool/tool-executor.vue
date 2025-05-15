@@ -60,7 +60,7 @@ import { defineComponent, defineProps, watch, ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { FormInstance, FormRules } from 'element-plus';
 import { tabs } from '../panel';
-import { callTool, toolsManager, ToolStorage } from './tools';
+import { callTool, toolsManager, type ToolStorage } from './tools';
 import { getDefaultValue, normaliseJavascriptType } from '@/hook/mcp';
 
 import KInputObject from '@/components/k-input-object/index.vue';

@@ -30,9 +30,9 @@
 
 <script setup lang="ts">
 import { useMessageBridge } from '@/api/message-bridge';
-import { ResourcesReadResponse } from '@/hook/type';
+import type { ResourcesReadResponse } from '@/hook/type';
 import { getImageBlobUrlByBase64 } from '@/hook/util';
-import { computed, defineProps, PropType, reactive, ref, watch } from 'vue';
+import { computed, defineProps, type PropType, ref } from 'vue';
 
 const props = defineProps({
     contents: {

@@ -8,8 +8,8 @@
 </template>
 
 <script setup lang="ts">
-import { PromptsGetResponse } from '@/hook/type';
-import { defineProps, PropType } from 'vue';
+import type { PromptsGetResponse } from '@/hook/type';
+import { defineProps, type PropType } from 'vue';
 
 const props = defineProps({
     messages: {

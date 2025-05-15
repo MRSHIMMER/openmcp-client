@@ -121,14 +121,14 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, ref, watch, PropType, computed, defineEmits } from 'vue';
+import { defineProps, ref, watch, type PropType, computed, defineEmits } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 import MessageMeta from './message-meta.vue';
 import { markdownToHtml } from '@/components/main-panel/chat/markdown/markdown';
 import { createTest } from '@/views/setting/llm';
 import { IToolRenderMessage, MessageState } from '../chat-box/chat';
-import { ToolCallContent } from '@/hook/type';
+import type { ToolCallContent } from '@/hook/type';
 
 import ToolcallResultItem from './toolcall-result-item.vue';
 import JsonRender from '@/components/json-render/index.vue';

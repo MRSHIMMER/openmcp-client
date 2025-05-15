@@ -3,7 +3,7 @@ import { OpenAI } from "openai";
 import { MyMessageType, MyToolMessageType } from "./llm.dto";
 import { RestfulResponse } from "../common/index.dto";
 import { ocrDB } from "../hook/db";
-import { ToolCallContent } from "../mcp/client.dto";
+import type { ToolCallContent } from "../mcp/client.dto";
 import { ocrWorkerStorage } from "../mcp/ocr.service";
 
 export let currentStream: AsyncIterable<any> | null = null;

@@ -20,8 +20,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, PropType, defineProps, defineEmits, computed, provide } from 'vue';
-import type { RichTextItem } from './chat';
+import { ref, defineProps, defineEmits, computed, provide } from 'vue';
 
 import Setting from './options/setting.vue';
 

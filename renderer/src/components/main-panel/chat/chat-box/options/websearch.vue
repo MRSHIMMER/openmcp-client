@@ -10,7 +10,7 @@
 <script setup lang="ts">
 import { inject } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { ChatStorage } from '../chat';
+import type { ChatStorage } from '../chat';
 
 const { t } = useI18n();
 

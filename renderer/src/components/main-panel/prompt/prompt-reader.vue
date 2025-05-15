@@ -36,8 +36,8 @@ import { defineComponent, defineProps, defineEmits, watch, ref, computed, reacti
 import { useI18n } from 'vue-i18n';
 import type { FormInstance, FormRules } from 'element-plus';
 import { tabs } from '../panel';
-import { promptsManager, PromptStorage } from './prompts';
-import { PromptsGetResponse } from '@/hook/type';
+import { promptsManager, type PromptStorage } from './prompts';
+import type { PromptsGetResponse } from '@/hook/type';
 import { useMessageBridge } from '@/api/message-bridge';
 import { getDefaultValue, normaliseJavascriptType } from '@/hook/mcp';
 

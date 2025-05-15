@@ -62,7 +62,7 @@
 <script setup lang="ts">
 import { ref, computed, inject, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { ChatStorage } from '../chat';
+import type { ChatStorage } from '../chat';
 import { systemPrompts, setSystemPrompt, loadSystemPrompts, deleteSystemPrompt } from './system-prompt';
 import { ElMessage } from 'element-plus';
 import { debounce } from 'lodash';

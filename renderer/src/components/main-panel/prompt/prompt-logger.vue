@@ -35,7 +35,7 @@
 import { defineComponent, defineProps, computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { tabs } from '../panel';
-import { PromptStorage } from './prompts';
+import type { PromptStorage } from './prompts';
 import JsonRender from '@/components/json-render/index.vue';
 
 defineComponent({ name: 'prompt-logger' });
