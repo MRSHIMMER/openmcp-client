@@ -1,5 +1,6 @@
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
+import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
 import { Implementation } from "@modelcontextprotocol/sdk/types";
 
 export interface GetPromptOption {
@@ -17,9 +18,9 @@ export interface CallToolOption {
 }
 
 // 定义连接类型
-export type ConnectionType = 'STDIO' | 'SSE';  
+export type ConnectionType = 'STDIO' | 'SSE' | 'STREAMABLE_HTTP';
 
-export type McpTransport = StdioClientTransport | SSEClientTransport;
+export type McpTransport = StdioClientTransport | SSEClientTransport | StreamableHTTPClientTransport;
 export type IServerVersion = Implementation | undefined;
 
 // 定义命令行参数接口

@@ -2,6 +2,7 @@ import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
+import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
 import type { McpOptions, McpTransport, IServerVersion, ToolCallResponse, ToolCallContent } from './client.dto';
 import { PostMessageble } from "../hook/adapter";
 import { createOcrWorker, saveBase64ImageData } from "./ocr.service";
@@ -52,10 +53,21 @@ export class McpClient {
                     throw new Error('URL is required for SSE connection');
                 }
                 this.transport = new SSEClientTransport(
-                    new URL(this.options.url)
+                    new URL(this.options.url),
+                    {
+                        // authProvider:
+                    }
                 );
 
                 break;
+            
+            case 'STREAMABLE_HTTP':
+                if (!this.options.url) {
+                    throw new Error('URL is required for STREAMABLE_HTTP connection');
+                }
+                this.transport = new StreamableHTTPClientTransport(
+                    new URL(this.options.url)
+                );
             default:
                 throw new Error(`Unsupported connection type: ${this.options.connectionType}`);
         }
