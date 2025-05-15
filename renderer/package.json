@@ -20,6 +20,7 @@
     "markdown-it": "^14.1.0",
     "markdown-it-katex": "^2.0.3",
     "openai": "^4.93.0",
+    "prism-esm": "^1.29.0-fix.6",
     "prismjs": "^1.30.0",
     "uuid": "^11.1.0",
     "vue": "^3.5.13",
@@ -27,6 +28,7 @@
     "vue-router": "^4.5.0"
   },
   "devDependencies": {
+    "@originjs/vite-plugin-commonjs": "^1.0.3",
     "@tsconfig/node22": "^22.0.1",
     "@types/node": "^22.14.0",
     "@types/prismjs": "^1.26.5",

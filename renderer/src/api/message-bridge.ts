@@ -230,8 +230,8 @@ export function createMessageBridge(setupSignature: any) {
 
 // 向外暴露一个独立函数，保证 MessageBridge 是单例的
 export function useMessageBridge() {
-	if (!messageBridge && getPlatform() !== 'nodejs') {
-		messageBridge = new MessageBridge('ws://localhost:8282');
+	if (!messageBridge && getPlatform() !== 'nodejs') {		
+		messageBridge = new MessageBridge(import.meta.env.VITE_WEBSOCKET_URL);
 	}
 	const bridge = messageBridge;
 
