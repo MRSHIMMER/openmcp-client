@@ -1,9 +1,12 @@
 {
-  "name": "test-vite",
-  "version": "0.0.0",
+  "name": "@openmcp/renderer",
+  "version": "0.1.0",
   "private": true,
   "type": "module",
   "scripts": {
+    "dev": "vite",
+    "postbuild": "node scripts/post-build.mjs",
+    "lint": "vue-cli-service lint",
     "serve": "vite",
     "serve:website": "vite --mode website",
     "build": "run-p type-check \"build-only {@}\" --",
