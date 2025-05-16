@@ -119,11 +119,7 @@ const wss = new WebSocketServer(
         port: 8282,
         verifyClient: (info, callback) => {
             console.log(info.req.url);
-
-            const ok = verifyToken(info.req.url || '');
-
-            console.log(ok);
-            
+            const ok = verifyToken(info.req.url || '');            
 
             if (!ok) {
                 callback(false, 401, 'Unauthorized: Invalid token');
