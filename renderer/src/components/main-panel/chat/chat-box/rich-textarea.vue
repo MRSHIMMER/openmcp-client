@@ -103,7 +103,6 @@ function handleInput(event: Event) {
         }
     });
 
-    console.log(fragments);
     emit('update:modelValue', fragments.join(' '));
 }
 

@@ -12,6 +12,13 @@ export const systemPrompts = ref<SystemPrompt[]>([{
     content: '你是一个AI助手, 你可以回答任何问题。'
 }]);
 
+export function getSystemPrompt(name: string) {
+    const prompt = systemPrompts.value.find(prompt => prompt.name === name);
+    if (prompt) {
+        return prompt.content;
+    }
+}
+
 export async function saveSystemPrompts() {
     const bridge = useMessageBridge();
 

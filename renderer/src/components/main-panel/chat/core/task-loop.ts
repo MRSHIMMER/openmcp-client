@@ -8,6 +8,7 @@ import { pinkLog, redLog } from "@/views/setting/util";
 import { ElMessage } from "element-plus";
 import { handleToolCalls, type ToolCallResult } from "./handle-tool-calls";
 import { getPlatform } from "@/api/platform";
+import { getSystemPrompt, systemPrompts } from "../chat-box/options/system-prompt";
 
 export type ChatCompletionChunk = OpenAI.Chat.Completions.ChatCompletionChunk;
 export type ChatCompletionCreateParamsBase = OpenAI.Chat.Completions.ChatCompletionCreateParams & { id?: string };
@@ -156,7 +157,7 @@ export class TaskLoop {
 
             }, { once: true });
 
-            // console.log(chatData);
+            console.log(chatData);
 
             this.bridge.postMessage({
                 command: 'llm/chat/completions',
@@ -183,10 +184,15 @@ export class TaskLoop {
         const tools = getToolSchema(tabStorage.settings.enableTools);
 
         const userMessages = [];
+
+        // 尝试获取 system prompt，在 api 模式下，systemPrompt 就是目标提词
+        // 但是在 UI 模式下，systemPrompt 只是一个 index，需要从后端数据库中获取真实 prompt
         if (tabStorage.settings.systemPrompt) {
+            const prompt = getSystemPrompt(tabStorage.settings.systemPrompt) || tabStorage.settings.systemPrompt;
+            
             userMessages.push({
                 role: 'system',
-                content: tabStorage.settings.systemPrompt
+                content: prompt
             });
         }
 

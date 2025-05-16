@@ -13,7 +13,7 @@
     --font-size-xsp: 11px;
     --md-zoom: 1.12;
 
-    --code-font-family: Consolas, Monaco, "Cascadia code", 'Andale Mono', 'Ubuntu Mono', monospace;
+    --code-font-family: Consolas, Monaco, "CustomCodeFont", 'Andale Mono', 'Ubuntu Mono', monospace;
 
     /* css 动画属性 */
     --animation-7s: .7s cubic-bezier(0.23, 1, 0.32, 1);
@@ -24,8 +24,8 @@
 }
 
 @font-face {
-    font-family: "Cascadia code";
-    src: url("./CascadiaCode.woff2");
+    font-family: "CustomCodeFont";
+    src: url("./sf-mono-regular.woff2");
 }
 
 html,
