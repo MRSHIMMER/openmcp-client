@@ -1,4 +1,4 @@
-import WebSocket from 'ws';
+import { WebSocketServer } from 'ws';
 import pino from 'pino';
 
 import { routeMessage } from './common/router';
@@ -26,7 +26,6 @@ const logger = pino({
 });
 
 export type MessageHandler = (message: VSCodeMessage) => void;
-const wss = new (WebSocket as any).Server({ port: 8282 });
 
 interface IStdioLaunchSignature {
     type: 'stdio';
@@ -97,6 +96,10 @@ function updateConnectionOption(data: any) {
 
 const devHome = path.join(__dirname, '..', '..');
 setRunningCWD(devHome);
+
+const wss = new WebSocketServer({ port: 8282 });
+
+console.log('listen on ws://localhost:8282');
 
 wss.on('connection', (ws: any) => {
 

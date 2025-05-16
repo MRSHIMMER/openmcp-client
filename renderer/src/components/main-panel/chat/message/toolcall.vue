@@ -127,7 +127,7 @@ import { useI18n } from 'vue-i18n';
 import MessageMeta from './message-meta.vue';
 import { markdownToHtml } from '@/components/main-panel/chat/markdown/markdown';
 import { createTest } from '@/views/setting/llm';
-import { IToolRenderMessage, MessageState } from '../chat-box/chat';
+import { type IToolRenderMessage, MessageState } from '../chat-box/chat';
 import type { ToolCallContent } from '@/hook/type';
 
 import ToolcallResultItem from './toolcall-result-item.vue';

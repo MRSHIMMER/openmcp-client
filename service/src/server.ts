@@ -1,4 +1,4 @@
-import WebSocket from 'ws';
+import { WebSocketServer } from 'ws';
 import pino from 'pino';
 
 import { routeMessage } from './common/router';
@@ -27,7 +27,6 @@ const logger = pino({
 });
 
 export type MessageHandler = (message: VSCodeMessage) => void;
-const wss = new (WebSocket as any).Server({ port: 8282 });
 
 interface IStdioLaunchSignature {
     type: 'stdio';
@@ -36,7 +35,7 @@ interface IStdioLaunchSignature {
 }
 
 interface ISSELaunchSignature {
-    type:'sse';
+    type: 'sse';
     url: string;
     oauth: string;
 }
@@ -45,13 +44,13 @@ export type ILaunchSigature = IStdioLaunchSignature | ISSELaunchSignature;
 
 function refreshConnectionOption(envPath: string) {
     const defaultOption = {
-        type:'stdio',
+        type: 'stdio',
         command: 'mcp',
         args: ['run', 'main.py'],
         cwd: '../server'
     };
 
-    fs.writeFileSync(envPath, JSON.stringify(defaultOption, null, 4));   
+    fs.writeFileSync(envPath, JSON.stringify(defaultOption, null, 4));
 
     return defaultOption;
 }
@@ -82,7 +81,7 @@ const authPassword = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '.env
 
 function updateConnectionOption(data: any) {
     const envPath = path.join(__dirname, '..', '.env');
-    
+
     if (data.connectionType === 'STDIO') {
         const connectionItem = {
             type: 'stdio',
@@ -106,6 +105,37 @@ function updateConnectionOption(data: any) {
 const devHome = path.join(__dirname, '..', '..');
 setRunningCWD(devHome);
 
+function verifyToken(url: string) {
+    try {
+        const token = url.split('=')[1];
+        return token === authPassword.toString();
+    } catch (error) {
+        return false;
+    }
+}
+
+const wss = new WebSocketServer(
+    {
+        port: 8282,
+        verifyClient: (info, callback) => {
+            console.log(info.req.url);
+
+            const ok = verifyToken(info.req.url || '');
+
+            console.log(ok);
+            
+
+            if (!ok) {
+                callback(false, 401, 'Unauthorized: Invalid token');
+            } else {
+                callback(true); // 允许连接
+            }
+        }
+    },
+);
+
+console.log('listen on ws://localhost:8282');
+
 wss.on('connection', (ws: any) => {
 
     // 仿造 webview 进行统一接口访问
@@ -125,42 +155,7 @@ wss.on('connection', (ws: any) => {
     // 注册消息接受的管线
     webview.onDidReceiveMessage(message => {
         logger.info(`command: [${message.command || 'No Command'}]`);
-        const { command, data, password } = message;
-
-        console.log(command, data);
-        
-
-        if (command === 'ciallo') {
-            if (data.password === authPassword) {
-                webview.postMessage({
-                    command,
-                    data: {
-                        code: 200,
-                        msg: 'ciallo'
-                    }
-                });
-            } else {
-                webview.postMessage({
-                    command,
-                    data: {
-                        code: 403,
-                        msg: '没有权限'
-                    }
-                });
-            }
-            return;
-        }
-
-        if (password !== authPassword) {
-            webview.postMessage({
-                command,
-                data: {
-                    code: 403,
-                    msg: '没有权限'
-                }
-            });
-            return;
-        }
+        const { command, data } = message;
 
         switch (command) {
             case 'web/launch-signature':
@@ -175,7 +170,7 @@ wss.on('connection', (ws: any) => {
                         url: option.url,
                         oauth: option.oauth || ''
                     };
-            
+
                 const launchResult = {
                     code: 200,
                     msg: launchResultMessage
@@ -187,11 +182,11 @@ wss.on('connection', (ws: any) => {
                 });
 
                 break;
-            
+
             case 'web/update-connection-sigature':
                 updateConnectionOption(data);
                 break;
-        
+
             default:
                 routeMessage(command, data, webview);
                 break;

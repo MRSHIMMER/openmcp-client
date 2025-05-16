@@ -46,7 +46,7 @@
         <el-tour-step
             target="#sidebar-connect"
             :prev-button-props="{ children: '上一步' }"
-            :next-button-props="{ children: '下一步', onClick: () => router.push('/connect') }"
+            :next-button-props="{ children: '下一步', onClick: () => router.push(baseUrl + 'connect') }"
             :show-close="false"
         >
             <template #header>
@@ -95,7 +95,7 @@
         <el-tour-step
             target="#sidebar-debug"
             :prev-button-props="{ children: '上一步' }"
-            :next-button-props="{ children: '下一步', onClick: () => router.push('/debug') }"
+            :next-button-props="{ children: '下一步', onClick: () => router.push(baseUrl + 'debug') }"
             :show-close="false"
         >
             <template #header>
@@ -129,8 +129,8 @@
 
         <el-tour-step
             target="#sidebar-setting"
-            :prev-button-props="{ children: '上一步', onClick: () => router.push('/debug') }"
-            :next-button-props="{ children: '下一步', onClick: () => router.push('/setting') }"
+            :prev-button-props="{ children: '上一步', onClick: () => router.push(baseUrl + 'debug') }"
+            :next-button-props="{ children: '下一步', onClick: () => router.push(baseUrl + 'setting') }"
             :show-close="false"
         >
             <template #header>
@@ -205,7 +205,7 @@
 
 
         <el-tour-step
-            :prev-button-props="{ children: '上一步', onClick: () => router.push('/setting') }"
+            :prev-button-props="{ children: '上一步', onClick: () => router.push(baseUrl + 'setting') }"
             :next-button-props="{ children: '下一步' }"
             :show-close="false"
         >
@@ -224,7 +224,7 @@
 
 
         <el-tour-step
-            :prev-button-props="{ children: '上一步', onClick: () => router.push('/setting') }"
+            :prev-button-props="{ children: '上一步', onClick: () => router.push(baseUrl + 'setting') }"
             :next-button-props="{ children: '结束', onClick: () => finishTour() }"
             :show-close="false"
         >
@@ -259,6 +259,8 @@ const openTour = ref(true);
 const { t } = useI18n();
 
 const router = useRouter();
+
+const baseUrl = import.meta.env.BASE_URL;
 
 function finishTour() {
     openTour.value = false;

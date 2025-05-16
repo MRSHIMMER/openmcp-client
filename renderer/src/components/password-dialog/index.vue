@@ -24,9 +24,10 @@ const dialogVisible = ref(true);
 
 const handleSubmit = async () => {
     const bridge = useMessageBridge();
-    const res = await bridge.commandRequest('ciallo', { password: privilegeStatus.password });
-
-    if (res.code === 200) {
+    
+    const ok = await bridge.setupWebSocket(import.meta.env.VITE_WEBSOCKET_URL + '?t=' + privilegeStatus.password);
+    
+    if (ok) {
         ElMessage.success('密码验证成功，欢迎回来锦恢');
         dialogVisible.value = false;
 

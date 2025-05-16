@@ -1,19 +1,28 @@
 {
     "compilerOptions": {
-    "module": "commonjs",
-    "target": "es6",
-    "outDir": "./dist",
-    "rootDir": "./src",
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "experimentalDecorators": true,
-    // 允许访问 openmcp-sdk 目录
-    "paths": {
-            "@openmcp-sdk/*": ["./openmcp-sdk/*"]
+        "module": "commonjs",
+        "target": "es6",
+        "outDir": "./dist",
+        "rootDir": "./src",
+        "strict": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "experimentalDecorators": true,
+        // 允许访问 openmcp-sdk 目录
+        "paths": {
+            "@openmcp-sdk/*": [
+                "./openmcp-sdk/*"
+            ]
         }
     },
-    "include": ["src/**/*"],
-    "exclude": ["node_modules", "dist", "service", "renderer"]
+    "include": [
+        "src/**/*"
+    ],
+    "exclude": [
+        "node_modules",
+        "dist",
+        "service",
+        "renderer"
+    ]
 }

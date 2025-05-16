@@ -45,14 +45,12 @@ onMounted(async () => {
 	setDefaultCss();
 
 	pinkLog('OpenMCP Client 启动');
-	const platform = getPlatform();
 
 	// 跳转到首页
-	if (platform !== 'web') {
-		if (route.name !== 'debug') {
-			router.replace('/debug');
-			router.push('/debug');
-		}
+	if (route.name !== 'debug') {
+		const targetRoute = import.meta.env.BASE_URL + 'debug';
+		console.log('go to ' + targetRoute);
+		router.push(targetRoute);
 	}
 
 	// 进行桥接

@@ -29,8 +29,10 @@ function isActive(name: string) {
 	return route.name === name;
 }
 
+const baseUrl = import.meta.env.BASE_URL;
+
 function gotoOption(ident: string) {
-	router.push('/' + ident);
+	router.push(baseUrl + ident);
 }
 
 </script>

@@ -1,12 +1,10 @@
 import { pinkLog, redLog } from '@/views/setting/util';
 import { acquireVsCodeApi, electronApi, getPlatform } from './platform';
-import { privilegeStatus } from '@/components/password-dialog/status';
 
 export interface VSCodeMessage {
 	command: string;
 	data?: unknown;
 	callbackId?: string;
-	password?: string;
 }
 
 export interface RestFulResponse {
@@ -67,51 +65,57 @@ export class MessageBridge {
 	}
 
 	// WebSocket 环境连接
-	private setupWebSocket() {
-
-		const wsUrl = this.setupSignature;
+	public setupWebSocket(setupSignature?: string) {
+		const wsUrl = setupSignature || this.setupSignature;
 
 		if (typeof wsUrl !== 'string') {
 			throw new Error('setupSignature must be a string');
 		}
-
+		
 		this.ws = new WebSocket(wsUrl);
-
-		this.ws.onmessage = (event) => {
-			try {				
-				const message = JSON.parse(event.data) as VSCodeMessage;
-				this.dispatchMessage(message);
-			} catch (err) {
-				console.error('Message parse error:', err);
-				console.log(event);
-			}
-		};
-
-		this.ws.onclose = () => {
-			redLog('WebSocket connection closed');
-		};
-
-		this.postMessage = (message) => {
-			if (this.ws?.readyState === WebSocket.OPEN) {
-				console.log('send', message);
-				message.password = privilegeStatus.password;
-				this.ws.send(JSON.stringify(message));
-			}
-		};
-
 		const ws = this.ws;
 
 		this.isConnected = new Promise<boolean>((resolve, reject) => {
 			ws.onopen = () => {
 				resolve(true);
 			};
+
+			ws.onmessage = (event) => {
+				try {				
+					const message = JSON.parse(event.data) as VSCodeMessage;
+					this.dispatchMessage(message);
+				} catch (err) {
+					console.error('Message parse error:', err);
+					console.log(event);
+				}
+			};
+	
+			ws.onerror = (err) => {
+				redLog('WebSocket error:');				
+				resolve(false);
+			};
+	
+			ws.onclose = () => {
+				redLog('WebSocket connection closed');
+				resolve(false);
+			};
+	
+			this.postMessage = (message) => {
+				if (this.ws?.readyState === WebSocket.OPEN) {
+					console.log('send', message);
+					this.ws.send(JSON.stringify(message));
+				}
+			};
 		});
+
+		return this.isConnected;
 	}
 
 	public async awaitForWebsocket() {
 		if (this.isConnected) {
-			await this.isConnected;
+			return await this.isConnected;
 		}
+		return false;
 	}
 
 	private setupElectronListener() {
