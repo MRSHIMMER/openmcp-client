@@ -1,5 +1,5 @@
-import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
-import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
+import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/STDIO.js";
+import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/SSE.js";
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
 import { Implementation } from "@modelcontextprotocol/sdk/types";
 

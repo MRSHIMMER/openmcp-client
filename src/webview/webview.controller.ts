@@ -19,7 +19,7 @@ export class WebviewController {
             }
 
             revealOpenMcpWebviewPanel(context, 'workspace', uri.fsPath, {
-                type: 'stdio',
+                type: 'STDIO',
                 name: 'OpenMCP',
                 command: sigature.command,
                 args: sigature.args,

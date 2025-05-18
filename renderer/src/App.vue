@@ -4,7 +4,7 @@
 		<MainPanel></MainPanel>
 
 		<Tour v-if="!userHasReadGuide"/>
-		<PasswordDialog v-if="password"/>
+		<PasswordDialog v-if="useAuth"/>
 	</div>
 </template>
 
@@ -37,8 +37,8 @@ bridge.addCommandListener('hello', data => {
 const route = useRoute();
 const router = useRouter();
 
-const password = Boolean(import.meta.env.VITE_USE_PASSWORD);
-privilegeStatus.allow = !Boolean(password);
+const useAuth = Boolean(import.meta.env.VITE_USE_AUTH);
+privilegeStatus.allow = !Boolean(useAuth);
 
 onMounted(async () => {
 	// 初始化 css

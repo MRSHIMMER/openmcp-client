@@ -1,33 +1,18 @@
-# test-vite
+## dev
 
-This template should help get you started developing with Vue 3 in Vite.
+如果想要部署到公网中，想要通过密码认证才能进入，进行如下步骤：
 
-## Recommended IDE Setup
-
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
-
-## Type Support for `.vue` Imports in TS
-
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
-
-```sh
-npm install
+```bash
+touch .env.website.local
 ```
 
-### Compile and Hot-Reload for Development
+写入：
 
-```sh
-npm run dev
+```toml
+VITE_USE_AUTH=true
+VITE_WEBSOCKET_URL=wss://<IP>/<路径>
 ```
 
-### Type-Check, Compile and Minify for Production
+使用 `npm run serve:website` 进行测试（服务端使用 ts-node src/server.ts）
 
-```sh
-npm run build
-```
+使用 `npm run build:website` 进行打包

@@ -3,10 +3,12 @@ import { RequestClientType } from '../common';
 import { connect } from './client.service';
 import { RestfulResponse } from '../common/index.dto';
 import { McpOptions } from './client.dto';
+import { randomUUID } from 'node:crypto';
 
-
-// TODO: 更多的 client
-export let client: RequestClientType = undefined;
+export const clientMap: Map<string, RequestClientType> = new Map();
+export function getClient(clientId?: string): RequestClientType | undefined {
+    return clientMap.get(clientId || '');
+}
 
 export function tryGetRunCommandError(command: string, args: string[] = [], cwd?: string): string | null {
     try {
@@ -15,7 +17,7 @@ export function tryGetRunCommandError(command: string, args: string[] = [], cwd?
 		
         const result = spawnSync(command, args, {
             cwd: cwd || process.cwd(),
-            stdio: 'pipe',
+            STDIO: 'pipe',
             encoding: 'utf-8'
         });
 
@@ -32,7 +34,6 @@ export function tryGetRunCommandError(command: string, args: string[] = [], cwd?
 }
 
 export async function connectService(
-    _client: RequestClientType,
     option: McpOptions
 ): Promise<RestfulResponse> {
 	try {
@@ -48,19 +49,25 @@ export async function connectService(
 			});
 		}
 		
-		client = await connect(option);
+		const client = await connect(option);
+		const uuid = randomUUID();
+		clientMap.set(uuid, client);
+
+		const versionInfo = client.getServerVersion();
+
 		const connectResult = {
 			code: 200,
-			msg: 'Connect to OpenMCP successfully\nWelcome back, Kirigaya'
+			msg: {
+				status: 'success',
+				clientId: uuid,
+				name: versionInfo?.name,
+				version: versionInfo?.version
+			}
 		};
 		
         return connectResult;
 	} catch (error) {
-
-		console.log('meet error');
-		console.log(error);
 		
-
 		// TODO: 这边获取到的 error 不够精致，如何才能获取到更加精准的错误
 		// 比如	error: Failed to spawn: `server.py`
   		//		  Caused by: No such file or directory (os error 2)

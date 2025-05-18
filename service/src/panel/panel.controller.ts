@@ -1,13 +1,16 @@
-import { Controller, RequestClientType } from "../common";
+import { Controller } from "../common";
 import { PostMessageble } from "../hook/adapter";
+import { RequestData } from "../common/index.dto";
+import { getClient } from "../mcp/connect.service";
 import { systemPromptDB } from "../hook/db";
 import { loadTabSaveConfig, saveTabSaveConfig } from "./panel.service";
 
 export class PanelController {
     @Controller('panel/save')
-    async savePanel(client: RequestClientType, data: any, webview: PostMessageble) {
+    async savePanel(data: RequestData, webview: PostMessageble) {
+        const client = getClient(data.clientId);
         const serverInfo = client?.getServerVersion();
-		saveTabSaveConfig(serverInfo, data);
+        saveTabSaveConfig(serverInfo, data);
 
         return {
             code: 200,
@@ -15,11 +18,11 @@ export class PanelController {
         };
     }
 
-
     @Controller('panel/load')
-    async loadPanel(client: RequestClientType, data: any, webview: PostMessageble) {
+    async loadPanel(data: RequestData, webview: PostMessageble) {
+        const client = getClient(data.clientId);
         const serverInfo = client?.getServerVersion();
-		const config = loadTabSaveConfig(serverInfo);
+        const config = loadTabSaveConfig(serverInfo);
 
         return {
             code: 200,
@@ -28,7 +31,8 @@ export class PanelController {
     }
 
     @Controller('system-prompts/set')
-    async setSystemPrompt(client: RequestClientType, data: any, webview: PostMessageble) {
+    async setSystemPrompt(data: RequestData, webview: PostMessageble) {
+        const client = getClient(data.clientId);
         const { name, content } = data;
 
         await systemPromptDB.insert({
@@ -44,7 +48,8 @@ export class PanelController {
     }
 
     @Controller('system-prompts/delete')
-    async deleteSystemPrompt(client: RequestClientType, data: any, webview: PostMessageble) {
+    async deleteSystemPrompt(data: RequestData, webview: PostMessageble) {
+        const client = getClient(data.clientId);
         const { name } = data;
         await systemPromptDB.delete(name);
         return {
@@ -54,7 +59,8 @@ export class PanelController {
     }
 
     @Controller('system-prompts/save')
-    async saveSystemPrompts(client: RequestClientType, data: any, webview: PostMessageble) {
+    async saveSystemPrompts(data: RequestData, webview: PostMessageble) {
+        const client = getClient(data.clientId);
         const { prompts } = data;
         
         await Promise.all(prompts.map((prompt: any) => {
@@ -72,8 +78,8 @@ export class PanelController {
     }
 
     @Controller('system-prompts/load')
-    async loadSystemPrompts(client: RequestClientType, data: any, webview: PostMessageble) {
-    	
+    async loadSystemPrompts(data: RequestData, webview: PostMessageble) {
+        const client = getClient(data.clientId);
         const queryPrompts = await systemPromptDB.findAll();
         const prompts = [];
         for (const prompt of queryPrompts) {

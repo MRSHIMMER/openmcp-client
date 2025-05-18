@@ -7,9 +7,9 @@ export interface VSCodeMessage {
 	callbackId?: string;
 }
 
-export interface RestFulResponse {
+export interface RestFulResponse<T = any> {
 	code: number;
-	msg: any;
+	msg: T;
 }
 
 export type MessageHandler = (message: VSCodeMessage) => void;
@@ -206,7 +206,7 @@ export class MessageBridge {
 	 * @param data 
 	 * @returns 
 	 */
-	public commandRequest(command: string, data?: any) {
+	public commandRequest<T = any>(command: string, data?: any): Promise<RestFulResponse<T>>  {
 		return new Promise<RestFulResponse>((resolve, reject) => {
 			this.addCommandListener(command, (data) => {
 				resolve(data as RestFulResponse);

@@ -3,7 +3,6 @@ import type { PostMessageble } from "../hook/adapter";
 import { LlmController } from "../llm/llm.controller";
 import { ClientController } from "../mcp/client.controller";
 import { ConnectController } from "../mcp/connect.controller";
-import { client } from "../mcp/connect.service";
 import { OcrController } from "../mcp/ocr.controller";
 import { PanelController } from "../panel/panel.controller";
 import { SettingController } from "../setting/setting.controller";
@@ -24,7 +23,7 @@ export async function routeMessage(command: string, data: any, webview: PostMess
 
         try {
             // TODO: select client based on something
-            const res = await handler(client, data, webview);
+            const res = await handler(data, webview);
             
             // res.code = -1 代表当前请求不需要返回发送
             if (res.code >= 0) {

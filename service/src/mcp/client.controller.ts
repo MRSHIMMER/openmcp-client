@@ -1,11 +1,14 @@
-import { Controller, RequestClientType } from "../common";
+import { Controller } from "../common";
+import { RequestData } from "../common/index.dto";
 import { PostMessageble } from "../hook/adapter";
 import { postProcessMcpToolcallResponse } from "./client.service";
+import { getClient } from "./connect.service";
 
 export class ClientController {
 
     @Controller('server/version')
-    async getServerVersion(client: RequestClientType, data: any, webview: PostMessageble) {	
+    async getServerVersion(data: RequestData, webview: PostMessageble) {	
+        const client = getClient(data.clientId);
         if (!client) {
             return {
                 code: 501,
@@ -21,7 +24,8 @@ export class ClientController {
     }
 
     @Controller('prompts/list')
-    async listPrompts(client: RequestClientType, data: any, webview: PostMessageble) {
+    async listPrompts(data: RequestData, webview: PostMessageble) {
+        const client = getClient(data.clientId);
         if (!client) {
             const connectResult = {
                 code: 501,
@@ -39,7 +43,8 @@ export class ClientController {
     }
 
     @Controller('prompts/get')
-    async getPrompt(client: RequestClientType, option: any, webview: PostMessageble) {
+    async getPrompt(data: RequestData, webview: PostMessageble) {
+        const client = getClient(data.clientId);
         if (!client) {
             return {
                 code: 501,
@@ -47,7 +52,7 @@ export class ClientController {
             };
         }
 
-        const prompt = await client.getPrompt(option.promptId, option.args || {});
+        const prompt = await client.getPrompt(data.promptId, data.args || {});
         return {
             code: 200,
             msg: prompt
@@ -55,7 +60,8 @@ export class ClientController {
     }
 
     @Controller('resources/list')
-    async listResources(client: RequestClientType, data: any, webview: PostMessageble) {
+    async listResources(data: RequestData, webview: PostMessageble) {
+        const client = getClient(data.clientId);
         if (!client) {
             return {
                 code: 501,
@@ -71,8 +77,8 @@ export class ClientController {
     }
 
     @Controller('resources/templates/list')
-    async listResourceTemplates(client: RequestClientType, data: any, webview: PostMessageble) {
-        
+    async listResourceTemplates(data: RequestData, webview: PostMessageble) {
+        const client = getClient(data.clientId);
         if (!client) {
             return {
                 code: 501,
@@ -88,7 +94,8 @@ export class ClientController {
     }
 
     @Controller('resources/read')
-    async readResource(client: RequestClientType, option: any, webview: PostMessageble) {
+    async readResource(data: RequestData, webview: PostMessageble) {
+        const client = getClient(data.clientId);
         if (!client) {
             return {
                 code: 501,
@@ -96,7 +103,7 @@ export class ClientController {
             };
         }
 
-        const resource = await client.readResource(option.resourceUri);
+        const resource = await client.readResource(data.resourceUri);
         console.log(resource);
         
         return {
@@ -106,7 +113,8 @@ export class ClientController {
     }
 
     @Controller('tools/list')
-    async listTools(client: RequestClientType, data: any, webview: PostMessageble) {
+    async listTools(data: RequestData, webview: PostMessageble) {
+        const client = getClient(data.clientId);
         if (!client) {
             return {
                 code: 501,
@@ -122,7 +130,8 @@ export class ClientController {
     }
 
     @Controller('tools/call')
-    async callTool(client: RequestClientType, option: any, webview: PostMessageble) {
+    async callTool(data: RequestData, webview: PostMessageble) {
+        const client = getClient(data.clientId);
         if (!client) {
             return {
                 code: 501,
@@ -131,17 +140,12 @@ export class ClientController {
         }
 
         const toolResult = await client.callTool({
-            name: option.toolName,
-            arguments: option.toolArgs,
-            callToolOption: option.callToolOption
+            name: data.toolName,
+            arguments: data.toolArgs,
+            callToolOption: data.callToolOption
         });
 
-        // console.log(JSON.stringify(toolResult, null, 2));
-        
         postProcessMcpToolcallResponse(toolResult, webview);
-
-        // console.log(JSON.stringify(toolResult, null, 2));
-        
 
         return {
             code: 200,

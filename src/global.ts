@@ -7,7 +7,7 @@ export type FsPath = string;
 export const panels = new Map<FsPath, vscode.WebviewPanel>();
 
 export interface IStdioConnectionItem {
-    type: 'stdio';
+    type: 'STDIO';
     name: string;
     version?: string;
     command: string;
@@ -18,7 +18,7 @@ export interface IStdioConnectionItem {
 }
 
 export interface ISSEConnectionItem {
-    type: 'sse';
+    type: 'SSE';
     name: string;
     version: string;
     url: string;
@@ -29,13 +29,13 @@ export interface ISSEConnectionItem {
 
 
 interface IStdioLaunchSignature {
-    type: 'stdio';
+    type: 'STDIO';
     commandString: string;
     cwd: string;
 }
 
 interface ISSELaunchSignature {
-    type:'sse';
+    type:'SSE';
     url: string;
     oauth: string;
 }
@@ -123,7 +123,7 @@ export function getWorkspaceConnectionConfig() {
         if (item.filePath && item.filePath.startsWith('{workspace}')) {
             item.filePath = item.filePath.replace('{workspace}', workspacePath).replace(/\\/g, '/');
         }
-        if (item.type === 'stdio' && item.cwd && item.cwd.startsWith('{workspace}')) {
+        if (item.type === 'STDIO' && item.cwd && item.cwd.startsWith('{workspace}')) {
             item.cwd = item.cwd.replace('{workspace}', workspacePath).replace(/\\/g, '/');
         }
     }
@@ -169,7 +169,7 @@ export function saveWorkspaceConnectionConfig(workspace: string) {
         if (item.filePath && item.filePath.replace(/\\/g, '/').startsWith(workspacePath)) {
             item.filePath = item.filePath.replace(workspacePath, '{workspace}').replace(/\\/g, '/');
         }
-        if (item.type ==='stdio' && item.cwd && item.cwd.replace(/\\/g, '/').startsWith(workspacePath)) {
+        if (item.type ==='STDIO' && item.cwd && item.cwd.replace(/\\/g, '/').startsWith(workspacePath)) {
             item.cwd = item.cwd.replace(workspacePath, '{workspace}').replace(/\\/g, '/');
         }
     }
@@ -213,7 +213,7 @@ export function updateWorkspaceConnectionConfig(
 
     if (data.connectionType === 'STDIO') {
         const connectionItem: IStdioConnectionItem = {
-            type: 'stdio',
+            type: 'STDIO',
             name: data.serverInfo.name,
             version: data.serverInfo.version,
             command: data.command,
@@ -234,7 +234,7 @@ export function updateWorkspaceConnectionConfig(
 
     } else {
         const connectionItem: ISSEConnectionItem = {
-            type: 'sse',
+            type: 'SSE',
             name: data.serverInfo.name,
             version: data.serverInfo.version,
             url: data.url,
@@ -267,7 +267,7 @@ export function updateInstalledConnectionConfig(
 
     if (data.connectionType === 'STDIO') {
         const connectionItem: IStdioConnectionItem = {
-            type: 'stdio',
+            type: 'STDIO',
             name: data.serverInfo.name,
             version: data.serverInfo.version,
             command: data.command,
@@ -287,7 +287,7 @@ export function updateInstalledConnectionConfig(
 
     } else {
         const connectionItem: ISSEConnectionItem = {
-            type: 'sse',
+            type: 'SSE',
             name: data.serverInfo.name,
             version: data.serverInfo.version,
             url: data.url,

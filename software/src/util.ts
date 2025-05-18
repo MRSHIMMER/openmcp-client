@@ -24,13 +24,13 @@ export class ElectronIPCLike {
 
 
 interface IStdioLaunchSignature {
-    type: 'stdio';
+    type: 'STDIO';
     commandString: string;
     cwd: string;
 }
 
 interface ISSELaunchSignature {
-    type:'sse';
+    type:'SSE';
     url: string;
     oauth: string;
 }
@@ -39,7 +39,7 @@ export type ILaunchSigature = IStdioLaunchSignature | ISSELaunchSignature;
 
 export function refreshConnectionOption(envPath: string) {
     const defaultOption = {
-        type:'stdio',
+        type:'STDIO',
         command: 'mcp',
         args: ['run', 'main.py'],
         cwd: '../server'
@@ -80,7 +80,7 @@ export function updateConnectionOption(data: any) {
     
     if (data.connectionType === 'STDIO') {
         const connectionItem = {
-            type: 'stdio',
+            type: 'STDIO',
             command: data.command,
             args: data.args,
             cwd: data.cwd.replace(/\\/g, '/')
@@ -89,7 +89,7 @@ export function updateConnectionOption(data: any) {
         fs.writeFileSync(envPath, JSON.stringify(connectionItem, null, 4));
     } else {
         const connectionItem = {
-            type: 'sse',
+            type: 'SSE',
             url: data.url,
             oauth: data.oauth
         };

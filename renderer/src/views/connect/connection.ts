@@ -5,8 +5,15 @@ import { ElLoading, ElMessage } from 'element-plus';
 import { getPlatform, type OpenMcpSupportPlatform } from '@/api/platform';
 import { getTour, loadSetting } from '@/hook/setting';
 import { loadPanels } from '@/hook/panel';
+import type { ConnectionType } from './connection-item';
 
-export const connectionMethods = reactive({
+export const connectionMethods = reactive<{
+    current: ConnectionType,
+    data: {
+        value: ConnectionType,
+        label: string
+    }[]
+}>({
     current: 'STDIO',
     data: [
         {
@@ -16,6 +23,10 @@ export const connectionMethods = reactive({
         {
             value: 'SSE',
             label: 'SSE'
+        },
+        {
+            value: 'STREAMABLE_HTTP',
+            label: 'STREAMABLE_HTTP'
         }
     ]
 });
@@ -23,6 +34,7 @@ export const connectionMethods = reactive({
 export const connectionSettingRef = ref<any>(null);
 export const connectionLogRef = ref<any>(null);
 
+// 主 mcp 服务器的连接参数
 export const connectionArgs = reactive({
     commandString: '',
     cwd: '',
@@ -41,6 +53,13 @@ export interface IConnectionEnv {
     newValue: string
 }
 
+export interface ConnectionResult {
+    status: string
+    clientId: string
+    name: string
+    version: string
+}
+
 export const connectionEnv = reactive<IConnectionEnv>({
     data: [],
     newKey: '',
@@ -55,9 +74,6 @@ export function makeEnv() {
     return env;
 }
 
-
-// 定义连接类型
-type ConnectionType = 'STDIO' | 'SSE';
 
 // 定义命令行参数接口
 export interface McpOptions {
@@ -74,6 +90,14 @@ export interface McpOptions {
     clientVersion?: string;
 }
 
+/**
+ * @description 试图启动 mcp 服务器，它会
+ * 1. 请求启动参数
+ * 2. 启动 mcp 服务器
+ * 3. 将本次的启动参数同步到本地
+ * @param option 
+ * @returns 
+ */
 export async function doConnect(
     option: {
         namespace: OpenMcpSupportPlatform
@@ -86,32 +110,21 @@ export async function doConnect(
         updateCommandString = true
     } = option;
 
+    //  如果是初始化，则需要请求启动参数
     if (updateCommandString) {
         pinkLog('请求启动参数');
         const connectionItem = await getLaunchSignature(namespace + '/launch-signature');
-
-        if (connectionItem.type ==='stdio') {
-            connectionMethods.current = 'STDIO';
-            connectionArgs.commandString = connectionItem.commandString;
-            connectionArgs.cwd = connectionItem.cwd;
-
-            if (connectionArgs.commandString.length === 0) {
-                return;
-            }
-        } else {
-            connectionMethods.current = 'SSE';
-            connectionArgs.urlString = connectionItem.url || '';
-            
-            if (connectionArgs.urlString.length === 0) {
-                return;
-            }
-        }
+        connectionMethods.current = connectionItem.type;
+        connectionArgs.commandString = connectionItem.commandString || '';
+        connectionArgs.cwd = connectionItem.cwd || '';
+        connectionArgs.oauth = connectionItem.oauth || '';
+        connectionArgs.urlString = connectionItem.url || '';
     }
 
     if (connectionMethods.current === 'STDIO') {
-        await launchStdio(namespace);
+        return await launchStdio(namespace);
     } else {
-        await launchSSE(namespace);
+        return await launchRemote(namespace);
     }
 }
 
@@ -128,26 +141,25 @@ async function launchStdio(namespace: string) {
         command: command,
         args: commandComponents,
         cwd: connectionArgs.cwd,
-        clientName: 'openmcp.connect.stdio',
+        clientName: 'openmcp.connect.STDIO',
         clientVersion: '0.0.1',
         env
     };
 
-    const { code, msg } = await bridge.commandRequest('connect', connectOption);
+    const { code, msg } = await bridge.commandRequest<ConnectionResult>('connect', connectOption);
 
     connectionResult.success = (code === 200);
 
     if (code === 200) {
-        connectionResult.logString.push({
-            type: 'info',
-            message: msg
-        });                
 
-        const res = await getServerVersion() as { name: string, version: string };
-        connectionResult.serverInfo.name = res.name || '';
-        connectionResult.serverInfo.version = res.version || '';
+        const message = `connect to ${msg.name} ${msg.version} success, clientId: ${msg.clientId}`;
+        connectionResult.logString.push({ type: 'info', message });        
 
-        // 同步信息到 vscode
+        connectionResult.serverInfo.name = msg.name || '';
+        connectionResult.serverInfo.version = msg.version || '';
+        connectionResult.clientId = msg.clientId || '';
+
+        // 同步信息到 后端
         const commandComponents = connectionArgs.commandString.split(/\s+/g);
         const command = commandComponents[0];
         commandComponents.shift();
@@ -155,7 +167,7 @@ async function launchStdio(namespace: string) {
         const clientStdioConnectionItem = {
             serverInfo: connectionResult.serverInfo,
             connectionType: 'STDIO',
-            name: 'openmcp.connect.stdio',
+            name: 'openmcp.connect.STDIO',
             command: command,
             args: commandComponents,
             cwd: connectionArgs.cwd,
@@ -168,46 +180,49 @@ async function launchStdio(namespace: string) {
         });
 
     } else {
+        const messaage = msg.toString();
         connectionResult.logString.push({
             type: 'error',
-            message: msg
+            message: messaage
         });
 
-        ElMessage.error(msg);
+        ElMessage.error(messaage);
     }
 }
 
-async function launchSSE(namespace: string) {
+async function launchRemote(namespace: string) {
     const bridge = useMessageBridge();
     const env = makeEnv();
 
     const connectOption: McpOptions = {
-        connectionType: 'SSE',
+        connectionType: connectionMethods.current,
         url: connectionArgs.urlString,
-        clientName: 'openmcp.connect.sse',
+        clientName: 'openmcp.connect.' + connectionMethods.current,
         clientVersion: '0.0.1',
         env
     };
 
-    const { code, msg } = await bridge.commandRequest('connect', connectOption);
+    const { code, msg } = await bridge.commandRequest<ConnectionResult>('connect', connectOption);
 
     connectionResult.success = (code === 200);
 
     if (code === 200) {
+        const message = `connect to ${msg.name} ${msg.version} success, clientId: ${msg.clientId}`;
+
         connectionResult.logString.push({
             type: 'info',
-            message: msg
+            message: message
         });
 
-        const res = await getServerVersion() as { name: string, version: string };
-        connectionResult.serverInfo.name = res.name || '';
-        connectionResult.serverInfo.version = res.version || '';
+        connectionResult.serverInfo.name = msg.name || '';
+        connectionResult.serverInfo.version = msg.version || '';
+        connectionResult.clientId = msg.clientId || '';
         
         // 同步信息到 vscode
         const clientSseConnectionItem = {
             serverInfo: connectionResult.serverInfo,
-            connectionType: 'SSE',
-            name: 'openmcp.connect.sse',
+            connectionType: connectionMethods.current,
+            name: 'openmcp.connect.' + connectionMethods.current,
             url: connectionArgs.urlString,
             oauth: connectionArgs.oauth,
             env: env
@@ -219,12 +234,13 @@ async function launchSSE(namespace: string) {
         });
 
     } else {
+        const message = msg.toString();
         connectionResult.logString.push({
             type: 'error',
-            message: msg
+            message: message
         });
 
-        ElMessage.error(msg);
+        ElMessage.error(message);
     }
 }
 
@@ -247,32 +263,19 @@ export const connectionResult = reactive<{
     serverInfo: {
         name: string,
         version: string
-    }
+    },
+    clientId: string
 }>({
     success: false,
     logString: [],
     serverInfo: {
         name: '',
         version: ''
-    }
+    },
+    clientId: ''
 });
 
-export function getServerVersion() {
-    return new Promise((resolve, reject) => {
-        const bridge = useMessageBridge();
-        bridge.addCommandListener('server/version', data => {
-            if (data.code === 200) {
-                resolve(data.msg);
-            } else {
-                reject(data.msg);
-            }
-        }, { once: true });
 
-        bridge.postMessage({
-            command: 'server/version',
-        });
-    });
-}
 
 export const envVarStatus = {
     launched: false
