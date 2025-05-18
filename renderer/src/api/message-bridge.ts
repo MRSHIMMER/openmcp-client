@@ -19,6 +19,11 @@ interface AddCommandListenerOption {
 	once: boolean // 只调用一次就销毁
 }
 
+export interface ICommandRequestData {
+	clientId?: string;
+	[key: string]: any;
+}
+
 export class MessageBridge {
 	private ws: WebSocket | null = null;
 	private handlers = new Map<string, Set<CommandHandler>>();
@@ -206,7 +211,7 @@ export class MessageBridge {
 	 * @param data 
 	 * @returns 
 	 */
-	public commandRequest<T = any>(command: string, data?: any): Promise<RestFulResponse<T>>  {
+	public commandRequest<T = any>(command: string, data?: ICommandRequestData): Promise<RestFulResponse<T>>  {
 		return new Promise<RestFulResponse>((resolve, reject) => {
 			this.addCommandListener(command, (data) => {
 				resolve(data as RestFulResponse);

@@ -25,10 +25,10 @@
         <span>{{ t('connect-sigature') }}</span>
         <span style="width: 310px;">
             <el-form :model="connectionArgs" :rules="rules" ref="urlForm">
-                <el-form-item prop="urlString">
+                <el-form-item prop="url">
                     <div class="input-with-label">
                         <span class="input-label">URL</span>
-                        <el-input v-model="connectionArgs.urlString" placeholder="http://"></el-input>
+                        <el-input v-model="connectionArgs.url" placeholder="http://"></el-input>
                     </div>
                 </el-form-item>
                 <el-form-item prop="oauth">
@@ -65,7 +65,7 @@ const rules = reactive<FormRules>({
     oauth: [
         { required: false, trigger: 'blur' }
     ],
-    urlString: [
+    url: [
         { required: true, message: 'URL不能为空', trigger: 'blur' }
     ]
 })
