@@ -6,7 +6,8 @@ import { routeMessage } from '../../openmcp-sdk/service';
 
 export function getWebviewContent(context: vscode.ExtensionContext, panel: vscode.WebviewPanel): string | undefined {
     const viewRoot = fspath.join(context.extensionPath, 'openmcp-sdk', 'renderer');
-    const htmlIndexPath = fspath.join(viewRoot, 'index.html');
+    const htmlIndexPath = fspath.join(viewRoot, 'index.html');    
+
     const html = fs.readFileSync(htmlIndexPath, { encoding: 'utf-8' })?.replace(/(<link.+?href="|<script.+?src="|<img.+?src="|url\()(.+?)(\)|")/g, (m, $1, $2) => {
         const absLocalPath = fspath.resolve(viewRoot, $2);
         const webviewUri = panel.webview.asWebviewUri(vscode.Uri.file(absLocalPath));
@@ -14,6 +15,10 @@ export function getWebviewContent(context: vscode.ExtensionContext, panel: vscod
         const replaceHref = $1 + webviewUri?.toString() + '"';
         return replaceHref;
     });
+
+    console.log(html);
+    
+
     return html;
 }
 
