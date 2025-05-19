@@ -3,7 +3,7 @@
 		<span>{{ t('log') }}</span>
 		<el-scrollbar height="90%">
 			<div class="output-content">
-				<div v-for="(log, index) in connectionResult.logString" :key="index" :class="log.type">
+				<div v-for="(log, index) in client.connectionResult.logString" :key="index" :class="log.type">
 					<span class="log-message">{{ log.message }}</span>
 				</div>
 			</div>
@@ -14,9 +14,17 @@
 <script setup lang="ts">
 import { defineComponent } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { connectionResult } from './connection';
+import { mcpClientAdapter } from './core';
 
 defineComponent({ name: 'connection-log' });
+const props = defineProps({
+	index: {
+		type: Number,
+		required: true
+	}
+});
+
+const client = mcpClientAdapter.clients[props.index];
 
 const { t } = useI18n();
 

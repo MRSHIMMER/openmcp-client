@@ -1,11 +1,14 @@
-import { Controller, RequestClientType } from "../common";
+import { Controller } from "../common";
 import { PostMessageble } from "../hook/adapter";
+import { RequestData } from "../common/index.dto";
+import { getClient } from "../mcp/connect.service";
 import { getTour, loadSetting, saveSetting, setTour } from "./setting.service";
 
 export class SettingController {
 
     @Controller('setting/save')
-    async saveSetting(client: RequestClientType, data: any, webview: PostMessageble) {
+    async saveSetting(data: RequestData, webview: PostMessageble) {
+        const client = getClient(data.clientId);
         saveSetting(data);
         console.log('Settings saved successfully');
         
@@ -16,8 +19,8 @@ export class SettingController {
     }
 
     @Controller('setting/load')
-    async loadSetting(client: RequestClientType, data: any, webview: PostMessageble) {
-        
+    async loadSetting(data: RequestData, webview: PostMessageble) {
+        const client = getClient(data.clientId);
         const config = loadSetting();
         return {
             code: 200,
@@ -26,10 +29,8 @@ export class SettingController {
     }
 
     @Controller('setting/set-tour')
-    async setTourController(client: RequestClientType, data: any, webview: PostMessageble) {
-        
+    async setTourController(data: any, webview: PostMessageble) {
         const { userHasReadGuide } = data;
-
         setTour(userHasReadGuide);
 
         return {
@@ -39,7 +40,7 @@ export class SettingController {
     }
 
     @Controller('setting/get-tour')
-    async getTourController(client: RequestClientType, data: any, webview: PostMessageble) {
+    async getTourController(data: any, webview: PostMessageble) {
         
         const { userHasReadGuide } = getTour();
 

@@ -6,7 +6,7 @@ import * as vscode from 'vscode';
 
 export async function acquireUserCustomConnection(): Promise<IConnectionItem | undefined> {
     // 让用户选择连接类型
-    const connectionType = await vscode.window.showQuickPick(['stdio', 'sse'], {
+    const connectionType = await vscode.window.showQuickPick(['STDIO', 'SSE'], {
         placeHolder: '请选择连接类型'
     });
 
@@ -14,7 +14,7 @@ export async function acquireUserCustomConnection(): Promise<IConnectionItem | u
         return; // 用户取消选择
     }
 
-    if (connectionType === 'stdio') {
+    if (connectionType === 'STDIO') {
         // 获取 command
         const commandString = await vscode.window.showInputBox({
             prompt: '请输入连接的 command',
@@ -47,15 +47,15 @@ export async function acquireUserCustomConnection(): Promise<IConnectionItem | u
 
         // 保存连接配置
         return {
-            type: 'stdio',
-            name: `stdio-${Date.now()}`,
+            type: 'STDIO',
+            name: `STDIO-${Date.now()}`,
             command: command,
             args,
             cwd: cwd || '',
             filePath
         };
 
-    } else if (connectionType === 'sse') {
+    } else if (connectionType === 'SSE') {
         // 获取 url
         const url = await vscode.window.showInputBox({
             prompt: '请输入连接的 URL',
@@ -74,8 +74,8 @@ export async function acquireUserCustomConnection(): Promise<IConnectionItem | u
 
         // 保存连接配置
         return {
-            type: 'sse',
-            name: `sse-${Date.now()}`,
+            type: 'SSE',
+            name: `SSE-${Date.now()}`,
             version: '1.0', // 假设默认版本为 1.0，可根据实际情况修改
             url: url,
             oauth: oauth || ''

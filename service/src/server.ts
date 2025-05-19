@@ -29,13 +29,13 @@ const logger = pino({
 export type MessageHandler = (message: VSCodeMessage) => void;
 
 interface IStdioLaunchSignature {
-    type: 'stdio';
+    type: 'STDIO';
     commandString: string;
     cwd: string;
 }
 
 interface ISSELaunchSignature {
-    type: 'sse';
+    type: 'SSE';
     url: string;
     oauth: string;
 }
@@ -43,19 +43,20 @@ interface ISSELaunchSignature {
 export type ILaunchSigature = IStdioLaunchSignature | ISSELaunchSignature;
 
 function refreshConnectionOption(envPath: string) {
+    const serverPath = path.join(__dirname, '..', '..', 'servers');
+
     const defaultOption = {
-        type: 'stdio',
-        command: 'mcp',
-        args: ['run', 'main.py'],
-        cwd: '../server'
+        type:'STDIO',
+        commandString: 'mcp run main.py',
+        cwd: serverPath
     };
 
-    fs.writeFileSync(envPath, JSON.stringify(defaultOption, null, 4));
+    fs.writeFileSync(envPath, JSON.stringify(defaultOption, null, 4));   
 
-    return defaultOption;
+    return { data: [ defaultOption ] };
 }
 
-function getInitConnectionOption() {
+function acquireConnectionOption() {
     const envPath = path.join(__dirname, '..', '.env');
 
     if (!fs.existsSync(envPath)) {
@@ -64,6 +65,15 @@ function getInitConnectionOption() {
 
     try {
         const option = JSON.parse(fs.readFileSync(envPath, 'utf-8'));
+
+        if (!option.data) {
+            return refreshConnectionOption(envPath);
+        }
+
+        if (option.data && option.data.length === 0) {
+            return refreshConnectionOption(envPath);
+        }
+
         return option;
 
     } catch (error) {
@@ -81,25 +91,8 @@ const authPassword = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '.env
 
 function updateConnectionOption(data: any) {
     const envPath = path.join(__dirname, '..', '.env');
-
-    if (data.connectionType === 'STDIO') {
-        const connectionItem = {
-            type: 'stdio',
-            command: data.command,
-            args: data.args,
-            cwd: data.cwd.replace(/\\/g, '/')
-        };
-
-        fs.writeFileSync(envPath, JSON.stringify(connectionItem, null, 4));
-    } else {
-        const connectionItem = {
-            type: 'sse',
-            url: data.url,
-            oauth: data.oauth
-        };
-
-        fs.writeFileSync(envPath, JSON.stringify(connectionItem, null, 4));
-    }
+    const connection = { data };
+    fs.writeFileSync(envPath, JSON.stringify(connection, null, 4));
 }
 
 const devHome = path.join(__dirname, '..', '..');
@@ -146,7 +139,7 @@ wss.on('connection', (ws: any) => {
         }
     });
 
-    const option = getInitConnectionOption();
+    const option = acquireConnectionOption();
 
     // 注册消息接受的管线
     webview.onDidReceiveMessage(message => {
@@ -155,21 +148,9 @@ wss.on('connection', (ws: any) => {
 
         switch (command) {
             case 'web/launch-signature':
-                const launchResultMessage: ILaunchSigature = option.type === 'stdio' ?
-                    {
-                        type: 'stdio',
-                        commandString: option.command + ' ' + option.args.join(' '),
-                        cwd: option.cwd || ''
-                    } :
-                    {
-                        type: 'sse',
-                        url: option.url,
-                        oauth: option.oauth || ''
-                    };
-
                 const launchResult = {
                     code: 200,
-                    msg: launchResultMessage
+                    msg: option.data
                 };
 
                 webview.postMessage({
@@ -179,7 +160,7 @@ wss.on('connection', (ws: any) => {
 
                 break;
 
-            case 'web/update-connection-sigature':
+            case 'web/update-connection-signature':
                 updateConnectionOption(data);
                 break;
 

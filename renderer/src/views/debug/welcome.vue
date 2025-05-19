@@ -7,7 +7,7 @@
 			<!-- TODO: 支持更多的 server -->
 			<span
 				class="debug-option"
-				:class="{ 'disable': !connectionResult.success }"
+				:class="{ 'disable': !client.connectionResult.success }"
 				v-for="(option, index) of debugOptions"
 				:key="index"
                 @click="chooseDebugMode(index)"
@@ -25,13 +25,14 @@
 import { debugModes, tabs } from '@/components/main-panel/panel';
 import { defineComponent, markRaw, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { connectionResult } from '../connect/connection';
 import { ElMessage } from 'element-plus';
 import { welcomeRef } from './welcome';
+import { mcpClientAdapter } from '../connect/core';
 
 defineComponent({ name: 'welcome' });
 
 const { t } = useI18n();
+const client = mcpClientAdapter.masterNode;
 
 const debugOptions = [
 	{
@@ -59,7 +60,7 @@ const debugOptions = [
 function chooseDebugMode(index: number) {
 
 	// TODO: 支持更多的 server
-	if (connectionResult.success) {
+	if (client.connectionResult.success) {
 		const activeTab = tabs.activeTab;
 		activeTab.component = markRaw(debugModes[index]);
 

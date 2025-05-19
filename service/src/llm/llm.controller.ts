@@ -1,12 +1,16 @@
 import { Controller, RequestClientType } from "../common";
+import { RequestData } from "../common/index.dto";
 import { PostMessageble } from "../hook/adapter";
+import { getClient } from "../mcp/connect.service";
 import { abortMessageService, streamingChatCompletion } from "./llm.service";
 
 export class LlmController {
 
     @Controller('llm/chat/completions')
-    async chatCompletion(client: RequestClientType, data: any, webview: PostMessageble) {
+    async chatCompletion(data: RequestData, webview: PostMessageble) {
         let { tools = [] } = data;
+
+        const client = getClient(data.clientId);
 
         if (tools.length > 0 && !client) {
             return {
@@ -37,7 +41,7 @@ export class LlmController {
     }
 
     @Controller('llm/chat/completions/abort')
-    async abortChatCompletion(client: RequestClientType, data: any, webview: PostMessageble) {
+    async abortChatCompletion(data: RequestData, webview: PostMessageble) {
         return abortMessageService(data, webview);
     }
 

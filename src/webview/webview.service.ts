@@ -36,7 +36,7 @@ export function revealOpenMcpWebviewPanel(
     type: 'workspace' | 'installed',
     panelKey: string,
     option: IConnectionItem = {
-        type: 'stdio',
+        type: 'STDIO',
         name: 'OpenMCP',
         command: 'mcp',
         args: ['run', 'main.py']
@@ -75,14 +75,14 @@ export function revealOpenMcpWebviewPanel(
         // 拦截消息，注入额外信息
         switch (command) {
             case 'vscode/launch-signature':
-                const launchResultMessage: ILaunchSigature = option.type === 'stdio' ?
+                const launchResultMessage: ILaunchSigature = option.type === 'STDIO' ?
                     {
-                        type: 'stdio',
+                        type: 'STDIO',
                         commandString: option.command + ' ' + option.args.join(' '),
                         cwd: option.cwd || ''
                     } :
                     {
-                        type: 'sse',
+                        type: 'SSE',
                         url: option.url,
                         oauth: option.oauth || ''
                     };
@@ -99,7 +99,7 @@ export function revealOpenMcpWebviewPanel(
 
                 break;
 
-            case 'vscode/update-connection-sigature':
+            case 'vscode/update-connection-signature':
                 if (type === 'installed') {
                     updateInstalledConnectionConfig(panelKey, data);
                 } else {

@@ -1,19 +1,19 @@
 <template>
     <!-- STDIO 模式下的命令输入 -->
-    <div class="connection-option" v-if="connectionMethods.current === 'STDIO'">
+    <div class="connection-option" v-if="client.connectionArgs.type === 'STDIO'">
         <span>{{ t('connect-sigature') }}</span>
         <span style="width: 310px;">
-            <el-form :model="connectionArgs" :rules="rules" ref="stdioForm">
+            <el-form :model="client.connectionArgs" :rules="rules" ref="stdioForm">
                 <el-form-item prop="commandString">
                     <div class="input-with-label">
                         <span class="input-label">{{ t("command") }}</span>
-                        <el-input v-model="connectionArgs.commandString" placeholder="mcp run <your script>"></el-input>
+                        <el-input v-model="client.connectionArgs.commandString" placeholder="mcp run <your script>"></el-input>
                     </div>
                 </el-form-item>
                 <el-form-item prop="cwd">
                     <div class="input-with-label">
                         <span class="input-label">{{ t('cwd') }}</span>
-                        <el-input v-model="connectionArgs.cwd" placeholder="cwd, 可为空"></el-input>
+                        <el-input v-model="client.connectionArgs.cwd" placeholder="cwd, 可为空"></el-input>
                     </div>
                 </el-form-item>
             </el-form>
@@ -24,17 +24,17 @@
     <div class="connection-option" v-else>
         <span>{{ t('connect-sigature') }}</span>
         <span style="width: 310px;">
-            <el-form :model="connectionArgs" :rules="rules" ref="urlForm">
-                <el-form-item prop="urlString">
+            <el-form :model="client.connectionArgs" :rules="rules" ref="urlForm">
+                <el-form-item prop="url">
                     <div class="input-with-label">
                         <span class="input-label">URL</span>
-                        <el-input v-model="connectionArgs.urlString" placeholder="http://"></el-input>
+                        <el-input v-model="client.connectionArgs.url" placeholder="http://"></el-input>
                     </div>
                 </el-form-item>
                 <el-form-item prop="oauth">
                     <div class="input-with-label">
                         <span class="input-label">OAuth</span>
-                        <el-input v-model="connectionArgs.oauth" placeholder="认证签名, 可为空"></el-input>
+                        <el-input v-model="client.connectionArgs.oauth" placeholder="认证签名, 可为空"></el-input>
                     </div>
                 </el-form-item>
             </el-form>
@@ -43,13 +43,22 @@
 </template>
 
 <script setup lang="ts">
-import { defineComponent, reactive, ref } from 'vue';
+import { reactive, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { ElMessage } from 'element-plus';
 import type { FormInstance, FormRules } from 'element-plus';
-import { connectionArgs, connectionMethods } from './connection';
+import { mcpClientAdapter } from './core';
 
 const { t } = useI18n();
+
+const props = defineProps({
+	index: {
+		type: Number,
+		required: true
+	}
+});
+
+const client = mcpClientAdapter.clients[props.index];
 
 const stdioForm = ref<FormInstance>()
 const urlForm = ref<FormInstance>()
@@ -65,7 +74,7 @@ const rules = reactive<FormRules>({
     oauth: [
         { required: false, trigger: 'blur' }
     ],
-    urlString: [
+    url: [
         { required: true, message: 'URL不能为空', trigger: 'blur' }
     ]
 })
@@ -73,7 +82,7 @@ const rules = reactive<FormRules>({
 // 验证当前活动表单
 const validateForm = async () => {
     try {
-        if (connectionMethods.current === 'STDIO') {
+        if (client.connectionArgs.type === 'STDIO') {
             await stdioForm.value?.validate()
         } else {
             await urlForm.value?.validate()

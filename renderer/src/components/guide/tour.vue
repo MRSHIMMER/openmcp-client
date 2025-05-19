@@ -58,7 +58,7 @@
         </el-tour-step>
 
         <el-tour-step
-            :target="connectionSettingRef"
+            :target="client.connectionSettingRef"
             :prev-button-props="{ children: '上一步' }"
             :next-button-props="{ children: '下一步' }"
             :show-close="false"
@@ -78,7 +78,7 @@
         </el-tour-step>
 
         <el-tour-step
-            :target="connectionLogRef"
+            :target="client.connectionLogRef"
             :prev-button-props="{ children: '上一步' }"
             :next-button-props="{ children: '下一步' }"
             :show-close="false"
@@ -249,16 +249,17 @@ import TourTitle from './tour-title.vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import { welcomeRef } from '@/views/debug/welcome';
-import { connectionLogRef, connectionSettingRef } from '@/views/connect/connection';
 import { llmSettingRef } from '@/views/setting/api';
 import { userHasReadGuide } from './tour';
 import { setTour } from '@/hook/setting';
+import { mcpClientAdapter } from '@/views/connect/core';
 
 const openTour = ref(true);
 
 const { t } = useI18n();
 
 const router = useRouter();
+const client = mcpClientAdapter.masterNode;
 
 const baseUrl = import.meta.env.BASE_URL;
 

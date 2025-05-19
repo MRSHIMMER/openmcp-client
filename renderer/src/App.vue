@@ -4,7 +4,7 @@
 		<MainPanel></MainPanel>
 
 		<Tour v-if="!userHasReadGuide"/>
-		<PasswordDialog v-if="password"/>
+		<PasswordDialog v-if="useAuth"/>
 	</div>
 </template>
 
@@ -18,8 +18,7 @@ import MainPanel from '@/components/main-panel/index.vue';
 import { setDefaultCss } from './hook/css';
 import { greenLog, pinkLog } from './views/setting/util';
 import { useMessageBridge } from './api/message-bridge';
-import { initialise } from './views/connect/connection';
-import { getPlatform } from './api/platform';
+import { initialise } from './views/connect';
 import Tour from '@/components/guide/tour.vue';
 import { userHasReadGuide } from './components/guide/tour';
 
@@ -37,8 +36,10 @@ bridge.addCommandListener('hello', data => {
 const route = useRoute();
 const router = useRouter();
 
-const password = Boolean(import.meta.env.VITE_USE_PASSWORD);
-privilegeStatus.allow = !Boolean(password);
+const useAuth = Boolean(import.meta.env.VITE_USE_AUTH !== "false");
+console.log(import.meta.env.VITE_USE_AUTH, useAuth);
+
+privilegeStatus.allow = !Boolean(useAuth);
 
 onMounted(async () => {
 	// 初始化 css
@@ -47,11 +48,11 @@ onMounted(async () => {
 	pinkLog('OpenMCP Client 启动');
 
 	// 跳转到首页
-	if (route.name !== 'debug') {
-		const targetRoute = import.meta.env.BASE_URL + 'debug';
-		console.log('go to ' + targetRoute);
-		router.push(targetRoute);
-	}
+	// if (route.name !== 'debug') {
+	// 	const targetRoute = import.meta.env.BASE_URL + 'debug';
+	// 	console.log('go to ' + targetRoute);
+	// 	router.push(targetRoute);
+	// }
 
 	// 进行桥接
 	await bridge.awaitForWebsocket();

@@ -1,8 +1,9 @@
 import { useMessageBridge } from "@/api/message-bridge";
 import { pinkLog } from "@/views/setting/util";
 import { debugModes, tabs } from "@/components/main-panel/panel";
-import { markRaw, ref, nextTick } from "vue";
+import { markRaw, ref } from "vue";
 import { v4 as uuidv4 } from 'uuid';
+import type { McpClient } from "@/views/connect/core";
 
 interface SaveTabItem {
 	name: string;
@@ -12,64 +13,55 @@ interface SaveTabItem {
 	storage: Record<string, any>;
 }
 
-interface SaveTab {
+export interface SaveTab {
 	tabs: SaveTabItem[]
 	currentIndex: number
 }
 
 export const panelLoaded = ref(false);
 
-export function loadPanels() {
-
-	return new Promise((resolve, reject) => {
-		const bridge = useMessageBridge();
-    
-		bridge.addCommandListener('panel/load', data => {
-			if (data.code !== 200) {
-				pinkLog('tabs 加载失败');
-				console.log(data.msg);
-				
-			} else {
-				const persistTab = data.msg as SaveTab;				
-	
-				pinkLog('tabs 加载成功');
-		
-				if (persistTab.tabs.length === 0) {
-					// 空的，直接返回不需要管
-					panelLoaded.value = true;
-					resolve(void 0);
-					return;
-				}
-				
-				tabs.activeIndex = 0;
-				tabs.content = [];
-		
-				for (const tab of persistTab.tabs || []) {
-					
-					const component = tab.componentIndex >= 0? markRaw(debugModes[tab.componentIndex]) : undefined;
-		
-					tabs.content.push({
-						id: uuidv4(),
-						name: tab.name,
-						icon: tab.icon,
-						type: tab.type,
-						componentIndex: tab.componentIndex,
-						component: component,
-						storage: tab.storage
-					});
-				}
-		
-				tabs.activeIndex = persistTab.currentIndex;				
-			}
-	
-			panelLoaded.value = true;
-			resolve(void 0);
-		}, { once: true });
-	
-		bridge.postMessage({
-			command: 'panel/load'
-		});
+export async function loadPanels(client: McpClient) {
+	const bridge = useMessageBridge();
+	const { code, msg } = await bridge.commandRequest<SaveTab>('panel/load', {
+		clientId: client.clientId
 	});
+	if (code !== 200) {
+		pinkLog('tabs 加载失败');
+		console.log(msg);
+		
+	} else {
+		const persistTab = msg;				
+
+		pinkLog('tabs 加载成功');
+
+		if (persistTab.tabs.length === 0) {
+			// 空的，直接返回不需要管
+			panelLoaded.value = true;
+			return;
+		}
+		
+		tabs.activeIndex = 0;
+		tabs.content = [];
+
+		for (const tab of persistTab.tabs || []) {
+			
+			const component = tab.componentIndex >= 0? markRaw(debugModes[tab.componentIndex]) : undefined;
+
+			tabs.content.push({
+				id: uuidv4(),
+				name: tab.name,
+				icon: tab.icon,
+				type: tab.type,
+				componentIndex: tab.componentIndex,
+				component: component,
+				storage: tab.storage
+			});
+		}
+
+		tabs.activeIndex = persistTab.currentIndex;				
+	}
+
+	panelLoaded.value = true;
 }
 
 let debounceHandler: number;
