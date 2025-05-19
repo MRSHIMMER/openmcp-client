@@ -218,6 +218,7 @@
         "software"
     ],
     "scripts": {
+        "setup": "npm i && npm run prepare:ocr",
         "dev": "turbo dev --filter=!@openmcp/electron",
         "dev:electron": "turbo dev --filter=@openmcp/electron",
         "dev:all": "turbo dev",

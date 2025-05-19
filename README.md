@@ -136,10 +136,7 @@ B <--mcp--> m(MCP Server)
 配置项目
 
 ```bash
-## linux
-./configure.sh
-## windows
-./configure.ps1
+npm run setup
 ```
 
 启动 dev server

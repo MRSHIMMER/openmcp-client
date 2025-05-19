@@ -2,20 +2,36 @@
     "$schema": "https://turborepo.com/schema.json",
     "tasks": {
         "dev": {
+            "dependsOn": ["@openmcp/renderer#serve", "@openmcp/service#serve"],
             "persistent": true,
             "cache": false
         },
         "build": {
-            "dependsOn": ["^build"],
-            "outputs": ["dist/**"]
+            "dependsOn": ["@openmcp/renderer#build", "@openmcp/service#build", "//#build:task-loop"],
+            "cache": false
+        },
+        "//#build:task-loop": {
+            "cache": false
+        },
+        "@openmcp/renderer#serve": {
+            "cache": false
+        },
+        "@openmcp/renderer#build": {
+            "cache": false
+        },
+        "@openmcp/service#serve": {
+            "cache": false
+        },
+        "@openmcp/service#build": {
+            "cache": false
         },
         "@openmcp/electron#dev": {
-            "dependsOn": ["@openmcp/renderer#build", "@openmcp/service#build"],
+            "dependsOn": ["@openmcp/renderer#build"],
             "persistent": true,
             "cache": false
         },
         "@openmcp/electron#build": {
-            "dependsOn": ["@openmcp/renderer#build", "@openmcp/service#build"],
+            "dependsOn": ["@openmcp/renderer#build"],
             "outputs": ["dist/**"]
         }
     }

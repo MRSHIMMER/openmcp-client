@@ -18,7 +18,7 @@ function recreateDir(filePath) {
 
 const currentDir = process.cwd();
 // 确保上级目录的 openmcp-sdk 存在
-const openMCPSdkPath = fsPath.join(currentDir, '..', 'openmcp-sdk')
+const openMCPSdkPath = fsPath.join(currentDir, '..', 'openmcp-sdk');
 createDirIfExists(openMCPSdkPath);
 
 const sdkRenderPath = fsPath.join(openMCPSdkPath, 'renderer');
