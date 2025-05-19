@@ -18,8 +18,7 @@ import MainPanel from '@/components/main-panel/index.vue';
 import { setDefaultCss } from './hook/css';
 import { greenLog, pinkLog } from './views/setting/util';
 import { useMessageBridge } from './api/message-bridge';
-import { initialise } from './views/connect/connection';
-import { getPlatform } from './api/platform';
+import { initialise } from './views/connect';
 import Tour from '@/components/guide/tour.vue';
 import { userHasReadGuide } from './components/guide/tour';
 
@@ -37,7 +36,9 @@ bridge.addCommandListener('hello', data => {
 const route = useRoute();
 const router = useRouter();
 
-const useAuth = Boolean(import.meta.env.VITE_USE_AUTH);
+const useAuth = Boolean(import.meta.env.VITE_USE_AUTH !== "false");
+console.log(import.meta.env.VITE_USE_AUTH, useAuth);
+
 privilegeStatus.allow = !Boolean(useAuth);
 
 onMounted(async () => {

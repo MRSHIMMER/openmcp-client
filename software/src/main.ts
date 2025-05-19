@@ -64,7 +64,7 @@ function createWindow(): void {
 
                 break;
 
-            case 'electron/update-connection-sigature':
+            case 'electron/update-connection-signature':
                 updateConnectionOption(data);
                 break;
 

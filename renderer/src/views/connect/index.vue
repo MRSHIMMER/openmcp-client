@@ -1,128 +1,96 @@
 <template>
-	<el-scrollbar>
-		<div class="connection-container">
-		<div class="connect-panel-container"
-			:ref="el => connectionSettingRef = el"
-		>
-			<ConnectionMethod></ConnectionMethod>
-			<ConnectionArgs></ConnectionArgs>
-			<EnvVar></EnvVar>
-
-			<div class="connect-action">
-				<el-button type="primary" size="large" :loading="isLoading" :disabled="!connectionResult"
-					@click="suitableConnect()">
-					<span class="iconfont icon-connect" v-if="!isLoading"></span>
-					{{ t('connect.appearance.connect') }}
-				</el-button>
+	<div class="connection-container">
+		<div class="server-list">
+			<div v-for="(client, index) in mcpClientAdapter.clients" :key="index" class="server-item"
+				:class="{ 'active': mcpClientAdapter.currentClientIndex === index }" @click="selectServer(index)">
+				<span class="server-name">Server {{ index + 1 }}</span>
+				<span class="server-status" :class="client.connectionResult.status">
+					{{ client.connectionResult.status }}
+				</span>
+			</div>
+			<div class="add-server" @click="addServer">
+				<span class="iconfont icon-add"></span>
 			</div>
 		</div>
-
-		<div class="connect-panel-container"
-			:ref="el => connectionLogRef = el"
-		>
-			<ConnectionLog></ConnectionLog>
+		<div class="panel-container">
+			<ConnectionPanel v-if="mcpClientAdapter.clients.length > 0" :index="mcpClientAdapter.currentClientIndex" />
 		</div>
 	</div>
-	</el-scrollbar>
-
 </template>
 
 <script setup lang="ts">
-import { defineComponent, ref } from 'vue';
-import { useI18n } from 'vue-i18n';
+import { defineComponent } from 'vue';
+import ConnectionPanel from './connection-panel.vue';
+import { mcpClientAdapter } from './core';
+import { ElMessage } from 'element-plus';
 
-const { t } = useI18n();
+defineComponent({ name: 'connection' });
 
-import { connectionLogRef, connectionResult, connectionSettingRef, doConnect } from './connection';
-
-import ConnectionMethod from './connection-method.vue';
-import ConnectionArgs from './connection-args.vue';
-import EnvVar from './env-var.vue';
-
-import ConnectionLog from './connection-log.vue';
-import { getPlatform } from '@/api/platform';
-
-defineComponent({ name: 'connect' });
-
-const isLoading = ref(false);
-
-async function suitableConnect() {
-	isLoading.value = true;
-
-	const plaform = getPlatform();
-
-	await doConnect({ namespace: plaform, updateCommandString: false })
-
-	isLoading.value = false;
+function selectServer(index: number) {
+	mcpClientAdapter.currentClientIndex = index;
 }
 
+function addServer() {
+	ElMessage.info('Add server is not implemented yet');
+	
+	// mcpClientAdapter.clients.push(new McpClient());
+	// mcpClientAdapter.currentClientIndex = mcpClientAdapter.clients.length - 1;
+}
 </script>
 
 <style>
 .connection-container {
 	display: flex;
+	height: 100%;
 }
 
-
-.connect-panel-container {
-	display: flex;
-	flex-direction: column;
-	width: 45%;
-	min-width: 300px;
-	padding: 20px;
-}
-
-.connection-option {
-	display: flex;
-	flex-direction: column;
-	background-color: var(--background);
+.server-list {
+	width: 200px;
+	border-right: 1px solid var(--border-color);
 	padding: 10px;
-	margin-bottom: 20px;
-	border-radius: .5em;
-	border: 1px solid var(--background);
 }
 
-.connection-option>span:first-child {
+.server-item {
+	padding: 10px;
 	margin-bottom: 5px;
-}
-
-.input-env-container {
-	display: flex;
-	margin-bottom: 10px;
-}
-
-.display-env {
-	padding-top: 10px;
-	padding-bottom: 10px;
-}
-
-.input-env-container>span {
-	width: 150px;
-	margin-right: 10px;
-	display: flex;
-	height: 30px;
-	align-items: center;
-}
-
-.input-env-container .iconfont {
-	font-size: 20px;
-	border-radius: 99em;
-	color: var(--foreground);
 	cursor: pointer;
+	border-radius: 4px;
 	display: flex;
+	justify-content: space-between;
 	align-items: center;
-	justify-content: center;
-	transition: var(--animation-3s);
-	user-select: none;
 }
 
-.input-env-container .iconfont:hover {
-	color: var(--main-color);
-	transition: var(--animation-3s);
+.server-item.active {
+	background-color: var(--main-color);
+	color: white;
 }
 
-.connect-action {
-	margin-top: 20px;
+.server-status {
+	font-size: 12px;
+}
+
+.server-status.connected {
+	color: green;
+}
+
+.server-status.disconnected {
+	color: red;
+}
+
+.add-server {
 	padding: 10px;
+	text-align: center;
+	cursor: pointer;
+	border-radius: 4px;
+	border: 1px dashed var(--border-color);
+}
+
+.add-server:hover {
+	background-color: var(--background);
+}
+
+.panel-container {
+	flex: 1;
+	padding: 20px;
 }
 </style>

@@ -5,7 +5,7 @@
 
 			<el-switch
 				v-model="envEnabled"
-				@change="handleEnvSwitch"
+				@change="(enable: boolean) => client.handleEnvSwitch(enable)"
 				inline-prompt
 				active-text="预设"
 				inactive-text="预设"
@@ -14,10 +14,10 @@
 		<div class="input-env">
 			<span class="input-env-container">
 				<span>
-					<el-input v-model="connectionEnv.newKey" @keyup.enter="addEnvVar"></el-input>
+					<el-input v-model="client.connectionEnvironment.newKey" @keyup.enter="addEnvVar"></el-input>
 				</span>
 				<span>
-					<el-input v-model="connectionEnv.newValue" @keyup.enter="addEnvVar"></el-input>
+					<el-input v-model="client.connectionEnvironment.newValue" @keyup.enter="addEnvVar"></el-input>
 				</span>
 				<span>
 					<div @click="addEnvVar">
@@ -28,7 +28,7 @@
 		</div>
 		<el-scrollbar height="200px" width="350px" class="display-env-container">
 			<div class="display-env">
-				<div class="input-env-container" v-for="option of connectionEnv.data" :key="option.key">
+				<div class="input-env-container" v-for="option of client.connectionEnvironment.data" :key="option.key">
 					<span> <el-input v-model="option.key"></el-input></span>
 					<span> <el-input v-model="option.value" show-password></el-input></span>
 					<span @click="deleteEnvVar(option)">
@@ -44,8 +44,18 @@
 <script setup lang="ts">
 import { defineComponent, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { mcpClientAdapter } from './core';
+import type { EnvItem } from './type';
 
 defineComponent({ name: 'env-var' });
+const props = defineProps({
+	index: {
+		type: Number,
+		required: true
+	}
+});
+
+const client = mcpClientAdapter.clients[props.index];
 
 const { t } = useI18n();
 
@@ -54,24 +64,24 @@ const { t } = useI18n();
  */
 function addEnvVar() {
 	// 检查是否存在一样的 key
-	const currentKey = connectionEnv.newKey;
-	const currentValue = connectionEnv.newValue;
+	const currentKey = client.connectionEnvironment.newKey;
+	const currentValue = client.connectionEnvironment.newValue;
 
 	if (currentKey.length === 0 || currentValue.length === 0) {
 		return;
 	}
 
-	const sameNameItems = connectionEnv.data.filter(item => item.key === currentKey);
+	const sameNameItems = client.connectionEnvironment.data.filter(item => item.key === currentKey);
 
 	if (sameNameItems.length > 0) {
 		const conflictItem = sameNameItems[0];
 		conflictItem.value = currentValue;
 	} else {
-		connectionEnv.data.push({
+		client.connectionEnvironment.data.push({
 			key: currentKey, value: currentValue
 		});
-		connectionEnv.newKey = '';
-		connectionEnv.newValue = '';
+		client.connectionEnvironment.newKey = '';
+		client.connectionEnvironment.newValue = '';
 	}
 }
 
@@ -80,10 +90,9 @@ function addEnvVar() {
  */
 function deleteEnvVar(option: EnvItem) {
 	const currentKey = option.key;
-	const reserveItems = connectionEnv.data.filter(item => item.key !== currentKey);
-	connectionEnv.data = reserveItems;
+	const reserveItems = client.connectionEnvironment.data.filter(item => item.key !== currentKey);
+	client.connectionEnvironment.data = reserveItems;
 }
-
 
 const envEnabled = ref(true);
 

@@ -44,6 +44,8 @@ import { panelLoaded } from '@/hook/panel';
 
 defineComponent({ name: 'main-panel' });
 
+const baseURL = import.meta.env.BASE_URL;
+
 const route = useRoute();
 const router = useRouter();
 
@@ -52,7 +54,7 @@ function pageAddNewTab() {
 
 	// 如果当前不在 debug 路由，则切换到 debug 路由
 	if (route.name !== 'debug') {
-		router.replace('/debug');
+		router.push(baseURL + 'debug');
 	}
 }
 
@@ -61,7 +63,7 @@ function setActiveTab(index: number) {
 		tabs.activeIndex = index;
 		// 如果不在 debug 路由，则进入
 		if (route.name !== 'debug') {
-			router.replace('/debug');
+			router.push(baseURL + 'debug');
 		}
 	}
 }

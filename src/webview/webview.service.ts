@@ -99,7 +99,7 @@ export function revealOpenMcpWebviewPanel(
 
                 break;
 
-            case 'vscode/update-connection-sigature':
+            case 'vscode/update-connection-signature':
                 if (type === 'installed') {
                     updateInstalledConnectionConfig(panelKey, data);
                 } else {

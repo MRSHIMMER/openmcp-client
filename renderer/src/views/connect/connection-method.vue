@@ -2,8 +2,8 @@
 	<div class="connection-option">
 		<span>{{ t('connection-method') }}</span>
 		<span style="width: 200px;">
-			<el-select name="language-setting" class="language-setting" v-model="connectionMethods.current">
-				<el-option v-for="option in connectionMethods.data" :value="option.value" :label="option.label"
+			<el-select name="language-setting" class="language-setting" v-model="client.connectionArgs.type">
+				<el-option v-for="option in connectionSelectDataViewOption" :value="option.value" :label="option.label"
 					:key="option.label"></el-option>
 			</el-select>
 		</span>
@@ -13,9 +13,17 @@
 <script setup lang="ts">
 import { defineComponent } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { connectionMethods } from './connection';
+import { connectionSelectDataViewOption, mcpClientAdapter } from './core';
 
 defineComponent({ name: 'connection-method' });
+const props = defineProps({
+	index: {
+		type: Number,
+		required: true
+	}
+});
+
+const client = mcpClientAdapter.clients[props.index];
 
 const { t } = useI18n();
 

@@ -179,7 +179,7 @@ wss.on('connection', (ws: any) => {
 
                 break;
 
-            case 'web/update-connection-sigature':
+            case 'web/update-connection-signature':
                 updateConnectionOption(data);
                 break;
 

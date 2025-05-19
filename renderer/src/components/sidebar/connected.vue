@@ -2,7 +2,7 @@
 	<div class="connected-status-container"
 		id="connected-status-container"
 		@click.stop="toggleConnectionPanel()"
-		:class="{ 'connected': connectionResult.success }"
+		:class="{ 'connected': client.connectionResult.success }"
 	>
 		<span class="mcp-server-info">
 			<el-tooltip
@@ -15,7 +15,7 @@
 			</el-tooltip>
 		</span>
 		<span class="connect-status">
-			<span v-if="connectionResult.success">
+			<span v-if="client.connectionResult.success">
 				<span class="iconfont icon-connect"></span>
 				<span class="iconfont icon-dui"></span>
 			</span>
@@ -32,18 +32,19 @@
 import { defineComponent, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Connection } from './sidebar';
-import { connectionResult } from '@/views/connect/connection';
+import { mcpClientAdapter } from '@/views/connect/core';
 
 defineComponent({ name: 'connected' });
 
 const { t } = useI18n();
+const client = mcpClientAdapter.masterNode;
 
 const fullDisplayServerName = computed(() => {
-	return connectionResult.serverInfo.name + '/' + connectionResult.serverInfo.version;
+	return client.connectionResult.name + '/' + client.connectionResult.version;
 });
 
 const displayServerName = computed(() => {
-    const name = connectionResult.serverInfo.name;
+    const name = client.connectionResult.name;
     if (name.length <= 3) return name;
     
     // 处理中文混合名称

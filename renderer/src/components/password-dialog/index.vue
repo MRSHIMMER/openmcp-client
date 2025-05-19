@@ -18,7 +18,7 @@ import { ref, onMounted } from 'vue';
 import { ElMessage } from 'element-plus';
 import { privilegeStatus } from './status';
 import { useMessageBridge } from '@/api/message-bridge';
-import { initialise } from '@/views/connect/connection';
+import { initialise } from '@/views/connect';
 
 const dialogVisible = ref(true);
 
