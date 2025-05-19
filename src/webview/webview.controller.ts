@@ -21,7 +21,7 @@ export class WebviewController {
             }
 
             revealOpenMcpWebviewPanel(context, 'workspace', uri.fsPath, {
-                type: 'stdio',
+                type: 'STDIO',
                 name: 'OpenMCP',
                 command: signature.command,
                 args: signature.args,

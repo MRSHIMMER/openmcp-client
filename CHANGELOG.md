@@ -1,5 +1,9 @@
 # Change Log
 
+## [main] 0.1.0
+- 新特性：支持同时连入多个 mcp server
+- 新特性：更新协议内容，支持 streamable http 协议，未来将逐步取代 SSE 的连接方式
+
 ## [main] 0.0.9
 - 修复 0.0.8 引入的bug：system prompt 返回的是索引而非真实内容
 - 测试新的发布管线

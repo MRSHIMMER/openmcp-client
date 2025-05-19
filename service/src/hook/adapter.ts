@@ -2,7 +2,7 @@ import { WebSocket } from 'ws';
 import { EventEmitter } from 'events';
 import { routeMessage } from '../common/router';
 import { McpOptions } from '../mcp/client.dto';
-import { client, connectService } from '../mcp/connect.service';
+import { clientMap, connectService } from '../mcp/connect.service';
 
 // WebSocket 消息格式
 export interface WebSocketMessage {
@@ -114,9 +114,12 @@ export class TaskLoopAdapter {
      * @param mcpOption 
      */
     public async connectMcpServer(mcpOption: McpOptions) {
-        const res = await connectService(undefined, mcpOption);
+        const res = await connectService(mcpOption);
         if (res.code === 200) {
             console.log('✅ 成功连接 mcp 服务器： '  + res.msg);
+
+            const uuid = res.msg.uuid;
+            const client = clientMap.get(uuid);
             const version = client?.getServerVersion();
             console.log(version);
         } else {
@@ -129,14 +132,19 @@ export class TaskLoopAdapter {
      * @returns 
      */
     public async listTools() {
-        const tools = await client?.listTools();
-        if (tools?.tools) {
-            return tools.tools.map((tool) => {
-                const enabledTools = { ...tool, enabled: true };
-                return enabledTools;
-            });
+        const tools = [];
+        for (const client of clientMap.values()) {
+            const clientTools = await client?.listTools();
+            if (clientTools?.tools) {
+                const enabledTools = clientTools.tools.map((tool) => {
+                    const enabledTools = {...tool, enabled: true };
+                    return enabledTools;
+                });
+                tools.push(...enabledTools);
+            }
         }
-        return [];
+
+        return tools;
     }
 }
 

@@ -149,7 +149,7 @@ export type APIRequest =
     | ToolCallRequest;
 
 export interface IStdioConnectionItem {
-	type: 'stdio';
+	type: 'STDIO';
 	name: string;
 	command: string;
 	args: string[];
@@ -159,7 +159,7 @@ export interface IStdioConnectionItem {
 }
 
 export interface ISSEConnectionItem {
-	type: 'sse';
+	type: 'SSE';
 	name: string;
 	url: string;
 	oauth?: string;
@@ -169,13 +169,13 @@ export interface ISSEConnectionItem {
 
 
 export interface IStdioLaunchSignature {
-	type: 'stdio';
+	type: 'STDIO';
 	commandString: string;
 	cwd: string;
 }
 
 export interface ISSELaunchSignature {
-	type:'sse';
+	type:'SSE';
 	url: string;
 	oauth: string;
 }

@@ -1,17 +1,19 @@
-import { Controller, RequestClientType } from '../common';
+import { Controller } from '../common';
 import { PostMessageble } from '../hook/adapter';
-import { connectService } from './connect.service';
+import { RequestData } from '../common/index.dto';
+import { connectService, getClient } from './connect.service';
 
 export class ConnectController {
 
 	@Controller('connect')
-    async connect(client: RequestClientType, data: any, webview: PostMessageble) {
-        const res = await connectService(client, data);
+    async connect(data: any, webview: PostMessageble) {
+        const res = await connectService(data);
         return res;
     }
 
     @Controller('lookup-env-var')
-    async lookupEnvVar(client: RequestClientType, data: any, webview: PostMessageble) {
+    async lookupEnvVar(data: RequestData, webview: PostMessageble) {
+        const client = getClient(data.clientId);
         const { keys } = data;
         const values = keys.map((key: string) => process.env[key] || '');
 
@@ -22,7 +24,8 @@ export class ConnectController {
     }
 
     @Controller('ping')
-    async ping(client: RequestClientType, data: any, webview: PostMessageble) {
+    async ping(data: RequestData, webview: PostMessageble) {
+        const client = getClient(data.clientId);
         if (!client) {
             const connectResult = {
                 code: 501,

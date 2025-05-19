@@ -3,9 +3,13 @@ import { McpClient } from "../mcp/client.service";
 
 export type RequestClientType = McpClient | undefined;
 
+export interface RequestData {
+    clientId?: string;
+    [key: string]: any;
+}
+
 export type RequestHandler<T, R> = (
-    client: RequestClientType,
-    data: T,
+    data: T & RequestData,
     webview: PostMessageble
 ) => Promise<R>;
 

@@ -40,14 +40,14 @@ function createWindow(): void {
 
         switch (command) {
             case 'electron/launch-signature':
-                const launchResultMessage: ILaunchSigature = option.type === 'stdio' ?
+                const launchResultMessage: ILaunchSigature = option.type === 'STDIO' ?
                     {
-                        type: 'stdio',
+                        type: 'STDIO',
                         commandString: option.command + ' ' + option.args.join(' '),
                         cwd: option.cwd || ''
                     } :
                     {
-                        type: 'sse',
+                        type: 'SSE',
                         url: option.url,
                         oauth: option.oauth || ''
                     };

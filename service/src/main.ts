@@ -28,13 +28,13 @@ const logger = pino({
 export type MessageHandler = (message: VSCodeMessage) => void;
 
 interface IStdioLaunchSignature {
-    type: 'stdio';
+    type: 'STDIO';
     commandString: string;
     cwd: string;
 }
 
 interface ISSELaunchSignature {
-    type:'sse';
+    type:'SSE';
     url: string;
     oauth: string;
 }
@@ -43,7 +43,7 @@ export type ILaunchSigature = IStdioLaunchSignature | ISSELaunchSignature;
 
 function refreshConnectionOption(envPath: string) {
     const defaultOption = {
-        type:'stdio',
+        type:'STDIO',
         command: 'mcp',
         args: ['run', 'main.py'],
         cwd: '../server'
@@ -76,7 +76,7 @@ function updateConnectionOption(data: any) {
     
     if (data.connectionType === 'STDIO') {
         const connectionItem = {
-            type: 'stdio',
+            type: 'STDIO',
             command: data.command,
             args: data.args,
             cwd: data.cwd.replace(/\\/g, '/')
@@ -85,7 +85,7 @@ function updateConnectionOption(data: any) {
         fs.writeFileSync(envPath, JSON.stringify(connectionItem, null, 4));
     } else {
         const connectionItem = {
-            type: 'sse',
+            type: 'SSE',
             url: data.url,
             oauth: data.oauth
         };
@@ -124,14 +124,14 @@ wss.on('connection', (ws: any) => {
 
         switch (command) {
             case 'web/launch-signature':
-                const launchResultMessage: ILaunchSigature = option.type === 'stdio' ?
+                const launchResultMessage: ILaunchSigature = option.type === 'STDIO' ?
                     {
-                        type: 'stdio',
+                        type: 'STDIO',
                         commandString: option.command + ' ' + option.args.join(' '),
                         cwd: option.cwd || ''
                     } :
                     {
-                        type: 'sse',
+                        type: 'SSE',
                         url: option.url,
                         oauth: option.oauth || ''
                     };
