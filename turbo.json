@@ -2,11 +2,6 @@
     "$schema": "https://turborepo.com/schema.json",
     "tasks": {
         "serve": {
-            "dependsOn": ["^build"],
-            "cache": false
-        },
-        "dev": {
-            "with": ["@openmcp/renderer#serve", "@openmcp/service#serve"],
             "cache": false
         },
         "build": {
