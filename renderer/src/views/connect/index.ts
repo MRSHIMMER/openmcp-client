@@ -1,7 +1,7 @@
 import { getTour, loadSetting } from "@/hook/setting";
 import { ElLoading } from "element-plus";
 import { pinkLog } from "../setting/util";
-import { mcpClientAdapter } from "./connection-item";
+import { mcpClientAdapter } from "./core";
 
 export async function initialise() {
 
