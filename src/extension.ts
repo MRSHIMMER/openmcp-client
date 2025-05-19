@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import * as OpenMCPService from '@openmcp/service';
+import { setRunningCWD, setVscodeWorkspace } from '../openmcp-sdk/service';
 import { launch } from './common/entry';
 
 export function activate(context: vscode.ExtensionContext) {
@@ -10,8 +10,8 @@ export function activate(context: vscode.ExtensionContext) {
     const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
     const workspace = workspaceFolder?.uri.fsPath || '';
 
-    OpenMCPService.setVscodeWorkspace(workspace);
-    OpenMCPService.setRunningCWD(context.extensionPath);
+    setVscodeWorkspace(workspace);
+    setRunningCWD(context.extensionPath);
 
     launch(context);
 }

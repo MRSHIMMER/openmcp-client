@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as fspath from 'path';
 import { IConnectionItem, ILaunchSigature, panels, updateInstalledConnectionConfig, updateWorkspaceConnectionConfig } from '../global';
-import * as OpenMCPService from '@openmcp/service';
+import { routeMessage } from '../../openmcp-sdk/service';
 
 export function getWebviewContent(context: vscode.ExtensionContext, panel: vscode.WebviewPanel): string | undefined {
     const viewRoot = fspath.join(context.extensionPath, 'openmcp-sdk', 'renderer');
@@ -101,7 +101,7 @@ export function revealOpenMcpWebviewPanel(
                 break;
 
             default:
-                OpenMCPService.routeMessage(command, data, panel.webview);
+                routeMessage(command, data, panel.webview);
                 break;
         }
 

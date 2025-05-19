@@ -48,7 +48,7 @@
 import { defineComponent, defineProps, computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { tabs } from '../panel';
-import { ResourceStorage } from './resources';
+import type { ResourceStorage } from './resources';
 import { getImageBlobUrlByBase64 } from '@/hook/util';
 import JsonRender from '@/components/json-render/index.vue';
 

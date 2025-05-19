@@ -72,7 +72,7 @@ export function loadPanels() {
 	});
 }
 
-let debounceHandler: NodeJS.Timeout;
+let debounceHandler: number;
 
 export function safeSavePanels() {
 	clearTimeout(debounceHandler);
