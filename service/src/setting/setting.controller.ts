@@ -8,7 +8,6 @@ export class SettingController {
 
     @Controller('setting/save')
     async saveSetting(data: RequestData, webview: PostMessageble) {
-        const client = getClient(data.clientId);
         saveSetting(data);
         console.log('Settings saved successfully');
         
@@ -20,7 +19,6 @@ export class SettingController {
 
     @Controller('setting/load')
     async loadSetting(data: RequestData, webview: PostMessageble) {
-        const client = getClient(data.clientId);
         const config = loadSetting();
         return {
             code: 200,

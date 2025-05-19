@@ -42,7 +42,7 @@
 
 
 <script setup lang="ts">
-import { defineComponent, ref } from 'vue';
+import { computed, defineComponent, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { mcpClientAdapter } from './core';
 import type { EnvItem } from './type';
@@ -55,7 +55,7 @@ const props = defineProps({
 	}
 });
 
-const client = mcpClientAdapter.clients[props.index];
+const client = computed(() => mcpClientAdapter.clients[props.index]);
 
 const { t } = useI18n();
 
@@ -64,24 +64,24 @@ const { t } = useI18n();
  */
 function addEnvVar() {
 	// 检查是否存在一样的 key
-	const currentKey = client.connectionEnvironment.newKey;
-	const currentValue = client.connectionEnvironment.newValue;
+	const currentKey = client.value.connectionEnvironment.newKey;
+	const currentValue = client.value.connectionEnvironment.newValue;
 
 	if (currentKey.length === 0 || currentValue.length === 0) {
 		return;
 	}
 
-	const sameNameItems = client.connectionEnvironment.data.filter(item => item.key === currentKey);
+	const sameNameItems = client.value.connectionEnvironment.data.filter(item => item.key === currentKey);
 
 	if (sameNameItems.length > 0) {
 		const conflictItem = sameNameItems[0];
 		conflictItem.value = currentValue;
 	} else {
-		client.connectionEnvironment.data.push({
+		client.value.connectionEnvironment.data.push({
 			key: currentKey, value: currentValue
 		});
-		client.connectionEnvironment.newKey = '';
-		client.connectionEnvironment.newValue = '';
+		client.value.connectionEnvironment.newKey = '';
+		client.value.connectionEnvironment.newValue = '';
 	}
 }
 
@@ -90,8 +90,8 @@ function addEnvVar() {
  */
 function deleteEnvVar(option: EnvItem) {
 	const currentKey = option.key;
-	const reserveItems = client.connectionEnvironment.data.filter(item => item.key !== currentKey);
-	client.connectionEnvironment.data = reserveItems;
+	const reserveItems = client.value.connectionEnvironment.data.filter(item => item.key !== currentKey);
+	client.value.connectionEnvironment.data = reserveItems;
 }
 
 const envEnabled = ref(true);

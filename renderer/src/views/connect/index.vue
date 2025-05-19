@@ -1,19 +1,35 @@
 <template>
-	<div class="connection-container">
+	<div class="connection-container-wrapper">
 		<div class="server-list">
-			<div v-for="(client, index) in mcpClientAdapter.clients" :key="index" class="server-item"
-				:class="{ 'active': mcpClientAdapter.currentClientIndex === index }" @click="selectServer(index)">
-				<span class="connect-status">
-					<span v-if="client.connectionResult.success">
-						<span class="iconfont icon-connect"></span>
-						<span class="iconfont icon-dui"></span>
-					</span>
-					<span v-else>
-						<span class="iconfont icon-connect"></span>
-						<span class="server-name"> Unconnected </span>
-					</span>
-				</span>
-			</div>
+			<el-segmented 
+				v-model="mcpClientAdapter.currentClientIndex" 
+				:options="serverOptions"
+				style="background-color: var(--background);"
+			>
+				<template #default="scope"
+					@click="selectServer(scope.item.index)"
+				>
+					<div class="server-item" :class="{ 'active': mcpClientAdapter.currentClientIndex === scope.index }">
+						<span class="connect-status">
+							<span v-if="scope.item.client.connectionResult.success"
+								class="success"
+							>
+								<span class="name">{{ scope.item.client.connectionResult.name }}</span>
+								<span class="iconfont icon-dui"></span>
+							</span>
+							<span v-else>
+								<span class="server-name" style="margin-right: 60px;">
+									<span class="iconfont icon-blank"></span>
+								</span>
+								<span class="iconfont icon-cuo"></span>
+							</span>
+						</span>
+						<span class="delete-btn" @click.stop="deleteServer(scope.item.index)">
+							<span class="iconfont icon-delete"></span>
+						</span>
+					</div>
+				</template>
+			</el-segmented>
 			<div class="add-server" @click="addServer">
 				<span class="iconfont icon-add"></span>
 			</div>
@@ -25,7 +41,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, computed } from 'vue';
 import ConnectionPanel from './connection-panel.vue';
 import { McpClient, mcpClientAdapter } from './core';
 import { ElMessage } from 'element-plus';
@@ -37,22 +53,44 @@ function selectServer(index: number) {
 }
 
 function addServer() {
-	ElMessage.info('Add server is not implemented yet');
 	mcpClientAdapter.clients.push(new McpClient());
 	mcpClientAdapter.currentClientIndex = mcpClientAdapter.clients.length - 1;
+}
+
+const serverOptions = computed(() => {
+	return mcpClientAdapter.clients.map((client, index) => ({
+		value: index,
+		label: `Server ${index + 1}`,
+		client,
+		index
+	}));
+});
+
+function deleteServer(index: number) {
+    if (mcpClientAdapter.clients.length <= 1) {
+        ElMessage.warning('至少需要保留一个服务器连接');
+        return;
+    }
+    mcpClientAdapter.clients.splice(index, 1);
+    if (mcpClientAdapter.currentClientIndex >= mcpClientAdapter.clients.length) {
+        mcpClientAdapter.currentClientIndex = mcpClientAdapter.clients.length - 1;
+    }
 }
 </script>
 
 <style>
-.connection-container {
+.connection-container-wrapper {
 	display: flex;
+	flex-direction: column;
 	height: 100%;
 }
 
 .server-list {
+	display: flex;
+	align-items: center;
 	width: 150px;
 	border-right: 1px solid var(--border-color);
-	padding: 10px;
+	padding: 15px 25px;
 }
 
 .server-name {
@@ -72,6 +110,19 @@ function addServer() {
 .server-item.active {
 	background-color: var(--main-color);
 	color: white;
+}
+
+.server-item .name {
+	width: 100px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	margin-right: 5px;
+}
+
+.server-item .success {
+	display: flex;
+	align-items: center;
 }
 
 .server-status {
@@ -100,6 +151,15 @@ function addServer() {
 
 .panel-container {
 	flex: 1;
-	padding: 20px;
+	padding: 5px;
+}
+
+.delete-btn {
+    margin-left: 10px;
+    cursor: pointer;
+    color: var(--error-color);
+}
+.delete-btn:hover {
+    opacity: 0.8;
 }
 </style>

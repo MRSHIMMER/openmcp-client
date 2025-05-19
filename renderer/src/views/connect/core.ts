@@ -43,7 +43,7 @@ export class McpClient {
     ) {
         // 连接入参
         this.connectionArgs = {
-            type: 'STDIO',
+            connectionType: 'STDIO',
             commandString: '',
             cwd: '',
             url: '',
@@ -69,7 +69,7 @@ export class McpClient {
     }
 
     async acquireConnectionSignature(args: IConnectionArgs) {
-        this.connectionArgs.type = args.type;
+        this.connectionArgs.connectionType = args.connectionType;
         this.connectionArgs.commandString = args.commandString || '';
         this.connectionArgs.cwd = args.cwd || '';
         this.connectionArgs.url = args.url || '';
@@ -123,9 +123,9 @@ export class McpClient {
         const url = this.connectionArgs.url;
         const cwd = this.connectionArgs.cwd;
         const oauth = this.connectionArgs.oauth;
-        const connectionType = this.connectionArgs.type;
+        const connectionType = this.connectionArgs.connectionType;
 
-        const clientName = this.clientNamePrefix + '.' + this.connectionArgs.type;
+        const clientName = this.clientNamePrefix + '.' + this.connectionArgs.connectionType;
         const clientVersion = this.clientVersion;
 
         const option: McpOptions = {
@@ -163,10 +163,18 @@ export class McpClient {
             ElMessage.error(message);
             return false;
         } else {
+            const info = msg.info || '';
+            if (info) {
+                this.connectionResult.logString.push({
+                    type: 'info',
+                    message: msg.info || ''
+                });
+            }
+
             this.connectionResult.logString.push({
                 type: 'info',
-                message: msg.info || ''
-            })
+                message: msg.name + ' ' + msg.version + ' 连接成功'
+            });
         }
 
         this.connectionResult.status = msg.status;
@@ -307,7 +315,7 @@ class McpClientAdapter {
             await client.handleEnvSwitch(true);
 
             // 连接
-            const ok = await client.connect(this.platform);
+            const ok = await client.connect();
             allOk &&= ok;
 
             this.clients.push(client);

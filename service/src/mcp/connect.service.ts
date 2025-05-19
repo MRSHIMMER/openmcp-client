@@ -1,4 +1,4 @@
-import { execSync, spawnSync } from 'node:child_process';
+import { exec, execSync, spawnSync } from 'node:child_process';
 import { RequestClientType } from '../common';
 import { connect } from './client.service';
 import { RestfulResponse } from '../common/index.dto';
@@ -6,6 +6,7 @@ import { McpOptions } from './client.dto';
 import { randomUUID } from 'node:crypto';
 import path from 'node:path';
 import fs from 'node:fs';
+import * as os from 'os';
 
 export const clientMap: Map<string, RequestClientType> = new Map();
 export function getClient(clientId?: string): RequestClientType | undefined {
@@ -17,13 +18,22 @@ export function tryGetRunCommandError(command: string, args: string[] = [], cwd?
 		console.log('current command', command);
 		console.log('current args', args);
 
-		const commandString = [command, ...args].join(' ');
+		const commandString = command + ' ' + args.join(' ');
 
-		const result = execSync(commandString, {
-			cwd: cwd || process.cwd()
-		}).toString('utf-8');
+        const result = spawnSync(commandString, {
+            cwd: cwd || process.cwd(),
+            STDIO: 'pipe',
+            encoding: 'utf-8'
+        });
 
-		return result;
+        if (result.error) {
+            return result.error.message;
+        }
+        if (result.status !== 0) {
+            return result.stderr || `Command failed with code ${result.status}`;
+        }
+        return null;
+
 	} catch (error) {
 		return error instanceof Error ? error.message : String(error);
 	}
@@ -48,8 +58,15 @@ function getCommandFileExt(option: McpOptions) {
 	return undefined;
 }
 
+function collectAllOutputExec(command: string, cwd: string) {
+	return new Promise<string>((resolve, reject) => {
+		exec(command, { cwd }, (error, stdout, stderr) => {
+			resolve(error + stdout + stderr);
+		});
+	});
+}
 
-function preprocessCommand(option: McpOptions): [McpOptions, string] {
+async function preprocessCommand(option: McpOptions): Promise<[McpOptions, string]> {
 	// 对于特殊表示的路径，进行特殊的支持
 	if (option.args) {
 		option.args = option.args.map(arg => {
@@ -83,49 +100,56 @@ function preprocessCommand(option: McpOptions): [McpOptions, string] {
 
 	switch (ext) {
 		case '.py':
-			info = initUv(cwd);			
+			info = await initUv(option, cwd);			
 			break;
 		case '.js':
 		case '.ts':
-			info = initNpm(cwd);
+			info = await initNpm(option, cwd);
 			break;
 
 		default:
 			break;
-	}
+	}	
 
-
-	return [option, info];
+	return [option, ''];
 }
 
-function initUv(cwd: string) {
+async function initUv(option: McpOptions, cwd: string) {
 	let projectDir = cwd;	
 
 	while (projectDir!== path.dirname(projectDir)) {
-		if (fs.readFileSync(projectDir).includes('pyproject.toml')) {
+		if (fs.readdirSync(projectDir).includes('pyproject.toml')) {
 			break;
 		}
 		projectDir = path.dirname(projectDir);
-	}
-
-	console.log(projectDir);
-	
+	}	
 
 	const venv = path.join(projectDir, '.venv');
-	const mcpCli = path.join(venv, 'bin', 'mcp');
+
+	// judge by OS
+	const mcpCli = os.platform() === 'win32' ?
+		path.join(venv, 'Scripts','mcp.exe') :
+		path.join(venv, 'bin', 'mcp');
+	
+	if (option.command === 'mcp') {
+		option.command = mcpCli;
+		option.cwd = projectDir;
+	}
+
 	if (fs.existsSync(mcpCli)) {
 		return '';
 	}
 
 	let info = '';
-	info += execSync('uv sync', { cwd: projectDir }).toString('utf-8') + '\n';
-	info += execSync('uv add mcp "mcp[cli]"', { cwd: projectDir }).toString('utf-8') + '\n';
-	
+
+	info += await collectAllOutputExec('uv sync', projectDir) + '\n';	
+	info += await collectAllOutputExec('uv add mcp "mcp[cli]"', projectDir) + '\n';	
+
 	return info;
 }
 
 
-function initNpm(cwd: string) {
+async function initNpm(option: McpOptions, cwd: string) {
 	let projectDir = cwd;
 
 	while (projectDir !== path.dirname(projectDir)) {
@@ -148,9 +172,10 @@ export async function connectService(
 	option: McpOptions
 ): Promise<RestfulResponse> {
 	try {
-		console.log('ready to connect', option);
-
-		const info = preprocessCommand(option);
+		const { env, ...others } = option; 
+		console.log('ready to connect', others);
+		
+		const [_, info] = await preprocessCommand(option);		
 
 		const client = await connect(option);
 		const uuid = randomUUID();
@@ -172,6 +197,8 @@ export async function connectService(
 		return connectResult;
 	} catch (error) {
 
+		console.log(error);
+		
 		// TODO: 这边获取到的 error 不够精致，如何才能获取到更加精准的错误
 		// 比如	error: Failed to spawn: `server.py`
 		//		  Caused by: No such file or directory (os error 2)

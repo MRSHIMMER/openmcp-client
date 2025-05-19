@@ -55,7 +55,12 @@ onMounted(async () => {
 	// }
 
 	// 进行桥接
-	await bridge.awaitForWebsocket();
+	console.log('enter');
+	
+	await bridge.awaitForWebsocket();	
+
+	console.log('enter2');
+	
 
 	// 根据是否需要密码进行后续的选择
 	if (!privilegeStatus.allow) {

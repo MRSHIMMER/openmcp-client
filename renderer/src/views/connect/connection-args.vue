@@ -1,6 +1,6 @@
 <template>
     <!-- STDIO 模式下的命令输入 -->
-    <div class="connection-option" v-if="client.connectionArgs.type === 'STDIO'">
+    <div class="connection-option" v-if="client.connectionArgs.connectionType === 'STDIO'">
         <span>{{ t('connect-sigature') }}</span>
         <span style="width: 310px;">
             <el-form :model="client.connectionArgs" :rules="rules" ref="stdioForm">
@@ -43,7 +43,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue';
+import { computed, reactive, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { ElMessage } from 'element-plus';
 import type { FormInstance, FormRules } from 'element-plus';
@@ -58,7 +58,7 @@ const props = defineProps({
 	}
 });
 
-const client = mcpClientAdapter.clients[props.index];
+const client = computed(() => mcpClientAdapter.clients[props.index]);
 
 const stdioForm = ref<FormInstance>()
 const urlForm = ref<FormInstance>()
@@ -82,7 +82,7 @@ const rules = reactive<FormRules>({
 // 验证当前活动表单
 const validateForm = async () => {
     try {
-        if (client.connectionArgs.type === 'STDIO') {
+        if (client.value.connectionArgs.connectionType === 'STDIO') {
             await stdioForm.value?.validate()
         } else {
             await urlForm.value?.validate()

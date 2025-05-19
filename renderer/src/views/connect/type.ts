@@ -6,14 +6,6 @@ export interface ConnectionTypeOptionItem {
     label: string;
 }
 
-export interface IConnectionArgs {
-    type: ConnectionType;
-    commandString?: string;
-    cwd?: string;
-    url?: string;
-    oauth?: string;
-}
-
 
 export interface IConnectionResult {
     info?: string;
@@ -64,7 +56,7 @@ export interface IConnectionEnvironment {
 }
 
 export interface IConnectionArgs {
-    type: ConnectionType;
+    connectionType: ConnectionType;
     commandString?: string;
     cwd?: string;
     url?: string;

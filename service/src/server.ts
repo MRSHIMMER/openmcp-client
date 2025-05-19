@@ -28,32 +28,18 @@ const logger = pino({
 
 export type MessageHandler = (message: VSCodeMessage) => void;
 
-interface IStdioLaunchSignature {
-    type: 'STDIO';
-    commandString: string;
-    cwd: string;
-}
-
-interface ISSELaunchSignature {
-    type: 'SSE';
-    url: string;
-    oauth: string;
-}
-
-export type ILaunchSigature = IStdioLaunchSignature | ISSELaunchSignature;
-
 function refreshConnectionOption(envPath: string) {
     const serverPath = path.join(__dirname, '..', '..', 'servers');
 
     const defaultOption = {
-        type:'STDIO',
+        connectionType: 'STDIO',
         commandString: 'mcp run main.py',
         cwd: serverPath
     };
 
-    fs.writeFileSync(envPath, JSON.stringify(defaultOption, null, 4));   
+    fs.writeFileSync(envPath, JSON.stringify(defaultOption, null, 4));
 
-    return { data: [ defaultOption ] };
+    return { data: [defaultOption] };
 }
 
 function acquireConnectionOption() {
@@ -73,6 +59,17 @@ function acquireConnectionOption() {
         if (option.data && option.data.length === 0) {
             return refreshConnectionOption(envPath);
         }
+
+        // 按照前端的规范，整理成 commandString 样式
+        option.data = option.data.map((item: any) => {
+            if (item.connectionType === 'STDIO') {
+                item.commandString = [item.command, ...item.args]?.join(' ');
+            } else {
+                item.url = item.url;
+            }
+
+            return item;
+        });
 
         return option;
 
@@ -112,7 +109,7 @@ const wss = new WebSocketServer(
         port: 8282,
         verifyClient: (info, callback) => {
             console.log(info.req.url);
-            const ok = verifyToken(info.req.url || '');            
+            const ok = verifyToken(info.req.url || '');
 
             if (!ok) {
                 callback(false, 401, 'Unauthorized: Invalid token');

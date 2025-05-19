@@ -37,14 +37,16 @@ import { mcpClientAdapter } from '@/views/connect/core';
 defineComponent({ name: 'connected' });
 
 const { t } = useI18n();
-const client = mcpClientAdapter.masterNode;
+const client = computed(() => mcpClientAdapter.masterNode);
+
+console.log(client);
 
 const fullDisplayServerName = computed(() => {
-	return client.connectionResult.name + '/' + client.connectionResult.version;
+	return client.value.connectionResult.name + '/' + client.value.connectionResult.version;
 });
 
 const displayServerName = computed(() => {
-    const name = client.connectionResult.name;
+    const name = client.value.connectionResult.name;
     if (name.length <= 3) return name;
     
     // 处理中文混合名称

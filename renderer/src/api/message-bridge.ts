@@ -77,6 +77,8 @@ export class MessageBridge {
 			throw new Error('setupSignature must be a string');
 		}
 		
+		console.log(wsUrl);
+		
 		this.ws = new WebSocket(wsUrl);
 		const ws = this.ws;
 
@@ -117,6 +119,7 @@ export class MessageBridge {
 	}
 
 	public async awaitForWebsocket() {
+		
 		if (this.isConnected) {
 			return await this.isConnected;
 		}

@@ -28,7 +28,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineComponent, ref } from 'vue';
+import { computed, defineComponent, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 import ConnectionMethod from './connection-method.vue';
@@ -48,11 +48,7 @@ const props = defineProps({
 	}
 });
 
-const client = mcpClientAdapter.clients[props.index];
-
-console.log(client);
-console.log(client.connectionSettingRef);
-
+const client = computed(() => mcpClientAdapter.clients[props.index]);
 
 const { t } = useI18n();
 
@@ -62,7 +58,7 @@ async function connect() {
 	isLoading.value = true;
 
 	const platform = getPlatform();
-	const ok = await client.connect();
+	const ok = await client.value.connect();
 	
 	if (ok) {
 		mcpClientAdapter.saveLaunchSignature();
@@ -83,8 +79,9 @@ async function connect() {
 	display: flex;
 	flex-direction: column;
 	width: 45%;
+	max-height: 85vh;
 	min-width: 300px;
-	padding: 20px;
+	padding: 5px 20px;
 }
 
 .connection-option {

@@ -12,7 +12,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineComponent } from 'vue';
+import { computed, defineComponent } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { mcpClientAdapter } from './core';
 
@@ -24,7 +24,7 @@ const props = defineProps({
 	}
 });
 
-const client = mcpClientAdapter.clients[props.index];
+const client = computed(() => mcpClientAdapter.clients[props.index]);
 
 const { t } = useI18n();
 
@@ -32,7 +32,7 @@ const { t } = useI18n();
 
 <style>
 .connection-option {
-	height: 90%;
+	height: 98%;
 }
 
 .connection-option .el-scrollbar__view {
