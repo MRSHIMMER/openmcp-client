@@ -9,10 +9,12 @@ export function getWebviewContent(context: vscode.ExtensionContext, panel: vscod
     const htmlIndexPath = fspath.join(viewRoot, 'index.html');    
 
     const html = fs.readFileSync(htmlIndexPath, { encoding: 'utf-8' })?.replace(/(<link.+?href="|<script.+?src="|<img.+?src="|url\()(.+?)(\)|")/g, (m, $1, $2) => {
-        const absLocalPath = fspath.resolve(viewRoot, $2);
+        const importFile = $2 as string;
+        const rel = importFile.startsWith('/') ? importFile.substring(1) : importFile;
+        const absLocalPath = fspath.resolve(viewRoot, rel);
+        
         const webviewUri = panel.webview.asWebviewUri(vscode.Uri.file(absLocalPath));
-
-        const replaceHref = $1 + webviewUri?.toString() + '"';
+        const replaceHref = $1 + webviewUri?.toString() + '"';        
         return replaceHref;
     });
 

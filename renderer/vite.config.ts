@@ -15,5 +15,14 @@ export default defineConfig(({ mode }) => ({
 			'@': fileURLToPath(new URL('./src', import.meta.url))
 		},
 	},
-	base: mode === 'website' ? '/mcp/' : '/'
+	base: mode === 'website' ? '/mcp/' : '/',
+	build: {
+		cssCodeSplit: false, // 禁用 CSS 代码分割
+		rollupOptions: {
+			output: {
+				inlineDynamicImports: true, // 将动态导入的内容内联
+				manualChunks: undefined, // 禁用手动分块
+			},
+		},
+	},
 }))

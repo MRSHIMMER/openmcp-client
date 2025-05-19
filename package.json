@@ -219,9 +219,7 @@
     ],
     "scripts": {
         "setup": "npm i && npm run prepare:ocr",
-        "dev": "turbo dev --filter=!@openmcp/electron",
-        "dev:electron": "turbo dev --filter=@openmcp/electron",
-        "dev:all": "turbo dev",
+        "serve": "turbo serve",
         "build": "turbo build --filter=!@openmcp/electron",
         "build:electron": "turbo build --filter=@openmcp/electron",
         "build:all": "turbo build",
