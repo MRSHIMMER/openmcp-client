@@ -16,6 +16,7 @@ export interface IConnectionArgs {
 
 
 export interface IConnectionResult {
+    info?: string;
     success: boolean;
     status: string
     clientId: string

@@ -3,9 +3,15 @@
 		<div class="server-list">
 			<div v-for="(client, index) in mcpClientAdapter.clients" :key="index" class="server-item"
 				:class="{ 'active': mcpClientAdapter.currentClientIndex === index }" @click="selectServer(index)">
-				<span class="server-name">Server {{ index + 1 }}</span>
-				<span class="server-status" :class="client.connectionResult.status">
-					{{ client.connectionResult.status }}
+				<span class="connect-status">
+					<span v-if="client.connectionResult.success">
+						<span class="iconfont icon-connect"></span>
+						<span class="iconfont icon-dui"></span>
+					</span>
+					<span v-else>
+						<span class="iconfont icon-connect"></span>
+						<span class="server-name"> Unconnected </span>
+					</span>
 				</span>
 			</div>
 			<div class="add-server" @click="addServer">
@@ -21,7 +27,7 @@
 <script setup lang="ts">
 import { defineComponent } from 'vue';
 import ConnectionPanel from './connection-panel.vue';
-import { mcpClientAdapter } from './core';
+import { McpClient, mcpClientAdapter } from './core';
 import { ElMessage } from 'element-plus';
 
 defineComponent({ name: 'connection' });
@@ -32,9 +38,8 @@ function selectServer(index: number) {
 
 function addServer() {
 	ElMessage.info('Add server is not implemented yet');
-	
-	// mcpClientAdapter.clients.push(new McpClient());
-	// mcpClientAdapter.currentClientIndex = mcpClientAdapter.clients.length - 1;
+	mcpClientAdapter.clients.push(new McpClient());
+	mcpClientAdapter.currentClientIndex = mcpClientAdapter.clients.length - 1;
 }
 </script>
 
@@ -45,9 +50,13 @@ function addServer() {
 }
 
 .server-list {
-	width: 200px;
+	width: 150px;
 	border-right: 1px solid var(--border-color);
 	padding: 10px;
+}
+
+.server-name {
+	font-size: 15px;
 }
 
 .server-item {

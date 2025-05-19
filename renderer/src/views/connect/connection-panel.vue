@@ -2,7 +2,7 @@
 	<el-scrollbar>
 		<div class="connection-container">
 		<div class="connect-panel-container"
-			:ref="el => client.connectionSettingRef.value = el"
+			:ref="el => client.connectionSettingRef = el"
 		>
 			<ConnectionMethod :index="props.index" />
 			<ConnectionArgs :index="props.index" />
@@ -18,7 +18,7 @@
 		</div>
 
 		<div class="connect-panel-container"
-			:ref="el => client.connectionLogRef.value = el"
+			:ref="el => client.connectionLogRef = el"
 		>
 			<ConnectionLog :index="props.index" />
 		</div>
@@ -51,6 +51,8 @@ const props = defineProps({
 const client = mcpClientAdapter.clients[props.index];
 
 console.log(client);
+console.log(client.connectionSettingRef);
+
 
 const { t } = useI18n();
 
@@ -59,8 +61,9 @@ const isLoading = ref(false);
 async function connect() {
 	isLoading.value = true;
 
-	const plaform = getPlatform();
-	const ok = await client.connect(plaform);
+	const platform = getPlatform();
+	const ok = await client.connect();
+	
 	if (ok) {
 		mcpClientAdapter.saveLaunchSignature();
 	}

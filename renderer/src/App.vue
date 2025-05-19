@@ -48,11 +48,11 @@ onMounted(async () => {
 	pinkLog('OpenMCP Client 启动');
 
 	// 跳转到首页
-	if (route.name !== 'debug') {
-		const targetRoute = import.meta.env.BASE_URL + 'debug';
-		console.log('go to ' + targetRoute);
-		router.push(targetRoute);
-	}
+	// if (route.name !== 'debug') {
+	// 	const targetRoute = import.meta.env.BASE_URL + 'debug';
+	// 	console.log('go to ' + targetRoute);
+	// 	router.push(targetRoute);
+	// }
 
 	// 进行桥接
 	await bridge.awaitForWebsocket();

@@ -58,7 +58,7 @@
         </el-tour-step>
 
         <el-tour-step
-            :target="client.connectionSettingRef.value"
+            :target="client.connectionSettingRef"
             :prev-button-props="{ children: '上一步' }"
             :next-button-props="{ children: '下一步' }"
             :show-close="false"
@@ -78,7 +78,7 @@
         </el-tour-step>
 
         <el-tour-step
-            :target="client.connectionLogRef.value"
+            :target="client.connectionLogRef"
             :prev-button-props="{ children: '上一步' }"
             :next-button-props="{ children: '下一步' }"
             :show-close="false"

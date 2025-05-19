@@ -1,5 +1,5 @@
 import { useMessageBridge } from "@/api/message-bridge";
-import { reactive, ref, type Reactive, type Ref } from "vue";
+import { reactive } from "vue";
 import type { IConnectionResult, ConnectionTypeOptionItem, IConnectionArgs, IConnectionEnvironment, McpOptions } from "./type";
 import { ElMessage } from "element-plus";
 import { loadPanels } from "@/hook/panel";
@@ -23,49 +23,49 @@ export const connectionSelectDataViewOption: ConnectionTypeOptionItem[] = [
 
 export class McpClient {
     // 连接入参
-    public connectionArgs: Reactive<IConnectionArgs>;
+    public connectionArgs: IConnectionArgs;
     // 连接出参
-    public connectionResult: Reactive<IConnectionResult>;
+    public connectionResult: IConnectionResult;
 
     // 预设环境变量，初始化的时候会去获取它们
     public presetsEnvironment: string[] = ['HOME', 'LOGNAME', 'PATH', 'SHELL', 'TERM', 'USER'];
     // 环境变量
-    public connectionEnvironment: Reactive<IConnectionEnvironment>;
+    public connectionEnvironment: IConnectionEnvironment;
 
     // logger 面板的 ref
-    public connectionLogRef = ref<any>(null);
+    public connectionLogRef: any = null;
     // setting 面板的 ref
-    public connectionSettingRef = ref<any>(null);
+    public connectionSettingRef: any = null;
 
     constructor(
         public clientVersion: string = '0.0.1',
         public clientNamePrefix: string = 'openmcp.connect'
     ) {
         // 连接入参
-        this.connectionArgs = reactive({
+        this.connectionArgs = {
             type: 'STDIO',
             commandString: '',
             cwd: '',
             url: '',
             oauth: ''
-        });
+        };
 
         // 连接出参
-        this.connectionResult = reactive({
+        this.connectionResult = {
             success: false,
             status: 'disconnected',
             clientId: '',
             name: '',
             version: '',
             logString: []
-        });
+        };
 
         // 环境变量
-        this.connectionEnvironment = reactive({
+        this.connectionEnvironment = {
             data: [],
             newKey: '',
             newValue: ''
-        });
+        };
     }
 
     async acquireConnectionSignature(args: IConnectionArgs) {
@@ -121,6 +121,7 @@ export class McpClient {
         const { command, args } = this.commandAndArgs;
         const env = this.env;
         const url = this.connectionArgs.url;
+        const cwd = this.connectionArgs.cwd;
         const oauth = this.connectionArgs.oauth;
         const connectionType = this.connectionArgs.type;
 
@@ -132,6 +133,7 @@ export class McpClient {
             command,
             args,
             url,
+            cwd,
             oauth,
             clientName,
             clientVersion,
@@ -145,7 +147,7 @@ export class McpClient {
         return option;
     }
 
-    public async connect(platform: string) {
+    public async connect() {
         const bridge = useMessageBridge();
         const { code, msg } = await bridge.commandRequest<IConnectionResult>('connect', this.connectOption);
 
@@ -160,6 +162,11 @@ export class McpClient {
 
             ElMessage.error(message);
             return false;
+        } else {
+            this.connectionResult.logString.push({
+                type: 'info',
+                message: msg.info || ''
+            })
         }
 
         this.connectionResult.status = msg.status;
@@ -284,9 +291,13 @@ class McpClientAdapter {
 
     public async launch() {
         const launchSignature = await this.getLaunchSignature();
+        console.log('launchSignature', launchSignature);
+                
         let allOk = true;
 
         for (const item of launchSignature) {
+
+            // 创建一个新的客户端            
             const client = new McpClient();
 
             // 同步连接参数

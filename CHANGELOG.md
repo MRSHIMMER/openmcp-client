@@ -3,6 +3,8 @@
 ## [main] 0.1.0
 - 新特性：支持同时连入多个 mcp server
 - 新特性：更新协议内容，支持 streamable http 协议，未来将逐步取代 SSE 的连接方式
+- 对于 uv 创建的 py 项目进行特殊支持：自动初始化项目，并将 mcp 定向到 .venv/bin/mcp 中，不再需要用户全局安装 mcp
+- 对于 npm 创建的 js/ts 项目进行特殊支持：自动初始化项目
 
 ## [main] 0.0.9
 - 修复 0.0.8 引入的bug：system prompt 返回的是索引而非真实内容
