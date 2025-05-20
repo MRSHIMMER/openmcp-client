@@ -7,6 +7,7 @@ import { randomUUID } from 'node:crypto';
 import path from 'node:path';
 import fs from 'node:fs';
 import * as os from 'os';
+import { PostMessageble } from '../hook/adapter';
 
 export const clientMap: Map<string, RequestClientType> = new Map();
 export function getClient(clientId?: string): RequestClientType | undefined {
@@ -14,15 +15,11 @@ export function getClient(clientId?: string): RequestClientType | undefined {
 }
 
 export function tryGetRunCommandError(command: string, args: string[] = [], cwd?: string): string | null {
-	try {
-		console.log('current command', command);
-		console.log('current args', args);
-
-		const commandString = command + ' ' + args.join(' ');
-
+    try {
+        const commandString = command + ' ' + args.join(' ');
         const result = spawnSync(commandString, {
             cwd: cwd || process.cwd(),
-            STDIO: 'pipe',
+            stdio: 'pipe',
             encoding: 'utf-8'
         });
 
@@ -33,10 +30,9 @@ export function tryGetRunCommandError(command: string, args: string[] = [], cwd?
             return result.stderr || `Command failed with code ${result.status}`;
         }
         return null;
-
-	} catch (error) {
-		return error instanceof Error ? error.message : String(error);
-	}
+    } catch (error) {
+        return error instanceof Error ? error.message : String(error);
+    }
 }
 
 function getCWD(option: McpOptions) {
@@ -61,12 +57,15 @@ function getCommandFileExt(option: McpOptions) {
 function collectAllOutputExec(command: string, cwd: string) {
 	return new Promise<string>((resolve, reject) => {
 		exec(command, { cwd }, (error, stdout, stderr) => {
-			resolve(error + stdout + stderr);
+			const errorString = error || '';
+			const stdoutString = stdout || '';
+			const stderrString = stderr || '';
+			resolve(errorString + stdoutString + stderrString);
 		});
 	});
 }
 
-async function preprocessCommand(option: McpOptions): Promise<[McpOptions, string]> {
+async function preprocessCommand(option: McpOptions, webview?: PostMessageble) {
 	// 对于特殊表示的路径，进行特殊的支持
 	if (option.args) {
 		option.args = option.args.map(arg => {
@@ -78,17 +77,17 @@ async function preprocessCommand(option: McpOptions): Promise<[McpOptions, strin
 	}
 
 	if (option.connectionType === 'SSE' || option.connectionType === 'STREAMABLE_HTTP') {
-		return [option, ''];
+		return;
 	}
 
 	const cwd = getCWD(option);	
 	if (!cwd) {
-		return [option, ''];
+		return;
 	}
 
 	const ext = getCommandFileExt(option);
 	if (!ext) {
-		return [option, ''];
+		return;
 	}
 
 	// STDIO 模式下，对不同类型的项目进行额外支持
@@ -96,25 +95,21 @@ async function preprocessCommand(option: McpOptions): Promise<[McpOptions, strin
 	// npm：如果没有初始化，则进行 npm init，将 mcp 设置为虚拟环境
 	// go：如果没有初始化，则进行 go mod init
 	
-	let info: string = '';
-
 	switch (ext) {
 		case '.py':
-			info = await initUv(option, cwd);			
+			await initUv(option, cwd, webview);	
 			break;
 		case '.js':
 		case '.ts':
-			info = await initNpm(option, cwd);
+			await initNpm(option, cwd, webview);
 			break;
 
 		default:
 			break;
-	}	
-
-	return [option, ''];
+	}
 }
 
-async function initUv(option: McpOptions, cwd: string) {
+async function initUv(option: McpOptions, cwd: string, webview?: PostMessageble) {
 	let projectDir = cwd;	
 
 	while (projectDir!== path.dirname(projectDir)) {
@@ -140,16 +135,27 @@ async function initUv(option: McpOptions, cwd: string) {
 		return '';
 	}
 
-	let info = '';
+	const syncOutput = await collectAllOutputExec('uv sync', projectDir);
+	webview?.postMessage({
+		command: 'connect/log',
+		data: {
+			code: syncOutput.toLowerCase().startsWith('error') ? 501: 200,
+			msg: syncOutput
+		}
+	});
 
-	info += await collectAllOutputExec('uv sync', projectDir) + '\n';	
-	info += await collectAllOutputExec('uv add mcp "mcp[cli]"', projectDir) + '\n';	
-
-	return info;
+	const addOutput = await collectAllOutputExec('uv add mcp "mcp[cli]"', projectDir);
+	webview?.postMessage({
+		command: 'connect/log',
+		data: {
+			code: addOutput.toLowerCase().startsWith('error') ? 501: 200,
+			msg: addOutput
+		}
+	});
 }
 
 
-async function initNpm(option: McpOptions, cwd: string) {
+async function initNpm(option: McpOptions, cwd: string, webview?: PostMessageble) {
 	let projectDir = cwd;
 
 	while (projectDir !== path.dirname(projectDir)) {
@@ -164,18 +170,26 @@ async function initNpm(option: McpOptions, cwd: string) {
 		return '';
 	}
 	
-	return execSync('npm i', { cwd: projectDir }).toString('utf-8') + '\n';
+	const installOutput = execSync('npm i', { cwd: projectDir }).toString('utf-8') + '\n';
+	webview?.postMessage({
+		command: 'connect/log',
+		data: {
+			code: installOutput.toLowerCase().startsWith('error')? 200: 501,
+			msg: installOutput
+		}
+	})
 }
 
 
 export async function connectService(
-	option: McpOptions
+	option: McpOptions,
+	webview?: PostMessageble
 ): Promise<RestfulResponse> {
 	try {
 		const { env, ...others } = option; 
 		console.log('ready to connect', others);
 		
-		const [_, info] = await preprocessCommand(option);		
+		await preprocessCommand(option, webview);
 
 		const client = await connect(option);
 		const uuid = randomUUID();
@@ -189,8 +203,7 @@ export async function connectService(
 				status: 'success',
 				clientId: uuid,
 				name: versionInfo?.name,
-				version: versionInfo?.version,
-				info
+				version: versionInfo?.version
 			}
 		};
 

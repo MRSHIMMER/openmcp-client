@@ -20,11 +20,11 @@ export async function initialise() {
 	// 获取引导状态
 	await getTour();
 
+	loading.close();
+
     // 尝试进行初始化连接
     await mcpClientAdapter.launch();
 
 	// loading panels
 	await mcpClientAdapter.loadPanels();
-
-	loading.close();
 }

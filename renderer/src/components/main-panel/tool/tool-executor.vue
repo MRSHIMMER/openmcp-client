@@ -60,10 +60,11 @@ import { defineComponent, defineProps, watch, ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { FormInstance, FormRules } from 'element-plus';
 import { tabs } from '../panel';
-import { callTool, toolsManager, type ToolStorage } from './tools';
+import type { ToolStorage } from './tools';
 import { getDefaultValue, normaliseJavascriptType } from '@/hook/mcp';
 
 import KInputObject from '@/components/k-input-object/index.vue';
+import { mcpClientAdapter } from '@/views/connect/core';
 
 defineComponent({ name: 'tool-executor' });
 
@@ -90,7 +91,10 @@ const formRef = ref<FormInstance>();
 const loading = ref(false);
 
 const currentTool = computed(() => {
-    return toolsManager.tools.find(tool => tool.name === tabStorage.currentToolName);
+    for (const client of mcpClientAdapter.clients) {
+        const tool = client.tools?.get(tabStorage.currentToolName);
+        if (tool) return tool;
+    }
 });
 
 
@@ -146,7 +150,7 @@ async function handleExecute() {
     loading.value = true;
     try {
         tabStorage.lastToolCallResponse = undefined;
-        const toolResponse = await callTool(tabStorage.currentToolName, tabStorage.formData);
+        const toolResponse = await mcpClientAdapter.callTool(tabStorage.currentToolName, tabStorage.formData);
         tabStorage.lastToolCallResponse = toolResponse;
     } finally {
         loading.value = false;

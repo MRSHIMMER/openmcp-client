@@ -42,6 +42,7 @@ import { parseResourceTemplate, resourcesManager, type ResourceStorage } from '.
 import type{ ResourcesReadResponse } from '@/hook/type';
 import { useMessageBridge } from '@/api/message-bridge';
 import { getDefaultValue, normaliseJavascriptType } from '@/hook/mcp';
+import { mcpClientAdapter } from '@/views/connect/core';
 
 defineComponent({ name: 'resource-reader' });
 
@@ -154,11 +155,10 @@ function getUri() {
 // 提交表单
 async function handleSubmit() {
     const uri = getUri();
+    const res = await mcpClientAdapter.readResource(uri);
 
-    const bridge = useMessageBridge();
-    const { code, msg } = await bridge.commandRequest('resources/read', { resourceUri: uri });
-    tabStorage.lastResourceReadResponse = msg;
-    emits('resource-get-response', msg);
+    tabStorage.lastResourceReadResponse = res;
+    emits('resource-get-response', res);
 }
 
 if (props.tabId >= 0) {

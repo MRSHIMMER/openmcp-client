@@ -1,7 +1,7 @@
 import { useMessageBridge } from "@/api/message-bridge";
 import { pinkLog } from "@/views/setting/util";
 import { debugModes, tabs } from "@/components/main-panel/panel";
-import { markRaw, ref } from "vue";
+import { markRaw, ref, type Reactive } from "vue";
 import { v4 as uuidv4 } from 'uuid';
 import type { McpClient } from "@/views/connect/core";
 
@@ -20,7 +20,7 @@ export interface SaveTab {
 
 export const panelLoaded = ref(false);
 
-export async function loadPanels(client: McpClient) {
+export async function loadPanels(client: McpClient | Reactive<McpClient>) {
 	const bridge = useMessageBridge();
 	const { code, msg } = await bridge.commandRequest<SaveTab>('panel/load', {
 		clientId: client.clientId

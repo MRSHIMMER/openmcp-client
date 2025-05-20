@@ -40,6 +40,7 @@ import { promptsManager, type PromptStorage } from './prompts';
 import type { PromptsGetResponse } from '@/hook/type';
 import { useMessageBridge } from '@/api/message-bridge';
 import { getDefaultValue, normaliseJavascriptType } from '@/hook/mcp';
+import { mcpClientAdapter } from '@/views/connect/core';
 
 defineComponent({ name: 'prompt-reader' });
 
@@ -131,16 +132,14 @@ const resetForm = () => {
 }
 
 async function handleSubmit() {
-    const bridge = useMessageBridge();
 
-    const { code, msg } = await bridge.commandRequest('prompts/get', {
-        promptId: currentPrompt.value.name,
-        args: JSON.parse(JSON.stringify(tabStorage.formData))
-    });
+    const res = await mcpClientAdapter.readPromptTemplate(
+        currentPrompt.value.name,
+        JSON.parse(JSON.stringify(tabStorage.formData))
+    );
 
-    tabStorage.lastPromptGetResponse = msg;
-    
-    emits('prompt-get-response', msg);
+    tabStorage.lastPromptGetResponse = res;
+    emits('prompt-get-response', res);
 }
 
 if (props.tabId >= 0) {

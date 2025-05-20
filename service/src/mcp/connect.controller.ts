@@ -7,7 +7,7 @@ export class ConnectController {
 
 	@Controller('connect')
     async connect(data: any, webview: PostMessageble) {
-        const res = await connectService(data);
+        const res = await connectService(data, webview);
         return res;
     }
 

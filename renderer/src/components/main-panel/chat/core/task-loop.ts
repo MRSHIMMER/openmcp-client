@@ -8,7 +8,7 @@ import { pinkLog, redLog } from "@/views/setting/util";
 import { ElMessage } from "element-plus";
 import { handleToolCalls, type ToolCallResult } from "./handle-tool-calls";
 import { getPlatform } from "@/api/platform";
-import { getSystemPrompt, systemPrompts } from "../chat-box/options/system-prompt";
+import { getSystemPrompt } from "../chat-box/options/system-prompt";
 
 export type ChatCompletionChunk = OpenAI.Chat.Completions.ChatCompletionChunk;
 export type ChatCompletionCreateParamsBase = OpenAI.Chat.Completions.ChatCompletionCreateParams & { id?: string };

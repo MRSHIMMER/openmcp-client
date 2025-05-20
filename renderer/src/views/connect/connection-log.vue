@@ -1,11 +1,26 @@
 <template>
 	<div class="connection-option">
-		<span>{{ t('log') }}</span>
+		<div class="header">
+			<span>{{ t('log') }}</span>
+			<span class="iconfont icon-delete" @click="clearLogs"></span>
+		</div>
 		<el-scrollbar height="90%">
 			<div class="output-content">
-				<div v-for="(log, index) in client.connectionResult.logString" :key="index" :class="log.type">
-					<span class="log-message">{{ log.message }}</span>
-				</div>
+				<el-collapse :expand-icon-position="'left'">
+					<el-collapse-item v-for="(log, index) in logString" :name="index" :class="['item', log.type]">
+						<template #title>
+							<div class="tool-calls">
+								<div class="tool-call-header">
+									<span>{{ log.message.split('\n')[0] }}</span>
+								</div>
+							</div>
+						</template>
+
+						<div class="logger-inner">
+							{{ log.message }}
+						</div>
+					</el-collapse-item>
+				</el-collapse>
 			</div>
 		</el-scrollbar>
 	</div>
@@ -24,10 +39,15 @@ const props = defineProps({
 	}
 });
 
-const client = computed(() => mcpClientAdapter.clients[props.index]);
+const logString = computed(() => {
+	return mcpClientAdapter.clients[props.index].connectionResult.logString;
+});
 
 const { t } = useI18n();
 
+function clearLogs() {
+    mcpClientAdapter.clients[props.index].connectionResult.logString = [];
+}
 </script>
 
 <style>
@@ -55,28 +75,22 @@ const { t } = useI18n();
 	height: 95%;
 }
 
+.output-content .item {
+	margin-bottom: 12px;
+	padding: 0px 9px;
+	border-radius: .5em;
+}
+
 .output-content .info {
 	background-color: rgba(103, 194, 58, 0.5);
-	margin: 8px 0;
-	margin-bottom: 12px;
-	padding: 5px 9px;
-	border-radius: .5em;
 }
 
 .output-content .error {
 	background-color: rgba(245, 108, 108, 0.5);
-	margin: 8px 0;
-	margin-bottom: 12px;
-	padding: 5px 9px;
-	border-radius: .5em;
 }
 
 .output-content .warning {
 	background-color: rgba(230, 162, 60, 0.5);
-	margin: 8px 0;
-	margin-bottom: 12px;
-	padding: 5px 9px;
-	border-radius: .5em;
 }
 
 .log-icon {
@@ -104,4 +118,34 @@ const { t } = useI18n();
 	display: inline-block;
 	vertical-align: middle;
 }
+
+.output-content .el-collapse-item__header,
+.output-content .el-collapse-item__wrap {
+	background-color: unset !important;
+	border-bottom: unset !important;
+}
+
+.output-content .el-collapse-item__content {
+	padding-bottom: unset;
+}
+
+.logger-inner {
+	padding: 10px;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.header .icon-delete {
+	margin-left: 10px;
+	cursor: pointer;
+}
+
+.header .icon-delete:hover {
+	color: var(--el-color-error);
+}
+
 </style>

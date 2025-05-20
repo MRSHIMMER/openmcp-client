@@ -54,13 +54,8 @@ onMounted(async () => {
 	// 	router.push(targetRoute);
 	// }
 
-	// 进行桥接
-	console.log('enter');
-	
-	await bridge.awaitForWebsocket();	
-
-	console.log('enter2');
-	
+	// 进行桥接	
+	await bridge.awaitForWebsocket();		
 
 	// 根据是否需要密码进行后续的选择
 	if (!privilegeStatus.allow) {

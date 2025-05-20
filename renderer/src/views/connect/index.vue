@@ -24,7 +24,9 @@
 								<span class="iconfont icon-cuo"></span>
 							</span>
 						</span>
-						<span class="delete-btn" @click.stop="deleteServer(scope.item.index)">
+						<span
+							v-if="scope.item.index > 0"
+							class="delete-btn" @click.stop="deleteServer(scope.item.index)">
 							<span class="iconfont icon-delete"></span>
 						</span>
 					</div>
@@ -41,7 +43,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineComponent, computed } from 'vue';
+import { defineComponent, computed, watch, toRef } from 'vue';
 import ConnectionPanel from './connection-panel.vue';
 import { McpClient, mcpClientAdapter } from './core';
 import { ElMessage } from 'element-plus';
@@ -58,13 +60,14 @@ function addServer() {
 }
 
 const serverOptions = computed(() => {
-	return mcpClientAdapter.clients.map((client, index) => ({
-		value: index,
-		label: `Server ${index + 1}`,
-		client,
-		index
-	}));
+    return mcpClientAdapter.clients.map((client, index) => ({
+        value: index,
+        label: `Server ${index + 1}`,
+        client,
+        index
+    }));
 });
+
 
 function deleteServer(index: number) {
     if (mcpClientAdapter.clients.length <= 1) {
@@ -75,6 +78,7 @@ function deleteServer(index: number) {
     if (mcpClientAdapter.currentClientIndex >= mcpClientAdapter.clients.length) {
         mcpClientAdapter.currentClientIndex = mcpClientAdapter.clients.length - 1;
     }
+	mcpClientAdapter.saveLaunchSignature();
 }
 </script>
 
@@ -89,6 +93,7 @@ function deleteServer(index: number) {
 	display: flex;
 	align-items: center;
 	width: 150px;
+	height: 50px;
 	border-right: 1px solid var(--border-color);
 	padding: 15px 25px;
 }

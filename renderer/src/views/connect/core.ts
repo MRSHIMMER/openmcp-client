@@ -1,9 +1,11 @@
 import { useMessageBridge } from "@/api/message-bridge";
-import { reactive } from "vue";
+import { reactive, type Reactive } from "vue";
 import type { IConnectionResult, ConnectionTypeOptionItem, IConnectionArgs, IConnectionEnvironment, McpOptions } from "./type";
 import { ElMessage } from "element-plus";
 import { loadPanels } from "@/hook/panel";
 import { getPlatform } from "@/api/platform";
+import type { PromptsGetResponse, PromptsListResponse, PromptTemplate, Resources, ResourcesListResponse, ResourcesReadResponse, ResourceTemplate, ResourceTemplatesListResponse, ToolCallResponse, ToolItem, ToolsListResponse } from "@/hook/type";
+import { mcpSetting } from "@/hook/mcp";
 
 export const connectionSelectDataViewOption: ConnectionTypeOptionItem[] = [
     {
@@ -36,6 +38,11 @@ export class McpClient {
     public connectionLogRef: any = null;
     // setting 面板的 ref
     public connectionSettingRef: any = null;
+
+    public tools: Map<string, ToolItem> | null = null;
+    public promptTemplates: Map<string, PromptTemplate> | null = null;
+    public resources: Map<string, Resources> | null = null;
+    public resourceTemplates: Map<string, ResourceTemplate> | null = null;
 
     constructor(
         public clientVersion: string = '0.0.1',
@@ -104,6 +111,83 @@ export class McpClient {
         return env;
     }
 
+    public async getTools() {
+        if (this.tools) {
+            return this.tools;
+        }
+
+        const bridge = useMessageBridge();
+        
+        const { code, msg } = await bridge.commandRequest<ToolsListResponse>('tools/list', { clientId: this.clientId });
+        if (code!== 200) {
+            return new Map<string, ToolItem>();
+        }
+
+        this.tools = new Map<string, ToolItem>();
+        msg.tools.forEach(tool => {
+            this.tools!.set(tool.name, tool);
+        });
+
+        return this.tools;
+    }
+
+    public async getPromptTemplates() {
+        if (this.promptTemplates) {
+            return this.promptTemplates;
+        }
+
+        const bridge = useMessageBridge();
+        
+        const { code, msg } = await bridge.commandRequest<PromptsListResponse>('prompts/list', { clientId: this.clientId });
+        if (code!== 200) {
+            return new Map<string, PromptTemplate>();
+        }
+    
+        this.promptTemplates = new Map<string, PromptTemplate>();
+        msg.prompts.forEach(template => {
+            this.promptTemplates!.set(template.name, template);
+        });
+
+        return this.promptTemplates;
+    }
+
+    public async getResources() {
+        if (this.resources) {
+            return this.resources;
+        }
+
+        const bridge = useMessageBridge();
+        
+        const { code, msg } = await bridge.commandRequest<ResourcesListResponse>('resources/list', { clientId: this.clientId });
+        if (code!== 200) {
+            return new Map<string, Resources>();
+        }
+
+        this.resources = new Map<string, Resources>();
+        msg.resources.forEach(resource => {
+            this.resources!.set(resource.name, resource);
+        });
+        return this.resources;
+    }
+
+    public async getResourceTemplates() {
+        if (this.resourceTemplates) {
+            return this.resourceTemplates;
+        }
+
+        const bridge = useMessageBridge();
+        
+        const { code, msg } = await bridge.commandRequest<ResourceTemplatesListResponse>('resources/templates/list', { clientId: this.clientId });
+        if (code!== 200) {
+            return new Map();
+        }
+        this.resourceTemplates = new Map<string, ResourceTemplate>();
+        msg.resourceTemplates.forEach(template => {
+            this.resourceTemplates!.set(template.name, template);
+        });
+        return this.resourceTemplates;
+    }
+
     private get commandAndArgs() {
         const commandString = this.connectionArgs.commandString;
 
@@ -163,14 +247,6 @@ export class McpClient {
             ElMessage.error(message);
             return false;
         } else {
-            const info = msg.info || '';
-            if (info) {
-                this.connectionResult.logString.push({
-                    type: 'info',
-                    message: msg.info || ''
-                });
-            }
-
             this.connectionResult.logString.push({
                 type: 'info',
                 message: msg.name + ' ' + msg.version + ' 连接成功'
@@ -247,10 +323,11 @@ export class McpClient {
 
 
 class McpClientAdapter {
-    public clients: McpClient[] = [];
+    public clients: Reactive<McpClient[]> = [];
     public currentClientIndex: number = 0;
 
     private defaultClient: McpClient = new McpClient();
+    public connectLogListenerCancel: (() => void) | null = null;
 
     constructor(
         public platform: string
@@ -298,6 +375,28 @@ class McpClientAdapter {
     }
 
     public async launch() {
+        // 创建对于 log/output 的监听
+        if (!this.connectLogListenerCancel) {
+            const bridge = useMessageBridge();
+            this.connectLogListenerCancel = bridge.addCommandListener('connect/log', (message) => {
+                const { code, msg } = message;
+
+                console.log(code, msg);
+                const client = this.clients.at(-1);
+                console.log(client);
+                
+                if (!client) {
+                    return;
+                }
+
+                client.connectionResult.logString.push({
+                    type: code === 200 ? 'info': 'error',
+                    message: msg
+                });
+
+            }, { once: false });   
+        }
+
         const launchSignature = await this.getLaunchSignature();
         console.log('launchSignature', launchSignature);
                 
@@ -306,7 +405,7 @@ class McpClientAdapter {
         for (const item of launchSignature) {
 
             // 创建一个新的客户端            
-            const client = new McpClient();
+            const client = reactive(new McpClient());
 
             // 同步连接参数
             await client.acquireConnectionSignature(item);
@@ -314,17 +413,87 @@ class McpClientAdapter {
             // 同步环境变量
             await client.handleEnvSwitch(true);
 
+            this.clients.push(client);
+
             // 连接
             const ok = await client.connect();
             allOk &&= ok;
-
-            this.clients.push(client);
         }
 
         // 如果全部成功，保存连接参数
         if (allOk) {
             this.saveLaunchSignature();
         }
+    }
+
+    public async readResource(resourceUri?: string) {
+        if (!resourceUri) {
+            return undefined;
+        }
+
+        // TODO: 如果遇到不同服务器的同名 tool，请拓展解决方案
+        // 目前只找到第一个匹配 toolName 的工具进行调用
+        let clientId = this.clients[0].clientId;
+
+        for (const client of this.clients) {
+            const resources = await client.getResources();
+            const resource = resources.get(resourceUri);
+            if (resource) {
+                clientId = client.clientId;
+                break;
+            }
+        }
+
+        const bridge = useMessageBridge();
+        const { code, msg } = await bridge.commandRequest<ResourcesReadResponse>('resources/read', { clientId, resourceUri });
+
+        return msg;
+    }
+
+    public async readPromptTemplate(promptId: string, args: Record<string, any>) {
+        // TODO: 如果遇到不同服务器的同名 tool，请拓展解决方案
+        // 目前只找到第一个匹配 toolName 的工具进行调用
+        let clientId = this.clients[0].clientId;
+
+        for (const client of this.clients) {
+            const promptTemplates = await client.getPromptTemplates();
+            const promptTemplate = promptTemplates.get(promptId);
+            if (promptTemplate) {
+                clientId = client.clientId;
+                break;
+            }
+        }
+
+        const bridge = useMessageBridge();
+        const { code, msg } = await bridge.commandRequest<PromptsGetResponse>('prompts/get', { clientId, promptId, args });
+        return msg;
+    }
+
+    public async callTool(toolName: string, toolArgs: Record<string, any>) {
+        // TODO: 如果遇到不同服务器的同名 tool，请拓展解决方案
+        // 目前只找到第一个匹配 toolName 的工具进行调用
+        let clientId = this.clients[0].clientId;
+
+        for (const client of this.clients) {
+            const tools = await client.getTools();
+            const tool = tools.get(toolName);
+            if (tool) {
+                clientId = client.clientId;
+                break;
+            }
+        }
+
+        const bridge = useMessageBridge();
+        const { msg } = await bridge.commandRequest<ToolCallResponse>('tools/call', {
+            clientId,
+            toolName,
+            toolArgs: JSON.parse(JSON.stringify(toolArgs)),
+            callToolOption: {
+                timeout: mcpSetting.timeout * 1000
+            }
+        });
+    
+        return msg;
     }
 
     public async loadPanels() {
@@ -337,3 +506,12 @@ const platform = getPlatform();
 export const mcpClientAdapter = reactive(
     new McpClientAdapter(platform)
 );
+
+export interface ISegmentViewItem {
+    value: any;
+    label: string;
+    client: McpClient;
+    index: number;
+}
+
+export const segmentsView = reactive<ISegmentViewItem[]>([]);
