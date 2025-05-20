@@ -1,16 +1,9 @@
 <template>
-	<div class="connected-status-container"
-		id="connected-status-container"
-		@click.stop="toggleConnectionPanel()"
-		:class="{ 'connected': client.connectionResult.success }"
-	>
+	<div v-if="!isConnecting" class="connected-status-container" id="connected-status-container"
+		@click.stop="toggleConnectionPanel()" :class="{ 'connected': client.connectionResult.success }">
 		<span class="mcp-server-info">
-			<el-tooltip
-				class="extra-connect-container"
-				effect="dark"
-				placement="right"
-				:content="fullDisplayServerName"
-			>
+			<el-tooltip class="extra-connect-container" effect="dark" placement="right"
+				:content="fullDisplayServerName">
 				<span class="name">{{ displayServerName }}</span>
 			</el-tooltip>
 		</span>
@@ -24,7 +17,33 @@
 				<span class="iconfont icon-cuo"></span>
 			</span>
 		</span>
-			
+	</div>
+	<div v-else class="connected-status-container">
+		<span class="mcp-server-info">
+			<el-tooltip class="extra-connect-container" effect="dark" placement="right"
+				:content="fullDisplayServerName">
+				<span class="name">
+					加载中
+				</span>
+			</el-tooltip>
+		</span>
+		<span class="connect-status">
+			<span style="display: flex;">
+				<span class="iconfont icon-connect"></span>
+				<div class="custom-loading">
+					<svg class="circular" viewBox="-10, -10, 50, 50">
+						<path class="path" d="
+            M 30 15
+            L 28 17
+            M 25.61 25.61
+            A 15 15, 0, 0, 1, 15 30
+            A 15 15, 0, 1, 1, 27.99 7.5
+            L 15 15
+          " style="stroke-width: 4px; fill: rgba(0, 0, 0, 0); stroke: var(--main-color);" />
+					</svg>
+				</div>
+			</span>
+		</span>
 	</div>
 </template>
 
@@ -33,6 +52,7 @@ import { defineComponent, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Connection } from './sidebar';
 import { mcpClientAdapter } from '@/views/connect/core';
+import { isConnecting } from './connected';
 
 defineComponent({ name: 'connected' });
 
@@ -46,29 +66,29 @@ const fullDisplayServerName = computed(() => {
 });
 
 const displayServerName = computed(() => {
-    const name = client.value.connectionResult.name;
-    if (name.length <= 3) return name;
-    
-    // 处理中文混合名称
-    const chineseMatch = name.match(/[\u4e00-\u9fa5]/g);
-    if (chineseMatch && chineseMatch.length >= 2) {
-        return chineseMatch.slice(0, 3).join('');
-    }
-    
-    // 处理各种命名格式
-    const words = name
-        .replace(/([a-z])([A-Z])/g, '$1 $2')  // 驼峰分割
-        .split(/[\s\-_]+/)  // 分割空格、连字符和下划线
-        .filter(word => word.length > 0);
-    
-    if (words.length === 1 && words[0].length > 3) {
-        return words[0].substring(0, 3).toUpperCase();
-    }
-    
-    return words
-        .map(word => word[0].toUpperCase())
-        .slice(0, 3)
-        .join('');
+	const name = client.value.connectionResult.name;
+	if (name.length <= 3) return name;
+
+	// 处理中文混合名称
+	const chineseMatch = name.match(/[\u4e00-\u9fa5]/g);
+	if (chineseMatch && chineseMatch.length >= 2) {
+		return chineseMatch.slice(0, 3).join('');
+	}
+
+	// 处理各种命名格式
+	const words = name
+		.replace(/([a-z])([A-Z])/g, '$1 $2')  // 驼峰分割
+		.split(/[\s\-_]+/)  // 分割空格、连字符和下划线
+		.filter(word => word.length > 0);
+
+	if (words.length === 1 && words[0].length > 3) {
+		return words[0].substring(0, 3).toUpperCase();
+	}
+
+	return words
+		.map(word => word[0].toUpperCase())
+		.slice(0, 3)
+		.join('');
 });
 
 function toggleConnectionPanel() {
@@ -104,7 +124,7 @@ function toggleConnectionPanel() {
 }
 
 .connected-status-container {
-    user-select: none;
+	user-select: none;
 	display: flex;
 	align-items: center;
 	width: auto;
@@ -163,7 +183,22 @@ function toggleConnectionPanel() {
 
 .mcp-server-info .version {
 	font-size: 12px;
-	font-weight: 400;	
+	font-weight: 400;
 }
 
+.custom-loading .circular {
+	margin-right: 6px;
+	width: 18px;
+	height: 18px;
+	animation: loading-rotate 2s linear infinite;
+}
+
+.custom-loading .circular .path {
+	animation: loading-dash 1.5s ease-in-out infinite;
+	stroke-dasharray: 90, 150;
+	stroke-dashoffset: 0;
+	stroke-width: 2;
+	stroke: var(--el-button-text-color);
+	stroke-linecap: round;
+}
 </style>

@@ -3,7 +3,7 @@ import { pinkLog } from "@/views/setting/util";
 import { debugModes, tabs } from "@/components/main-panel/panel";
 import { markRaw, ref, type Reactive } from "vue";
 import { v4 as uuidv4 } from 'uuid';
-import type { McpClient } from "@/views/connect/core";
+import { mcpClientAdapter, type McpClient } from "@/views/connect/core";
 
 interface SaveTabItem {
 	name: string;
@@ -104,8 +104,12 @@ export function savePanels(saveHandler?: () => void) {
         }
     }, { once: true });
 
+	const masterNode = mcpClientAdapter.masterNode;
     bridge.postMessage({
         command: 'panel/save',
-        data: saveTabs
+        data: {
+			clientId: masterNode.clientId,
+			...saveTabs
+		}
     });
 }

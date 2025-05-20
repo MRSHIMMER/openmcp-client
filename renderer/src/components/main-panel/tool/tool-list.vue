@@ -69,6 +69,8 @@ function reloadTools(option: { first: boolean }) {
 }
 
 function handleClick(tool: { name: string }) {
+    console.log('enter');
+    
     tabStorage.currentToolName = tool.name;
     tabStorage.lastToolCallResponse = undefined;
 }

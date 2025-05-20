@@ -2,11 +2,12 @@ import { getTour, loadSetting } from "@/hook/setting";
 import { ElLoading } from "element-plus";
 import { pinkLog } from "../setting/util";
 import { mcpClientAdapter } from "./core";
+import { isConnecting } from "@/components/sidebar/connected";
 
 export async function initialise() {
 
 	pinkLog('准备请求设置');
-    
+
     const loading = ElLoading.service({
 		fullscreen: true,
 		lock: true,
@@ -27,4 +28,6 @@ export async function initialise() {
 
 	// loading panels
 	await mcpClientAdapter.loadPanels();
+
+	isConnecting.value = false;
 }

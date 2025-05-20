@@ -3,7 +3,7 @@ import { RequestClientType } from '../common';
 import { connect } from './client.service';
 import { RestfulResponse } from '../common/index.dto';
 import { McpOptions } from './client.dto';
-import { randomUUID } from 'node:crypto';
+import * as crypto from 'node:crypto';
 import path from 'node:path';
 import fs from 'node:fs';
 import * as os from 'os';
@@ -181,6 +181,24 @@ async function initNpm(option: McpOptions, cwd: string, webview?: PostMessageble
 }
 
 
+async function deterministicUUID(input: string) {
+    // 使用Web Crypto API进行哈希
+    const msgBuffer = new TextEncoder().encode(input);
+    const hashBuffer = await crypto.subtle.digest('SHA-1', msgBuffer);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    
+    // 格式化为UUID (版本5)
+    return [
+        hashHex.substring(0, 8),
+        hashHex.substring(8, 4),
+        '5' + hashHex.substring(13, 3), // 设置版本为5
+        '8' + hashHex.substring(17, 3), // 设置变体
+        hashHex.substring(20, 12)
+    ].join('-');
+}
+
+
 export async function connectService(
 	option: McpOptions,
 	webview?: PostMessageble
@@ -190,10 +208,16 @@ export async function connectService(
 		console.log('ready to connect', others);
 		
 		await preprocessCommand(option, webview);
+		
+		// 通过 option 字符串进行 hash，得到唯一的 uuid
+		const uuid = await deterministicUUID(JSON.stringify(option));
 
-		const client = await connect(option);
-		const uuid = randomUUID();
-		clientMap.set(uuid, client);
+		if (!clientMap.has(uuid)) {
+			const client = await connect(option);
+			clientMap.set(uuid, client);	
+		}
+
+		const client = clientMap.get(uuid)!;
 
 		const versionInfo = client.getServerVersion();
 

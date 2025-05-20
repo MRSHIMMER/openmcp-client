@@ -43,7 +43,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineComponent, computed, watch, toRef } from 'vue';
+import { defineComponent, computed } from 'vue';
 import ConnectionPanel from './connection-panel.vue';
 import { McpClient, mcpClientAdapter } from './core';
 import { ElMessage } from 'element-plus';
@@ -54,10 +54,12 @@ function selectServer(index: number) {
 	mcpClientAdapter.currentClientIndex = index;
 }
 
+
 function addServer() {
 	mcpClientAdapter.clients.push(new McpClient());
 	mcpClientAdapter.currentClientIndex = mcpClientAdapter.clients.length - 1;
 }
+
 
 const serverOptions = computed(() => {
     return mcpClientAdapter.clients.map((client, index) => ({
