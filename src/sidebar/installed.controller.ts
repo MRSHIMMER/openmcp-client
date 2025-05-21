@@ -22,6 +22,7 @@ export class McpInstalledConnectProvider implements vscode.TreeDataProvider<Conn
         const connection = getConnectionConfig();
         const sidebarItems = connection.items.map((item, index) => {
             // 连接的名字
+            item = Array.isArray(item)? item[0] : item;
             const itemName = `${item.name} (${item.type})`
             return new ConnectionViewItem(itemName, vscode.TreeItemCollapsibleState.None, item, 'server');
         })
@@ -33,7 +34,9 @@ export class McpInstalledConnectProvider implements vscode.TreeDataProvider<Conn
     @RegisterCommand('revealWebviewPanel')
     public revealWebviewPanel(context: vscode.ExtensionContext, view: ConnectionViewItem) {
         const item = view.item;
-        revealOpenMcpWebviewPanel(context, 'installed', item.filePath || item.name, item);
+        const masterNode = Array.isArray(item)? item[0] : item;
+        const name = masterNode.filePath || masterNode.name || '';
+        revealOpenMcpWebviewPanel(context, 'installed', name, item);
     }
 
     @RegisterCommand('refresh')
@@ -45,7 +48,7 @@ export class McpInstalledConnectProvider implements vscode.TreeDataProvider<Conn
     public async addConnection(context: vscode.ExtensionContext) {
         const item = await acquireInstalledConnection();
 
-        if (!item) {
+        if (item.length === 0) {
             return;
         }
 

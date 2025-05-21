@@ -39,7 +39,7 @@ function refreshConnectionOption(envPath: string) {
 
     fs.writeFileSync(envPath, JSON.stringify(defaultOption, null, 4));
 
-    return { data: [defaultOption] };
+    return { items: [defaultOption] };
 }
 
 function acquireConnectionOption() {
@@ -52,16 +52,16 @@ function acquireConnectionOption() {
     try {
         const option = JSON.parse(fs.readFileSync(envPath, 'utf-8'));
 
-        if (!option.data) {
+        if (!option.items) {
             return refreshConnectionOption(envPath);
         }
 
-        if (option.data && option.data.length === 0) {
+        if (option.items && option.items.length === 0) {
             return refreshConnectionOption(envPath);
         }
 
         // 按照前端的规范，整理成 commandString 样式
-        option.data = option.data.map((item: any) => {
+        option.items = option.items.map((item: any) => {
             if (item.connectionType === 'STDIO') {
                 item.commandString = [item.command, ...item.args]?.join(' ');
             } else {
@@ -88,7 +88,7 @@ const authPassword = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '.env
 
 function updateConnectionOption(data: any) {
     const envPath = path.join(__dirname, '..', '.env');
-    const connection = { data };
+    const connection = { items: data };
     fs.writeFileSync(envPath, JSON.stringify(connection, null, 4));
 }
 
@@ -147,7 +147,7 @@ wss.on('connection', (ws: any) => {
             case 'web/launch-signature':
                 const launchResult = {
                     code: 200,
-                    msg: option.data
+                    msg: option.items
                 };
 
                 webview.postMessage({

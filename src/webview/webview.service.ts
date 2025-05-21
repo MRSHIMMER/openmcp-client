@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as fspath from 'path';
-import { IConnectionItem, ILaunchSigature, panels, updateInstalledConnectionConfig, updateWorkspaceConnectionConfig } from '../global';
+import { McpOptions, panels, updateInstalledConnectionConfig, updateWorkspaceConnectionConfig } from '../global';
 import { routeMessage } from '../../openmcp-sdk/service';
 
 export function getWebviewContent(context: vscode.ExtensionContext, panel: vscode.WebviewPanel): string | undefined {
@@ -35,12 +35,7 @@ export function revealOpenMcpWebviewPanel(
     context: vscode.ExtensionContext,
     type: 'workspace' | 'installed',
     panelKey: string,
-    option: IConnectionItem = {
-        type: 'STDIO',
-        name: 'OpenMCP',
-        command: 'mcp',
-        args: ['run', 'main.py']
-    }
+    option: McpOptions[] | McpOptions
 ) {
     if (panels.has(panelKey)) {
         const panel = panels.get(panelKey);
@@ -75,21 +70,9 @@ export function revealOpenMcpWebviewPanel(
         // 拦截消息，注入额外信息
         switch (command) {
             case 'vscode/launch-signature':
-                const launchResultMessage: ILaunchSigature = option.type === 'STDIO' ?
-                    {
-                        type: 'STDIO',
-                        commandString: option.command + ' ' + option.args.join(' '),
-                        cwd: option.cwd || ''
-                    } :
-                    {
-                        type: 'SSE',
-                        url: option.url,
-                        oauth: option.oauth || ''
-                    };
-
                 const launchResult = {
                     code: 200,
-                    msg: launchResultMessage
+                    msg: option
                 };
 
                 panel.webview.postMessage({
@@ -117,6 +100,8 @@ export function revealOpenMcpWebviewPanel(
     panel.onDidDispose(async () => {
         // 删除
         panels.delete(panelKey);
+
+        // TODO: 通过引用计数器关闭后端的 clientMap
 
         // 退出
         panel.dispose();

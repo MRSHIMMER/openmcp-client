@@ -145,7 +145,6 @@ async function connect() {
 }
 
 .connect-action {
-	margin-top: 20px;
 	padding: 10px;
 }
 </style>

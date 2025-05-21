@@ -84,7 +84,11 @@ const handleKeydown = (event: KeyboardEvent) => {
 const copy = async () => {
     try {
         if (navigator.clipboard) {
-            await navigator.clipboard.writeText(userInput.value);
+            await navigator.clipboard.write([
+                new ClipboardItem({
+                    'text/plain': new Blob([userInput.value], { type: 'text/plain' })
+                })
+            ]);
         } else {
             const textarea = document.createElement('textarea');
             textarea.value = userInput.value;

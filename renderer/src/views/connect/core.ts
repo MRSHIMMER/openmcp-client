@@ -367,7 +367,9 @@ export class McpClient {
      */
     public async lookupEnvVar(varNames: string[]) {
         const bridge = useMessageBridge();
-        const { code, msg } = await bridge.commandRequest('lookup-env-var', { keys: varNames });
+        const { code, msg } = await bridge.commandRequest('lookup-env-var', {
+            keys: varNames
+        });
 
         if (code === 200) {
             this.connectionResult.logString.push({

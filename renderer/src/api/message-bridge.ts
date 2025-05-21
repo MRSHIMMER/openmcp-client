@@ -1,5 +1,6 @@
 import { pinkLog, redLog } from '@/views/setting/util';
 import { acquireVsCodeApi, electronApi, getPlatform } from './platform';
+import { isReactive } from 'vue';
 
 export interface VSCodeMessage {
 	command: string;
@@ -208,6 +209,21 @@ export class MessageBridge {
 		return () => commandHandlers.delete(wrapperCommandHandler);
 	}
 
+	private deserializeReactiveData(data: any) {
+		if (isReactive(data)) {
+			return JSON.parse(JSON.stringify(data));
+		}
+
+		// 只对第一层进行遍历
+		for (const key in data) {
+			if (isReactive(data[key])) {
+				data[key] = JSON.parse(JSON.stringify(data[key]));
+			}
+		}
+
+		return data;
+	}
+
 	/**
 	 * @description do as axios does
 	 * @param command 
@@ -215,6 +231,7 @@ export class MessageBridge {
 	 * @returns 
 	 */
 	public commandRequest<T = any>(command: string, data?: ICommandRequestData): Promise<RestFulResponse<T>>  {
+
 		return new Promise<RestFulResponse>((resolve, reject) => {
 			this.addCommandListener(command, (data) => {
 				resolve(data as RestFulResponse);
@@ -222,7 +239,7 @@ export class MessageBridge {
 
 			this.postMessage({
 				command,
-				data
+				data: this.deserializeReactiveData(data)
 			});
 		});
 	}

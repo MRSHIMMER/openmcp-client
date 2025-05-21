@@ -22,8 +22,7 @@ export function getSystemPrompt(name: string) {
 export async function saveSystemPrompts() {
     const bridge = useMessageBridge();
 
-    const payload = JSON.parse(JSON.stringify(systemPrompts.value));
-    const res = await bridge.commandRequest('system-prompts/save', { prompts: payload });
+    const res = await bridge.commandRequest('system-prompts/save', { prompts: systemPrompts.value });
     if (res.code === 200) {
         pinkLog('system prompt 保存成功');
     }

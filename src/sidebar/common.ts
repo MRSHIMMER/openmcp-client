@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import type { IConnectionItem } from '../global';
+import { McpOptions } from '../global';
 
 export class SidebarItem extends vscode.TreeItem {
     constructor(
@@ -18,7 +18,7 @@ export class ConnectionViewItem extends vscode.TreeItem {
     constructor(
         public readonly label: string,
         public readonly collapsibleState: vscode.TreeItemCollapsibleState,
-        public readonly item: IConnectionItem,
+        public readonly item: McpOptions[] | McpOptions,
         public readonly icon?: string
     ) {
         super(label, collapsibleState);

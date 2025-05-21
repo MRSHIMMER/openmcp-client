@@ -6,46 +6,42 @@ import * as fs from 'fs';
 export type FsPath = string;
 export const panels = new Map<FsPath, vscode.WebviewPanel>();
 
-export interface IStdioConnectionItem {
-    type: 'STDIO';
-    name: string;
-    version?: string;
-    command: string;
-    args: string[];
-    cwd?: string;
-    env?: { [key: string]: string };
-    filePath?: string;
-}
-
-export interface ISSEConnectionItem {
-    type: 'SSE';
-    name: string;
-    version: string;
-    url: string;
-    oauth?: string;
-    env?: { [key: string]: string };
-    filePath?: string;
-}
-
-
-interface IStdioLaunchSignature {
-    type: 'STDIO';
-    commandString: string;
-    cwd: string;
-}
-
-interface ISSELaunchSignature {
-    type:'SSE';
-    url: string;
-    oauth: string;
-}
-
-export type IConnectionItem = IStdioConnectionItem | ISSEConnectionItem;
-export type ILaunchSigature = IStdioLaunchSignature | ISSELaunchSignature;
-
 export interface IConnectionConfig {
-    items: IConnectionItem[];
+    items: (McpOptions[] | McpOptions)[];
 }
+
+export type ConnectionType = 'STDIO' | 'SSE' | 'STREAMABLE_HTTP';
+
+export interface McpOptions {
+    connectionType: ConnectionType;
+    command?: string;
+
+    // STDIO 特定选项
+    args?: string[];
+    cwd?: string;
+    env?: Record<string, string>;
+
+    // SSE 特定选项
+    url?: string;
+    oauth?: any;
+
+    // 通用客户端选项
+    clientName?: string;
+    clientVersion?: string;
+    serverInfo?: {
+        name: string
+        version: string
+    }
+
+    // vscode 专用
+    filePath?: string;
+    name?: string;
+    version?: string;
+    type?: ConnectionType;
+
+    [key: string]: any;
+}
+
 
 export const CONNECTION_CONFIG_NAME = 'openmcp_connection.json';
 
@@ -71,11 +67,11 @@ export function getConnectionConfig() {
     const rawConnectionString = fs.readFileSync(connectionConfig, 'utf-8');
     let connection;
     try {
-        connection = JSON.parse(rawConnectionString) as IConnectionConfig;        
+        connection = JSON.parse(rawConnectionString) as IConnectionConfig;
     } catch (error) {
         connection = { items: [] };
     }
-    
+
     _connectionConfig = connection;
     return connection;
 }
@@ -113,17 +109,20 @@ export function getWorkspaceConnectionConfig() {
 
     let connection;
     try {
-        connection = JSON.parse(rawConnectionString) as IConnectionConfig;        
+        connection = JSON.parse(rawConnectionString) as IConnectionConfig;
     } catch (error) {
         connection = { items: [] };
     }
 
     const workspacePath = getWorkspacePath();
-    for (const item of connection.items) {
+    for (let item of connection.items) {
+        item = Array.isArray(item) ? item[0] : item;
+        const itemType = item.type || item.connectionType;
+
         if (item.filePath && item.filePath.startsWith('{workspace}')) {
             item.filePath = item.filePath.replace('{workspace}', workspacePath).replace(/\\/g, '/');
         }
-        if (item.type === 'STDIO' && item.cwd && item.cwd.startsWith('{workspace}')) {
+        if (itemType === 'STDIO' && item.cwd && item.cwd.startsWith('{workspace}')) {
             item.cwd = item.cwd.replace('{workspace}', workspacePath).replace(/\\/g, '/');
         }
     }
@@ -165,42 +164,28 @@ export function saveWorkspaceConnectionConfig(workspace: string) {
     const connectionConfigPath = fspath.join(configDir, CONNECTION_CONFIG_NAME);
 
     const workspacePath = getWorkspacePath();
-    for (const item of connectionConfig.items) {
+    for (let item of connectionConfig.items) {
+
+        item = Array.isArray(item) ? item[0] : item;
+        const itemType = item.type || item.connectionType;
+        item.type = undefined;
+
         if (item.filePath && item.filePath.replace(/\\/g, '/').startsWith(workspacePath)) {
             item.filePath = item.filePath.replace(workspacePath, '{workspace}').replace(/\\/g, '/');
         }
-        if (item.type ==='STDIO' && item.cwd && item.cwd.replace(/\\/g, '/').startsWith(workspacePath)) {
+        if (item.type === 'STDIO' && item.cwd && item.cwd.replace(/\\/g, '/').startsWith(workspacePath)) {
             item.cwd = item.cwd.replace(workspacePath, '{workspace}').replace(/\\/g, '/');
         }
     }
     fs.writeFileSync(connectionConfigPath, JSON.stringify(connectionConfig, null, 2), 'utf-8');
 }
 
-interface ClientStdioConnectionItem {
-    command: string;
-    args: string[];
-    connectionType: 'STDIO';
-    cwd: string;
-    env: { [key: string]: string };
-}
-
-interface ClientSseConnectionItem {
-    url: string;
-    connectionType: 'SSE';
-    oauth: string;
-    env: { [key: string]: string };
-}
-
-interface ServerInfo {
-    name: string;
-    version: string;
-}
 
 export function updateWorkspaceConnectionConfig(
     absPath: string,
-    data: (ClientStdioConnectionItem | ClientSseConnectionItem) & { serverInfo: ServerInfo }
+    data: McpOptions[]
 ) {
-    const connectionItem = getWorkspaceConnectionConfigItemByPath(absPath);    
+    const connectionItem = getWorkspaceConnectionConfigItemByPath(absPath);
     const workspaceConnectionConfig = getWorkspaceConnectionConfig();
 
     // 如果存在，删除老的 connectionItem
@@ -211,48 +196,29 @@ export function updateWorkspaceConnectionConfig(
         }
     }
 
-    if (data.connectionType === 'STDIO') {
-        const connectionItem: IStdioConnectionItem = {
-            type: 'STDIO',
-            name: data.serverInfo.name,
-            version: data.serverInfo.version,
-            command: data.command,
-            args: data.args,
-            cwd: data.cwd.replace(/\\/g, '/'),
-            env: data.env,
-            filePath: absPath.replace(/\\/g, '/')
-        };
+    // 对于第一个 item 添加 filePath
+    // 对路径进行标准化
+    data.forEach(item => {
+        item.filePath = absPath.replace(/\\/g, '/');
+        item.cwd = item.cwd?.replace(/\\/g, '/');
+        item.name = item.serverInfo?.name;
+        item.version = item.serverInfo?.version;
+        item.type = undefined;
+    });
 
-        console.log('get connectionItem: ', connectionItem);
-        
+    console.log('get connectionItem: ', data);
 
-        // 插入到第一个
-        workspaceConnectionConfig.items.unshift(connectionItem);
-        const workspacePath = getWorkspacePath();
-        saveWorkspaceConnectionConfig(workspacePath);
-        vscode.commands.executeCommand('openmcp.sidebar.workspace-connection.refresh');
+    // 插入到第一个
+    workspaceConnectionConfig.items.unshift(data);
+    const workspacePath = getWorkspacePath();
+    saveWorkspaceConnectionConfig(workspacePath);
+    vscode.commands.executeCommand('openmcp.sidebar.workspace-connection.refresh');
 
-    } else {
-        const connectionItem: ISSEConnectionItem = {
-            type: 'SSE',
-            name: data.serverInfo.name,
-            version: data.serverInfo.version,
-            url: data.url,
-            oauth: data.oauth,
-            filePath: absPath.replace(/\\/g, '/')
-        };
-
-        // 插入到第一个
-        workspaceConnectionConfig.items.unshift(connectionItem);
-        const workspacePath = getWorkspacePath();
-        saveWorkspaceConnectionConfig(workspacePath);
-        vscode.commands.executeCommand('openmcp.sidebar.workspace-connection.refresh');
-    }
 }
 
 export function updateInstalledConnectionConfig(
     absPath: string,
-    data: (ClientStdioConnectionItem | ClientSseConnectionItem) & { serverInfo: ServerInfo }
+    data: McpOptions[]
 ) {
     const connectionItem = getInstalledConnectionConfigItemByPath(absPath);
     const installedConnectionConfig = getConnectionConfig();
@@ -265,45 +231,26 @@ export function updateInstalledConnectionConfig(
         }
     }
 
-    if (data.connectionType === 'STDIO') {
-        const connectionItem: IStdioConnectionItem = {
-            type: 'STDIO',
-            name: data.serverInfo.name,
-            version: data.serverInfo.version,
-            command: data.command,
-            args: data.args,
-            cwd: data.cwd.replace(/\\/g, '/'),
-            env: data.env,
-            filePath: absPath.replace(/\\/g, '/')
-        };
+    // 对于第一个 item 添加 filePath
+    // 对路径进行标准化
+    data.forEach(item => {
+        item.filePath = absPath.replace(/\\/g, '/');
+        item.cwd = item.cwd?.replace(/\\/g, '/');
+        item.name = item.serverInfo?.name;
+        item.version = item.serverInfo?.version;
+        item.type = undefined;
+    });
 
-        console.log('get connectionItem: ', connectionItem);
-        
+    console.log('get connectionItem: ', data);
 
-        // 插入到第一个
-        installedConnectionConfig.items.unshift(connectionItem);
-        saveConnectionConfig();
-        vscode.commands.executeCommand('openmcp.sidebar.installed-connection.refresh');
-
-    } else {
-        const connectionItem: ISSEConnectionItem = {
-            type: 'SSE',
-            name: data.serverInfo.name,
-            version: data.serverInfo.version,
-            url: data.url,
-            oauth: data.oauth,
-            filePath: absPath.replace(/\\/g, '/')
-        };
-
-        // 插入到第一个
-        installedConnectionConfig.items.unshift(connectionItem);
-        saveConnectionConfig();
-        vscode.commands.executeCommand('openmcp.sidebar.installed-connection.refresh');
-    }
+    // 插入到第一个
+    installedConnectionConfig.items.unshift(data);
+    saveConnectionConfig();
+    vscode.commands.executeCommand('openmcp.sidebar.installed-connection.refresh');
 }
 
 
-function normaliseConnectionFilePath(item: IConnectionItem, workspace: string) {
+function normaliseConnectionFilePath(item: McpOptions, workspace: string) {
     if (item.filePath) {
         if (item.filePath.startsWith('{workspace}')) {
             return item.filePath.replace('{workspace}', workspace).replace(/\\/g, '/');
@@ -329,7 +276,9 @@ export function getWorkspaceConnectionConfigItemByPath(absPath: string) {
     const workspaceConnectionConfig = getWorkspaceConnectionConfig();
 
     const normaliseAbsPath = absPath.replace(/\\/g, '/');
-    for (const item of workspaceConnectionConfig.items) {
+    for (let item of workspaceConnectionConfig.items) {
+        item = Array.isArray(item)? item[0] : item;
+
         const filePath = normaliseConnectionFilePath(item, workspacePath);
         if (filePath === normaliseAbsPath) {
             return item;
@@ -347,7 +296,9 @@ export function getInstalledConnectionConfigItemByPath(absPath: string) {
     const installedConnectionConfig = getConnectionConfig();
 
     const normaliseAbsPath = absPath.replace(/\\/g, '/');
-    for (const item of installedConnectionConfig.items) {
+    for (let item of installedConnectionConfig.items) {
+        item = Array.isArray(item)? item[0] : item;
+
         const filePath = (item.filePath || '').replace(/\\/g, '/');
         if (filePath === normaliseAbsPath) {
             return item;
@@ -361,14 +312,14 @@ export function getInstalledConnectionConfigItemByPath(absPath: string) {
 export async function getFirstValidPathFromCommand(command: string, cwd: string): Promise<string | undefined> {
     // 分割命令字符串
     const parts = command.split(' ');
-    
+
     // 遍历命令部分，寻找第一个可能是路径的部分
     for (let i = 1; i < parts.length; i++) {
         const part = parts[i];
-        
+
         // 跳过以 '-' 开头的参数
         if (part.startsWith('-')) continue;
-        
+
         // 处理相对路径
         let fullPath = part;
         if (!fspath.isAbsolute(part)) {
@@ -381,6 +332,6 @@ export async function getFirstValidPathFromCommand(command: string, cwd: string)
             return fullPath;
         }
     }
-    
+
     return undefined;
 }

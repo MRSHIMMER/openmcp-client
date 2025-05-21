@@ -5,7 +5,7 @@ import { createOcrWorker, saveBase64ImageData } from "./ocr.service";
 
 export class OcrController {
     @Controller('ocr/get-ocr-image')
-    async getOcrImage(client: RequestClientType, data: any, webview: PostMessageble) {
+    async getOcrImage(data: any, webview: PostMessageble) {
         const { filename } = data;
         const buffer = diskStorage.getSync(filename);
         const base64String = buffer ? buffer.toString('base64'): undefined;
@@ -18,7 +18,7 @@ export class OcrController {
     }
 
     @Controller('ocr/start-ocr')
-    async startOcr(client: RequestClientType, data: any, webview: PostMessageble) {
+    async startOcr(data: any, webview: PostMessageble) {
         const { base64String, mimeType } = data;
 
         const filename = saveBase64ImageData(base64String, mimeType);

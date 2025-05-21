@@ -20,6 +20,7 @@ export function createTest(call: ToolCall) {
 	tab.name = t("tools");
 	
 	const storage: ToolStorage = {
+		activeNames: [0],
 		currentToolName: call.function.name,
 		formData: JSON.parse(call.function.arguments)
 	};

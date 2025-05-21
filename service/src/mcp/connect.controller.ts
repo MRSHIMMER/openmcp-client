@@ -16,8 +16,22 @@ export class ConnectController {
         const { keys } = data;
         const values = keys.map((key: string) => {
             // TODO: 在 Windows 上测试
-            if (process.platform === 'win32' && key.toLowerCase() === 'path') {
-                key = 'Path'; // 确保正确匹配环境变量的 ke
+            console.log(key);
+            console.log(process.env);
+            
+            if (process.platform === 'win32') {
+                switch (key) {
+                    case 'USER':
+                        return process.env.USERNAME || '';
+                    case 'HOME':
+                        return process.env.USERPROFILE || process.env.HOME;
+                    case 'LOGNAME':
+                        return process.env.USERNAME || '';
+                    case 'SHELL':
+                        return process.env.SHELL || process.env.COMSPEC;
+                    case 'TERM':
+                        return process.env.TERM || '未设置 (Windows 默认终端)';
+                }
             }
 
             return process.env[key] || '';
