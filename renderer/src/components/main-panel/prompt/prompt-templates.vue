@@ -84,10 +84,6 @@ function handleClick(prompt: PromptTemplate) {
 }
 
 onMounted(async () => {
-	for (const client of mcpClientAdapter.clients) {
-		await client.getPromptTemplates();
-	}
-
 	if (tabStorage.currentPromptName === undefined) {
 		const masterNode = mcpClientAdapter.masterNode;
 		const prompt = masterNode.promptTemplates?.values().next();

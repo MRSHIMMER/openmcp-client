@@ -24,6 +24,30 @@ export const llms = [
 		userModel: 'gpt-4-turbo'
 	},
 	{
+		id: 'qwen',
+		name: '通义千问 Qwen',
+		baseUrl: 'https://dashscope.aliyuncs.com/compatible-mode/v1',
+		models: ['qwen-max', 'qwen-plus', 'qwen-turbo', 'qwen-long', 'qwen-omni-turbo', 'qwen-omni-turbo-realtime'],
+		provider: 'Alibaba',
+		isOpenAICompatible: true,
+		description: '阿里巴巴通义千问',
+		website: 'https://help.aliyun.com/zh/model-studio/models#cfc131abafghw',
+		userToken: '',
+		userModel: 'qwen-plus'
+	},
+	{
+		id: 'doubao',
+		name: '豆包 Seed',
+		baseUrl: 'https://ark.cn-beijing.volces.com/api/v3',
+		models: ['doubao-1.5-pro-32k', 'doubao-1.5-pro-256k', 'doubao-1.5-lite', 'deepseek-v3'],
+		provider: 'bytedance',
+		isOpenAICompatible: true,
+		description: '字节跳动豆包 Seed',
+		website: 'https://help.aliyun.com/zh/model-studio/models#cfc131abafghw',
+		userToken: '',
+		userModel: 'doubao-1.5-pro-32k'
+	},
+	{
 		id: 'mistral',
 		name: 'Mistral',
 		baseUrl: 'https://api.mistral.ai/v1',

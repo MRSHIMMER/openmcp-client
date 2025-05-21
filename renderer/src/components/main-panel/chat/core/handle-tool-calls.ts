@@ -1,6 +1,6 @@
 import type { ToolCallContent, ToolCallResponse } from "@/hook/type";
-import { callTool } from "../../tool/tools";
 import { MessageState, type ToolCall } from "../chat-box/chat";
+import { mcpClientAdapter } from "@/views/connect/core";
 
 export interface ToolCallResult {
     state: MessageState;
@@ -25,7 +25,7 @@ export async function handleToolCalls(toolCall: ToolCall): Promise<ToolCallResul
     const toolArgs = argsResult.value;
 
     // 进行调用，根据结果返回不同的值
-    const toolResponse = await callTool(toolName, toolArgs);
+    const toolResponse = await mcpClientAdapter.callTool(toolName, toolArgs);
     return handleToolResponse(toolResponse);
 }
 

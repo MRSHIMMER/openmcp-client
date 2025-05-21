@@ -56,10 +56,20 @@ function getCommandFileExt(option: McpOptions) {
 
 function collectAllOutputExec(command: string, cwd: string) {
 	return new Promise<string>((resolve, reject) => {
+		const handler = setTimeout(() => {
+			resolve('');
+		}, 5000);
+
 		exec(command, { cwd }, (error, stdout, stderr) => {
 			const errorString = error || '';
 			const stdoutString = stdout || '';
 			const stderrString = stderr || '';
+
+			console.log('[collectAllOutputExec]', errorString);
+			console.log('[collectAllOutputExec]', stdoutString);
+			console.log('[collectAllOutputExec]', stderrString);
+			
+			clearTimeout(handler);
 			resolve(errorString + stdoutString + stderrString);
 		});
 	});
@@ -140,7 +150,10 @@ async function initUv(option: McpOptions, cwd: string, webview?: PostMessageble)
 		command: 'connect/log',
 		data: {
 			code: syncOutput.toLowerCase().startsWith('error') ? 501: 200,
-			msg: syncOutput
+			msg: {
+				title: 'uv sync',
+				message: syncOutput
+			}
 		}
 	});
 
@@ -149,7 +162,10 @@ async function initUv(option: McpOptions, cwd: string, webview?: PostMessageble)
 		command: 'connect/log',
 		data: {
 			code: addOutput.toLowerCase().startsWith('error') ? 501: 200,
-			msg: addOutput
+			msg: {
+				title: 'uv add mcp "mcp[cli]"',
+				message: addOutput
+			}
 		}
 	});
 }
@@ -175,7 +191,10 @@ async function initNpm(option: McpOptions, cwd: string, webview?: PostMessageble
 		command: 'connect/log',
 		data: {
 			code: installOutput.toLowerCase().startsWith('error')? 200: 501,
-			msg: installOutput
+			msg: {
+				title: 'npm i',
+				message: installOutput
+			}
 		}
 	})
 }
@@ -212,6 +231,7 @@ export async function connectService(
 		// 通过 option 字符串进行 hash，得到唯一的 uuid
 		const uuid = await deterministicUUID(JSON.stringify(option));
 
+		const reuseConntion = clientMap.has(uuid);
 		if (!clientMap.has(uuid)) {
 			const client = await connect(option);
 			clientMap.set(uuid, client);	
@@ -226,6 +246,7 @@ export async function connectService(
 			msg: {
 				status: 'success',
 				clientId: uuid,
+				reuseConntion,
 				name: versionInfo?.name,
 				version: versionInfo?.version
 			}
@@ -234,7 +255,7 @@ export async function connectService(
 		return connectResult;
 	} catch (error) {
 
-		console.log(error);
+		console.log('[connectService catch error]', error);
 		
 		// TODO: 这边获取到的 error 不够精致，如何才能获取到更加精准的错误
 		// 比如	error: Failed to spawn: `server.py`
@@ -243,7 +264,10 @@ export async function connectService(
 		let errorMsg = '';
 
 		if (option.command) {
-			errorMsg += tryGetRunCommandError(option.command, option.args, option.cwd);
+			errorMsg += await collectAllOutputExec(
+				option.command + ' ' + (option.args || []).join(' '),
+				option.cwd || process.cwd()
+			)
 		}
 
 		errorMsg += (error as any).toString();

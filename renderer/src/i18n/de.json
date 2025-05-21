@@ -155,5 +155,6 @@
     "return": "Zurück",
     "error": "Fehler",
     "feedback": "Feedback",
-    "waiting-mcp-server": "Warten auf Antwort vom MCP-Server"
+    "waiting-mcp-server": "Warten auf Antwort vom MCP-Server",
+    "parallel-tool-calls": "Erlauben Sie dem Modell, mehrere Tools in einer einzigen Antwort aufzurufen"
 }

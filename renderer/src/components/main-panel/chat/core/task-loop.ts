@@ -157,8 +157,6 @@ export class TaskLoop {
 
             }, { once: true });
 
-            console.log(chatData);
-
             this.bridge.postMessage({
                 command: 'llm/chat/completions',
                 data: JSON.parse(JSON.stringify(chatData)),
@@ -182,6 +180,7 @@ export class TaskLoop {
         const model = this.getLlmConfig().userModel;
         const temperature = tabStorage.settings.temperature;
         const tools = getToolSchema(tabStorage.settings.enableTools);
+        const parallelToolCalls = tabStorage.settings.parallelToolCalls;
 
         const userMessages = [];
 
@@ -210,6 +209,7 @@ export class TaskLoop {
             model,
             temperature,
             tools,
+            parallelToolCalls,
             messages: userMessages,
         } as ChatCompletionCreateParamsBase;
 

@@ -11,13 +11,13 @@
 						<template #title>
 							<div class="tool-calls">
 								<div class="tool-call-header">
-									<span>{{ log.message.split('\n')[0] }}</span>
+									<span>{{ log.title }}</span>
 								</div>
 							</div>
 						</template>
 
 						<div class="logger-inner">
-							{{ log.message }}
+							{{ log.message || '' }}
 						</div>
 					</el-collapse-item>
 				</el-collapse>
@@ -52,7 +52,7 @@ function clearLogs() {
 
 <style>
 .connection-option {
-	height: 98%;
+	height: 90vh;
 }
 
 .connection-option .el-scrollbar__view {

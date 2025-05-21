@@ -8,18 +8,7 @@ export class LlmController {
 
     @Controller('llm/chat/completions')
     async chatCompletion(data: RequestData, webview: PostMessageble) {
-        let { tools = [] } = data;
 
-        const client = getClient(data.clientId);
-
-        if (tools.length > 0 && !client) {
-            return {
-                code: 501,
-                msg:'mcp client 尚未连接'
-            };
-        }
-
-        
         try {
             await streamingChatCompletion(data, webview);            
         } catch (error) {

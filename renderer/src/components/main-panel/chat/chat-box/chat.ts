@@ -47,11 +47,11 @@ export interface TextMessage {
 export type ChatMessage = ToolMessage | TextMessage;
 
 // 新增状态和工具数据
-interface EnableToolItem {
-	name: string;
-	description: string;
-	enabled: boolean;
-    inputSchema?: any;
+export interface EnableToolItem {
+    name: string;
+    description: string;
+    enabled: boolean;
+    inputSchema: any;
 }
 
 export interface ChatSetting {
@@ -61,10 +61,11 @@ export interface ChatSetting {
     temperature: number
     enableWebSearch: boolean
     contextLength: number
+    parallelToolCalls: boolean
 }
 
 export interface ChatStorage {
-	messages: ChatMessage[]
+    messages: ChatMessage[]
     settings: ChatSetting
 }
 
@@ -95,8 +96,6 @@ interface TextItem {
 
 export type RichTextItem = PromptTextItem | ResourceTextItem | TextItem;
 
-export const allTools = ref<ToolItem[]>([]);
-
 export interface ICommonRenderMessage {
     role: 'user' | 'assistant/content';
     content: string;
@@ -110,41 +109,27 @@ export interface IToolRenderMessage {
     toolResults: ToolCallContent[][];
     tool_calls: ToolCall[];
     showJson?: Ref<boolean>;
-    extraInfo: IExtraInfo;   
+    extraInfo: IExtraInfo;
 }
 
 export type IRenderMessage = ICommonRenderMessage | IToolRenderMessage;
 
 export function getToolSchema(enableTools: EnableToolItem[]) {
     const toolsSchema = [];
-	for (let i = 0; i < enableTools.length; i++) {
+    for (let i = 0; i < enableTools.length; i++) {
         const enableTool = enableTools[i];
 
         if (enableTool.enabled) {
-
-            if (enableTool.inputSchema) {
-                toolsSchema.push({
-                    type: 'function',
-                    function: {
-                        name: enableTool.name,
-                        description: enableTool.description || "",
-                        parameters: enableTool.inputSchema
-                    }
-                });
-            } else {
-                const tool = allTools.value[i];
-			
-                toolsSchema.push({
-                    type: 'function',
-                    function: {
-                        name: tool.name,
-                        description: tool.description || "",
-                        parameters: tool.inputSchema
-                    }
-                });
-            }
-		}
-	}
+            toolsSchema.push({
+                type: 'function',
+                function: {
+                    name: enableTool.name,
+                    description: enableTool.description || "",
+                    parameters: enableTool.inputSchema
+                }
+            });
+        }
+    }
     return toolsSchema;
 }
 

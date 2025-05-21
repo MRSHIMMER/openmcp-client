@@ -5,7 +5,7 @@
 		<ToolUse />
 		<Prompt />
 		<Resource />
-		<Websearch />
+		<ParallelToolCalls />
 		<Temperature />
 		<ContextLength />
 	</div>
@@ -22,7 +22,7 @@ import SystemPrompt from './system-prompt.vue';
 import ToolUse from './tool-use.vue';
 import Prompt from './prompt.vue';
 import Resource from './resource.vue';
-import Websearch from './websearch.vue';
+import ParallelToolCalls from './parallel-tool-calls.vue';
 import Temperature from './temperature.vue';
 import ContextLength from './context-length.vue';
 
@@ -57,9 +57,10 @@ if (!tabStorage.settings) {
 		modelIndex: llmManager.currentModelIndex,
 		enableTools: [],
 		enableWebSearch: false,
-		temperature: 0.7,
+		temperature: 0.6,
 		contextLength: 20,
-		systemPrompt: ''
+		systemPrompt: '',
+		parallelToolCalls: true
 	} as ChatSetting;
 }
 

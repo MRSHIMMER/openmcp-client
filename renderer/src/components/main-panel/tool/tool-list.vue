@@ -65,10 +65,6 @@ function handleClick(tool: { name: string }) {
 }
 
 onMounted(async () => {
-    for (const client of mcpClientAdapter.clients) {
-        await client.getTools();
-    }
-
     if (tabStorage.currentToolName === undefined) {
         const masterNode = mcpClientAdapter.masterNode;
         const tool = masterNode.tools?.values().next();

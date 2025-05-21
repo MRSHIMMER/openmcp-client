@@ -37,9 +37,9 @@
 <script setup lang="ts">
 import { ref, computed, inject, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { allTools, type ChatStorage, getToolSchema } from '../chat';
+import { type ChatStorage, type EnableToolItem, getToolSchema } from '../chat';
 import { markdownToHtml } from '@/components/main-panel/chat/markdown/markdown';
-import { useMessageBridge } from '@/api/message-bridge';
+import { mcpClientAdapter } from '@/views/connect/core';
 
 const { t } = useI18n();
 
@@ -50,8 +50,6 @@ const showToolsDialog = ref(false);
 const availableToolsNum = computed(() => {
 	return tabStorage.settings.enableTools.filter(tool => tool.enabled).length;
 });
-
-
 
 // 修改 toggleTools 方法
 const toggleTools = () => {
@@ -82,19 +80,31 @@ const disableAllTools = () => {
 };
 
 onMounted(async () => {
-    const bridge = useMessageBridge();
-    const res = await bridge.commandRequest('tools/list');
-    if (res.code === 200) {
-        allTools.value = res.msg.tools || [];
-        tabStorage.settings.enableTools = [];
-		for (const tool of allTools.value) {
-			tabStorage.settings.enableTools.push({
-				name: tool.name,
-				description: tool.description,
-				enabled: true
-			});
-		}
+    // 将新的 tool 和并进入 tabStorage.settings.enableTools 中
+    // 只需要保证 enable 信息同步即可，其余工具默认开启
+    const disableToolNames = new Set<string>(
+        tabStorage.settings.enableTools
+        .filter(tool => !tool.enabled)
+        .map(tool => tool.name)
+    );
+
+    const newTools: EnableToolItem[] = [];
+
+    for (const client of mcpClientAdapter.clients) {
+        const tools = await client.getTools();
+        for (const tool of tools.values()) {
+            const enabled = !disableToolNames.has(tool.name);
+
+            newTools.push({
+                name: tool.name,
+                description: tool.description,
+                inputSchema: tool.inputSchema,
+                enabled
+            });
+        }
     }
+
+    tabStorage.settings.enableTools = newTools;
 });
 
 </script>

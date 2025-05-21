@@ -22,6 +22,14 @@ export const connectionSelectDataViewOption: ConnectionTypeOptionItem[] = [
     }
 ]
 
+function prettifyMapKeys(keys: MapIterator<string>) {
+    const result: string[] = [];
+    for (const key of keys) {
+        result.push('+ ' +key);
+    }
+    return result.join('\n');
+}
+
 
 export class McpClient {
     // 连接入参
@@ -60,6 +68,7 @@ export class McpClient {
         // 连接出参
         this.connectionResult = {
             success: false,
+            reuseConntion: false,
             status: 'disconnected',
             clientId: '',
             name: '',
@@ -263,6 +272,7 @@ export class McpClient {
             const message = msg.toString();
             this.connectionResult.logString.push({
                 type: 'error',
+                title: '连接失败',
                 message
             });
 
@@ -271,14 +281,46 @@ export class McpClient {
         } else {
             this.connectionResult.logString.push({
                 type: 'info',
-                message: msg.name + ' ' + msg.version + ' 连接成功'
+                title: msg.name + ' ' + msg.version + ' 连接成功',
+                message: JSON.stringify(msg, null, 2)
             });
         }
 
+        this.connectionResult.reuseConntion = msg.reuseConntion;
         this.connectionResult.status = msg.status;
         this.connectionResult.clientId = msg.clientId;
         this.connectionResult.name = msg.name;
         this.connectionResult.version = msg.version;
+
+        // 刷新所有资源
+        const tools = await this.getTools({ cache: false });
+        this.connectionResult.logString.push({
+            type: 'info',
+            title: `${this.name}'s tools loaded (${tools.size})`,
+            message: prettifyMapKeys(tools.keys())
+        });
+        
+        const prompts = await this.getPromptTemplates({ cache: false });
+        this.connectionResult.logString.push({
+            type: 'info',
+            title: `${this.name}'s prompts loaded (${prompts.size})`,
+            message: prettifyMapKeys(prompts.keys())
+        });
+
+        const resources = await this.getResources({ cache: false });
+        this.connectionResult.logString.push({
+            type: 'info',
+            title: `${this.name}'s resources loaded (${resources.size})`,
+            message: prettifyMapKeys(resources.keys())
+        });
+        
+        const resourceTemplates = await this.getResourceTemplates({ cache: false });
+        this.connectionResult.logString.push({
+            type: 'info',
+            title: `${this.name}'s resourceTemplates loaded (${resourceTemplates.size})`,
+            message: prettifyMapKeys(resourceTemplates.keys())
+        });
+
         return true;
     }
 
@@ -330,14 +372,15 @@ export class McpClient {
         if (code === 200) {
             this.connectionResult.logString.push({
                 type: 'info',
-                message: '预设环境变量同步完成'
+                title: '预设环境变量同步完成'
             });
 
             return msg;
         } else {
             this.connectionResult.logString.push({
                 type: 'error',
-                message: '预设环境变量同步失败: ' + msg
+                title: '预设环境变量同步失败',
+                message: msg.toString()
             });
         }
     }
@@ -403,9 +446,7 @@ class McpClientAdapter {
             this.connectLogListenerCancel = bridge.addCommandListener('connect/log', (message) => {
                 const { code, msg } = message;
 
-                console.log(code, msg);
                 const client = this.clients.at(-1);
-                console.log(client);
                 
                 if (!client) {
                     return;
@@ -413,7 +454,8 @@ class McpClientAdapter {
 
                 client.connectionResult.logString.push({
                     type: code === 200 ? 'info': 'error',
-                    message: msg
+                    title: msg.title,
+                    message: msg.message
                 });
 
             }, { once: false });   

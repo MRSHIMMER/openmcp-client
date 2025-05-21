@@ -1,4 +1,5 @@
 {
+  "clientId": "3e33bc4d-bc4d-53bc4d856bb-83bc4d856bbb1ac-bb1acc2e",
   "currentIndex": 0,
   "tabs": [
     {
@@ -7,21 +8,445 @@
       "type": "blank",
       "componentIndex": 3,
       "storage": {
+        "activeNames": [
+          0
+        ],
         "messages": [
           {
             "role": "user",
-            "content": "hello",
+            "content": "搜集 锦恢 的资料并整理成 word 文档",
             "extraInfo": {
-              "created": 1747658023940,
+              "created": 1747826001541,
               "state": "success",
               "serverName": "Huoshan DeepSeek"
             }
           },
           {
             "role": "assistant",
-            "content": "Hello! How can I assist you today?",
+            "content": "",
+            "tool_calls": [
+              {
+                "id": "call_lfhned4kdymj3c3gs3jtbwp4",
+                "index": 0,
+                "type": "function",
+                "function": {
+                  "name": "k_navigate",
+                  "arguments": "{\"url\":\"https://www.baidu.com\"}"
+                }
+              }
+            ],
             "extraInfo": {
-              "created": 1747658024544,
+              "created": 1747826003528,
+              "state": "success",
+              "serverName": "Huoshan DeepSeek"
+            }
+          },
+          {
+            "role": "tool",
+            "index": 0,
+            "tool_call_id": "call_lfhned4kdymj3c3gs3jtbwp4",
+            "content": [
+              {
+                "type": "text",
+                "text": "Navigated to https://www.baidu.com"
+              }
+            ],
+            "extraInfo": {
+              "created": 1747826006262,
+              "state": "success",
+              "serverName": "Huoshan DeepSeek"
+            }
+          },
+          {
+            "role": "assistant",
+            "content": "",
+            "tool_calls": [
+              {
+                "id": "call_2kxsixghph65js038ifmzki1",
+                "index": 0,
+                "type": "function",
+                "function": {
+                  "name": "k_fill",
+                  "arguments": "{\"selector\":\"#kw\",\"value\":\"锦恢\"}"
+                }
+              }
+            ],
+            "extraInfo": {
+              "created": 1747826008183,
+              "state": "success",
+              "serverName": "Huoshan DeepSeek"
+            }
+          },
+          {
+            "role": "tool",
+            "index": 0,
+            "tool_call_id": "call_2kxsixghph65js038ifmzki1",
+            "content": [
+              {
+                "type": "text",
+                "text": "Filled #kw with: 锦恢"
+              }
+            ],
+            "extraInfo": {
+              "created": 1747826008235,
+              "state": "success",
+              "serverName": "Huoshan DeepSeek"
+            }
+          },
+          {
+            "role": "assistant",
+            "content": "",
+            "tool_calls": [
+              {
+                "id": "call_snyn18zlh8rkgc2b2du3yq99",
+                "index": 0,
+                "type": "function",
+                "function": {
+                  "name": "k_click",
+                  "arguments": "{\"selector\":\"#su\"}"
+                }
+              }
+            ],
+            "extraInfo": {
+              "created": 1747826009946,
+              "state": "success",
+              "serverName": "Huoshan DeepSeek"
+            }
+          },
+          {
+            "role": "tool",
+            "index": 0,
+            "tool_call_id": "call_snyn18zlh8rkgc2b2du3yq99",
+            "content": [
+              {
+                "type": "text",
+                "text": "Clicked: #su"
+              }
+            ],
+            "extraInfo": {
+              "created": 1747826009989,
+              "state": "success",
+              "serverName": "Huoshan DeepSeek"
+            }
+          },
+          {
+            "role": "assistant",
+            "content": "",
+            "tool_calls": [
+              {
+                "id": "call_r9hwuich0ye4dh9rt3gobpk2",
+                "index": 0,
+                "type": "function",
+                "function": {
+                  "name": "k_get_full_page_text",
+                  "arguments": "{}"
+                }
+              }
+            ],
+            "extraInfo": {
+              "created": 1747826011708,
+              "state": "success",
+              "serverName": "Huoshan DeepSeek"
+            }
+          },
+          {
+            "role": "tool",
+            "index": 0,
+            "tool_call_id": "call_r9hwuich0ye4dh9rt3gobpk2",
+            "content": [
+              {
+                "type": "text",
+                "text": "Execution result:\n\"百度首页设置登录\\n\\n网页图片资讯视频笔记地图贴吧文库更多\\n锦恢\\n问AI\\n相关搜索\\n锦发集团有限公司\\n锦襜是什么意思\\n新宋锦和宋锦的区别\\n锦康集团有限公司\\n锦发集团有限公司董事长\\n锦里耆旧传\\n\\n换一换\\n热搜榜北京榜民生榜财经榜\\n\\n看工业“关节”有啥“绝活”\\n1\\n四川省公安厅厅长叶寒冰被查热\\n2\\n朱媛媛一个月前访谈状态曝光新\\n3\\n#北京范儿#\\n4\\n央视爆猛料：空战实现“A锁B射C导”新\\n5\\n偶遇王菲谢霆锋520一起旅行新\\n6\\n女孩拨打12309：我能换个爸爸吗？新\\n7\\n混双世界第一出局 栋曼组合输日本热\\n8\\n辛柏青发文时间有深意\\n9\\n718斤“中国第一胖”减掉半个自己\\n10\\n巴基斯坦一校车遇袭致5死40伤\\n11\\n有图就有真相吗？警惕AI图片造假\\n12\\n传9岁天才棋手被父亲家暴跳楼身亡新\\n13\\n超2.8万名妇女女童在加沙战火中丧生\\n14\\n今年已有22位演艺界名人逝世新\\n15\\n错过航班女子称考虑起诉视频发布者\\n收起工具\\n时间不限所有网页和文件站点内检索\\n搜索工具\\n百度为您找到以下结果\\n锦恢名字的寓意-锦恢什么意思-锦恢名字的含义-猎名网\\n2025年5月10日 恢的意思:恢字指弘大、恢张、发扬、扩大。查看锦恢名字打分 恢的含义:恢字取名含义为意厚德载物、力挽狂澜、海量汪涵之义。 恢的寓意:恢字取名寓意为气势恢宏...\\n猎名网\\n锦恢这个名字怎么样-锦恢的名字寓意及含义-锦恢这个名字好...\\n「锦恢」字义分析 87分 锦恢名字含义「锦」 (jǐn)意为指鲜艳华美的。用作人名意指鲜明、美丽、美好、尊贵之义; 锦的详细含义及解释>> 「恢」 (huī)意为本意是广大。引申指...\\nwww.91cm.cn/mz/锦恢.html\\n锦恢的个人空间-锦恢个人主页-哔哩哔哩视频\\n锦恢 主站 番剧 游戏中心 直播 会员购 漫画 赛事 下载客户端 登录 开通大会员 大会员 消息 动态 收藏 历史记录 创作中心 投稿 If you cannot be a poet, be the poem. 博客:kirigaya.cn 关...\\n哔哩哔哩\\n锦恢- 知乎\\n3天前 锦恢 ​ 直面恐惧,创造未来,https://kirigaya.cn 为了说明 ds 性价比到底多高,给大家看个东西吧。 这是我最近开发的 openmcp 工具,支持 mcp 全部协议,使用 deepseek 测试功能测试 open...\\n知乎\\n大家还在搜\\n锦发集团有限公司\\n锦襜是什么意思\\n新宋锦和宋锦的区别\\n锦康集团有限公司\\n锦发集团有限公司董事长\\n锦里耆旧传\\n重锦是什么意思\\n华锦股份重组最新消息\\n\\n绵恢725(籼型常规水稻) - 百度百科\\n\\n绵恢725，籼型常规水稻，绵阳市农业科学研究所选育。详情\\n\\n品种来源\\n特征特性\\n百度百科\\n最优化方法复习笔记(三)牛顿法及其收敛性分析 - 知乎\\n2024年3月22日 锦恢:最优化方法复习笔记(二)梯度下降法的全局收敛与收敛速率175 赞同 · 15 评论文章 最近四项目并行多线程,还有悬空欲坠的数据结构课设=_=,所以嘛。。。更得会时快时慢啦。...\\n知乎\\n锦恢:最优化复习笔记(总结向)\\n2024年03月22日-锦恢​ 直面恐惧,创造未来,https://kirigaya.cn 来自专栏 · 机器...\\n我只教一次!vscode remote-ssh 连接失败的基本原理和优雅的解决方案...\\n2024年04月28日-no丶mad 锦恢 commit id是一致的 1.Update the sshd_config file ...\\n机器人仿真pybullet资料整理 - 知乎\\n2023年12月13日-[1]锦恢:panda3d学习笔记(一)Hello World [2]锦恢:PyBullet笔记(...\\n更多同站结果 >\\n锦恢-CSDN博客\\n2023年2月16日 锦恢 博客等级 码龄6年 34 原创 209 点赞 808 收藏 51 粉丝 关注 私信 热门文章 在overleaf中使用bibtex引用参考文献 41990 ValueError: too many dimension...\\nCSDN博客\\n大穗型水稻恢复系绵恢 523\\n2022年12月13日 绵恢 523 是绵阳市农业科学研究院以内恢 99-14 为母本、（蜀恢 881/ 千粒稻） F1 为父本杂交后经系谱法选育而成的杂交水稻中籼迟熟大穗型恢复系。1、农艺性状：在四川绵阳 4...\\n小苏说稻\\n恢字起名男孩名字,带恢的名字男孩\\n恢字起名男孩名字,带恢的名字男孩,恢字取名男孩, 不重 (男) 顺恢 (男) 德恢 (男) 富忠 (男) 一植 (男) 一竹 (男) 椿治 (男) 文恢 (男) 锦恢 (男) 敬恢 (男) 浠中 (男) 昊中 (...\\nm.sanzang5.com/minfo/10/8440.....\\n相关搜索\\n锦发集团有限公司\\n\\t\\n华锦股份重组最新消息\\n重锦是什么意思\\n\\t\\n锦里耆旧传\\n宋锦和新宋锦的区别\\n\\t\\n锦婳怎么解释\\n汉锦都是什么品牌\\n\\t\\n宋锦蜀锦云锦哪个好\\n云锦蜀锦宋锦壮锦\\n\\t\\n锦绶新垂\\n1\\n2\\n3\\n4\\n5\\n6\\n7\\n8\\n9\\n10\\n下一页 >\\n帮助举报用户反馈企业推广\"\n\nConsole output:\n"
+              }
+            ],
+            "extraInfo": {
+              "created": 1747826011749,
+              "state": "success",
+              "serverName": "Huoshan DeepSeek"
+            }
+          },
+          {
+            "role": "assistant",
+            "content": "",
+            "tool_calls": [
+              {
+                "id": "call_phlshy7mrhp4ef7gx51gxomf",
+                "index": 0,
+                "type": "function",
+                "function": {
+                  "name": "create_document",
+                  "arguments": "{\"filename\":\"锦恢资料.docx\",\"title\":\"锦恢资料\",\"author\":\"Assistant\"}"
+                }
+              },
+              {
+                "id": "call_hchnnysnfbfcicf87kmndce8",
+                "index": 1,
+                "type": "function",
+                "function": {
+                  "name": "add_paragraph",
+                  "arguments": "{\"filename\":\"锦恢资料.docx\",\"text\":\"锦恢名字的寓意-锦恢什么意思-锦恢名字的含义-猎名网\\n2025年5月10日 恢的意思:恢字指弘大、恢张、发扬、扩大。查看锦恢名字打分 恢的含义:恢字取名含义为意厚德载物、力挽狂澜、海量汪涵之义。 恢的寓意:恢字取名寓意为气势恢宏...\"}"
+                }
+              },
+              {
+                "id": "call_166ali7u5fvogpoyyvsdu7tq",
+                "index": 2,
+                "type": "function",
+                "function": {
+                  "name": "add_paragraph",
+                  "arguments": "{\"filename\":\"锦恢资料.docx\",\"text\":\"锦恢这个名字怎么样-锦恢的名字寓意及含义-锦恢这个名字好...\\n「锦恢」字义分析 87分 锦恢名字含义「锦」 (jǐn)意为指鲜艳华美的。用作人名意指鲜明、美丽、美好、尊贵之义; 锦的详细含义及解释>> 「恢」 (huī)意为本意是广大。引申指...\"}"
+                }
+              },
+              {
+                "id": "call_1cdqr5pdjl7au5hrjdw7ewni",
+                "index": 3,
+                "type": "function",
+                "function": {
+                  "name": "add_paragraph",
+                  "arguments": "{\"filename\":\"锦恢资料.docx\",\"text\":\"锦恢的个人空间-锦恢个人主页-哔哩哔哩视频\\n锦恢 主站 番剧 游戏中心 直播 会员购 漫画 赛事 下载客户端 登录 开通大会员 大会员 消息 动态 收藏 历史记录 创作中心 投稿 If you cannot be a poet, be the poem. 博客:kirigaya.cn 关...\"}"
+                }
+              },
+              {
+                "id": "call_u5y0sjd02acduwscq72in5mk",
+                "index": 4,
+                "type": "function",
+                "function": {
+                  "name": "add_paragraph",
+                  "arguments": "{\"filename\":\"锦恢资料.docx\",\"text\":\"锦恢- 知乎\\n3天前 锦恢 ​ 直面恐惧,创造未来,https://kirigaya.cn 为了说明 ds 性价比到底多高,给大家看个东西吧。 这是我最近开发的 openmcp 工具,支持 mcp 全部协议,使用 deepseek 测试功能测试 open...\"}"
+                }
+              },
+              {
+                "id": "call_sr9xxaayb24mrp87fk8gu85m",
+                "index": 5,
+                "type": "function",
+                "function": {
+                  "name": "add_paragraph",
+                  "arguments": "{\"filename\":\"锦恢资料.docx\",\"text\":\"绵恢725(籼型常规水稻) - 百度百科\\n绵恢725，籼型常规水稻，绵阳市农业科学研究所选育。详情\\n品种来源\\n特征特性\\n百度百科\"}"
+                }
+              },
+              {
+                "id": "call_04i2zabn9w620efu9r02q2ti",
+                "index": 6,
+                "type": "function",
+                "function": {
+                  "name": "add_paragraph",
+                  "arguments": "{\"filename\":\"锦恢资料.docx\",\"text\":\"最优化方法复习笔记(三)牛顿法及其收敛性分析 - 知乎\\n2024年3月22日 锦恢:最优化方法复习笔记(二)梯度下降法的全局收敛与收敛速率175 赞同 · 15 评论文章 最近四项目并行多线程,还有悬空欲坠的数据结构课设=_=,所以嘛。。。更得会时快时慢啦。...\"}"
+                }
+              },
+              {
+                "id": "call_rdtaqvst4gzu6vrroy58u82x",
+                "index": 7,
+                "type": "function",
+                "function": {
+                  "name": "add_paragraph",
+                  "arguments": "{\"filename\":\"锦恢资料.docx\",\"text\":\"锦恢:最优化复习笔记(总结向)\\n2024年03月22日-锦恢​ 直面恐惧,创造未来,https://kirigaya.cn 来自专栏 · 机器...\\n我只教一次!vscode remote-ssh 连接失败的基本原理和优雅的解决方案...\\n2024年04月28日-no丶mad 锦恢 commit id是一致的 1.Update the sshd_config file ...\\n机器人仿真pybullet资料整理 - 知乎\\n2023年12月13日-[1]锦恢:panda3d学习笔记(一)Hello World [2]锦恢:PyBullet笔记(...\\n更多同站结果 >\"}"
+                }
+              },
+              {
+                "id": "call_q1gwv2j3bvi80a9zp7hv2q33",
+                "index": 8,
+                "type": "function",
+                "function": {
+                  "name": "add_paragraph",
+                  "arguments": "{\"filename\":\"锦恢资料.docx\",\"text\":\"锦恢-CSDN博客\\n2023年2月16日 锦恢 博客等级 码龄6年 34 原创 209 点赞 808 收藏 51 粉丝 关注 私信 热门文章 在overleaf中使用bibtex引用参考文献 41990 ValueError: too many dimension...\"}"
+                }
+              },
+              {
+                "id": "call_o8rg1egton6smvxp01cpey5e",
+                "index": 9,
+                "type": "function",
+                "function": {
+                  "name": "add_paragraph",
+                  "arguments": "{\"filename\":\"锦恢资料.docx\",\"text\":\"大穗型水稻恢复系绵恢 523\\n2022年12月13日 绵恢 523 是绵阳市农业科学研究院以内恢 99-14 为母本、（蜀恢 881/ 千粒稻） F1 为父本杂交后经系谱法选育而成的杂交水稻中籼迟熟大穗型恢复系。1、农艺性状：在四川绵阳 4...\"}"
+                }
+              },
+              {
+                "id": "call_o3n2i261030qzk18vz1mthsx",
+                "index": 10,
+                "type": "function",
+                "function": {
+                  "name": "add_paragraph",
+                  "arguments": "{\"filename\":\"锦恢资料.docx\",\"text\":\"恢字起名男孩名字,带恢的名字男孩\\n恢字起名男孩名字,带恢的名字男孩,恢字取名男孩, 不重 (男) 顺恢 (男) 德恢 (男) 富忠 (男) 一植 (男) 一竹 (男) 椿治 (男) 文恢 (男) 锦恢 (男) 敬恢 (男) 浠中 (男) 昊中 (...\\nm.sanzang5.com/minfo/10/8440.....\"}"
+                }
+              }
+            ],
+            "extraInfo": {
+              "created": 1747826035031,
+              "state": "success",
+              "serverName": "Huoshan DeepSeek"
+            }
+          },
+          {
+            "role": "tool",
+            "index": 0,
+            "tool_call_id": "call_phlshy7mrhp4ef7gx51gxomf",
+            "content": [
+              {
+                "type": "text",
+                "text": "Document 锦恢资料.docx created successfully"
+              }
+            ],
+            "extraInfo": {
+              "created": 1747826035113,
+              "state": "success",
+              "serverName": "Huoshan DeepSeek"
+            }
+          },
+          {
+            "role": "tool",
+            "index": 1,
+            "tool_call_id": "call_hchnnysnfbfcicf87kmndce8",
+            "content": [
+              {
+                "type": "text",
+                "text": "Paragraph added to 锦恢资料.docx"
+              }
+            ],
+            "extraInfo": {
+              "created": 1747826035151,
+              "state": "success",
+              "serverName": "Huoshan DeepSeek"
+            }
+          },
+          {
+            "role": "tool",
+            "index": 2,
+            "tool_call_id": "call_166ali7u5fvogpoyyvsdu7tq",
+            "content": [
+              {
+                "type": "text",
+                "text": "Paragraph added to 锦恢资料.docx"
+              }
+            ],
+            "extraInfo": {
+              "created": 1747826035180,
+              "state": "success",
+              "serverName": "Huoshan DeepSeek"
+            }
+          },
+          {
+            "role": "tool",
+            "index": 3,
+            "tool_call_id": "call_1cdqr5pdjl7au5hrjdw7ewni",
+            "content": [
+              {
+                "type": "text",
+                "text": "Paragraph added to 锦恢资料.docx"
+              }
+            ],
+            "extraInfo": {
+              "created": 1747826035215,
+              "state": "success",
+              "serverName": "Huoshan DeepSeek"
+            }
+          },
+          {
+            "role": "tool",
+            "index": 4,
+            "tool_call_id": "call_u5y0sjd02acduwscq72in5mk",
+            "content": [
+              {
+                "type": "text",
+                "text": "Paragraph added to 锦恢资料.docx"
+              }
+            ],
+            "extraInfo": {
+              "created": 1747826035239,
+              "state": "success",
+              "serverName": "Huoshan DeepSeek"
+            }
+          },
+          {
+            "role": "tool",
+            "index": 5,
+            "tool_call_id": "call_sr9xxaayb24mrp87fk8gu85m",
+            "content": [
+              {
+                "type": "text",
+                "text": "Paragraph added to 锦恢资料.docx"
+              }
+            ],
+            "extraInfo": {
+              "created": 1747826035268,
+              "state": "success",
+              "serverName": "Huoshan DeepSeek"
+            }
+          },
+          {
+            "role": "tool",
+            "index": 6,
+            "tool_call_id": "call_04i2zabn9w620efu9r02q2ti",
+            "content": [
+              {
+                "type": "text",
+                "text": "Paragraph added to 锦恢资料.docx"
+              }
+            ],
+            "extraInfo": {
+              "created": 1747826035307,
+              "state": "success",
+              "serverName": "Huoshan DeepSeek"
+            }
+          },
+          {
+            "role": "tool",
+            "index": 7,
+            "tool_call_id": "call_rdtaqvst4gzu6vrroy58u82x",
+            "content": [
+              {
+                "type": "text",
+                "text": "Paragraph added to 锦恢资料.docx"
+              }
+            ],
+            "extraInfo": {
+              "created": 1747826035331,
+              "state": "success",
+              "serverName": "Huoshan DeepSeek"
+            }
+          },
+          {
+            "role": "tool",
+            "index": 8,
+            "tool_call_id": "call_q1gwv2j3bvi80a9zp7hv2q33",
+            "content": [
+              {
+                "type": "text",
+                "text": "Paragraph added to 锦恢资料.docx"
+              }
+            ],
+            "extraInfo": {
+              "created": 1747826035358,
+              "state": "success",
+              "serverName": "Huoshan DeepSeek"
+            }
+          },
+          {
+            "role": "tool",
+            "index": 9,
+            "tool_call_id": "call_o8rg1egton6smvxp01cpey5e",
+            "content": [
+              {
+                "type": "text",
+                "text": "Paragraph added to 锦恢资料.docx"
+              }
+            ],
+            "extraInfo": {
+              "created": 1747826035381,
+              "state": "success",
+              "serverName": "Huoshan DeepSeek"
+            }
+          },
+          {
+            "role": "tool",
+            "index": 10,
+            "tool_call_id": "call_o3n2i261030qzk18vz1mthsx",
+            "content": [
+              {
+                "type": "text",
+                "text": "Paragraph added to 锦恢资料.docx"
+              }
+            ],
+            "extraInfo": {
+              "created": 1747826035404,
               "state": "success",
               "serverName": "Huoshan DeepSeek"
             }
@@ -33,48 +458,1045 @@
             {
               "name": "k_navigate",
               "description": "Navigate to a URL",
+              "inputSchema": {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "type": "string",
+                    "description": "URL to navigate to"
+                  },
+                  "launchOptions": {
+                    "type": "object",
+                    "description": "PuppeteerJS LaunchOptions. Default null. If changed and not null, browser restarts. Example: { headless: true, args: ['--no-sandbox'] }"
+                  },
+                  "allowDangerous": {
+                    "type": "boolean",
+                    "description": "Allow dangerous LaunchOptions that reduce security. When false, dangerous args like --no-sandbox will throw errors. Default false."
+                  }
+                },
+                "required": [
+                  "url"
+                ]
+              },
               "enabled": true
             },
             {
               "name": "k_screenshot",
               "description": "Take a screenshot of the current page or a specific element",
+              "inputSchema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Name for the screenshot"
+                  },
+                  "selector": {
+                    "type": "string",
+                    "description": "CSS selector for element to screenshot"
+                  },
+                  "width": {
+                    "type": "number",
+                    "description": "Width in pixels (default: 800)"
+                  },
+                  "height": {
+                    "type": "number",
+                    "description": "Height in pixels (default: 600)"
+                  }
+                },
+                "required": [
+                  "name"
+                ]
+              },
               "enabled": true
             },
             {
               "name": "k_click",
               "description": "Click an element on the page",
+              "inputSchema": {
+                "type": "object",
+                "properties": {
+                  "selector": {
+                    "type": "string",
+                    "description": "CSS selector for element to click"
+                  }
+                },
+                "required": [
+                  "selector"
+                ]
+              },
               "enabled": true
             },
             {
               "name": "k_fill",
               "description": "Fill out an input field",
+              "inputSchema": {
+                "type": "object",
+                "properties": {
+                  "selector": {
+                    "type": "string",
+                    "description": "CSS selector for input field"
+                  },
+                  "value": {
+                    "type": "string",
+                    "description": "Value to fill"
+                  }
+                },
+                "required": [
+                  "selector",
+                  "value"
+                ]
+              },
               "enabled": true
             },
             {
               "name": "k_select",
               "description": "Select an element on the page with Select tag",
+              "inputSchema": {
+                "type": "object",
+                "properties": {
+                  "selector": {
+                    "type": "string",
+                    "description": "CSS selector for element to select"
+                  },
+                  "value": {
+                    "type": "string",
+                    "description": "Value to select"
+                  }
+                },
+                "required": [
+                  "selector",
+                  "value"
+                ]
+              },
               "enabled": true
             },
             {
               "name": "k_hover",
               "description": "Hover an element on the page",
+              "inputSchema": {
+                "type": "object",
+                "properties": {
+                  "selector": {
+                    "type": "string",
+                    "description": "CSS selector for element to hover"
+                  }
+                },
+                "required": [
+                  "selector"
+                ]
+              },
               "enabled": true
             },
             {
               "name": "k_evaluate",
               "description": "Execute JavaScript in the browser console",
+              "inputSchema": {
+                "type": "object",
+                "properties": {
+                  "script": {
+                    "type": "string",
+                    "description": "JavaScript code to execute"
+                  }
+                },
+                "required": [
+                  "script"
+                ]
+              },
               "enabled": true
             },
             {
               "name": "k_get_full_page_text",
               "description": "获取页面所有文本内容",
+              "inputSchema": {
+                "type": "object",
+                "properties": {}
+              },
+              "enabled": true
+            },
+            {
+              "name": "create_document",
+              "description": "Create a new Word document with optional metadata.\n\nArgs:\n    filename: Name of the document to create (with or without .docx extension)\n    title: Optional title for the document metadata\n    author: Optional author for the document metadata\n",
+              "inputSchema": {
+                "type": "object",
+                "properties": {
+                  "filename": {
+                    "title": "Filename",
+                    "type": "string"
+                  },
+                  "title": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "default": null,
+                    "title": "Title"
+                  },
+                  "author": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "default": null,
+                    "title": "Author"
+                  }
+                },
+                "required": [
+                  "filename"
+                ],
+                "title": "create_documentArguments"
+              },
+              "enabled": true
+            },
+            {
+              "name": "copy_document",
+              "description": "Create a copy of a Word document.\n\nArgs:\n    source_filename: Path to the source document\n    destination_filename: Optional path for the copy. If not provided, a default name will be generated.\n",
+              "inputSchema": {
+                "type": "object",
+                "properties": {
+                  "source_filename": {
+                    "title": "Source Filename",
+                    "type": "string"
+                  },
+                  "destination_filename": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "default": null,
+                    "title": "Destination Filename"
+                  }
+                },
+                "required": [
+                  "source_filename"
+                ],
+                "title": "copy_documentArguments"
+              },
+              "enabled": true
+            },
+            {
+              "name": "get_document_info",
+              "description": "Get information about a Word document.\n\nArgs:\n    filename: Path to the Word document\n",
+              "inputSchema": {
+                "type": "object",
+                "properties": {
+                  "filename": {
+                    "title": "Filename",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "filename"
+                ],
+                "title": "get_document_infoArguments"
+              },
+              "enabled": true
+            },
+            {
+              "name": "get_document_text",
+              "description": "Extract all text from a Word document.\n\nArgs:\n    filename: Path to the Word document\n",
+              "inputSchema": {
+                "type": "object",
+                "properties": {
+                  "filename": {
+                    "title": "Filename",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "filename"
+                ],
+                "title": "get_document_textArguments"
+              },
+              "enabled": true
+            },
+            {
+              "name": "get_document_outline",
+              "description": "Get the structure of a Word document.\n\nArgs:\n    filename: Path to the Word document\n",
+              "inputSchema": {
+                "type": "object",
+                "properties": {
+                  "filename": {
+                    "title": "Filename",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "filename"
+                ],
+                "title": "get_document_outlineArguments"
+              },
+              "enabled": true
+            },
+            {
+              "name": "list_available_documents",
+              "description": "List all .docx files in the specified directory.\n\nArgs:\n    directory: Directory to search for Word documents\n",
+              "inputSchema": {
+                "type": "object",
+                "properties": {
+                  "directory": {
+                    "default": ".",
+                    "title": "Directory",
+                    "type": "string"
+                  }
+                },
+                "title": "list_available_documentsArguments"
+              },
+              "enabled": true
+            },
+            {
+              "name": "add_paragraph",
+              "description": "Add a paragraph to a Word document.\n\nArgs:\n    filename: Path to the Word document\n    text: Paragraph text\n    style: Optional paragraph style name\n",
+              "inputSchema": {
+                "type": "object",
+                "properties": {
+                  "filename": {
+                    "title": "Filename",
+                    "type": "string"
+                  },
+                  "text": {
+                    "title": "Text",
+                    "type": "string"
+                  },
+                  "style": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "default": null,
+                    "title": "Style"
+                  }
+                },
+                "required": [
+                  "filename",
+                  "text"
+                ],
+                "title": "add_paragraphArguments"
+              },
+              "enabled": true
+            },
+            {
+              "name": "add_heading",
+              "description": "Add a heading to a Word document.\n\nArgs:\n    filename: Path to the Word document\n    text: Heading text\n    level: Heading level (1-9, where 1 is the highest level)\n",
+              "inputSchema": {
+                "type": "object",
+                "properties": {
+                  "filename": {
+                    "title": "Filename",
+                    "type": "string"
+                  },
+                  "text": {
+                    "title": "Text",
+                    "type": "string"
+                  },
+                  "level": {
+                    "default": 1,
+                    "title": "Level",
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "filename",
+                  "text"
+                ],
+                "title": "add_headingArguments"
+              },
+              "enabled": true
+            },
+            {
+              "name": "add_picture",
+              "description": "Add an image to a Word document.\n\nArgs:\n    filename: Path to the Word document\n    image_path: Path to the image file\n    width: Optional width in inches (proportional scaling)\n",
+              "inputSchema": {
+                "type": "object",
+                "properties": {
+                  "filename": {
+                    "title": "Filename",
+                    "type": "string"
+                  },
+                  "image_path": {
+                    "title": "Image Path",
+                    "type": "string"
+                  },
+                  "width": {
+                    "anyOf": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "default": null,
+                    "title": "Width"
+                  }
+                },
+                "required": [
+                  "filename",
+                  "image_path"
+                ],
+                "title": "add_pictureArguments"
+              },
+              "enabled": true
+            },
+            {
+              "name": "add_table",
+              "description": "Add a table to a Word document.\n\nArgs:\n    filename: Path to the Word document\n    rows: Number of rows in the table\n    cols: Number of columns in the table\n    data: Optional 2D array of data to fill the table\n",
+              "inputSchema": {
+                "type": "object",
+                "properties": {
+                  "filename": {
+                    "title": "Filename",
+                    "type": "string"
+                  },
+                  "rows": {
+                    "title": "Rows",
+                    "type": "integer"
+                  },
+                  "cols": {
+                    "title": "Cols",
+                    "type": "integer"
+                  },
+                  "data": {
+                    "anyOf": [
+                      {
+                        "items": {
+                          "items": {
+                            "type": "string"
+                          },
+                          "type": "array"
+                        },
+                        "type": "array"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "default": null,
+                    "title": "Data"
+                  }
+                },
+                "required": [
+                  "filename",
+                  "rows",
+                  "cols"
+                ],
+                "title": "add_tableArguments"
+              },
+              "enabled": true
+            },
+            {
+              "name": "add_page_break",
+              "description": "Add a page break to the document.\n\nArgs:\n    filename: Path to the Word document\n",
+              "inputSchema": {
+                "type": "object",
+                "properties": {
+                  "filename": {
+                    "title": "Filename",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "filename"
+                ],
+                "title": "add_page_breakArguments"
+              },
+              "enabled": true
+            },
+            {
+              "name": "delete_paragraph",
+              "description": "Delete a paragraph from a document.\n\nArgs:\n    filename: Path to the Word document\n    paragraph_index: Index of the paragraph to delete (0-based)\n",
+              "inputSchema": {
+                "type": "object",
+                "properties": {
+                  "filename": {
+                    "title": "Filename",
+                    "type": "string"
+                  },
+                  "paragraph_index": {
+                    "title": "Paragraph Index",
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "filename",
+                  "paragraph_index"
+                ],
+                "title": "delete_paragraphArguments"
+              },
+              "enabled": true
+            },
+            {
+              "name": "search_and_replace",
+              "description": "Search for text and replace all occurrences.\n\nArgs:\n    filename: Path to the Word document\n    find_text: Text to search for\n    replace_text: Text to replace with\n",
+              "inputSchema": {
+                "type": "object",
+                "properties": {
+                  "filename": {
+                    "title": "Filename",
+                    "type": "string"
+                  },
+                  "find_text": {
+                    "title": "Find Text",
+                    "type": "string"
+                  },
+                  "replace_text": {
+                    "title": "Replace Text",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "filename",
+                  "find_text",
+                  "replace_text"
+                ],
+                "title": "search_and_replaceArguments"
+              },
+              "enabled": true
+            },
+            {
+              "name": "create_custom_style",
+              "description": "Create a custom style in the document.\n\nArgs:\n    filename: Path to the Word document\n    style_name: Name for the new style\n    bold: Set text bold (True/False)\n    italic: Set text italic (True/False)\n    font_size: Font size in points\n    font_name: Font name/family\n    color: Text color (e.g., 'red', 'blue')\n    base_style: Optional existing style to base this on\n",
+              "inputSchema": {
+                "type": "object",
+                "properties": {
+                  "filename": {
+                    "title": "Filename",
+                    "type": "string"
+                  },
+                  "style_name": {
+                    "title": "Style Name",
+                    "type": "string"
+                  },
+                  "bold": {
+                    "anyOf": [
+                      {
+                        "type": "boolean"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "default": null,
+                    "title": "Bold"
+                  },
+                  "italic": {
+                    "anyOf": [
+                      {
+                        "type": "boolean"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "default": null,
+                    "title": "Italic"
+                  },
+                  "font_size": {
+                    "anyOf": [
+                      {
+                        "type": "integer"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "default": null,
+                    "title": "Font Size"
+                  },
+                  "font_name": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "default": null,
+                    "title": "Font Name"
+                  },
+                  "color": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "default": null,
+                    "title": "Color"
+                  },
+                  "base_style": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "default": null,
+                    "title": "Base Style"
+                  }
+                },
+                "required": [
+                  "filename",
+                  "style_name"
+                ],
+                "title": "create_custom_styleArguments"
+              },
+              "enabled": true
+            },
+            {
+              "name": "format_text",
+              "description": "Format a specific range of text within a paragraph.\n\nArgs:\n    filename: Path to the Word document\n    paragraph_index: Index of the paragraph (0-based)\n    start_pos: Start position within the paragraph text\n    end_pos: End position within the paragraph text\n    bold: Set text bold (True/False)\n    italic: Set text italic (True/False)\n    underline: Set text underlined (True/False)\n    color: Text color (e.g., 'red', 'blue', etc.)\n    font_size: Font size in points\n    font_name: Font name/family\n",
+              "inputSchema": {
+                "type": "object",
+                "properties": {
+                  "filename": {
+                    "title": "Filename",
+                    "type": "string"
+                  },
+                  "paragraph_index": {
+                    "title": "Paragraph Index",
+                    "type": "integer"
+                  },
+                  "start_pos": {
+                    "title": "Start Pos",
+                    "type": "integer"
+                  },
+                  "end_pos": {
+                    "title": "End Pos",
+                    "type": "integer"
+                  },
+                  "bold": {
+                    "anyOf": [
+                      {
+                        "type": "boolean"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "default": null,
+                    "title": "Bold"
+                  },
+                  "italic": {
+                    "anyOf": [
+                      {
+                        "type": "boolean"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "default": null,
+                    "title": "Italic"
+                  },
+                  "underline": {
+                    "anyOf": [
+                      {
+                        "type": "boolean"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "default": null,
+                    "title": "Underline"
+                  },
+                  "color": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "default": null,
+                    "title": "Color"
+                  },
+                  "font_size": {
+                    "anyOf": [
+                      {
+                        "type": "integer"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "default": null,
+                    "title": "Font Size"
+                  },
+                  "font_name": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "default": null,
+                    "title": "Font Name"
+                  }
+                },
+                "required": [
+                  "filename",
+                  "paragraph_index",
+                  "start_pos",
+                  "end_pos"
+                ],
+                "title": "format_textArguments"
+              },
+              "enabled": true
+            },
+            {
+              "name": "format_table",
+              "description": "Format a table with borders, shading, and structure.\n\nArgs:\n    filename: Path to the Word document\n    table_index: Index of the table (0-based)\n    has_header_row: If True, formats the first row as a header\n    border_style: Style for borders ('none', 'single', 'double', 'thick')\n    shading: 2D list of cell background colors (by row and column)\n",
+              "inputSchema": {
+                "type": "object",
+                "properties": {
+                  "filename": {
+                    "title": "Filename",
+                    "type": "string"
+                  },
+                  "table_index": {
+                    "title": "Table Index",
+                    "type": "integer"
+                  },
+                  "has_header_row": {
+                    "anyOf": [
+                      {
+                        "type": "boolean"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "default": null,
+                    "title": "Has Header Row"
+                  },
+                  "border_style": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "default": null,
+                    "title": "Border Style"
+                  },
+                  "shading": {
+                    "anyOf": [
+                      {
+                        "items": {
+                          "items": {
+                            "type": "string"
+                          },
+                          "type": "array"
+                        },
+                        "type": "array"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "default": null,
+                    "title": "Shading"
+                  }
+                },
+                "required": [
+                  "filename",
+                  "table_index"
+                ],
+                "title": "format_tableArguments"
+              },
+              "enabled": true
+            },
+            {
+              "name": "protect_document",
+              "description": "Add password protection to a Word document.\n\nArgs:\n    filename: Path to the Word document\n    password: Password to protect the document with\n",
+              "inputSchema": {
+                "type": "object",
+                "properties": {
+                  "filename": {
+                    "title": "Filename",
+                    "type": "string"
+                  },
+                  "password": {
+                    "title": "Password",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "filename",
+                  "password"
+                ],
+                "title": "protect_documentArguments"
+              },
+              "enabled": true
+            },
+            {
+              "name": "unprotect_document",
+              "description": "Remove password protection from a Word document.\n\nArgs:\n    filename: Path to the Word document\n    password: Password that was used to protect the document\n",
+              "inputSchema": {
+                "type": "object",
+                "properties": {
+                  "filename": {
+                    "title": "Filename",
+                    "type": "string"
+                  },
+                  "password": {
+                    "title": "Password",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "filename",
+                  "password"
+                ],
+                "title": "unprotect_documentArguments"
+              },
+              "enabled": true
+            },
+            {
+              "name": "add_footnote_to_document",
+              "description": "Add a footnote to a specific paragraph in a Word document.\n\nArgs:\n    filename: Path to the Word document\n    paragraph_index: Index of the paragraph to add footnote to (0-based)\n    footnote_text: Text content of the footnote\n",
+              "inputSchema": {
+                "type": "object",
+                "properties": {
+                  "filename": {
+                    "title": "Filename",
+                    "type": "string"
+                  },
+                  "paragraph_index": {
+                    "title": "Paragraph Index",
+                    "type": "integer"
+                  },
+                  "footnote_text": {
+                    "title": "Footnote Text",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "filename",
+                  "paragraph_index",
+                  "footnote_text"
+                ],
+                "title": "add_footnote_to_documentArguments"
+              },
+              "enabled": true
+            },
+            {
+              "name": "add_endnote_to_document",
+              "description": "Add an endnote to a specific paragraph in a Word document.\n\nArgs:\n    filename: Path to the Word document\n    paragraph_index: Index of the paragraph to add endnote to (0-based)\n    endnote_text: Text content of the endnote\n",
+              "inputSchema": {
+                "type": "object",
+                "properties": {
+                  "filename": {
+                    "title": "Filename",
+                    "type": "string"
+                  },
+                  "paragraph_index": {
+                    "title": "Paragraph Index",
+                    "type": "integer"
+                  },
+                  "endnote_text": {
+                    "title": "Endnote Text",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "filename",
+                  "paragraph_index",
+                  "endnote_text"
+                ],
+                "title": "add_endnote_to_documentArguments"
+              },
+              "enabled": true
+            },
+            {
+              "name": "convert_footnotes_to_endnotes_in_document",
+              "description": "Convert all footnotes to endnotes in a Word document.\n\nArgs:\n    filename: Path to the Word document\n",
+              "inputSchema": {
+                "type": "object",
+                "properties": {
+                  "filename": {
+                    "title": "Filename",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "filename"
+                ],
+                "title": "convert_footnotes_to_endnotes_in_documentArguments"
+              },
+              "enabled": true
+            },
+            {
+              "name": "customize_footnote_style",
+              "description": "Customize footnote numbering and formatting in a Word document.\n\nArgs:\n    filename: Path to the Word document\n    numbering_format: Format for footnote numbers (e.g., \"1, 2, 3\", \"i, ii, iii\", \"a, b, c\")\n    start_number: Number to start footnote numbering from\n    font_name: Optional font name for footnotes\n    font_size: Optional font size for footnotes (in points)\n",
+              "inputSchema": {
+                "type": "object",
+                "properties": {
+                  "filename": {
+                    "title": "Filename",
+                    "type": "string"
+                  },
+                  "numbering_format": {
+                    "default": "1, 2, 3",
+                    "title": "Numbering Format",
+                    "type": "string"
+                  },
+                  "start_number": {
+                    "default": 1,
+                    "title": "Start Number",
+                    "type": "integer"
+                  },
+                  "font_name": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "default": null,
+                    "title": "Font Name"
+                  },
+                  "font_size": {
+                    "anyOf": [
+                      {
+                        "type": "integer"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "default": null,
+                    "title": "Font Size"
+                  }
+                },
+                "required": [
+                  "filename"
+                ],
+                "title": "customize_footnote_styleArguments"
+              },
+              "enabled": true
+            },
+            {
+              "name": "get_paragraph_text_from_document",
+              "description": "Get text from a specific paragraph in a Word document.\n\nArgs:\n    filename: Path to the Word document\n    paragraph_index: Index of the paragraph to retrieve (0-based)\n",
+              "inputSchema": {
+                "type": "object",
+                "properties": {
+                  "filename": {
+                    "title": "Filename",
+                    "type": "string"
+                  },
+                  "paragraph_index": {
+                    "title": "Paragraph Index",
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "filename",
+                  "paragraph_index"
+                ],
+                "title": "get_paragraph_text_from_documentArguments"
+              },
+              "enabled": true
+            },
+            {
+              "name": "find_text_in_document",
+              "description": "Find occurrences of specific text in a Word document.\n\nArgs:\n    filename: Path to the Word document\n    text_to_find: Text to search for in the document\n    match_case: Whether to match case (True) or ignore case (False)\n    whole_word: Whether to match whole words only (True) or substrings (False)\n",
+              "inputSchema": {
+                "type": "object",
+                "properties": {
+                  "filename": {
+                    "title": "Filename",
+                    "type": "string"
+                  },
+                  "text_to_find": {
+                    "title": "Text To Find",
+                    "type": "string"
+                  },
+                  "match_case": {
+                    "default": true,
+                    "title": "Match Case",
+                    "type": "boolean"
+                  },
+                  "whole_word": {
+                    "default": false,
+                    "title": "Whole Word",
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "filename",
+                  "text_to_find"
+                ],
+                "title": "find_text_in_documentArguments"
+              },
+              "enabled": true
+            },
+            {
+              "name": "convert_to_pdf",
+              "description": "Convert a Word document to PDF format.\n\nArgs:\n    filename: Path to the Word document\n    output_filename: Optional path for the output PDF. If not provided, \n                     will use the same name with .pdf extension\n",
+              "inputSchema": {
+                "type": "object",
+                "properties": {
+                  "filename": {
+                    "title": "Filename",
+                    "type": "string"
+                  },
+                  "output_filename": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "default": null,
+                    "title": "Output Filename"
+                  }
+                },
+                "required": [
+                  "filename"
+                ],
+                "title": "convert_to_pdfArguments"
+              },
               "enabled": true
             }
           ],
           "enableWebSearch": false,
-          "temperature": 0.7,
+          "temperature": 0.6,
           "contextLength": 20,
-          "systemPrompt": ""
+          "systemPrompt": "",
+          "parallelToolCalls": true
         }
       }
     }

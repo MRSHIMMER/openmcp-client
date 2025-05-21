@@ -38,7 +38,7 @@ export class McpClient {
 
         // 根据连接类型创建传输层
         switch (this.options.connectionType) {
-            case 'STDIO':
+            case 'STDIO':                
                 this.transport = new StdioClientTransport({
                     command: this.options.command || '',
                     args: this.options.args || [],

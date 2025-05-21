@@ -155,5 +155,6 @@
     "return": "返回",
     "error": "錯誤",
     "feedback": "反饋",
-    "waiting-mcp-server": "等待MCP伺服器響應"
+    "waiting-mcp-server": "等待MCP伺服器響應",
+    "parallel-tool-calls": "允許模型在單輪回覆中調用多個工具"
 }

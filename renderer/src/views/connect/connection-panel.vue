@@ -1,7 +1,7 @@
 <template>
 	<el-scrollbar>
 		<div class="connection-container">
-		<div class="connect-panel-container"
+		<div class="connect-panel-container left"
 			:ref="el => client.connectionSettingRef = el"
 		>
 			<ConnectionMethod :index="props.index" />
@@ -17,7 +17,7 @@
 			</div>
 		</div>
 
-		<div class="connect-panel-container"
+		<div class="connect-panel-container right"
 			:ref="el => client.connectionLogRef = el"
 		>
 			<ConnectionLog :index="props.index" />
@@ -75,14 +75,25 @@ async function connect() {
 }
 
 
-.connect-panel-container {
+.connect-panel-container.left {
 	display: flex;
 	flex-direction: column;
 	width: 45%;
 	max-height: 85vh;
-	min-width: 300px;
+	max-width: 500px;
+	min-width: 350px;
 	padding: 5px 20px;
 }
+
+.connect-panel-container.right {
+	display: flex;
+	flex-direction: column;
+	width: 55%;
+	max-height: 85vh;
+	min-width: 450px;
+	padding: 5px 20px;
+}
+
 
 .connection-option {
 	display: flex;

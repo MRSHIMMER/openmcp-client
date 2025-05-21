@@ -8,15 +8,17 @@ export interface ConnectionTypeOptionItem {
 
 
 export interface IConnectionResult {
-    info?: string;
-    success: boolean;
+    info?: string
+    success: boolean
+    reuseConntion: boolean
     status: string
     clientId: string
     name: string
     version: string
     logString: {
         type: 'info' | 'error' | 'warning',
-        message: string
+        title: string
+        message?: string
     }[]
 }
 

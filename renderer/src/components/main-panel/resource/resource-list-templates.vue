@@ -89,10 +89,6 @@ function handleClick(template: ResourceTemplate) {
 }
 
 onMounted(async () => {
-	for (const client of mcpClientAdapter.clients) {
-		await client.getResourceTemplates({ cache: false });
-	}
-
 	if (tabStorage.currentResourceName === undefined && tabStorage.currentType === 'template') {
 		const masterNode = mcpClientAdapter.masterNode;
 		const resourceTemplate = masterNode?.resourceTemplates?.values().next();

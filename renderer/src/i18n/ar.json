@@ -155,5 +155,6 @@
     "return": "عودة",
     "error": "خطأ",
     "feedback": "تعليقات",
-    "waiting-mcp-server": "في انتظار استجابة خادم MCP"
+    "waiting-mcp-server": "في انتظار استجابة خادم MCP",
+    "parallel-tool-calls": "السماح للنموذج باستدعاء أدوات متعددة في رد واحد"
 }

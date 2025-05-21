@@ -14,8 +14,8 @@
 							<span v-if="scope.item.client.connectionResult.success"
 								class="success"
 							>
-								<span class="name">{{ scope.item.client.connectionResult.name }}</span>
 								<span class="iconfont icon-dui"></span>
+								<span class="name">{{ scope.item.client.connectionResult.name }}</span>
 							</span>
 							<span v-else>
 								<span class="server-name" style="margin-right: 60px;">
@@ -124,7 +124,7 @@ function deleteServer(index: number) {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
-	margin-right: 5px;
+	margin-left: 5px;
 }
 
 .server-item .success {

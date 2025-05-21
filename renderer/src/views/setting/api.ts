@@ -31,12 +31,13 @@ export async function makeSimpleTalk() {
     const chatStorage: ChatStorage = {
         messages: [],
         settings: {
-            temperature: 0.7,
+            temperature: 0.6,
             modelIndex: llmManager.currentModelIndex,
             systemPrompt: '',
             enableTools: [],
             enableWebSearch: false,
-            contextLength: 5
+            contextLength: 5,
+            parallelToolCalls: true
         }
     };
 

@@ -91,10 +91,6 @@ async function handleClick(resource: Resources) {
 }
 
 onMounted(async () => {
-	for (const client of mcpClientAdapter.clients) {
-		await client.getResources();
-	}
-
 	if (tabStorage.currentResourceName === undefined && tabStorage.currentType === 'resource') {
 		const masterNode = mcpClientAdapter.masterNode;
 		const resource = masterNode.resources?.values().next();

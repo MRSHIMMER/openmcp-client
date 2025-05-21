@@ -12,7 +12,15 @@ export async function streamingChatCompletion(
     data: any,
     webview: PostMessageble
 ) {
-    let { baseURL, apiKey, model, messages, temperature, tools = [] } = data;
+    let {
+            baseURL,
+            apiKey,
+            model,
+            messages,
+            temperature,
+            tools = [],
+            parallelToolCalls = true
+        } = data;
 
     const client = new OpenAI({
         baseURL,
@@ -30,8 +38,7 @@ export async function streamingChatCompletion(
         messages,
         temperature,
         tools,
-        tool_choice: 'auto',
-        web_search_options: {},
+        parallel_tool_calls: parallelToolCalls,
         stream: true
     });
 
