@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as fspath from 'path';
-import { McpOptions, panels, updateInstalledConnectionConfig, updateWorkspaceConnectionConfig } from '../global';
+import { ConnectionType, McpOptions, panels, updateInstalledConnectionConfig, updateWorkspaceConnectionConfig } from '../global';
 import { routeMessage } from '../../openmcp-sdk/service';
 
 export function getWebviewContent(context: vscode.ExtensionContext, panel: vscode.WebviewPanel): string | undefined {
@@ -42,6 +42,17 @@ export function revealOpenMcpWebviewPanel(
         panel?.reveal();
         return panel;
     }
+
+    // 对老版本的 option 进行调整
+    option = Array.isArray(option)? option : [option];
+    option.forEach(item => {
+        const itemType = (item.type || item.connectionType).toUpperCase() as ConnectionType;
+        item.type = undefined;
+        item.connectionType = itemType;
+        if (itemType === 'STDIO') {
+            item.commandString = [item.command, ...(item.args || [])]?.join(' ');
+        }
+    })
 
     const panel = vscode.window.createWebviewPanel(
         'OpenMCP',

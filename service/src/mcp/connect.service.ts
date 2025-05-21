@@ -175,7 +175,7 @@ async function initNpm(option: McpOptions, cwd: string, webview?: PostMessageble
 	let projectDir = cwd;
 
 	while (projectDir !== path.dirname(projectDir)) {
-		if (fs.readFileSync(projectDir).includes('package.json')) {
+		if (fs.readdirSync(projectDir).includes('package.json')) {
 			break;
 		}
 		projectDir = path.dirname(projectDir);

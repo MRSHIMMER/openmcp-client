@@ -3,6 +3,9 @@ import { ElLoading } from "element-plus";
 import { pinkLog } from "../setting/util";
 import { mcpClientAdapter } from "./core";
 import { isConnecting } from "@/components/sidebar/connected";
+import { ref } from "vue";
+
+export const mcpServerAddRef = ref<any>(null);
 
 export async function initialise() {
 

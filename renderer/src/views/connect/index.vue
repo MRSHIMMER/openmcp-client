@@ -1,6 +1,8 @@
 <template>
 	<div class="connection-container-wrapper">
-		<div class="server-list">
+		<div class="server-list"
+			:ref="el => mcpServerAddRef = el"
+		>
 			<el-segmented 
 				v-model="mcpClientAdapter.currentClientIndex" 
 				:options="serverOptions"
@@ -47,6 +49,7 @@ import { defineComponent, computed } from 'vue';
 import ConnectionPanel from './connection-panel.vue';
 import { McpClient, mcpClientAdapter } from './core';
 import { ElMessage } from 'element-plus';
+import { mcpServerAddRef } from '.';
 
 defineComponent({ name: 'connection' });
 

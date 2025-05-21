@@ -32,7 +32,7 @@ export async function getTour() {
     const { code, msg } = await bridge.commandRequest('setting/get-tour');
     
     if (code === 200) {
-        pinkLog('获取引导状态成功');
+        pinkLog('获取引导状态成功 ' + msg.userHasReadGuide);
         userHasReadGuide.value = msg.userHasReadGuide || false;
     }
 }

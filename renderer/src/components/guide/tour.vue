@@ -58,7 +58,7 @@
         </el-tour-step>
 
         <el-tour-step
-            :target="client.connectionSettingRef"
+            :target="mcpClientAdapter.clients[0].connectionSettingRef"
             :prev-button-props="{ children: '上一步' }"
             :next-button-props="{ children: '下一步' }"
             :show-close="false"
@@ -78,7 +78,7 @@
         </el-tour-step>
 
         <el-tour-step
-            :target="client.connectionLogRef"
+            :target="mcpClientAdapter.clients[0].connectionLogRef"
             :prev-button-props="{ children: '上一步' }"
             :next-button-props="{ children: '下一步' }"
             :show-close="false"
@@ -89,6 +89,20 @@
             </template>
             <div class="tour-common-text">
                 连接响应会在这个地方打印出来，如果出现绿色背景的信息，代表连接成功。
+            </div>
+        </el-tour-step>
+
+        <el-tour-step
+            :target="mcpServerAddRef"
+            :prev-button-props="{ children: '上一步' }"
+            :next-button-props="{ children: '下一步' }"
+            :show-close="false"
+        >
+            <template #header>
+                <TourTitle>调试</TourTitle>
+            </template>
+            <div class="tour-common-text">
+                你可以点击最右侧的加号来添加额外的 mcp 服务器，让你当前正在调试的 agent 零成本快速获得额外的能力。
             </div>
         </el-tour-step>
 
@@ -253,13 +267,13 @@ import { llmSettingRef } from '@/views/setting/api';
 import { userHasReadGuide } from './tour';
 import { setTour } from '@/hook/setting';
 import { mcpClientAdapter } from '@/views/connect/core';
+import { mcpServerAddRef } from '@/views/connect';
 
 const openTour = ref(true);
 
 const { t } = useI18n();
 
 const router = useRouter();
-const client = mcpClientAdapter.masterNode;
 
 const baseUrl = import.meta.env.BASE_URL;
 

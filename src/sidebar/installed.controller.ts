@@ -34,6 +34,8 @@ export class McpInstalledConnectProvider implements vscode.TreeDataProvider<Conn
     @RegisterCommand('revealWebviewPanel')
     public revealWebviewPanel(context: vscode.ExtensionContext, view: ConnectionViewItem) {
         const item = view.item;
+        console.log(item);
+        
         const masterNode = Array.isArray(item)? item[0] : item;
         const name = masterNode.filePath || masterNode.name || '';
         revealOpenMcpWebviewPanel(context, 'installed', name, item);
