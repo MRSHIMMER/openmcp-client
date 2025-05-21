@@ -1,19 +1,15 @@
 <template>
     <div>
-        <h3>{{ currentResource.template?.name }}</h3>
+        <h3>{{ currentResource?.name }}</h3>
     </div>
     <div class="resource-reader-container">
         <el-form :model="tabStorage.formData" :rules="formRules" ref="formRef" label-position="top">
-            <el-form-item v-for="param in currentResource?.params" :key="param.name" :label="param.name"
-                :prop="param.name">
-                <!-- 根据不同类型渲染不同输入组件 -->
-                <el-input v-if="param.type === 'string'" v-model="tabStorage.formData[param.name]"
-                    :placeholder="param.placeholder || `请输入${param.name}`" @keydown.enter.prevent="handleSubmit" />
-
-                <el-input-number v-else-if="param.type === 'number'" v-model="tabStorage.formData[param.name]"
-                    :placeholder="param.placeholder || `请输入${param.name}`" @keydown.enter.prevent="handleSubmit" />
-
-                <el-switch v-else-if="param.type === 'boolean'" v-model="tabStorage.formData[param.name]" />
+            <el-form-item v-for="param in currentResource?.params" :key="param" :label="param"
+                :prop="param">
+                <el-input v-model="tabStorage.formData[param]"
+                    :placeholder="t('enter') + ' ' + param"
+                    @keydown.enter.prevent="handleSubmit"
+                />
             </el-form-item>
 
             <el-form-item v-if="tabStorage.currentType === 'template'">
@@ -38,9 +34,8 @@ import { defineComponent, defineProps, watch, ref, computed, reactive, defineEmi
 import { useI18n } from 'vue-i18n';
 import type { FormInstance, FormRules } from 'element-plus';
 import { tabs } from '../panel';
-import { parseResourceTemplate, resourcesManager, type ResourceStorage } from './resources';
+import { parseResourceTemplate, type ResourceStorage } from './resources';
 import type{ ResourcesReadResponse } from '@/hook/type';
-import { useMessageBridge } from '@/api/message-bridge';
 import { getDefaultValue, normaliseJavascriptType } from '@/hook/mcp';
 import { mcpClientAdapter } from '@/views/connect/core';
 
@@ -68,6 +63,8 @@ if (props.tabId >= 0) {
     tabStorage = tab.storage as ResourceStorage;
 } else {
     tabStorage = reactive({
+        activeNames: [0],
+		templateActiveNames: [0],
         currentType: 'resource',
         currentResourceName: props.currentResourceName || '',
         formData: {},
@@ -86,30 +83,39 @@ const responseData = ref<ResourcesReadResponse>();
 
 // 当前 resource 的模板参数
 const currentResource = computed(() => {
-    const template = resourcesManager.templates.find(template => template.name === tabStorage.currentResourceName);
-    const { params, fill } = parseResourceTemplate(template?.uriTemplate || '');
 
-    const viewParams = params.map(param => ({
-        name: param,
-        type: 'string',
-        placeholder: t('enter') + ' ' + param,
-        required: true
-    }));
+    for (const client of mcpClientAdapter.clients) {
+        const resource = client.resources?.get(tabStorage.currentResourceName);
+        if (resource) {
+            return {
+                name: resource.name,
+                template: resource,
+                params: [],
+                // resources 用不到 fill 函数
+                fill: () => ''
+            };
+        }
 
-    return {
-        template,
-        params: viewParams,
-        fill
-    };
+        const resourceTemplate = client.resourceTemplates?.get(tabStorage.currentResourceName);
+        if (resourceTemplate) {
+            const { params, fill } = parseResourceTemplate(resourceTemplate.uriTemplate);
+            return {
+                name: resourceTemplate.name,
+                template: resourceTemplate,
+                params,
+                fill
+            };
+        }
+    }
 });
 
 // 表单验证规则
 const formRules = computed<FormRules>(() => {
     const rules: FormRules = {}
     currentResource.value?.params.forEach(param => {
-        rules[param.name] = [
+        rules[param] = [
             {
-                message: `${param.name} 是必填字段`,
+                message: `${param} 是必填字段`,
                 trigger: 'blur'
             }
         ]
@@ -121,15 +127,11 @@ const formRules = computed<FormRules>(() => {
 // 初始化表单数据
 const initFormData = () => {
     if (!currentResource.value?.params) return;
-
     const newSchemaDataForm: Record<string, number | boolean | string> = {};
-
     currentResource.value.params.forEach(param => {
-        newSchemaDataForm[param.name] = getDefaultValue(param);
-        const originType = normaliseJavascriptType(typeof tabStorage.formData[param.name]);
-
-        if (tabStorage.formData[param.name] !== undefined && originType === param.type) {
-            newSchemaDataForm[param.name] = tabStorage.formData[param.name];
+        newSchemaDataForm[param] = '';
+        if (tabStorage.formData[param] !== undefined) {
+            newSchemaDataForm[param] = tabStorage.formData[param];
         }
     })
 }
@@ -142,21 +144,23 @@ const resetForm = () => {
 
 function getUri() {
     if (tabStorage.currentType === 'template') {
-        const fillFn = currentResource.value.fill;
+        const fillFn = currentResource.value?.fill || ((str: any) => str);
         const uri = fillFn(tabStorage.formData);
         return uri;
     }
-
-    const currentResourceName = props.tabId >= 0 ? tabStorage.currentResourceName : props.currentResourceName;
-    const targetResource = resourcesManager.resources.find(resources => resources.name === currentResourceName);
-    return targetResource?.uri;
+    
+    for (const client of mcpClientAdapter.clients) {
+        const resource = client.resources?.get(tabStorage.currentResourceName);
+        if (resource) {
+            return resource.uri;
+        }
+    }
 }
 
 // 提交表单
 async function handleSubmit() {
     const uri = getUri();
     const res = await mcpClientAdapter.readResource(uri);
-
     tabStorage.lastResourceReadResponse = res;
     emits('resource-get-response', res);
 }

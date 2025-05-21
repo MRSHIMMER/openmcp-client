@@ -71,3 +71,6 @@ export interface ConnectionResult {
     version: string
 }
 
+export interface McpClientGetCommonOption {
+    cache: boolean;
+}

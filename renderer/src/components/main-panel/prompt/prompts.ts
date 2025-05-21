@@ -1,15 +1,7 @@
-import type { PromptsGetResponse, PromptTemplate } from '@/hook/type';
-import { reactive } from 'vue';
-
-export const promptsManager = reactive<{
-    current: PromptTemplate | undefined
-    templates: PromptTemplate[]
-}>({
-    current: undefined,
-    templates: []
-});
+import type { PromptsGetResponse } from '@/hook/type';
 
 export interface PromptStorage {
+    activeNames: any[];
     currentPromptName: string;
     lastPromptGetResponse?: PromptsGetResponse;
     formData: Record<string, any>;

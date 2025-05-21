@@ -70,7 +70,10 @@ export function createTab(type: string, index: number): Tab {
 		id,
 		componentIndex: -1,
 		component: undefined,
-		storage: {},
+		storage: {
+			// 默认打开一个 mcp server 的面板
+			activeNames: [0]
+		},
 	};
 }
 

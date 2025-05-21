@@ -1,130 +1,125 @@
 <template>
-    <h3 class="resource-template">
-		<code>resources/templates/list</code>
-		<span
-			class="iconfont icon-restart"
-			@click="reloadResources({ first: false })"
-		></span>
-	</h3>
+	<el-collapse :expand-icon-position="'left'" v-model="tabStorage.templateActiveNames">
+		<el-collapse-item v-for="(client, index) in mcpClientAdapter.clients" :name="index" :class="[]">
 
-	<div class="resource-template-container-scrollbar">
-		<el-scrollbar height="500px" v-if="resourcesManager.templates.length > 0">
-			<div class="resource-template-container">
-				<div
-					class="item"
-                    :class="{ 'active': props.tabId >= 0 && tabStorage.currentType === 'template' && tabStorage.currentResourceName === template.name }"
-					v-for="template of resourcesManager.templates"
-					:key="template.name"
-                    @click="handleClick(template)"
-				>
-					<span>{{ template.name }}</span>
-					<span>{{ template.description || '' }}</span>
+			<!-- header -->
+			<template #title>
+				<h3 class="resource-template">
+					<code>resources/templates/list</code>
+					<span class="iconfont icon-restart" @click="reloadResources(client, { first: false })"></span>
+				</h3>
+			</template>
+
+			<!-- body -->
+			<div class="resource-template-container-scrollbar">
+				<el-scrollbar height="500px" v-if="(client.resourceTemplates?.size || 0) > 0">
+					<div class="resource-template-container">
+						<div class="item"
+							:class="{ 'active': props.tabId >= 0 && tabStorage.currentType === 'template' && tabStorage.currentResourceName === template.name }"
+							v-for="template of client.resourceTemplates?.values()" :key="template.name"
+							@click="handleClick(template)">
+							<span>{{ template.name }}</span>
+							<span>{{ template.description || '' }}</span>
+						</div>
+					</div>
+				</el-scrollbar>
+				<div v-else style="padding: 10px;">
+					empty
 				</div>
 			</div>
-		</el-scrollbar>
-		<div v-else style="padding: 10px;">
-			empty
-		</div>
-	</div>
+		</el-collapse-item>
+	</el-collapse>
+
 </template>
 
 <script setup lang="ts">
 import { useMessageBridge } from '@/api/message-bridge';
 import type { CasualRestAPI, ResourceTemplate, ResourceTemplatesListResponse } from '@/hook/type';
-import { onMounted, onUnmounted, defineProps, ref, reactive } from 'vue';
+import { onMounted, onUnmounted, defineProps, ref, reactive, type Reactive } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { resourcesManager, type ResourceStorage } from './resources';
+import type { ResourceStorage } from './resources';
 import { tabs } from '../panel';
 import { ElMessage } from 'element-plus';
+import { McpClient, mcpClientAdapter } from '@/views/connect/core';
 
 const bridge = useMessageBridge();
 const { t } = useI18n();
 
 const props = defineProps({
-    tabId: {
-        type: Number,
-        required: true
-    }
+	tabId: {
+		type: Number,
+		required: true
+	}
 });
 
 let tabStorage: ResourceStorage;
 
 if (props.tabId >= 0) {
-    const tab = tabs.content[props.tabId];
-    tabStorage = tab.storage as ResourceStorage;
+	const tab = tabs.content[props.tabId];
+	tabStorage = tab.storage as ResourceStorage;
 } else {
-    tabStorage = reactive({
-        currentType:'template',
-        currentResourceName: '',
-        formData: {},
-        lastResourceReadResponse: undefined
-    });
+	tabStorage = reactive({
+		activeNames: [0],
+		templateActiveNames: [0],
+		currentType: 'template',
+		currentResourceName: '',
+		formData: {},
+		lastResourceReadResponse: undefined
+	});
 }
 
-function reloadResources(option: { first: boolean }) {    
-    bridge.postMessage({
-        command: 'resources/templates/list'
-    });
+async function reloadResources(client: Reactive<McpClient>, option: { first: boolean }) {
 
-    if (!option.first) {
-        ElMessage({
-            message: t('finish-refresh'),
-            type: 'success',
+	await client.getResourceTemplates({ cache: false });
+
+	if (!option.first) {
+		ElMessage({
+			message: t('finish-refresh'),
+			type: 'success',
 			duration: 3000,
 			showClose: true,
-        });
-    }
+		});
+	}
 }
 
 function handleClick(template: ResourceTemplate) {
 	tabStorage.currentType = 'template';
-    tabStorage.currentResourceName = template.name;
-    tabStorage.lastResourceReadResponse = undefined;
+	tabStorage.currentResourceName = template.name;
+	tabStorage.lastResourceReadResponse = undefined;
 }
 
-let commandCancel: (() => void);
+onMounted(async () => {
+	for (const client of mcpClientAdapter.clients) {
+		await client.getResourceTemplates({ cache: false });
+	}
 
-onMounted(() => {
-    commandCancel = bridge.addCommandListener('resources/templates/list', (data: CasualRestAPI<ResourceTemplatesListResponse>) => {
-		resourcesManager.templates = data.msg.resourceTemplates || [];
-
-		if (tabStorage.currentType === 'template') {
-			const targetResource = resourcesManager.templates.find(template => template.name === tabStorage.currentResourceName);
-			if (targetResource === undefined) {
-				tabStorage.currentResourceName = resourcesManager.templates[0]?.name;
-				tabStorage.lastResourceReadResponse = undefined;
-			}
-		}
-	}, { once: false });
-
-    reloadResources({ first: true });
+	if (tabStorage.currentResourceName === undefined && tabStorage.currentType === 'template') {
+		const masterNode = mcpClientAdapter.masterNode;
+		const resourceTemplate = masterNode?.resourceTemplates?.values().next();
+		tabStorage.currentResourceName = resourceTemplate?.value?.name || '';
+	}
 });
 
-onUnmounted(() => {
-    if (commandCancel){
-        commandCancel();
-    }
-})
 </script>
 
 <style>
 h3.resource-template {
-    display: flex;
-    align-items: center;
+	display: flex;
+	align-items: center;
 }
 
 h3.resource-template .iconfont.icon-restart {
-    margin-left: 10px;
-    cursor: pointer;
+	margin-left: 10px;
+	cursor: pointer;
 }
 
 h3.resource-template .iconfont.icon-restart:hover {
-    color: var(--main-color);
+	color: var(--main-color);
 }
 
 .resource-template-container-scrollbar {
 	background-color: var(--background);
-    margin-bottom: 10px;
+	margin-bottom: 10px;
 	border-radius: .5em;
 }
 
@@ -136,17 +131,17 @@ h3.resource-template .iconfont.icon-restart:hover {
 }
 
 .resource-template-function-container {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 .resource-template-function-container button {
-    width: 175px;
+	width: 175px;
 }
 
-.resource-template-container > .item {
+.resource-template-container>.item {
 	margin: 3px;
 	padding: 5px 10px;
 	border-radius: .3em;
@@ -158,24 +153,24 @@ h3.resource-template .iconfont.icon-restart:hover {
 	transition: var(--animation-3s);
 }
 
-.resource-template-container > .item:hover {
+.resource-template-container>.item:hover {
 	background-color: var(--main-light-color);
 	transition: var(--animation-3s);
 }
 
-.resource-template-container > .item.active {
+.resource-template-container>.item.active {
 	background-color: var(--main-light-color);
 	transition: var(--animation-3s);
 }
 
-.resource-template-container > .item > span:first-child {
+.resource-template-container>.item>span:first-child {
 	max-width: 200px;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
 
-.resource-template-container > .item > span:last-child {
+.resource-template-container>.item>span:last-child {
 	opacity: 0.6;
 	font-size: 12.5px;
 	max-width: 200px;
@@ -183,5 +178,4 @@ h3.resource-template .iconfont.icon-restart:hover {
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
-
 </style>

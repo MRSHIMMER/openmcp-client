@@ -1,6 +1,6 @@
 import { useMessageBridge } from "@/api/message-bridge";
 import { reactive, type Reactive } from "vue";
-import type { IConnectionResult, ConnectionTypeOptionItem, IConnectionArgs, IConnectionEnvironment, McpOptions } from "./type";
+import type { IConnectionResult, ConnectionTypeOptionItem, IConnectionArgs, IConnectionEnvironment, McpOptions, McpClientGetCommonOption } from "./type";
 import { ElMessage } from "element-plus";
 import { loadPanels } from "@/hook/panel";
 import { getPlatform } from "@/api/platform";
@@ -111,8 +111,13 @@ export class McpClient {
         return env;
     }
 
-    public async getTools() {
-        if (this.tools) {
+    public async getTools(option?: McpClientGetCommonOption) {
+
+        const {
+            cache = true
+        } = option || {};
+
+        if (cache && this.tools) {
             return this.tools;
         }
 
@@ -131,14 +136,20 @@ export class McpClient {
         return this.tools;
     }
 
-    public async getPromptTemplates() {
-        if (this.promptTemplates) {
+    public async getPromptTemplates(option?: McpClientGetCommonOption) {
+
+        const {
+            cache = true
+        } = option || {};
+
+        if (cache && this.promptTemplates) {
             return this.promptTemplates;
         }
 
         const bridge = useMessageBridge();
         
-        const { code, msg } = await bridge.commandRequest<PromptsListResponse>('prompts/list', { clientId: this.clientId });
+        const { code, msg } = await bridge.commandRequest<PromptsListResponse>('prompts/list', { clientId: this.clientId });        
+
         if (code!== 200) {
             return new Map<string, PromptTemplate>();
         }
@@ -151,8 +162,13 @@ export class McpClient {
         return this.promptTemplates;
     }
 
-    public async getResources() {
-        if (this.resources) {
+    public async getResources(option?: McpClientGetCommonOption) {
+
+        const {
+            cache = true
+        } = option || {};
+
+        if (cache && this.resources) {
             return this.resources;
         }
 
@@ -170,8 +186,13 @@ export class McpClient {
         return this.resources;
     }
 
-    public async getResourceTemplates() {
-        if (this.resourceTemplates) {
+    public async getResourceTemplates(option?: McpClientGetCommonOption) {
+
+        const {
+            cache = true
+        } = option || {};
+
+        if (cache && this.resourceTemplates) {
             return this.resourceTemplates;
         }
 
@@ -184,6 +205,7 @@ export class McpClient {
         this.resourceTemplates = new Map<string, ResourceTemplate>();
         msg.resourceTemplates.forEach(template => {
             this.resourceTemplates!.set(template.name, template);
+
         });
         return this.resourceTemplates;
     }

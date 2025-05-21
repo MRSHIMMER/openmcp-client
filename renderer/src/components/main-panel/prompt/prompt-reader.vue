@@ -1,22 +1,15 @@
 <template>
     <div>
-        <h3>{{ currentPrompt.name }}</h3>
+        <h3>{{ currentPrompt?.name }}</h3>
     </div>
     <div class="prompt-reader-container">
         <el-form :model="tabStorage.formData" :rules="formRules" ref="formRef" label-position="top">
-            <el-form-item v-for="param in currentPrompt?.params" :key="param.name"
+            <el-form-item v-for="param in currentPrompt?.arguments" :key="param.name"
                 :label="param.name" :prop="param.name">
-                <el-input v-if="param.type === 'string'" v-model="tabStorage.formData[param.name]"
-                    :placeholder="param.placeholder || `请输入${param.name}`"
+                <el-input v-model="tabStorage.formData[param.name]"
+                    :placeholder="t('enter') +' ' + param.name"
                     @keydown.enter.prevent="handleSubmit"
-                    />
-
-                <el-input-number v-else-if="param.type === 'number'" v-model="tabStorage.formData[param.name]"
-                    :placeholder="param.placeholder || `请输入${param.name}`"
-                    @keydown.enter.prevent="handleSubmit"
-                    />
-
-                <el-switch v-else-if="param.type === 'boolean'" v-model="tabStorage.formData[param.name]" />
+                />
             </el-form-item>
 
             <el-form-item>
@@ -36,10 +29,8 @@ import { defineComponent, defineProps, defineEmits, watch, ref, computed, reacti
 import { useI18n } from 'vue-i18n';
 import type { FormInstance, FormRules } from 'element-plus';
 import { tabs } from '../panel';
-import { promptsManager, type PromptStorage } from './prompts';
+import type { PromptStorage } from './prompts';
 import type { PromptsGetResponse } from '@/hook/type';
-import { useMessageBridge } from '@/api/message-bridge';
-import { getDefaultValue, normaliseJavascriptType } from '@/hook/mcp';
 import { mcpClientAdapter } from '@/views/connect/core';
 
 defineComponent({ name: 'prompt-reader' });
@@ -65,6 +56,7 @@ if (props.tabId >= 0) {
     tabStorage = tabs.content[props.tabId].storage as PromptStorage;
 } else {
     tabStorage = reactive({
+        activeNames: [0],
         currentPromptName: props.currentPromptName || '',
         formData: {},
         lastPromptGetResponse: undefined
@@ -80,26 +72,18 @@ const loading = ref(false);
 const responseData = ref<PromptsGetResponse>();
 
 const currentPrompt = computed(() => {
-    const template = promptsManager.templates.find(template => template.name === tabStorage.currentPromptName);
-    const name = template?.name || '';
-    const params = template?.arguments || [];
 
-    const viewParams = params.map(param => ({
-        name: param.name,
-        type: 'string',
-        placeholder: t('enter') +' ' + param.name,
-        required: param.required
-    }));
-
-    return {
-        name,
-        params: viewParams
-    };
+    for (const client of mcpClientAdapter.clients) {
+        const prompt = client.promptTemplates?.get(tabStorage.currentPromptName);
+        if (prompt) {
+            return prompt;
+        }
+    }
 });
 
 const formRules = computed<FormRules>(() => {
     const rules: FormRules = {}
-    currentPrompt.value?.params.forEach(param => {
+    currentPrompt.value?.arguments.forEach(param => {
         rules[param.name] = [
             {
                 message: `${param.name} 是必填字段`,
@@ -112,15 +96,12 @@ const formRules = computed<FormRules>(() => {
 });
 
 const initFormData = () => {
-    
-    if (!currentPrompt.value?.params) return;
-
+    if (!currentPrompt.value?.arguments) return;
     const newSchemaDataForm: Record<string, number | boolean | string> = {};
 
-    currentPrompt.value.params.forEach(param => {
-        newSchemaDataForm[param.name] = getDefaultValue(param);
-        const originType = normaliseJavascriptType(typeof tabStorage.formData[param.name]);
-        if (tabStorage.formData[param.name]!== undefined && originType === param.type) {
+    currentPrompt.value.arguments.forEach(param => {
+        newSchemaDataForm[param.name] = '';
+        if (tabStorage.formData[param.name]!== undefined) {
             newSchemaDataForm[param.name] = tabStorage.formData[param.name];
         }
     });
@@ -134,7 +115,7 @@ const resetForm = () => {
 async function handleSubmit() {
 
     const res = await mcpClientAdapter.readPromptTemplate(
-        currentPrompt.value.name,
+        currentPrompt.value?.name || '',
         JSON.parse(JSON.stringify(tabStorage.formData))
     );
 

@@ -1,18 +1,8 @@
-import type { ResourcesReadResponse, ResourceTemplate, Resources } from '@/hook/type';
-import { reactive } from 'vue';
-
-
-export const resourcesManager = reactive<{
-    current: ResourceTemplate | undefined
-    templates: ResourceTemplate[],
-    resources: Resources[]
-}>({
-    current: undefined,
-    templates: [],
-    resources: []
-});
+import type { ResourcesReadResponse } from '@/hook/type';
 
 export interface ResourceStorage {
+    activeNames: any[];
+    templateActiveNames: any[];
     currentType: 'resource' | 'template';
     currentResourceName: string;
     lastResourceReadResponse?: ResourcesReadResponse;

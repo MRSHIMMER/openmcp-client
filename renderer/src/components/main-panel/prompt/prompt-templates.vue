@@ -1,50 +1,54 @@
 <template>
-    <h3 class="resource-template">
-		<code>prompts/list</code>
-		<span
-			@click="reloadPrompts({ first: false })"
-			class="iconfont icon-restart"
-		></span>
-	</h3>
+	<el-collapse :expand-icon-position="'left'" v-model="tabStorage.activeNames">
+		<el-collapse-item v-for="(client, index) in mcpClientAdapter.clients" :name="index" :class="[]">
 
-	<div class="prompt-template-container-scrollbar">
-		<el-scrollbar height="500px">
-			<div class="prompt-template-container">
-				<div
-					class="item"
-                    :class="{ 'active': props.tabId >= 0 && tabStorage.currentPromptName === template.name }"
-					v-for="template of promptsManager.templates"
-					:key="template.name"
-                    @click="handleClick(template)"
-				>
-					<span>{{ template.name }}</span>
-					<span>{{ template.description || '' }}</span>
-				</div>
+			<!-- header -->
+			<template #title>
+				<h3 class="resource-template">
+					<code>prompts/list</code>
+					<span @click.stop="reloadPrompts(client, { first: false })" class="iconfont icon-restart"></span>
+				</h3>
+
+			</template>
+
+			<!-- body -->
+
+			<div class="prompt-template-container-scrollbar">
+				<el-scrollbar height="500px">
+					<div class="prompt-template-container">
+						<div class="item"
+							:class="{ 'active': props.tabId >= 0 && tabStorage.currentPromptName === template.name }"
+							v-for="template of client.promptTemplates?.values()" :key="template.name"
+							@click="handleClick(template)">
+							<span>{{ template.name }}</span>
+							<span>{{ template.description || '' }}</span>
+						</div>
+					</div>
+				</el-scrollbar>
 			</div>
-		</el-scrollbar>
-	</div>
+		</el-collapse-item>
+	</el-collapse>
 </template>
 
 <script setup lang="ts">
-import { useMessageBridge } from '@/api/message-bridge';
-import type { CasualRestAPI, PromptTemplate, PromptsListResponse } from '@/hook/type';
-import { onMounted, onUnmounted, defineProps, defineEmits, reactive } from 'vue';
+import type { PromptTemplate } from '@/hook/type';
+import { onMounted, defineProps, defineEmits, reactive, ref, type Reactive } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { promptsManager, type PromptStorage } from './prompts';
+import type { PromptStorage } from './prompts';
 import { tabs } from '../panel';
 import { ElMessage } from 'element-plus';
+import { McpClient, mcpClientAdapter } from '@/views/connect/core';
 
-const bridge = useMessageBridge();
 const { t } = useI18n();
 
 const props = defineProps({
-    tabId: {
-        type: Number,
-        required: true
-    }
+	tabId: {
+		type: Number,
+		required: true
+	}
 });
 
-const emits = defineEmits([ 'prompt-selected' ]);
+const emits = defineEmits(['prompt-selected']);
 
 let tabStorage: PromptStorage;
 
@@ -53,63 +57,51 @@ if (props.tabId >= 0) {
 	tabStorage = tab.storage as PromptStorage;
 } else {
 	tabStorage = reactive({
+		activeNames: [0],
 		currentPromptName: '',
 		formData: {},
 		lastPromptGetResponse: undefined
 	});
 }
 
-function reloadPrompts(option: { first: boolean }) {    
-    bridge.postMessage({
-        command: 'prompts/list'
-    });
+async function reloadPrompts(client: Reactive<McpClient>, option: { first: boolean }) {
+	await client.getPromptTemplates({ cache: false });
 
-    if (!option.first) {
-        ElMessage({
-            message: t('finish-refresh'),
-            type: 'success',
+	if (!option.first) {
+		ElMessage({
+			message: t('finish-refresh'),
+			type: 'success',
 			duration: 3000,
 			showClose: true,
-        });
-    }
+		});
+	}
 }
 
 function handleClick(prompt: PromptTemplate) {
-    tabStorage.currentPromptName = prompt.name;
-    tabStorage.lastPromptGetResponse = undefined;
-
-    emits('prompt-selected', prompt);
+	tabStorage.currentPromptName = prompt.name;
+	tabStorage.lastPromptGetResponse = undefined;
+	emits('prompt-selected', prompt);
 }
 
-let commandCancel: (() => void);
+onMounted(async () => {
+	for (const client of mcpClientAdapter.clients) {
+		await client.getPromptTemplates();
+	}
 
-onMounted(() => {
-    commandCancel = bridge.addCommandListener('prompts/list', (data: CasualRestAPI<PromptsListResponse>) => {
-		promptsManager.templates = data.msg.prompts || [];
-
-		const targetPrompt = promptsManager.templates.find(template => template.name === tabStorage.currentPromptName);
-
-        if (targetPrompt === undefined) {
-            tabStorage.currentPromptName = promptsManager.templates[0].name;
-            tabStorage.lastPromptGetResponse = undefined;
-        }
-	}, { once: false });
-
-    reloadPrompts({ first: true });
+	if (tabStorage.currentPromptName === undefined) {
+		const masterNode = mcpClientAdapter.masterNode;
+		const prompt = masterNode.promptTemplates?.values().next();
+		tabStorage.currentPromptName = prompt?.value?.name || '';
+	}
 });
 
-onUnmounted(() => {
-    if (commandCancel){
-        commandCancel();
-    }
-})
 
 </script>
 
 <style>
 .prompt-template-container-scrollbar {
 	background-color: var(--background);
-    margin-bottom: 10px;
+	margin-bottom: 10px;
 	border-radius: .5em;
 }
 
@@ -121,17 +113,17 @@ onUnmounted(() => {
 }
 
 .prompt-template-function-container {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 .prompt-template-function-container button {
-    width: 175px;
+	width: 175px;
 }
 
-.prompt-template-container > .item {
+.prompt-template-container>.item {
 	margin: 3px;
 	padding: 5px 10px;
 	border-radius: .3em;
@@ -143,24 +135,24 @@ onUnmounted(() => {
 	transition: var(--animation-3s);
 }
 
-.prompt-template-container > .item:hover {
+.prompt-template-container>.item:hover {
 	background-color: var(--main-light-color);
 	transition: var(--animation-3s);
 }
 
-.prompt-template-container > .item.active {
+.prompt-template-container>.item.active {
 	background-color: var(--main-light-color);
 	transition: var(--animation-3s);
 }
 
-.prompt-template-container > .item > span:first-child {
+.prompt-template-container>.item>span:first-child {
 	max-width: 200px;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
 
-.prompt-template-container > .item > span:last-child {
+.prompt-template-container>.item>span:last-child {
 	opacity: 0.6;
 	font-size: 12.5px;
 	max-width: 200px;

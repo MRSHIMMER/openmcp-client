@@ -1,137 +1,127 @@
 <template>
-    <h3 class="resource-template">
-		<code>resources/list</code>
-		<span
-			class="iconfont icon-restart"
-			@click="reloadResources({ first: false })"
-		></span>
-	</h3>
+	<el-collapse :expand-icon-position="'left'" v-model="tabStorage.activeNames">
+		<el-collapse-item v-for="(client, index) in mcpClientAdapter.clients" :name="index" :class="[]">
 
-	<div class="resource-template-container-scrollbar">
-		<el-scrollbar height="500px">
-			<div class="resource-template-container">
-				<div
-					class="item"
-                    :class="{ 'active': props.tabId >= 0 && tabStorage.currentType === 'resource' && tabStorage.currentResourceName === resource.name }"
-					v-for="resource of resourcesManager.resources"
-					:key="resource.uri"
-                    @click="handleClick(resource)"
-				>
-                    <span>{{ resource.name }}</span>
-                    <span>{{ resource.mimeType }}</span>
-				</div>
+			<!-- header -->
+			<template #title>
+				<h3 class="resource-template">
+					<code>resources/list</code>
+					<span class="iconfont icon-restart" @click="reloadResources(client, { first: false })"></span>
+				</h3>
+			</template>
+
+			<!-- body -->
+			<div class="resource-template-container-scrollbar">
+				<el-scrollbar height="500px">
+					<div class="resource-template-container">
+						<div class="item"
+							:class="{ 'active': props.tabId >= 0 && tabStorage.currentType === 'resource' && tabStorage.currentResourceName === resource.name }"
+							v-for="resource of client.resources?.values()" :key="resource.uri"
+							@click="handleClick(resource)">
+							<span>{{ resource.name }}</span>
+							<span>{{ resource.mimeType }}</span>
+						</div>
+					</div>
+				</el-scrollbar>
 			</div>
-		</el-scrollbar>
-	</div>
+		</el-collapse-item>
+	</el-collapse>
 </template>
 
 <script setup lang="ts">
-import { useMessageBridge } from '@/api/message-bridge';
-import type { CasualRestAPI, Resources, ResourcesListResponse } from '@/hook/type';
-import { onMounted, onUnmounted, defineProps, defineEmits, reactive } from 'vue';
+import type { Resources } from '@/hook/type';
+import { onMounted, defineProps, defineEmits, reactive, type Reactive } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { resourcesManager, type ResourceStorage } from './resources';
+import type { ResourceStorage } from './resources';
 import { tabs } from '../panel';
 import { ElMessage } from 'element-plus';
+import { McpClient, mcpClientAdapter } from '@/views/connect/core';
 
-const bridge = useMessageBridge();
 const { t } = useI18n();
 
 const props = defineProps({
-    tabId: {
-        type: Number,
-        required: true
-    }
+	tabId: {
+		type: Number,
+		required: true
+	}
 });
 
-const emits = defineEmits([ 'resource-selected' ]);
+const emits = defineEmits(['resource-selected']);
 
 let tabStorage: ResourceStorage;
 
 if (props.tabId >= 0) {
-    const tab = tabs.content[props.tabId];
-    tabStorage = tab.storage as ResourceStorage;
+	const tab = tabs.content[props.tabId];
+	tabStorage = tab.storage as ResourceStorage;
 } else {
-    tabStorage = reactive({
-        currentType:'resource',
-        currentResourceName: '',
-        formData: {},
-        lastResourceReadResponse: undefined
-    });
+	tabStorage = reactive({
+		activeNames: [0],
+		templateActiveNames: [0],
+		currentType: 'resource',
+		currentResourceName: '',
+		formData: {},
+		lastResourceReadResponse: undefined
+	});
 }
 
-function reloadResources(option: { first: boolean }) {    
-    bridge.postMessage({
-        command: 'resources/list'
-    });
+async function reloadResources(client: Reactive<McpClient>, option: { first: boolean }) {
+	await client.getResources({ cache: false });
 
-    if (!option.first) {
-        ElMessage({
-            message: t('finish-refresh'),
-            type: 'success',
+	if (!option.first) {
+		ElMessage({
+			message: t('finish-refresh'),
+			type: 'success',
 			duration: 3000,
 			showClose: true,
-        });
-    }
+		});
+	}
 }
 
 async function handleClick(resource: Resources) {
-    tabStorage.currentType = 'resource';
-    tabStorage.currentResourceName = resource.name;
-    tabStorage.lastResourceReadResponse = undefined;
+	tabStorage.currentType = 'resource';
+	tabStorage.currentResourceName = resource.name;
+	tabStorage.lastResourceReadResponse = undefined;
 	emits('resource-selected', resource);
 
 	// 更新资源
 	if (props.tabId >= 0) {
-		const bridge = useMessageBridge();
-		const { code, msg } = await bridge.commandRequest('resources/read', { resourceUri: resource.uri });
-		tabStorage.lastResourceReadResponse = msg;
+		const res = await mcpClientAdapter.readResource(resource.uri);
+		tabStorage.lastResourceReadResponse = res;
 	}
 }
 
-let commandCancel: (() => void);
+onMounted(async () => {
+	for (const client of mcpClientAdapter.clients) {
+		await client.getResources();
+	}
 
-onMounted(() => {
-    commandCancel = bridge.addCommandListener('resources/list', (data: CasualRestAPI<ResourcesListResponse>) => {
-		resourcesManager.resources = data.msg.resources || [];
-
-		if (tabStorage.currentType === 'resource') {
-            const targetResource = resourcesManager.resources.find(resources => resources.name === tabStorage.currentResourceName);
-            if (targetResource === undefined) {
-                tabStorage.currentResourceName = resourcesManager.templates[0]?.name;
-                tabStorage.lastResourceReadResponse = undefined;
-            }
-        }
-	}, { once: false });
-
-    reloadResources({ first: true });
+	if (tabStorage.currentResourceName === undefined && tabStorage.currentType === 'resource') {
+		const masterNode = mcpClientAdapter.masterNode;
+		const resource = masterNode.resources?.values().next();
+		tabStorage.currentResourceName = resource?.value?.name || '';
+	}
 });
 
-onUnmounted(() => {
-    if (commandCancel){
-        commandCancel();
-    }
-})
 </script>
 
 <style>
 h3.resource-template {
-    display: flex;
-    align-items: center;
+	display: flex;
+	align-items: center;
 }
 
 h3.resource-template .iconfont.icon-restart {
-    margin-left: 10px;
-    cursor: pointer;
+	margin-left: 10px;
+	cursor: pointer;
 }
 
 h3.resource-template .iconfont.icon-restart:hover {
-    color: var(--main-color);
+	color: var(--main-color);
 }
 
 .resource-template-container-scrollbar {
 	background-color: var(--background);
-    margin-bottom: 10px;
+	margin-bottom: 10px;
 	border-radius: .5em;
 }
 
@@ -143,17 +133,17 @@ h3.resource-template .iconfont.icon-restart:hover {
 }
 
 .resource-template-function-container {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 .resource-template-function-container button {
-    width: 175px;
+	width: 175px;
 }
 
-.resource-template-container > .item {
+.resource-template-container>.item {
 	margin: 3px;
 	padding: 5px 10px;
 	border-radius: .3em;
@@ -165,24 +155,24 @@ h3.resource-template .iconfont.icon-restart:hover {
 	transition: var(--animation-3s);
 }
 
-.resource-template-container > .item:hover {
+.resource-template-container>.item:hover {
 	background-color: var(--main-light-color);
 	transition: var(--animation-3s);
 }
 
-.resource-template-container > .item.active {
+.resource-template-container>.item.active {
 	background-color: var(--main-light-color);
 	transition: var(--animation-3s);
 }
 
-.resource-template-container > .item > span:first-child {
+.resource-template-container>.item>span:first-child {
 	max-width: 200px;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
 
-.resource-template-container > .item > span:last-child {
+.resource-template-container>.item>span:last-child {
 	opacity: 0.6;
 	font-size: 12.5px;
 	max-width: 200px;
@@ -190,5 +180,4 @@ h3.resource-template .iconfont.icon-restart:hover {
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
-
 </style>

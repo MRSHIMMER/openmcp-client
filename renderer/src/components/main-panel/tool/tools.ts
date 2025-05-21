@@ -4,6 +4,7 @@ import type { ToolsListResponse, ToolCallResponse, CasualRestAPI } from '@/hook/
 import { mcpClientAdapter } from '@/views/connect/core';
 
 export interface ToolStorage {
+    activeNames: any[];
     currentToolName: string;
     lastToolCallResponse?: ToolCallResponse | string;
     formData: Record<string, any>;
