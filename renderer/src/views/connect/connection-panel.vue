@@ -109,7 +109,6 @@ function handleDrop(event: DragEvent) {
 		client.value.connectionArgs.connectionType = 'STDIO';
 		client.value.connectionArgs.commandString = command;		
 		client.value.connectionArgs.cwd = cwd;
-		client.value.handleEnvSwitch(true);
 	}
 
 	isDraging.value = false;
