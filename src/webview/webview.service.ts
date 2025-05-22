@@ -101,6 +101,10 @@ export function revealOpenMcpWebviewPanel(
                 }
                 break;
 
+            case 'vscode/clipboard/writeText':
+                vscode.env.clipboard.writeText(data.text);
+                break;
+
             default:
                 routeMessage(command, data, panel.webview);
                 break;

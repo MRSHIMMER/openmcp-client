@@ -116,14 +116,18 @@ export function getWorkspaceConnectionConfig() {
 
     const workspacePath = getWorkspacePath();
     for (let item of connection.items) {
-        item = Array.isArray(item) ? item[0] : item;
-        const itemType = item.type || item.connectionType;
+        const connections = Array.isArray(item) ? item : [item];
+        for (let connection of connections) {
+            const connectionType = (connection.type || connection.connectionType).toUpperCase() as ConnectionType;
+            connection.type = undefined;
+            connection.connectionType = connectionType;
 
-        if (item.filePath && item.filePath.startsWith('{workspace}')) {
-            item.filePath = item.filePath.replace('{workspace}', workspacePath).replace(/\\/g, '/');
-        }
-        if (itemType === 'STDIO' && item.cwd && item.cwd.startsWith('{workspace}')) {
-            item.cwd = item.cwd.replace('{workspace}', workspacePath).replace(/\\/g, '/');
+            if (connection.filePath && connection.filePath.startsWith('{workspace}')) {
+                connection.filePath = connection.filePath.replace('{workspace}', workspacePath).replace(/\\/g, '/');
+            }
+            if (connectionType === 'STDIO' && connection.cwd && connection.cwd.startsWith('{workspace}')) {
+                connection.cwd = connection.cwd.replace('{workspace}', workspacePath).replace(/\\/g, '/');
+            }    
         }
     }
 
@@ -165,16 +169,18 @@ export function saveWorkspaceConnectionConfig(workspace: string) {
 
     const workspacePath = getWorkspacePath();
     for (let item of connectionConfig.items) {
-
-        item = Array.isArray(item) ? item[0] : item;
-        const itemType = item.type || item.connectionType;
-        item.type = undefined;
-
-        if (item.filePath && item.filePath.replace(/\\/g, '/').startsWith(workspacePath)) {
-            item.filePath = item.filePath.replace(workspacePath, '{workspace}').replace(/\\/g, '/');
-        }
-        if (item.type === 'STDIO' && item.cwd && item.cwd.replace(/\\/g, '/').startsWith(workspacePath)) {
-            item.cwd = item.cwd.replace(workspacePath, '{workspace}').replace(/\\/g, '/');
+        const connections = Array.isArray(item)? item : [item];
+        for (let connection of connections) {
+            const connectionType = (connection.type || connection.connectionType).toUpperCase() as ConnectionType;
+            connection.type = undefined;
+            connection.connectionType = connectionType;
+    
+            if (connection.filePath && connection.filePath.replace(/\\/g, '/').startsWith(workspacePath)) {
+                connection.filePath = connection.filePath.replace(workspacePath, '{workspace}').replace(/\\/g, '/');
+            }
+            if (connectionType === 'STDIO' && connection.cwd && connection.cwd.replace(/\\/g, '/').startsWith(workspacePath)) {
+                connection.cwd = connection.cwd.replace(workspacePath, '{workspace}').replace(/\\/g, '/');
+            }
         }
     }
     fs.writeFileSync(connectionConfigPath, JSON.stringify(connectionConfig, null, 2), 'utf-8');

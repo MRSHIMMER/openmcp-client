@@ -36,12 +36,29 @@ export function tryGetRunCommandError(command: string, args: string[] = [], cwd?
 }
 
 function getCWD(option: McpOptions) {
-	if (option.cwd) {
-		return option.cwd;
-	}
+	// if (option.cwd) {
+	// 	return option.cwd;
+	// }
 	const file = option.args?.at(-1);
 	if (file) {
-		return path.dirname(file);
+		// 如果是绝对路径，直接返回目录
+		if (path.isAbsolute(file)) {
+			// 如果是是文件，则返回文件所在的目录
+			if (fs.statSync(file).isDirectory()) {
+				return file;
+			} else {
+				return path.dirname(file);
+			}
+		} else {
+			// 如果是相对路径，根据 cwd 获取真实路径
+			const absPath = path.resolve(option.cwd || process.cwd(), file);
+			// 如果是是文件，则返回文件所在的目录
+			if (fs.statSync(absPath).isDirectory()) {
+				return absPath;
+			} else {
+				return path.dirname(absPath);
+			}
+		}
 	}
 	return undefined;
 }

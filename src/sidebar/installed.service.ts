@@ -19,7 +19,7 @@ export async function deleteInstalledConnection(item: McpOptions[] | McpOptions)
     const installedConnection = getConnectionConfig();
 
     // 从配置中移除该连接项
-    const index = installedConnection.items.indexOf(item);    
+    const index = installedConnection.items.indexOf(item);
     
 
     if (index !== -1) {

@@ -5,7 +5,7 @@
             <!-- header -->
             <template #title>
                 <h3 class="resource-template">
-                    <code>tools/list</code>
+                    <span>tools/list</span>
                     <span class="iconfont icon-restart" @click.stop="reloadTools(client, { first: false })"></span>
                 </h3>
             </template>

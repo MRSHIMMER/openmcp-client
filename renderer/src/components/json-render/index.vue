@@ -6,12 +6,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed, defineProps, type PropType } from 'vue';
+import { defineProps, type PropType } from 'vue';
 import { renderJson } from '../main-panel/chat/markdown/markdown';
 
 const props = defineProps({
     json: {
-        type: Object as PropType<string | object | undefined>,
+        type: Object as PropType<any>,
         required: true
     }
 });

@@ -82,21 +82,8 @@ const handleKeydown = (event: KeyboardEvent) => {
 };
 
 const copy = async () => {
-    try {
-        if (navigator.clipboard) {
-            await navigator.clipboard.write([
-                new ClipboardItem({
-                    'text/plain': new Blob([userInput.value], { type: 'text/plain' })
-                })
-            ]);
-        } else {
-            const textarea = document.createElement('textarea');
-            textarea.value = userInput.value;
-            document.body.appendChild(textarea);
-            textarea.select();
-            document.execCommand('copy');
-            document.body.removeChild(textarea);
-        }
+    try {        
+        await navigator.clipboard.writeText(props.message.content.trim());
         ElMessage.success('内容已复制到剪贴板');
     } catch (err) {
         console.error('无法复制内容: ', err);

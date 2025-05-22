@@ -5,7 +5,7 @@
 			<!-- header -->
 			<template #title>
 				<h3 class="resource-template">
-					<code>prompts/list</code>
+					<span>prompts/list</span>
 					<span @click.stop="reloadPrompts(client, { first: false })" class="iconfont icon-restart"></span>
 				</h3>
 

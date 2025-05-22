@@ -1,4 +1,5 @@
 import { useMessageBridge } from "@/api/message-bridge";
+import { getPlatform } from "@/api/platform";
 
 export function getCurrentTime() {
     // 创建一个Date对象

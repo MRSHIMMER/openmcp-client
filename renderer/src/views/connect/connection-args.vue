@@ -116,6 +116,7 @@ const validateForm = async () => {
     flex-direction: column;
     gap: 12px;
     padding: 16px;
+    height: fit-content;
     background-color: var(--el-bg-color);
     border-radius: 4px;
     margin-bottom: 16px;

@@ -1,5 +1,5 @@
 <template>
-	<div class="connection-option">
+	<div class="connection-log">
 		<div class="header">
 			<span>{{ t('log') }}</span>
 			<span class="iconfont icon-delete" @click="clearLogs"></span>
@@ -51,15 +51,23 @@ function clearLogs() {
 </script>
 
 <style>
-.connection-option {
+
+.connection-log {
 	height: 90vh;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px;
+    background-color: var(--el-bg-color);
+    border-radius: 4px;
+    margin-bottom: 16px;
 }
 
-.connection-option .el-scrollbar__view {
+.connection-log .el-scrollbar__view {
 	height: 100%;
 }
 
-.connection-option .output-content {
+.connection-log .output-content {
 	border-radius: .5em;
 	padding: 12px 16px;
 	min-height: 300px;
