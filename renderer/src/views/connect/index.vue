@@ -38,8 +38,12 @@
 				<span class="iconfont icon-add"></span>
 			</div>
 		</div>
-		<div class="panel-container">
-			<ConnectionPanel v-if="mcpClientAdapter.clients.length > 0" :index="mcpClientAdapter.currentClientIndex" />
+		<div class="panel-container" v-if="mcpClientAdapter.clients.length > 0">
+			<ConnectionPanel :index="mcpClientAdapter.currentClientIndex" />
+		</div>
+		<div class="empty-state" v-else>
+			<span class="iconfont icon-openmcp"></span>
+			<span class="empty-text">暂无连接选项，点击上方的加号创建</span>
 		</div>
 	</div>
 </template>
@@ -59,8 +63,11 @@ function selectServer(index: number) {
 
 
 function addServer() {
-	mcpClientAdapter.clients.push(new McpClient());
+	const client = new McpClient();
+	mcpClientAdapter.clients.push(client);
 	mcpClientAdapter.currentClientIndex = mcpClientAdapter.clients.length - 1;
+
+	client.handleEnvSwitch(true);
 }
 
 
@@ -171,5 +178,24 @@ function deleteServer(index: number) {
 }
 .delete-btn:hover {
     opacity: 0.8;
+}
+
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: var(--text-secondary);
+}
+
+.empty-state .iconfont {
+    font-size: 128px;
+    margin-bottom: 16px;
+}
+
+.empty-text {
+    font-size: 18px;
+    color: var(--text-secondary);
 }
 </style>

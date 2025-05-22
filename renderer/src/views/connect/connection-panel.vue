@@ -1,28 +1,28 @@
 <template>
 	<el-scrollbar>
-		<div class="connection-container">
-		<div class="connect-panel-container left"
-			:ref="el => client.connectionSettingRef = el"
-		>
-			<ConnectionMethod :index="props.index" />
-			<ConnectionArgs :index="props.index" />
-			<ConnectionEnvironment :index="props.index" />
+		<div class="connection-container" @dragover.prevent="handleDragOver" @drop.prevent="handleDrop">
+			<div v-if="isDraging" class="drag-mask">
+				<span class="iconfont icon-connect"></span>
+				<span>拖拽以填充连接参数</span>
+			</div>
+			<div class="connect-panel-container left" :ref="el => client.connectionSettingRef = el">
+				<ConnectionMethod :index="props.index" />
+				<ConnectionArgs :index="props.index" />
+				<ConnectionEnvironment :index="props.index" />
 
-			<div class="connect-action">
-				<el-button type="primary" size="large" :loading="isLoading" :disabled="!client.connectionResult"
-					@click="connect()">
-					<span class="iconfont icon-connect" v-if="!isLoading"></span>
-					{{ t('connect.appearance.connect') }}
-				</el-button>
+				<div class="connect-action">
+					<el-button type="primary" size="large" :loading="isLoading" :disabled="!client.connectionResult"
+						@click="connect()">
+						<span class="iconfont icon-connect" v-if="!isLoading"></span>
+						{{ t('connect.appearance.connect') }}
+					</el-button>
+				</div>
+			</div>
+
+			<div class="connect-panel-container right" :ref="el => client.connectionLogRef = el">
+				<ConnectionLog :index="props.index" />
 			</div>
 		</div>
-
-		<div class="connect-panel-container right"
-			:ref="el => client.connectionLogRef = el"
-		>
-			<ConnectionLog :index="props.index" />
-		</div>
-	</div>
 	</el-scrollbar>
 
 </template>
@@ -59,12 +59,66 @@ async function connect() {
 
 	const platform = getPlatform();
 	const ok = await client.value.connect();
-	
+
 	if (ok) {
 		mcpClientAdapter.saveLaunchSignature();
 	}
 
 	isLoading.value = false;
+}
+
+const isDraging = ref(false);
+let dragHandler: number;
+
+function handleDragOver(event: DragEvent) {
+	event.preventDefault();
+	clearTimeout(dragHandler);
+	isDraging.value = true;
+
+	dragHandler = setTimeout(() => {
+		isDraging.value = false;
+	}, 100);
+}
+
+
+function getLaunchCommand(fileName: string) {
+	const ext = fileName.split('.').pop()?.toLowerCase();
+	switch (ext) {
+		case 'py':
+			return `mcp run ${fileName}`;
+		
+		case 'js':
+			return `node ${fileName}`;
+
+		default:
+			return fileName;
+	}
+}
+
+function handleDrop(event: DragEvent) {
+	event.preventDefault();
+
+	const dragedFilePath = event.dataTransfer?.getData('text/plain') || '';
+	if (dragedFilePath) {
+		const path = dragedFilePath.replace(/\\/g, '/');
+		const coms = path.split('/');
+		const fileName = coms[coms.length - 1];
+		const cwd = coms.slice(0, coms.length - 1).join('/');
+
+		const command = getLaunchCommand(fileName);
+		client.value.connectionArgs.connectionType = 'STDIO';
+		client.value.connectionArgs.commandString = command;		
+		client.value.connectionArgs.cwd = cwd;
+	}
+
+	isDraging.value = false;
+
+	// const files = event.dataTransfer?.files;
+	// if (files && files.length > 0) {
+	// 	for (let i = 0; i < files.length; i++) {
+	// 		console.log('拖拽的文件:', files[i]);
+	// 	}
+	// }
 }
 
 </script>
@@ -146,5 +200,26 @@ async function connect() {
 
 .connect-action {
 	padding: 10px;
+}
+
+.drag-mask {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.5);
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	color: white;
+	font-size: 18px;
+	z-index: 9999;
+}
+
+.drag-mask .iconfont {
+	font-size: 80px;
+	margin-bottom: 20px;
 }
 </style>

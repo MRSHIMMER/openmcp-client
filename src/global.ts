@@ -283,9 +283,9 @@ export function getWorkspaceConnectionConfigItemByPath(absPath: string) {
 
     const normaliseAbsPath = absPath.replace(/\\/g, '/');
     for (let item of workspaceConnectionConfig.items) {
-        item = Array.isArray(item)? item[0] : item;
+        const nItem = Array.isArray(item)? item[0] : item;
 
-        const filePath = normaliseConnectionFilePath(item, workspacePath);
+        const filePath = normaliseConnectionFilePath(nItem, workspacePath);
         if (filePath === normaliseAbsPath) {
             return item;
         }
@@ -303,9 +303,9 @@ export function getInstalledConnectionConfigItemByPath(absPath: string) {
 
     const normaliseAbsPath = absPath.replace(/\\/g, '/');
     for (let item of installedConnectionConfig.items) {
-        item = Array.isArray(item)? item[0] : item;
+        const nItem = Array.isArray(item)? item[0] : item;
 
-        const filePath = (item.filePath || '').replace(/\\/g, '/');
+        const filePath = (nItem.filePath || '').replace(/\\/g, '/');
         if (filePath === normaliseAbsPath) {
             return item;
         }

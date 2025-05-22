@@ -3,10 +3,12 @@
 ## [main] 0.1.0
 - 新特性：支持同时连入多个 mcp server
 - 新特性：更新协议内容，支持 streamable http 协议，未来将逐步取代 SSE 的连接方式
-- 对于 uv 创建的 py 项目进行特殊支持：自动初始化项目，并将 mcp 定向到 .venv/bin/mcp 中，不再需要用户全局安装 mcp
+- impl issue#16：对于 uv 创建的 py 项目进行特殊支持，自动初始化项目，并将 mcp 定向到 .venv/bin/mcp 中，不再需要用户全局安装 mcp
 - 对于 npm 创建的 js/ts 项目进行特殊支持：自动初始化项目
 - 去除了 websearch 的设置，增加了 parallel_tool_calls 的设置，parallel_tool_calls 默认为 true，代表 允许模型在单轮回复中调用多个工具
-- 重构了 openmcp 连接模块的基础设施，基于新的技术设施实现了更加详细的连接模块的日志系统
+- 重构了 openmcp 连接模块的基础设施，基于新的技术设施实现了更加详细的连接模块的日志系统.
+- impl issue#15：无法复制
+- impl issue#14：增加日志清除按钮
 
 ## [main] 0.0.9
 - 修复 0.0.8 引入的bug：system prompt 返回的是索引而非真实内容
