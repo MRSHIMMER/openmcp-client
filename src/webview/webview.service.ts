@@ -24,7 +24,7 @@ export function getWebviewContent(context: vscode.ExtensionContext, panel: vscod
     return html;
 }
 
-export function getLaunchCWD(context: vscode.ExtensionContext, uri: vscode.Uri) {
+export function getWorkspacePath(context: vscode.ExtensionContext, uri: vscode.Uri) {
     // TODO: 启动上下文？
     // 获取当前打开的项目的路径
     const workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);

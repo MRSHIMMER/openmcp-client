@@ -5,6 +5,9 @@ export async function deleteUserConnection(item: McpOptions[] | McpOptions) {
     // 弹出确认对话框
     const masterNode = Array.isArray(item) ? item[0] : item;
     const name = masterNode.name;
+
+    console.log('enter delete');
+    
     const confirm = await vscode.window.showWarningMessage(
         `确定要删除连接 "${name}" 吗？`,
         { modal: true },
@@ -18,6 +21,10 @@ export async function deleteUserConnection(item: McpOptions[] | McpOptions) {
     const workspaceConnectionConfig = getWorkspaceConnectionConfig();
 
     // 从配置中移除该连接项
+    console.log(item);
+    console.log(workspaceConnectionConfig.items);
+    // TODO: 改成基于 path 进行搜索
+    
     const index = workspaceConnectionConfig.items.indexOf(item);
     if (index !== -1) {
         workspaceConnectionConfig.items.splice(index, 1);
