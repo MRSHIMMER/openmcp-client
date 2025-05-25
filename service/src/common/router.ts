@@ -30,6 +30,7 @@ export async function routeMessage(command: string, data: any, webview: PostMess
                 webview.postMessage({ command, data: res });
             }
         } catch (error) {
+            console.error(error);
             webview.postMessage({
                 command, data: {
                     code: 500,
