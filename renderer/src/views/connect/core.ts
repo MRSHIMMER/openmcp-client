@@ -563,6 +563,10 @@ class McpClientAdapter {
         return msg;
     }
 
+    public get connected() {
+        return this.clients.length > 0 && this.clients[0].connectionResult.success;
+    }
+
     public async loadPanels() {
         const masterNode = this.clients[0];
         await loadPanels(masterNode);

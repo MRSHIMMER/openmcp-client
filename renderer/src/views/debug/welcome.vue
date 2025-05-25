@@ -7,7 +7,7 @@
 			<!-- TODO: 支持更多的 server -->
 			<span
 				class="debug-option"
-				:class="{ 'disable': !client.connectionResult.success }"
+				:class="{ 'disable': !mcpClientAdapter.connected }"
 				v-for="(option, index) of debugOptions"
 				:key="index"
                 @click="chooseDebugMode(index)"
@@ -32,7 +32,6 @@ import { mcpClientAdapter } from '../connect/core';
 defineComponent({ name: 'welcome' });
 
 const { t } = useI18n();
-const client = mcpClientAdapter.masterNode;
 
 const debugOptions = [
 	{
@@ -60,7 +59,7 @@ const debugOptions = [
 function chooseDebugMode(index: number) {
 
 	// TODO: 支持更多的 server
-	if (client.connectionResult.success) {
+	if (mcpClientAdapter.connected) {
 		const activeTab = tabs.activeTab;
 		activeTab.component = markRaw(debugModes[index]);
 

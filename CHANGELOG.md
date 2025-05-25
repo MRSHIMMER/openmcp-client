@@ -3,6 +3,8 @@
 ## [main] 0.1.1
 - 修复 SSH 连接 Ubuntu 的情况下的部分 bug
 - 修复 python 项目点击 openmcp 进行连接时，初始化参数错误的问题
+- 取消 service 底层的 mcp 连接复用技术，防止无法刷新
+- 修复连接后，可能无法在欢迎界面选择调试选项的 bug
 
 ## [main] 0.1.0
 - 新特性：支持同时连入多个 mcp server
