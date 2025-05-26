@@ -62,11 +62,11 @@ function selectServer(index: number) {
 }
 
 function addServer() {
-	const client = reactive(new McpClient());
+	// const client = reactive(new McpClient());
+	const client = new McpClient();
 	mcpClientAdapter.clients.push(client);
 	mcpClientAdapter.currentClientIndex = mcpClientAdapter.clients.length - 1;
-
-	client.handleEnvSwitch(true);
+	mcpClientAdapter.clients.at(-1)!.handleEnvSwitch(true);
 }
 
 

@@ -471,7 +471,8 @@ class McpClientAdapter {
         for (const item of launchSignature) {
 
             // 创建一个新的客户端            
-            const client = reactive(new McpClient());
+            // const client = reactive(new McpClient());
+            const client = new McpClient();
 
             // 同步连接参数
             await client.acquireConnectionSignature(item);
@@ -560,6 +561,10 @@ class McpClientAdapter {
         });
     
         return msg;
+    }
+
+    public get connected() {
+        return this.clients.length > 0 && this.clients[0].connectionResult.success;
     }
 
     public async loadPanels() {

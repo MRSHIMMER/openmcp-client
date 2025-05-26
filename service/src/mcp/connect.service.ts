@@ -249,12 +249,15 @@ export async function connectService(
 		const uuid = await deterministicUUID(JSON.stringify(option));
 
 		const reuseConntion = clientMap.has(uuid);
-		if (!clientMap.has(uuid)) {
-			const client = await connect(option);
-			clientMap.set(uuid, client);	
-		}
+		
+		// if (!clientMap.has(uuid)) {
+		// 	const client = await connect(option);
+		// 	clientMap.set(uuid, client);
+		// }
+		// const client = clientMap.get(uuid)!;
 
-		const client = clientMap.get(uuid)!;
+		const client = await connect(option);
+		clientMap.set(uuid, client);
 
 		const versionInfo = client.getServerVersion();
 
