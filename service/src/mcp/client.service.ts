@@ -134,8 +134,12 @@ export class McpClient {
     // 调用工具
     public async callTool(options: { name: string; arguments: Record<string, any>, callToolOption?: any }) {
         const { callToolOption, ...methodArgs } = options;
+        console.log('methodArgs', methodArgs);
         console.log('callToolOption', callToolOption);
-        return await this.client.callTool(methodArgs, undefined, callToolOption);
+        const res = await this.client.callTool(methodArgs, undefined, callToolOption);
+        console.log('callTool res', res);
+        
+        return res;
     }
 }
 

@@ -1,7 +1,8 @@
 import * as vscode from 'vscode';
 import { RegisterCommand } from "../common";
-import { getDefaultLanunchSignature, getLaunchCWD, revealOpenMcpWebviewPanel } from './webview.service';
+import { getDefaultLanunchSignature, getWorkspacePath, revealOpenMcpWebviewPanel } from './webview.service';
 import { getWorkspaceConnectionConfigItemByPath } from '../global';
+import path from 'path';
 
 export class WebviewController {
     @RegisterCommand('openmcp.showOpenMCP')
@@ -10,8 +11,7 @@ export class WebviewController {
                 
         if (!connectionItem) {
             // 项目不存在连接信息
-            const cwd = getLaunchCWD(context, uri);
-
+            const cwd = path.dirname(uri.fsPath);
             const signature = getDefaultLanunchSignature(uri.fsPath, cwd);
 
             if (!signature) {

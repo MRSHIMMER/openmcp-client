@@ -22,8 +22,8 @@ export class McpInstalledConnectProvider implements vscode.TreeDataProvider<Conn
         const connection = getConnectionConfig();
         const sidebarItems = connection.items.map((item, index) => {
             // 连接的名字
-            item = Array.isArray(item)? item[0] : item;
-            const itemName = `${item.name} (${item.type || item.connectionType})`
+            const nItem = Array.isArray(item)? item[0] : item;
+            const itemName = `${nItem.name} (${nItem.type || nItem.connectionType})`
             return new ConnectionViewItem(itemName, vscode.TreeItemCollapsibleState.None, item, 'server');
         })
         
