@@ -1,11 +1,12 @@
 import { WebSocketServer } from 'ws';
-import pino from 'pino';
-
-import { routeMessage } from './common/router';
-import { VSCodeWebViewLike } from './hook/adapter';
+import {pino} from 'pino';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import { routeMessage } from './common/router.js';
+import { VSCodeWebViewLike } from './hook/adapter.js';
 import path from 'node:path';
 import * as fs from 'node:fs';
-import { setRunningCWD } from './hook/setting';
+import { setRunningCWD } from './hook/setting.js';
 
 export interface VSCodeMessage {
     command: string;
@@ -84,7 +85,7 @@ function updateConnectionOption(data: any) {
     fs.writeFileSync(envPath, JSON.stringify(connection, null, 4));
 }
 
-
+const __dirname = dirname(fileURLToPath(import.meta.url));
 const devHome = path.join(__dirname, '..', '..');
 setRunningCWD(devHome);
 

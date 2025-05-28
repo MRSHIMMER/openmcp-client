@@ -1,5 +1,4 @@
-import { MapperDescriptor, RequestHandler, RequestClientType, RestfulResponse, ControllerOption, RequestHandlerStore } from "./index.dto";
-export { MapperDescriptor, RequestHandler, RequestClientType };
+import { MapperDescriptor, RestfulResponse, ControllerOption, RequestHandlerStore } from "./index.dto.js";
 
 export const requestHandlerStorage = new Map<string, RequestHandlerStore<any, RestfulResponse>>();
 

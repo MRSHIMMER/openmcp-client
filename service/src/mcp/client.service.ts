@@ -3,9 +3,9 @@ import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
-import type { McpOptions, McpTransport, IServerVersion, ToolCallResponse, ToolCallContent } from './client.dto';
-import { PostMessageble } from "../hook/adapter";
-import { createOcrWorker, saveBase64ImageData } from "./ocr.service";
+import type { McpOptions, McpTransport, IServerVersion, ToolCallResponse, ToolCallContent } from './client.dto.js';
+import { PostMessageble } from "../hook/adapter.js";
+import { createOcrWorker, saveBase64ImageData } from "./ocr.service.js";
 
 // 增强的客户端类
 export class McpClient {

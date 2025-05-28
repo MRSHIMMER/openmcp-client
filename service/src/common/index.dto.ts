@@ -1,5 +1,5 @@
-import { PostMessageble } from "../hook/adapter";
-import { McpClient } from "../mcp/client.service";
+import { PostMessageble } from "../hook/adapter.js";
+import { McpClient } from "../mcp/client.service.js";
 
 export type RequestClientType = McpClient | undefined;
 
