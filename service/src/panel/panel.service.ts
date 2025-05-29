@@ -1,9 +1,9 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { VSCODE_WORKSPACE } from '../hook/setting';
-import { IServerVersion } from '../mcp/client.dto';
-import { SaveTab } from './panel.dto';
-import { IConfig } from '../setting/setting.dto';
+import { VSCODE_WORKSPACE } from '../hook/setting.js';
+import { IServerVersion } from '../mcp/client.dto.js';
+import { SaveTab } from './panel.dto.js';
+import { IConfig } from '../setting/setting.dto.js';
 
 const DEFAULT_TABS: SaveTab = {
     tabs: [],

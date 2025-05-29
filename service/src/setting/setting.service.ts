@@ -1,9 +1,9 @@
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import { VSCODE_WORKSPACE } from '../hook/setting';
-import { IConfig } from './setting.dto';
-import { llms } from '../hook/llm';
+import { VSCODE_WORKSPACE } from '../hook/setting.js';
+import { IConfig } from './setting.dto.js';
+import { llms } from '../hook/llm.js';
 
 function getConfigurationPath() {
     const homeDir = os.homedir();

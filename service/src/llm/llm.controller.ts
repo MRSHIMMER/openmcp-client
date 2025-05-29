@@ -1,8 +1,9 @@
-import { Controller, RequestClientType } from "../common";
-import { RequestData } from "../common/index.dto";
-import { PostMessageble } from "../hook/adapter";
-import { getClient } from "../mcp/connect.service";
-import { abortMessageService, streamingChatCompletion } from "./llm.service";
+import {  RequestClientType } from "../common/index.dto.js";
+import { Controller } from "../common/index.js";
+import { RequestData } from "../common/index.dto.js";
+import { PostMessageble } from "../hook/adapter.js";
+import { getClient } from "../mcp/connect.service.js";
+import { abortMessageService, streamingChatCompletion } from "./llm.service.js";
 
 export class LlmController {
 

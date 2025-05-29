@@ -28,7 +28,7 @@ export class LocalDB<T extends Entity> {
         const filename = path.join(dbPath, `${this.tableName}.db`);
         
         if (!dbConnections[filename]) {
-            dbConnections[filename] = new Datastore({
+            dbConnections[filename] = new Datastore.default({
                 filename,
                 autoload: true,
                 timestampData: true

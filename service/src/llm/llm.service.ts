@@ -1,10 +1,10 @@
-import { PostMessageble } from "../hook/adapter";
+import { PostMessageble } from "../hook/adapter.js";
 import { OpenAI } from "openai";
-import { MyMessageType, MyToolMessageType } from "./llm.dto";
-import { RestfulResponse } from "../common/index.dto";
-import { ocrDB } from "../hook/db";
-import type { ToolCallContent } from "../mcp/client.dto";
-import { ocrWorkerStorage } from "../mcp/ocr.service";
+import { MyMessageType, MyToolMessageType } from "./llm.dto.js";
+import { RestfulResponse } from "../common/index.dto.js";
+import { ocrDB } from "../hook/db.js";
+import type { ToolCallContent } from "../mcp/client.dto.js";
+import { ocrWorkerStorage } from "../mcp/ocr.service.js";
 
 export let currentStream: AsyncIterable<any> | null = null;
 

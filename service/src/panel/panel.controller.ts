@@ -1,9 +1,9 @@
-import { Controller } from "../common";
-import { PostMessageble } from "../hook/adapter";
-import { RequestData } from "../common/index.dto";
-import { getClient } from "../mcp/connect.service";
-import { systemPromptDB } from "../hook/db";
-import { loadTabSaveConfig, saveTabSaveConfig } from "./panel.service";
+import { Controller } from "../common/index.js";
+import { PostMessageble } from "../hook/adapter.js";
+import { RequestData } from "../common/index.dto.js";
+import { getClient } from "../mcp/connect.service.js";
+import { systemPromptDB } from "../hook/db.js";
+import { loadTabSaveConfig, saveTabSaveConfig } from "./panel.service.js";
 
 export class PanelController {
     @Controller('panel/save')
