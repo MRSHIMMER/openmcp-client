@@ -19,12 +19,12 @@ export class HelpProvider implements vscode.TreeDataProvider<SidebarItem> {
             new SidebarItem('入门', vscode.TreeItemCollapsibleState.None, {
                 command: 'vscode.open',
                 title: 'Open Guide',
-                arguments: [vscode.Uri.parse('https://zhuanlan.zhihu.com/p/1896301240826184013')]
+                arguments: [vscode.Uri.parse('https://kirigaya.cn/openmcp/plugin-tutorial/usage/connect-mcp.html·')]
             }, 'book'),
             new SidebarItem('阅读文档', vscode.TreeItemCollapsibleState.None, {
                 command: 'vscode.open',
                 title: 'Open Documentation',
-                arguments: [vscode.Uri.parse('https://document.kirigaya.cn/blogs/openmcp/main.html')]
+                arguments: [vscode.Uri.parse('https://kirigaya.cn/openmcp')]
             }, 'file-text'),
             new SidebarItem('报告问题', vscode.TreeItemCollapsibleState.None, {
                 command: 'vscode.open',
