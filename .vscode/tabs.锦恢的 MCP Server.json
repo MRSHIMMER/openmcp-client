@@ -1,0 +1,30 @@
+{
+  "clientId": "737fbd1e-bd1e-5fbd1ee197b-8fbd1ee197b1295-b1295bef",
+  "currentIndex": 0,
+  "tabs": [
+    {
+      "name": "工具",
+      "icon": "icon-tool",
+      "type": "blank",
+      "componentIndex": 2,
+      "storage": {
+        "activeNames": [
+          0
+        ],
+        "formData": {
+          "city_code": 101210101
+        },
+        "currentToolName": "get_weather_by_city_code",
+        "lastToolCallResponse": {
+          "content": [
+            {
+              "type": "text",
+              "text": "CityWeather(city_name_en='hangzhou', city_name_cn='杭州', city_code='101210101', temp='24.2', wd='', ws='', sd='64%', aqi='54', weather='阴')"
+            }
+          ],
+          "isError": false
+        }
+      }
+    }
+  ]
+}
