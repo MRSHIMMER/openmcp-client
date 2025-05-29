@@ -6,13 +6,17 @@ import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/
 import type { McpOptions, McpTransport, IServerVersion, ToolCallResponse, ToolCallContent } from './client.dto.js';
 import { PostMessageble } from "../hook/adapter.js";
 import { createOcrWorker, saveBase64ImageData } from "./ocr.service.js";
-
+import { OAuthClient } from "./auth.service.js";
+import { UnauthorizedError } from '@modelcontextprotocol/sdk/client/auth.js';
+import { OAuthClientProvider } from '@modelcontextprotocol/sdk/client/auth.js';
 // 增强的客户端类
 export class McpClient {
     private client: Client;
     private transport?: McpTransport;
     private options: McpOptions;
     private serverVersion: IServerVersion;
+    private oAuthClient: OAuthClient;
+    private oauthPovider?: OAuthClientProvider;
 
     constructor(options: McpOptions) {
         this.options = options;
@@ -31,14 +35,18 @@ export class McpClient {
                 }
             }
         );
+
+        this.oAuthClient = new OAuthClient();
     }
 
     // 连接方法
     public async connect(): Promise<void> {
-
+        if (!this.oauthPovider){
+            this.oauthPovider = await this.oAuthClient.getOAuthProvider();
+        }
         // 根据连接类型创建传输层
         switch (this.options.connectionType) {
-            case 'STDIO':                
+            case 'STDIO':
                 this.transport = new StdioClientTransport({
                     command: this.options.command || '',
                     args: this.options.args || [],
@@ -55,18 +63,21 @@ export class McpClient {
                 this.transport = new SSEClientTransport(
                     new URL(this.options.url),
                     {
-                        // authProvider:
+                        authProvider: this.oauthPovider
                     }
                 );
 
                 break;
-            
+
             case 'STREAMABLE_HTTP':
                 if (!this.options.url) {
                     throw new Error('URL is required for STREAMABLE_HTTP connection');
                 }
                 this.transport = new StreamableHTTPClientTransport(
-                    new URL(this.options.url)
+                    new URL(this.options.url),
+                    {
+                        authProvider:this.oauthPovider
+                    }
                 );
                 break;
             default:
@@ -75,10 +86,31 @@ export class McpClient {
 
         // 建立连接
         if (this.transport) {
-            await this.client.connect(this.transport);
-            console.log(`Connected to MCP server via ${this.options.connectionType}`);   
+            try {
+                console.log(`🔌 Connecting to MCP server via ${this.options.connectionType}...`);
+                await this.client.connect(this.transport);
+                console.log(`Connected to MCP server via ${this.options.connectionType}`);
+            } catch (error) {
+                if (error instanceof UnauthorizedError) {
+                    if (!(this.transport instanceof StreamableHTTPClientTransport) && !(this.transport instanceof SSEClientTransport)) {
+                        console.error('❌ OAuth is only supported for StreamableHTTP and SSE transports. Please use one of these transports for OAuth authentication.');
+                        return;
+                    }
+                    console.log('🔐 OAuth required - waiting for authorization...');
+                    const callbackPromise = this.oAuthClient.waitForOAuthCallback();
+                    const authCode = await callbackPromise;
+                    await this.transport.finishAuth(authCode);
+                    console.log('🔐 Authorization code received:', authCode);
+                    console.log('🔌 Reconnecting with authenticated transport...');
+                    await this.connect(); // 递归重试
+                } else {
+                    console.error('❌ Connection failed with non-auth error:', error);
+                    throw error;
+                }
+            }
         }
     }
+
 
     public getServerVersion() {
         if (this.serverVersion) {
@@ -93,7 +125,7 @@ export class McpClient {
     // 断开连接
     public async disconnect(): Promise<void> {
         await this.client.close();
-        
+
         console.log('Disconnected from MCP server');
     }
 
@@ -103,7 +135,7 @@ export class McpClient {
     }
 
     // 获取提示
-    public async getPrompt(name: string, args: Record<string, any> = {}) {        
+    public async getPrompt(name: string, args: Record<string, any> = {}) {
         return await this.client.getPrompt({
             name, arguments: args
         });
@@ -138,7 +170,7 @@ export class McpClient {
         console.log('callToolOption', callToolOption);
         const res = await this.client.callTool(methodArgs, undefined, callToolOption);
         console.log('callTool res', res);
-        
+
         return res;
     }
 }
@@ -157,10 +189,10 @@ async function handleImage(
     if (content.data && content.mimeType) {
         const filename = saveBase64ImageData(content.data, content.mimeType);
         content.data = filename;
-    
+
         // 加入工作线程
         const worker = createOcrWorker(filename, webview);
-    
+
         content._meta = {
             ocr: true,
             workerId: worker.id
@@ -191,7 +223,7 @@ export function postProcessMcpToolcallResponse(
             case 'image':
                 handleImage(content, webview);
                 break;
-        
+
             default:
                 break;
         }
