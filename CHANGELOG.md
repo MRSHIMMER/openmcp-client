@@ -1,5 +1,13 @@
 # Change Log
 
+## [main] 0.1.2
+- 新特性：用户发送的信息增加「重新发送」按钮。
+- 支持特性 issue#17 「关于左侧添加mcp服务器操作优化问题」：增加强制聚焦功能，用户创建mcp服务器连接的过程中不会让输入框失去焦点。
+- 更新 MCP & OpenAI 协议内容。
+- 解决 issue#21 vscode插件界面bug，在高度有限情况下无法通过滚动完全显示连接按钮。
+- 解决 issue#21 最后一个标签页关闭并恢复默认页面。
+- 解决 issue#22 工具模块UI异常，现在 openmcp 支持解析 pydantic 进行 typing 的 python mcp 了。
+
 ## [main] 0.1.1
 - 修复 SSH 连接 Ubuntu 的情况下的部分 bug
 - 修复 python 项目点击 openmcp 进行连接时，初始化参数错误的问题

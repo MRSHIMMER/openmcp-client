@@ -10,6 +10,7 @@ export interface InputSchema {
 	properties: Record<string, SchemaProperty>;
 	required?: string[];
 	title?: string;
+	$defs?: any;
 }
 
 export interface Argument {
@@ -40,6 +41,7 @@ export interface ToolItem {
 	name: string;
 	description: string;
 	inputSchema: InputSchema;
+	anyOf?: any;
 }
 export interface ToolsListResponse {
 	tools: ToolItem[]

@@ -2,7 +2,7 @@
     "name": "openmcp",
     "displayName": "OpenMCP",
     "description": "An all in one MCP Client/TestTool",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "publisher": "kirigaya",
     "author": {
         "name": "kirigaya",
@@ -233,11 +233,11 @@
         "build:task-loop": "webpack --config webpack/webpack.task-loop.js"
     },
     "dependencies": {
-        "@modelcontextprotocol/sdk": "^1.10.2",
+        "@modelcontextprotocol/sdk": "^1.12.1",
         "@seald-io/nedb": "^4.1.1",
         "axios": "^1.7.7",
         "bson": "^6.8.0",
-        "openai": "^4.93.0",
+        "openai": "^5.0.1",
         "pako": "^2.1.0",
         "tesseract.js": "^6.0.1",
         "uuid": "^11.1.0",

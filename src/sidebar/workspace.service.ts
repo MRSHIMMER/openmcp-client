@@ -59,8 +59,10 @@ export async function validateAndGetCommandPath(command: string, cwd?: string): 
 
 export async function acquireUserCustomConnection(): Promise<McpOptions[]> {
     // 让用户选择连接类型
-    const connectionType = await vscode.window.showQuickPick(['STDIO', 'SSE'], {
-        placeHolder: '请选择连接类型'
+    const connectionType = await vscode.window.showQuickPick(['STDIO', 'SSE', 'STREAMABLE_HTTP'], {
+        placeHolder: '请选择连接类型',
+        canPickMany: false,
+        ignoreFocusOut: true,
     });
 
     if (!connectionType) {

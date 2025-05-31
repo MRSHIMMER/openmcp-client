@@ -58,7 +58,8 @@ export async function acquireInstalledConnection(): Promise<McpOptions[]> {
     // 让用户选择连接类型
     const connectionType = await vscode.window.showQuickPick(['STDIO', 'SSE', 'STREAMABLE_HTTP'], {
         placeHolder: '请选择连接类型',
-        canPickMany: false
+        canPickMany: false,
+        ignoreFocusOut: true,
     });
 
     if (!connectionType) {

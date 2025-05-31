@@ -1,5 +1,5 @@
 <template>
-	<el-scrollbar>
+	<el-scrollbar height="98%">
 		<div class="connection-container" @dragover.prevent="handleDragOver" @drop.prevent="handleDrop">
 			<div v-if="isDraging" class="drag-mask">
 				<span class="iconfont icon-connect"></span>
@@ -24,7 +24,6 @@
 			</div>
 		</div>
 	</el-scrollbar>
-
 </template>
 
 <script setup lang="ts">
@@ -126,6 +125,7 @@ function handleDrop(event: DragEvent) {
 <style>
 .connection-container {
 	display: flex;
+	max-height: 85vh;
 }
 
 
@@ -133,7 +133,6 @@ function handleDrop(event: DragEvent) {
 	display: flex;
 	flex-direction: column;
 	width: 45%;
-	max-height: 85vh;
 	max-width: 500px;
 	min-width: 350px;
 	padding: 5px 20px;
@@ -143,7 +142,6 @@ function handleDrop(event: DragEvent) {
 	display: flex;
 	flex-direction: column;
 	width: 55%;
-	max-height: 85vh;
 	min-width: 450px;
 	padding: 5px 20px;
 }

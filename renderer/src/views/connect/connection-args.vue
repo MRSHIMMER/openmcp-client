@@ -121,4 +121,9 @@ const validateForm = async () => {
     border-radius: 4px;
     margin-bottom: 16px;
 }
+
+.connection-option .el-form-item {
+    margin-bottom: 0;
+}
+
 </style>

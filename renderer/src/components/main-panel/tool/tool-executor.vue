@@ -90,16 +90,23 @@ console.log(tabStorage.formData);
 const formRef = ref<FormInstance>();
 const loading = ref(false);
 
+
+
 const currentTool = computed(() => {
     for (const client of mcpClientAdapter.clients) {
         const tool = client.tools?.get(tabStorage.currentToolName);
-        if (tool) return tool;
+        if (tool) {            
+            console.log(tool);
+            
+            return tool;
+        }
     }
 });
 
 
 const formRules = computed<FormRules>(() => {
     const rules: FormRules = {};
+    
     if (!currentTool.value?.inputSchema?.properties) return rules;
     
     Object.entries(currentTool.value.inputSchema.properties).forEach(([name, property]) => {
