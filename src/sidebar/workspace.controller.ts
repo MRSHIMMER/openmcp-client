@@ -51,7 +51,7 @@ export class McpWorkspaceConnectProvider implements vscode.TreeDataProvider<Conn
 
         const item = await acquireUserCustomConnection();
 
-        if (!item) {
+        if (item.length === 0) {
             return;
         }
 
