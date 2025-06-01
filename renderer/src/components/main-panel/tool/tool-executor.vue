@@ -128,9 +128,7 @@ const initFormData = () => {
 
     if (!currentTool.value?.inputSchema?.properties) return;
 
-    const newSchemaDataForm: Record<string, number | boolean | string | object> = {};
-
-    console.log(currentTool.value.inputSchema.properties);
+    const newSchemaDataForm: Record<string, number | boolean | string | object> = {};    
     
     Object.entries(currentTool.value.inputSchema.properties).forEach(([name, property]) => {
         newSchemaDataForm[name] = getDefaultValue(property);

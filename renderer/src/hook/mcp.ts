@@ -27,7 +27,7 @@ export function normaliseJavascriptType(type: string) {
         case 'string':
             return 'string';
         default:
-            return 'string';
+            return type;
     }
 }
 
