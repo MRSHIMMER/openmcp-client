@@ -222,3 +222,9 @@ a {
 .el-dropdown-menu__item:hover {
     background-color: var(--background) !important;
 }
+
+/* codemirror */
+.ͼo,
+.ͼo .cm-gutters {
+    background-color: transparent !important;
+}

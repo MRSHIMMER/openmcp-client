@@ -38,6 +38,7 @@
                     <k-input-object
                         v-else-if="property.type === 'object'"
                         v-model="tabStorage.formData[name]"
+                        :schema="property"
                         :placeholder="property.description || t('enter') + ' ' + (property.title || name)"
                     />
                 </el-form-item>
@@ -84,13 +85,8 @@ if (!tabStorage.formData) {
     tabStorage.formData = {};
 }
 
-console.log(tabStorage.formData);
-
-
 const formRef = ref<FormInstance>();
 const loading = ref(false);
-
-
 
 const currentTool = computed(() => {
     for (const client of mcpClientAdapter.clients) {

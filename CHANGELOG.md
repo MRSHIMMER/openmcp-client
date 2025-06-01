@@ -7,6 +7,7 @@
 - 解决 issue#21 vscode插件界面bug，在高度有限情况下无法通过滚动完全显示连接按钮。
 - 解决 issue#21 最后一个标签页关闭并恢复默认页面。
 - 解决 issue#22 工具模块UI异常，现在 openmcp 支持解析 pydantic 进行 typing 的 python mcp 了。
+- 优化对象输入框，现在对象输入框具有语法高亮和受限度的自动补全了。
 
 ## [main] 0.1.1
 - 修复 SSH 连接 Ubuntu 的情况下的部分 bug
