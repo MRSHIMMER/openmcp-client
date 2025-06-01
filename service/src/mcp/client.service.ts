@@ -68,6 +68,8 @@ export class McpClient {
                 this.transport = new StreamableHTTPClientTransport(
                     new URL(this.options.url)
                 );
+
+                break;
             default:
                 throw new Error(`Unsupported connection type: ${this.options.connectionType}`);
         }
