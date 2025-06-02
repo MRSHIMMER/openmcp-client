@@ -1,4 +1,5 @@
-import axios, { AxiosResponse } from "axios";
+import axios, { AxiosProxyConfig } from "axios";
+import { HttpsProxyAgent } from 'https-proxy-agent';
 
 interface FetchOptions {
     method?: string;
@@ -16,7 +17,7 @@ interface FetchResponse {
     redirected: boolean;
     type: string;
     body: any;
-    
+
     json(): Promise<any>;
     text(): Promise<string>;
     arrayBuffer(): Promise<ArrayBuffer>;
@@ -24,7 +25,7 @@ interface FetchResponse {
 }
 
 interface ReadableStreamDefaultReader {
-    read(): Promise<{done: boolean, value?: any}>;
+    read(): Promise<{ done: boolean, value?: any }>;
     cancel(): Promise<void>;
     releaseLock(): void;
     get closed(): boolean;
@@ -185,8 +186,18 @@ function adaptResponse(axiosResponse: FetchOptions): FetchResponse {
 /**
  * @description 主函数 - 用 axios 实现 fetch
  */
-export async function axiosFetch(url: any, options: any): Promise<any> {
-    const axiosConfig = adaptRequestOptions(url, options);
+export async function axiosFetch(input: any, init: any, requestOption: { proxyServer?: string } = {}): Promise<any> {
+    const axiosConfig = adaptRequestOptions(input, init);
+
+    const {
+        proxyServer = ''
+    } = requestOption;
+
+    if (proxyServer) {
+        const proxyAgent = new HttpsProxyAgent(proxyServer);
+        axiosConfig.httpsAgent = proxyAgent;
+        axiosConfig.httpAgent = proxyAgent;
+    }
 
     try {
         const response = await axios(axiosConfig) as FetchOptions;

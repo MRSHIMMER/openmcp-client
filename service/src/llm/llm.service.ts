@@ -20,7 +20,8 @@ export async function streamingChatCompletion(
         messages,
         temperature,
         tools = [],
-        parallelToolCalls = true
+        parallelToolCalls = true,
+        proxyServer = ''
     } = data;
 
     const client = new OpenAI({
@@ -28,7 +29,7 @@ export async function streamingChatCompletion(
         apiKey,
         fetch: async (input: string | URL | Request, init?: RequestInit) => {
 
-            console.log('openai fetch begin');
+            console.log('openai fetch begin, proxyServer:', proxyServer);
             
             if (model.startsWith('gemini')) {
                 // 该死的 google
@@ -38,11 +39,8 @@ export async function streamingChatCompletion(
                         'Authorization': `Bearer ${apiKey}`
                     }
                 }
-
-                console.log('input:', input);
-                console.log('init:', init);
                 
-                return await axiosFetch(input, init);
+                return await axiosFetch(input, init, { proxyServer });
             } else {
                 return await fetch(input, init);
             }

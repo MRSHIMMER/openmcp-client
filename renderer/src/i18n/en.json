@@ -156,5 +156,6 @@
     "error": "Error",
     "feedback": "Feedback",
     "waiting-mcp-server": "Waiting for MCP server response",
-    "parallel-tool-calls": "Allow the model to call multiple tools in a single reply"
+    "parallel-tool-calls": "Allow the model to call multiple tools in a single reply",
+    "proxy-server": "Proxy server"
 }

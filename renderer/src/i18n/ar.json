@@ -156,5 +156,6 @@
     "error": "خطأ",
     "feedback": "تعليقات",
     "waiting-mcp-server": "في انتظار استجابة خادم MCP",
-    "parallel-tool-calls": "السماح للنموذج باستدعاء أدوات متعددة في رد واحد"
+    "parallel-tool-calls": "السماح للنموذج باستدعاء أدوات متعددة في رد واحد",
+    "proxy-server": "خادم وكيل"
 }

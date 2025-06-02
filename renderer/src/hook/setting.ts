@@ -20,6 +20,7 @@ export async function loadSetting() {
         llmManager.currentModelIndex = persistConfig.MODEL_INDEX || 0;
         I18n.global.locale.value = persistConfig.LANG || 'zh';
         mcpSetting.timeout = persistConfig.MCP_TIMEOUT_SEC || 60;
+        mcpSetting.proxyServer = persistConfig.PROXY_SERVER || '';
 
         persistConfig.LLM_INFO.forEach((element: any) => {
             llms.push(element);
@@ -51,7 +52,8 @@ export function saveSetting(saveHandler?: () => void) {
         MODEL_INDEX: llmManager.currentModelIndex,
         LLM_INFO: JSON.parse(JSON.stringify(llms)),
         LANG: I18n.global.locale.value,
-        MCP_TIMEOUT_SEC: mcpSetting.timeout
+        MCP_TIMEOUT_SEC: mcpSetting.timeout,
+        PROXY_SERVER: mcpSetting.proxyServer
     };
 
     bridge.addCommandListener('setting/save', data => {

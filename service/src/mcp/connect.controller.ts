@@ -15,9 +15,6 @@ export class ConnectController {
     async lookupEnvVar(data: RequestData, webview: PostMessageble) {
         const { keys } = data;
         const values = keys.map((key: string) => {
-            // TODO: 在 Windows 上测试
-            console.log(key);
-            console.log(process.env);
             
             if (process.platform === 'win32') {
                 switch (key) {
