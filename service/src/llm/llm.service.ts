@@ -5,6 +5,7 @@ import { RestfulResponse } from "../common/index.dto";
 import { ocrDB } from "../hook/db";
 import type { ToolCallContent } from "../mcp/client.dto";
 import { ocrWorkerStorage } from "../mcp/ocr.service";
+import { axiosFetch } from "../hook/axios-fetch";
 
 export let currentStream: AsyncIterable<any> | null = null;
 
@@ -12,33 +13,54 @@ export async function streamingChatCompletion(
     data: any,
     webview: PostMessageble
 ) {
-    let {
-            baseURL,
-            apiKey,
-            model,
-            messages,
-            temperature,
-            tools = [],
-            parallelToolCalls = true
-        } = data;
+    const {
+        baseURL,
+        apiKey,
+        model,
+        messages,
+        temperature,
+        tools = [],
+        parallelToolCalls = true
+    } = data;
 
     const client = new OpenAI({
         baseURL,
-        apiKey
+        apiKey,
+        fetch: async (input: string | URL | Request, init?: RequestInit) => {
+
+            console.log('openai fetch begin');
+            
+            if (model.startsWith('gemini')) {
+                // 该死的 google
+                if (init) {
+                    init.headers = {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    }
+                }
+
+                console.log('input:', input);
+                console.log('init:', init);
+                
+                return await axiosFetch(input, init);
+            } else {
+                return await fetch(input, init);
+            }
+        }
     });
 
-    if (tools.length === 0) {
-        tools = undefined;
-    }
-    
+    const seriableTools = (tools.length === 0) ? undefined: tools;
+    const seriableParallelToolCalls = (tools.length === 0)? 
+        undefined: model.startsWith('gemini') ? undefined : parallelToolCalls;
+     
     await postProcessMessages(messages);
     
     const stream = await client.chat.completions.create({
         model,
         messages,
         temperature,
-        tools,
-        parallel_tool_calls: parallelToolCalls,
+        tools: seriableTools,
+        parallel_tool_calls: seriableParallelToolCalls,
         stream: true
     });
 

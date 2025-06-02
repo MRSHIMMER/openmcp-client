@@ -1,5 +1,9 @@
 # Change Log
 
+## [main] 0.1.4
+- 支持 Google Gemini 模型。
+- 支持 Grok3 的 tool call 流式传输。
+
 ## [main] 0.1.3
 - 解决 issue#21 点击按钮后的发送文本后不会清空当前的输入框。
 - 修复暂停按键在多轮对话后消失的问题。
