@@ -176,9 +176,10 @@ export class MacroColor {
         // 额外支持 trae 的默认主题
         const sidebarColorString = this.rootStyles.getPropertyValue('--sidebar');
         if (sidebarColorString === backgroundColorString) {
+            // trae 默认主题的特点：sidebarColorString 和 backgroundColorString 一样
+            // 把 默认主题的特点：sidebarColorString 的颜色加深一些
             const newSidebarColor = this.theme === 'dark' ? '#252a38' : '#edeff2';
-            document.documentElement.style.setProperty('--sidebar', newSidebarColor);
-            pinkLog('修改 sidebar 颜色为' + newSidebarColor);
+            document.documentElement.style.setProperty('--sidebar', 'var(--vscode-icube-colorBg2)');
         }
     }
 

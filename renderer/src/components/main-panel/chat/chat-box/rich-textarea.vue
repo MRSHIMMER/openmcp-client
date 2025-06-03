@@ -117,6 +117,12 @@ function extractTextFromCollection(collection: HTMLCollection) {
 
 const isComposing = ref(false);
 
+defineExpose({
+    editor,
+    handleBackspace,
+    handleInput,
+});
+
 function handleKeydown(event: KeyboardEvent) {
     
     if (event.key === 'Enter' && !event.shiftKey && !isComposing.value) {

@@ -60,7 +60,7 @@ export function createTab(type: string, index: number): Tab {
 			if (customName !== null) {
 				return customName;
 			}
-			return t('blank-test') + ` ${index}`;
+			return t('blank-test');
 		},
 		set name(value: string) {
 			customName = value; // 允许外部修改 name
@@ -85,8 +85,6 @@ export function addNewTab() {
 
 
 export function closeTab(index: number) {
-	if (tabs.content.length <= 1) return; // 至少保留一个标签页
-
 	tabs.content.splice(index, 1);
 
 	console.log(tabs.content);
@@ -94,5 +92,9 @@ export function closeTab(index: number) {
 	// 调整活动标签索引
 	if (tabs.activeIndex >= index) {
 		tabs.activeIndex = Math.max(0, tabs.activeIndex - 1);
+	}
+
+	if (tabs.content.length === 0) {
+		addNewTab();	
 	}
 }

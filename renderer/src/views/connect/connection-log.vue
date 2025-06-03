@@ -53,7 +53,7 @@ function clearLogs() {
 <style>
 
 .connection-log {
-	height: 90vh;
+	height: 100%;
     display: flex;
     flex-direction: column;
     gap: 12px;

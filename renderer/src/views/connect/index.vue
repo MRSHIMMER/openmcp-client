@@ -104,18 +104,15 @@ function deleteServer(index: number) {
 	display: flex;
 	align-items: center;
 	width: 150px;
-	height: 50px;
 	border-right: 1px solid var(--border-color);
-	padding: 15px 25px;
+	padding: 0 25px;
 }
 
 .server-name {
-	font-size: 15px;
+	font-size: 12px;
 }
 
 .server-item {
-	padding: 10px;
-	margin-bottom: 5px;
 	cursor: pointer;
 	border-radius: 4px;
 	display: flex;

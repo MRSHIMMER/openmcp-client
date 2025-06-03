@@ -14,7 +14,8 @@ export enum MessageState {
     ToolCall = 'tool call failed',
     None = 'none',
     Success = 'success',
-    ParseJsonError = 'parse json error'
+    ParseJsonError = 'parse json error',
+    NoToolFunction = 'no tool function',
 }
 
 export interface IExtraInfo {
@@ -69,15 +70,7 @@ export interface ChatStorage {
     settings: ChatSetting
 }
 
-export interface ToolCall {
-    id?: string;
-    index?: number;
-    type: string;
-    function: {
-        name: string;
-        arguments: string;
-    }
-}
+export type ToolCall = OpenAI.Chat.Completions.ChatCompletionChunk.Choice.Delta.ToolCall;
 
 interface PromptTextItem {
     type: 'prompt'

@@ -79,7 +79,6 @@ export class PanelController {
 
     @Controller('system-prompts/load')
     async loadSystemPrompts(data: RequestData, webview: PostMessageble) {
-        const client = getClient(data.clientId);
         const queryPrompts = await systemPromptDB.findAll();
         const prompts = [];
         for (const prompt of queryPrompts) {

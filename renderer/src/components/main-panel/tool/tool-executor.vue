@@ -38,6 +38,7 @@
                     <k-input-object
                         v-else-if="property.type === 'object'"
                         v-model="tabStorage.formData[name]"
+                        :schema="property"
                         :placeholder="property.description || t('enter') + ' ' + (property.title || name)"
                     />
                 </el-form-item>
@@ -84,22 +85,24 @@ if (!tabStorage.formData) {
     tabStorage.formData = {};
 }
 
-console.log(tabStorage.formData);
-
-
 const formRef = ref<FormInstance>();
 const loading = ref(false);
 
 const currentTool = computed(() => {
     for (const client of mcpClientAdapter.clients) {
         const tool = client.tools?.get(tabStorage.currentToolName);
-        if (tool) return tool;
+        if (tool) {            
+            console.log(tool);
+            
+            return tool;
+        }
     }
 });
 
 
 const formRules = computed<FormRules>(() => {
     const rules: FormRules = {};
+    
     if (!currentTool.value?.inputSchema?.properties) return rules;
     
     Object.entries(currentTool.value.inputSchema.properties).forEach(([name, property]) => {
@@ -125,9 +128,7 @@ const initFormData = () => {
 
     if (!currentTool.value?.inputSchema?.properties) return;
 
-    const newSchemaDataForm: Record<string, number | boolean | string | object> = {};
-
-    console.log(currentTool.value.inputSchema.properties);
+    const newSchemaDataForm: Record<string, number | boolean | string | object> = {};    
     
     Object.entries(currentTool.value.inputSchema.properties).forEach(([name, property]) => {
         newSchemaDataForm[name] = getDefaultValue(property);

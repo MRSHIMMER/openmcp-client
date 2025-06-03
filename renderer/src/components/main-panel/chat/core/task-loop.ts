@@ -3,15 +3,16 @@ import { ref, type Ref } from "vue";
 import { type ToolCall, type ChatStorage, getToolSchema, MessageState } from "../chat-box/chat";
 import { useMessageBridge, MessageBridge, createMessageBridge } from "@/api/message-bridge";
 import type { OpenAI } from 'openai';
-import { llmManager, llms } from "@/views/setting/llm";
+import { llmManager, llms, type BasicLlmDescription } from "@/views/setting/llm";
 import { pinkLog, redLog } from "@/views/setting/util";
 import { ElMessage } from "element-plus";
-import { handleToolCalls, type ToolCallResult } from "./handle-tool-calls";
+import { getToolCallIndexAdapter, handleToolCalls, type IToolCallIndex, type ToolCallResult } from "./handle-tool-calls";
 import { getPlatform } from "@/api/platform";
 import { getSystemPrompt } from "../chat-box/options/system-prompt";
+import { mcpSetting } from "@/hook/mcp";
 
 export type ChatCompletionChunk = OpenAI.Chat.Completions.ChatCompletionChunk;
-export type ChatCompletionCreateParamsBase = OpenAI.Chat.Completions.ChatCompletionCreateParams & { id?: string };
+export type ChatCompletionCreateParamsBase = OpenAI.Chat.Completions.ChatCompletionCreateParams & { id?: string, proxyServer?: string };
 export interface TaskLoopOptions {
     maxEpochs?: number;
     maxJsonParseRetry?: number;
@@ -44,7 +45,7 @@ export class TaskLoop {
     private onToolCalled: (toolCallResult: ToolCallResult) => ToolCallResult = toolCallResult => toolCallResult;
     private onEpoch: () => void = () => {};
     private completionUsage: ChatCompletionChunk['usage'] | undefined;
-    private llmConfig: any;
+    private llmConfig?: BasicLlmDescription;
 
     constructor(
         private readonly taskOptions: TaskLoopOptions = { maxEpochs: 20, maxJsonParseRetry: 3, adapter: undefined },
@@ -75,17 +76,23 @@ export class TaskLoop {
         }
     }
 
-    private handleChunkDeltaToolCalls(chunk: ChatCompletionChunk) {
+    private handleChunkDeltaToolCalls(chunk: ChatCompletionChunk, toolcallIndexAdapter: (toolCall: ToolCall) => IToolCallIndex) {
         const toolCall = chunk.choices[0]?.delta?.tool_calls?.[0];
         
         if (toolCall) {
-            const currentCall = this.streamingToolCalls.value[toolCall.index];
+            if (toolCall.index === undefined || toolCall.index === null) {
+                console.warn('tool_call.index is undefined or null');
+            }
+
+
+            const index = toolcallIndexAdapter(toolCall);
+            const currentCall = this.streamingToolCalls.value[index];
 
             if (currentCall === undefined) {
                 // 新的工具调用开始
-                this.streamingToolCalls.value[toolCall.index] = {
+                this.streamingToolCalls.value[index] = {
                     id: toolCall.id,
-                    index: toolCall.index,
+                    index,
                     type: 'function',
                     function: {
                         name: toolCall.function?.name || '',
@@ -99,10 +106,10 @@ export class TaskLoop {
                         currentCall.id = toolCall.id;
                     }
                     if (toolCall.function?.name) {
-                        currentCall.function.name = toolCall.function.name;
+                        currentCall.function!.name = toolCall.function.name;
                     }
                     if (toolCall.function?.arguments) {
-                        currentCall.function.arguments += toolCall.function.arguments;                        
+                        currentCall.function!.arguments += toolCall.function.arguments;                        
                     }
                 }
             }
@@ -117,16 +124,18 @@ export class TaskLoop {
         }
     }
 
-    private doConversation(chatData: ChatCompletionCreateParamsBase) {
+    private doConversation(chatData: ChatCompletionCreateParamsBase, toolcallIndexAdapter: (toolCall: ToolCall) => IToolCallIndex) {
 
         return new Promise<IDoConversationResult>((resolve, reject) => {
             const chunkHandler = this.bridge.addCommandListener('llm/chat/completions/chunk', data => {
                 // data.code 一定为 200，否则不会走这个 route
                 const { chunk } = data.msg as { chunk: ChatCompletionChunk };
 
+                console.log(chunk);
+
                 // 处理增量的 content 和 tool_calls
                 this.handleChunkDeltaContent(chunk);
-                this.handleChunkDeltaToolCalls(chunk);
+                this.handleChunkDeltaToolCalls(chunk, toolcallIndexAdapter);
                 this.handleChunkUsage(chunk);
                 
                 this.onChunk(chunk);
@@ -181,6 +190,7 @@ export class TaskLoop {
         const temperature = tabStorage.settings.temperature;
         const tools = getToolSchema(tabStorage.settings.enableTools);
         const parallelToolCalls = tabStorage.settings.parallelToolCalls;
+        const proxyServer = mcpSetting.proxyServer || '';
 
         const userMessages = [];
 
@@ -211,6 +221,7 @@ export class TaskLoop {
             tools,
             parallelToolCalls,
             messages: userMessages,
+            proxyServer
         } as ChatCompletionCreateParamsBase;
 
         return chatData;
@@ -342,9 +353,11 @@ export class TaskLoop {
             }
 
             this.currentChatId = chatData.id!;
+            const llm = this.getLlmConfig();
+            const toolcallIndexAdapter = getToolCallIndexAdapter(llm);
 
             // 发送请求
-            const doConverationResult = await this.doConversation(chatData);
+            const doConverationResult = await this.doConversation(chatData, toolcallIndexAdapter);
 
             console.log('[doConverationResult] Response');
             console.log(doConverationResult);
@@ -395,8 +408,8 @@ export class TaskLoop {
                     } else if (toolCallResult.state === MessageState.Success) {
                         tabStorage.messages.push({
                             role: 'tool',
-                            index: toolCall.index || 0,
-                            tool_call_id: toolCall.id || toolCall.function.name,
+                            index: toolcallIndexAdapter(toolCall),
+                            tool_call_id: toolCall.id || '',
                             content: toolCallResult.content,
                             extraInfo: {
                                 created: Date.now(),
@@ -409,8 +422,8 @@ export class TaskLoop {
     
                         tabStorage.messages.push({
                             role: 'tool',
-                            index: toolCall.index || 0,
-                            tool_call_id: toolCall.id || toolCall.function.name,
+                            index: toolcallIndexAdapter(toolCall),
+                            tool_call_id: toolCall.id || toolCall.function!.name,
                             content: toolCallResult.content,
                             extraInfo: {
                                 created: Date.now(),

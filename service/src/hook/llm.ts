@@ -48,6 +48,30 @@ export const llms = [
 		userModel: 'doubao-1.5-pro-32k'
 	},
 	{
+		id: 'gemini',
+		name: 'Gemini',
+		baseUrl: 'https://generativelanguage.googleapis.com/v1beta/openai/',
+		models: ['gemini-2.0-flash', 'gemini-2.5-flash-preview-05-20', 'gemini-2.5-pro-preview-05-06'],
+		provider: 'google',
+		isOpenAICompatible: true,
+		description: 'Google Gemini',
+		website: 'https://ai.google.dev/gemini-api/docs/models?hl=zh-cn%2F%2Fgemini-2.5-pro-preview-05-06#gemini-2.5-pro-preview-05-06',
+		userToken: '',
+		userModel: 'gemini-2.0-flash'
+	},
+	{
+		id: 'grok',
+		name: 'Grok',
+		baseUrl: 'https://api.x.ai/v1',
+		models: ['grok-3', 'grok-3-fast', 'grok-3-mini', 'grok-3-mini-fast'],
+		provider: 'xai',
+		isOpenAICompatible: true,
+		description: 'xAI Grok',
+		website: 'https://docs.x.ai/docs/models',
+		userToken: '',
+		userModel: 'grok-3-mini'
+	},
+	{
 		id: 'mistral',
 		name: 'Mistral',
 		baseUrl: 'https://api.mistral.ai/v1',
@@ -108,3 +132,5 @@ export const llms = [
 		userModel: 'moonshot-v1-8k'
 	}
 ];
+
+

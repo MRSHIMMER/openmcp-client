@@ -30,6 +30,66 @@ function prettifyMapKeys(keys: MapIterator<string>) {
     return result.join('\n');
 }
 
+function _processSchemaNode(node: any, defs: Record<string, any> = {}): any {    
+    // Handle $ref references
+    if ('$ref' in node) {
+        const refPath = node['$ref'];
+        if (refPath.startsWith('#/$defs/')) {
+            const refName = refPath.split('/').pop();
+            if (refName && refName in defs) {
+                // Process the referenced definition
+                return _processSchemaNode(defs[refName], defs);
+            }
+        }
+    }
+
+    // Start with a new schema object
+    const result: Record<string, any> = {};
+
+    // Copy the basic properties
+    if ('type' in node) {
+        result.type = node.type;
+    }
+
+    // Handle anyOf (often used for optional fields with None)
+    if ('anyOf' in node) {
+        const nonNullTypes = node.anyOf.filter((t: any) => t?.type !== 'null');
+        if (nonNullTypes.length > 0) {
+            // Process the first non-null type
+            const processed = _processSchemaNode(nonNullTypes[0], defs);
+            Object.assign(result, processed);
+        }
+    }
+
+    // Handle description
+    if ('description' in node) {
+        result.description = node.description;
+    }
+
+    // Handle object properties recursively
+    if (node?.type === 'object' && 'properties' in node) {
+        result.type = 'object';
+        result.properties = {};
+
+        // Process each property
+        for (const [propName, propSchema] of Object.entries(node.properties)) {
+            result.properties[propName] = _processSchemaNode(propSchema as any, defs);
+        }
+
+        // Add required fields if present
+        if ('required' in node) {
+            result.required = node.required;
+        }
+    }
+
+    // Handle arrays
+    if (node?.type === 'array' && 'items' in node) {
+        result.type = 'array';
+        result.items = _processSchemaNode(node.items, defs);
+    }
+
+    return result;
+}
 
 export class McpClient {
     // 连接入参
@@ -139,6 +199,11 @@ export class McpClient {
 
         this.tools = new Map<string, ToolItem>();
         msg.tools.forEach(tool => {
+            const standardSchema = _processSchemaNode(tool.inputSchema, tool.inputSchema.$defs || {});
+            console.log(standardSchema);
+            
+            tool.inputSchema = standardSchema;
+            
             this.tools!.set(tool.name, tool);
         });
 

@@ -27,6 +27,20 @@
 					@change="safeSaveSetting" />
 			</div>
 		</div>
+
+		<div class="setting-option">
+			<span>
+				<span class="iconfont icon-proxy"></span>
+				<span class="option-title">{{ t('proxy-server') }}</span>
+			</span>
+			<div style="width: 200px;">
+				<el-input
+					v-model="mcpSetting.proxyServer"
+					:placeholder="'http://localhost:7890'"
+					@input="safeSaveSetting"
+				/>
+			</div>
+		</div>
 	</div>
 </template>
 

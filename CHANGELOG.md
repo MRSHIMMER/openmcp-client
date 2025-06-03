@@ -1,5 +1,30 @@
 # Change Log
 
+## [main] 0.1.5
+- 修复 gemini 获取模型列表时存在 models 前缀的问题
+- 增加 web api 功能
+
+## [main] 0.1.4
+- 重新实现 openai 协议的底层网络实现，从而支持 Google Gemini 全系列模型。
+- 实现 index 适配器，从而支持 Grok3 全系列模型。
+- 解决 issue#23 插件创建连接时报错“Cannot read properties of undefined (reading 'name')”
+- 在填写 apikey 和 baseurl 的情况下，现在可以一键刷新模型列表，避免用户手动输入模型列表。
+
+## [main] 0.1.3
+- 解决 issue#21 点击按钮后的发送文本后不会清空当前的输入框。
+- 修复暂停按键在多轮对话后消失的问题。
+- 修复 issue#25 无法连接 streamable http 的问题。
+
+## [main] 0.1.2
+- 新特性：用户发送的信息增加「重新发送」按钮。
+- 支持特性 issue#17 「关于左侧添加mcp服务器操作优化问题」：增加强制聚焦功能，用户创建mcp服务器连接的过程中不会让输入框失去焦点。
+- 更新 MCP & OpenAI 协议内容。
+- 解决 issue#21 vscode插件界面bug，在高度有限情况下无法通过滚动完全显示连接按钮。
+- 解决 issue#21 最后一个标签页关闭并恢复默认页面。
+- 解决 issue#22 工具模块UI异常，现在 openmcp 支持解析 pydantic 进行 typing 的 python mcp 了。
+- 优化对象输入框，现在对象输入框具有语法高亮和受限度的自动补全了。
+- 对于 trae 的所有默认主题进行额外支持。
+
 ## [main] 0.1.1
 - 修复 SSH 连接 Ubuntu 的情况下的部分 bug
 - 修复 python 项目点击 openmcp 进行连接时，初始化参数错误的问题

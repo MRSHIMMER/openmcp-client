@@ -7,6 +7,7 @@ import { VSCodeWebViewLike } from './hook/adapter.js';
 import path from 'node:path';
 import * as fs from 'node:fs';
 import { setRunningCWD } from './hook/setting.js';
+import axios from 'axios';
 
 export interface VSCodeMessage {
     command: string;

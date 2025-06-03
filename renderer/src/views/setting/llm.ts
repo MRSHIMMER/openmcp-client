@@ -6,11 +6,24 @@ import type { ToolCall } from '@/components/main-panel/chat/chat-box/chat';
 import I18n from '@/i18n';
 const { t } = I18n.global;
 
-export const llms = reactive<any[]>([]);
+export const llms = reactive<BasicLlmDescription[]>([]);
 
 export const llmManager = reactive({
 	currentModelIndex: 0,
 });
+
+export interface BasicLlmDescription {
+	id: string,
+	name: string,
+	baseUrl: string,
+	models: string[],
+	isOpenAICompatible: boolean,
+	description: string,
+	website: string,
+	userToken: string,
+	userModel: string,
+	[key: string]: any
+}
 
 export function createTest(call: ToolCall) {
 	const tab = createTab('tool', 0);
@@ -21,8 +34,8 @@ export function createTest(call: ToolCall) {
 	
 	const storage: ToolStorage = {
 		activeNames: [0],
-		currentToolName: call.function.name,
-		formData: JSON.parse(call.function.arguments)
+		currentToolName: call.function!.name!,
+		formData: JSON.parse(call.function!.arguments!)
 	};
 
 	tab.storage = storage;

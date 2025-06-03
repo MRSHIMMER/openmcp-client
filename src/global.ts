@@ -68,6 +68,19 @@ export function getConnectionConfig() {
     let connection;
     try {
         connection = JSON.parse(rawConnectionString) as IConnectionConfig;
+
+        // 对连接信息进行校验
+        if (!connection.items) {
+            connection = { items: [] };
+        }
+
+        connection.items = connection.items.filter(item => {
+            if (Array.isArray(item) && item.length === 0) {
+                return false;
+            }
+            return true;
+        });
+
     } catch (error) {
         connection = { items: [] };
     }
@@ -110,6 +123,19 @@ export function getWorkspaceConnectionConfig() {
     let connection;
     try {
         connection = JSON.parse(rawConnectionString) as IConnectionConfig;
+
+        // 对连接信息进行校验
+        if (!connection.items) {
+            connection = { items: [] };
+        }
+
+        connection.items = connection.items.filter(item => {
+            if (Array.isArray(item) && item.length === 0) {
+                return false;
+            }
+            return true;
+        });
+
     } catch (error) {
         connection = { items: [] };
     }
@@ -127,7 +153,7 @@ export function getWorkspaceConnectionConfig() {
             }
             if (connectionType === 'STDIO' && connection.cwd && connection.cwd.startsWith('{workspace}')) {
                 connection.cwd = connection.cwd.replace('{workspace}', workspacePath).replace(/\\/g, '/');
-            }    
+            }
         }
     }
 
@@ -169,12 +195,12 @@ export function saveWorkspaceConnectionConfig(workspace: string) {
 
     const workspacePath = getWorkspacePath();
     for (let item of connectionConfig.items) {
-        const connections = Array.isArray(item)? item : [item];
+        const connections = Array.isArray(item) ? item : [item];
         for (let connection of connections) {
             const connectionType = (connection.type || connection.connectionType).toUpperCase() as ConnectionType;
             connection.type = undefined;
             connection.connectionType = connectionType;
-    
+
             if (connection.filePath && connection.filePath.replace(/\\/g, '/').startsWith(workspacePath)) {
                 connection.filePath = connection.filePath.replace(workspacePath, '{workspace}').replace(/\\/g, '/');
             }
@@ -283,7 +309,7 @@ export function getWorkspaceConnectionConfigItemByPath(absPath: string) {
 
     const normaliseAbsPath = absPath.replace(/\\/g, '/');
     for (let item of workspaceConnectionConfig.items) {
-        const nItem = Array.isArray(item)? item[0] : item;
+        const nItem = Array.isArray(item) ? item[0] : item;
 
         const filePath = normaliseConnectionFilePath(nItem, workspacePath);
         if (filePath === normaliseAbsPath) {
@@ -303,7 +329,7 @@ export function getInstalledConnectionConfigItemByPath(absPath: string) {
 
     const normaliseAbsPath = absPath.replace(/\\/g, '/');
     for (let item of installedConnectionConfig.items) {
-        const nItem = Array.isArray(item)? item[0] : item;
+        const nItem = Array.isArray(item) ? item[0] : item;
 
         const filePath = (nItem.filePath || '').replace(/\\/g, '/');
         if (filePath === normaliseAbsPath) {

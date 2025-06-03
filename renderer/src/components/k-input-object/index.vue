@@ -1,147 +1,199 @@
 <template>
     <div class="k-input-object">
-        <textarea ref="textareaRef" v-model="inputValue" class="k-input-object__textarea"
-            :class="{ 'is-invalid': isInvalid }" @input="handleInput" @blur="handleBlur"
-            @keydown="handleKeydown"
-            :placeholder="props.placeholder"
-        ></textarea>
-    </div>
-    <div v-if="errorMessage" class="k-input-object__error">
-        {{ errorMessage }}
+        <div :ref="el => editorContainer = el" class="k-input-object__editor"></div>
+        <div v-if="errorMessage" class="k-input-object__error">
+            {{ errorMessage }}
+        </div>
     </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref, watch, nextTick } from 'vue';
-import { debounce } from 'lodash';
+<script lang="ts" setup>
+import { ref, onMounted, watch, type PropType } from 'vue'
+import { EditorView, basicSetup } from 'codemirror'
+import type { Completion, CompletionContext } from "@codemirror/autocomplete"
+import { jsonLanguage } from "@codemirror/lang-json"
 
-export default defineComponent({
-    name: 'KInputObject',
-    props: {
-        modelValue: {
-            type: Object,
-            default: () => ({})
-        },
-        placeholder: {
-            type: String,
-            default: '请输入 JSON 对象'
-        },
-        debounceTime: {
-            type: Number,
-            default: 500
-        }
+import { json } from '@codemirror/lang-json'
+import { oneDark } from '@codemirror/theme-one-dark'
+import { debounce } from 'lodash'
+
+const props = defineProps({
+    modelValue: {
+        type: Object,
+        default: () => ({})
     },
-    emits: ['update:modelValue', 'parse-error'],
-    setup(props, { emit }) {
-        const textareaRef = ref<HTMLTextAreaElement | null>(null)
-        const inputValue = ref<string>(JSON.stringify(props.modelValue, null, 2))
-        const isInvalid = ref<boolean>(false)
-        const errorMessage = ref<string>('')
-
-        // 防抖处理输入
-        const debouncedParse = debounce((value: string) => {
-            if (value.trim() === '') {
-                errorMessage.value = '';
-                isInvalid.value = false;
-                emit('update:modelValue', undefined);
-                return;
-            }
-            try {
-                const parsed = JSON.parse(value);
-                isInvalid.value = false;
-                errorMessage.value = '';
-                emit('update:modelValue', parsed);
-            } catch (error) {
-                isInvalid.value = true;
-                errorMessage.value = 'JSON 解析错误: ' + (error as Error).message;
-                emit('parse-error', error);
-            }
-        }, props.debounceTime)
-
-        const handleInput = () => {
-            debouncedParse(inputValue.value)
-        }
-
-        const handleBlur = () => {
-            // 立即执行最后一次防抖
-            debouncedParse.flush()
-        }
-
-        // 当外部 modelValue 变化时更新输入框内容
-        watch(
-            () => props.modelValue,
-            (newVal) => {
-                const currentParsed = tryParse(inputValue.value)
-                if (!isDeepEqual(currentParsed, newVal)) {
-                    inputValue.value = JSON.stringify(newVal, null, 2)
-                }
-            },
-            { deep: true }
-        )
-
-        // 辅助函数：尝试解析 JSON
-        const tryParse = (value: string): any => {
-            try {
-                return JSON.parse(value)
-            } catch {
-                return undefined
-            }
-        }
-
-        // 辅助函数：深度比较对象
-        const isDeepEqual = (obj1: any, obj2: any): boolean => {
-            return JSON.stringify(obj1) === JSON.stringify(obj2)
-        }
-
-        const handleKeydown = (event: KeyboardEvent) => {
-            if (event.key === '{') {
-                event.preventDefault();
-                const start = textareaRef.value!.selectionStart;
-                const end = textareaRef.value!.selectionEnd;
-                const value = inputValue.value;
-                const newValue = value.substring(0, start) + '{\n  \n}' + value.substring(end);
-                inputValue.value = newValue;
-                nextTick(() => {
-                    textareaRef.value!.setSelectionRange(start + 2, start + 2);
-                });
-            } else if (event.key === '"') {
-                event.preventDefault();
-                const start = textareaRef.value!.selectionStart;
-                const end = textareaRef.value!.selectionEnd;
-                const value = inputValue.value;
-                const newValue = value.substring(0, start) + '""' + value.substring(end);
-                inputValue.value = newValue;
-                nextTick(() => {
-                    textareaRef.value!.setSelectionRange(start + 1, start + 1);
-                });
-            } else if (event.key === 'Tab') {
-                event.preventDefault();
-                const start = textareaRef.value!.selectionStart;
-                const end = textareaRef.value!.selectionEnd;
-                const value = inputValue.value;
-                const newValue = value.substring(0, start) + '    ' + value.substring(end);
-                inputValue.value = newValue;
-                nextTick(() => {
-                    textareaRef.value!.setSelectionRange(start + 1, start + 1);
-                });
-            } else if (event.key === 'Enter' && inputValue.value.trim() === '') {
-                event.preventDefault();
-                inputValue.value = '{}';
-            }
-        };
-
-        return {
-            textareaRef,
-            inputValue,
-            isInvalid,
-            errorMessage,
-            handleInput,
-            handleBlur,
-            handleKeydown,
-            props
-        }
+    placeholder: {
+        type: String,
+        default: '请输入 JSON 对象'
+    },
+    debounceTime: {
+        type: Number,
+        default: 500
+    },
+    schema: {
+        type: Object as PropType<{
+            type?: string;
+            properties?: Record<string, {
+                type: string;
+                description?: string;
+                default?: any;
+                enum?: any[];
+            }>;
+            required?: string[];
+        }>,
+        default: () => ({})
     }
 })
+
+const emit = defineEmits(['update:modelValue', 'parse-error'])
+
+const editorContainer = ref<any>(null);
+const editorView = ref<EditorView | null>(null);
+const isInvalid = ref(false);
+const errorMessage = ref('');
+
+const inputValue = ref<string>(JSON.stringify(props.modelValue, null, 2));
+
+// 防抖处理输入
+const debouncedParse = debounce((value: string) => {
+    if (value.trim() === '') {
+        errorMessage.value = '';
+        isInvalid.value = false;
+        emit('update:modelValue', undefined);
+        return;
+    }
+    try {
+        const parsed = JSON.parse(value);
+        isInvalid.value = false;
+        errorMessage.value = '';
+        emit('update:modelValue', parsed);
+    } catch (error) {
+        isInvalid.value = true;
+        errorMessage.value = 'JSON 解析错误: ' + (error as Error).message;
+        emit('parse-error', error);
+    }
+}, props.debounceTime);
+
+onMounted(() => {
+    if (editorContainer.value) {
+        const extensions = [
+            basicSetup,
+            json(),
+            oneDark,
+            EditorView.updateListener.of(update => {
+                if (update.docChanged) {
+                    const value = update.state.doc.toString()
+                    debouncedParse(value)
+                }
+            })
+        ]
+
+        // 如果schema不为空，添加自动补全
+        if (Object.keys(props.schema).length > 0) {
+            extensions.push(
+                jsonLanguage.data.of({
+                    autocomplete: getJsonCompletion(props.schema)
+                })
+            )
+        }
+
+        editorView.value = new EditorView({
+            doc: JSON.stringify(props.modelValue, null, 2),
+            extensions,
+            parent: editorContainer.value
+        })
+    }
+})
+
+// 添加自动补全函数
+function getJsonCompletion(schema: any) {
+    return (context: CompletionContext) => {
+        // 检查当前输入是否是标点符号
+        const charBefore = context.state.sliceDoc(context.pos - 1, context.pos)
+        if (/[,.{}[\]:]/.test(charBefore)) return null
+
+        const word = context.matchBefore(/\w*/)
+        if (!word) return null
+
+        // 检查当前是否在字符串内
+        const state = context.state
+        const pos = context.pos
+        const line = state.doc.lineAt(pos)
+        const textBefore = line.text.slice(0, pos - line.from)
+        
+        // 如果前面有奇数个双引号，说明在字符串内，不触发补全
+        const quoteCount = (textBefore.match(/"/g) || []).length
+        if (quoteCount % 2 !== 0) return null
+
+        const completions: Completion[] = []
+        
+        // 处理对象属性补全
+        if (schema.properties) {
+            Object.entries(schema.properties).forEach(([key, value]) => {
+                completions.push({
+                    label: key,
+                    type: "property",
+                    apply: `"${key}": ${getDefaultValue(value as any)}`
+                })
+            })
+        }
+
+        return {
+            from: word.from,
+            options: completions,
+            validFor: /^\w*$/
+        }
+    }
+}
+
+// 获取默认值函数
+function getDefaultValue(property: any): string {
+    if (property.default !== undefined) {
+        return JSON.stringify(property.default)
+    }
+    switch (property.type) {
+        case 'string': return '""'
+        case 'number': return '0'
+        case 'boolean': return 'false'
+        case 'object': return '{}'
+        case 'array': return '[]'
+        default: return 'null'
+    }
+}
+
+// 修改 watch 逻辑
+// watch(
+//     () => props.modelValue,
+//     (newVal) => {
+//         const currentParsed = tryParse(inputValue.value)
+//         if (!isDeepEqual(currentParsed, newVal)) {
+//             const newContent = JSON.stringify(newVal, null, 2)
+//             editorView.value?.dispatch({
+//                 changes: {
+//                     from: 0,
+//                     to: editorView.value.state.doc.length,
+//                     insert: newContent
+//                 }
+//             })
+//         }
+//     },
+//     { deep: true }
+// )
+
+// 辅助函数：尝试解析 JSON
+const tryParse = (value: string): any => {
+    try {
+        return JSON.parse(value)
+    } catch {
+        return undefined
+    }
+}
+
+// 辅助函数：深度比较对象
+const isDeepEqual = (obj1: any, obj2: any): boolean => {
+    return JSON.stringify(obj1) === JSON.stringify(obj2)
+}
+
 </script>
 
 <style scoped>
@@ -151,6 +203,7 @@ export default defineComponent({
     border-radius: .5em;
     margin-bottom: 15px;
     display: flex;
+    flex-direction: column;
 }
 
 .k-input-object__textarea {
@@ -171,6 +224,24 @@ export default defineComponent({
 }
 
 .k-input-object__textarea.is-invalid {
+    border-color: var(--el-color-error);
+}
+
+.k-input-object__error {
+    color: var(--el-color-error);
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+.k-input-object__editor {
+    width: 100%;
+    border: 1px solid var(--el-border-color-light);
+    border-radius: 4px;
+    overflow: hidden;
+    background-color: var(--el-bg-color-overlay);
+}
+
+.k-input-object__editor.is-invalid {
     border-color: var(--el-color-error);
 }
 

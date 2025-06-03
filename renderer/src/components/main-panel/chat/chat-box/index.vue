@@ -4,6 +4,7 @@
         <div class="input-wrapper">
 
             <KRichTextarea
+                :ref="el => editorRef = el"
                 :tabId="tabId"
                 v-model="userInput"
                 :placeholder="t('enter-message-dot')"
@@ -43,6 +44,7 @@ const props = defineProps({
 });
 
 const emits = defineEmits(['update:scrollToBottom']);
+const editorRef = ref<any>(null);
 
 const tab = tabs.content[props.tabId];
 const tabStorage = tab.storage as ChatStorage;
@@ -83,7 +85,8 @@ function clearErrorMessage(errorMessage: string) {
     }
 }
 
-function handleSend(newMessage?: string) {    
+function handleSend(newMessage?: string) {
+    
     // 将富文本信息转换成纯文本信息
     const userMessage = newMessage || userInput.value;
 
@@ -115,8 +118,6 @@ function handleSend(newMessage?: string) {
                 }
             });
         }
-
-        isLoading.value = false;
     });
 
     loop.registerOnChunk(() => {
@@ -124,7 +125,6 @@ function handleSend(newMessage?: string) {
     });
 
     loop.registerOnDone(() => {
-        isLoading.value = false;
         scrollToBottom();
     });
 
@@ -133,9 +133,16 @@ function handleSend(newMessage?: string) {
         scrollToBottom();
     });
 
-    loop.start(tabStorage, userMessage);
+    loop.start(tabStorage, userMessage).then(() => {
+        isLoading.value = false;
+    });
     
+    // 清空文本
     userInput.value = '';
+    const editor = editorRef.value.editor;
+    if (editor) {
+        editor.innerHTML = '';
+    }
 }
 
 function handleAbort() {

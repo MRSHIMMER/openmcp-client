@@ -52,7 +52,11 @@ export function loadSetting(): IConfig {
     
     try {
         const configData = fs.readFileSync(configPath, 'utf-8');
-        return JSON.parse(configData) as IConfig;
+        const config = JSON.parse(configData) as IConfig;
+        if (!config.LLM_INFO || (Array.isArray(config.LLM_INFO) && config.LLM_INFO.length === 0)) {
+            config.LLM_INFO = llms;
+        }        
+        return config;
     } catch (error) {
         console.error('Error loading config file, creating new one:', error);
         return createConfig();

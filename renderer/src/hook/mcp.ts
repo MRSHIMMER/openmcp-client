@@ -27,10 +27,11 @@ export function normaliseJavascriptType(type: string) {
         case 'string':
             return 'string';
         default:
-            return 'string';
+            return type;
     }
 }
 
 export const mcpSetting = reactive({
     timeout: 60,
+    proxyServer: '',
 });

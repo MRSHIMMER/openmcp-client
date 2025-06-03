@@ -16,6 +16,9 @@
             <el-button @click="copy">
                 <span class="iconfont icon-copy"></span>
             </el-button>
+            <el-button @click="reload">
+                <span class="iconfont icon-restart"></span>
+            </el-button>
             <el-button @click="toggleEdit">
                 <span class="iconfont icon-edit2"></span>
             </el-button>
@@ -88,6 +91,16 @@ const copy = async () => {
     } catch (err) {
         console.error('无法复制内容: ', err);
         ElMessage.error('复制失败，请手动复制');
+    }
+};
+
+const reload = async () => {
+    const index = tabStorage.messages.findIndex(msg => msg.extraInfo === props.message.extraInfo);
+
+    if (index !== -1 && chatContext.handleSend) {
+        // 把 index 之后的全部删除（包括 index）
+        tabStorage.messages.splice(index);
+        chatContext.handleSend(props.message.content);
     }
 };
 
