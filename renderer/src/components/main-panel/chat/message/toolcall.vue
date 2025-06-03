@@ -20,7 +20,7 @@
                             <span class="tool-name">
                                 <span class="iconfont icon-tool"></span>
 
-                                {{ props.message.tool_calls[0].function.name }}
+                                {{ props.message.tool_calls[0].function!.name }}
                             </span>
                             <el-button size="small" @click="createTest(props.message.tool_calls[0])">
                                 <span class="iconfont icon-send"></span>
@@ -37,7 +37,7 @@
                             <span class="tool-name">
                                 <span class="iconfont icon-tool"></span>
 
-                                {{ props.message.tool_calls[toolIndex].function.name }}
+                                {{ props.message.tool_calls[toolIndex].function!.name }}
                             </span>
                             <el-button size="small" @click="createTest(props.message.tool_calls[toolIndex])">
                                 <span class="iconfont icon-send"></span>
@@ -46,7 +46,7 @@
                     </div>
 
                     <div class="tool-arguments">
-                        <json-render :json="props.message.tool_calls[toolIndex].function.arguments"/>
+                        <json-render :json="props.message.tool_calls[toolIndex].function!.arguments"/>
                     </div>
 
                     <!-- 工具调用结果 -->

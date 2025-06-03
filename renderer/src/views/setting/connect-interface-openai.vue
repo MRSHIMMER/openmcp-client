@@ -14,7 +14,7 @@
                     v-for="option in llms[llmManager.currentModelIndex].models"
                     :value="option"
                     :label="option"
-                    :key="option.id"
+                    :key="option"
                 ></el-option>
             </el-select>
         </div>
