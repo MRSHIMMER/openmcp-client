@@ -51,8 +51,19 @@
 		<div class="setting-save-container">
 			<el-button
 				id="add-new-server-button"
-				type="success" @click="addNewServer">
+				type="success"
+				@click="addNewServer"
+			>
 				{{ t("add-new-server") }}
+			</el-button>
+
+			<el-button
+				id="add-new-server-button"
+				type="success"
+				@click="updateModels"
+				:loading="updateModelLoading"
+			>
+				{{ "更新模型列表" }}
 			</el-button>
 
 			<el-button
@@ -120,6 +131,7 @@ import { pinkLog } from './util';
 import ConnectInterfaceOpenai from './connect-interface-openai.vue';
 import ConnectTest from './connect-test.vue';
 import { llmSettingRef, makeSimpleTalk, simpleTestResult } from './api';
+import { useMessageBridge } from '@/api/message-bridge';
 
 defineComponent({ name: 'api' });
 const { t } = useI18n();
@@ -210,6 +222,35 @@ function addNewProvider() {
 		baseUrl: '',
 		userToken: ''
 	};
+}
+
+
+const updateModelLoading = ref(false);
+
+async function updateModels() {
+	updateModelLoading.value = true;
+
+	const llm = llms[llmManager.currentModelIndex];
+	const apiKey = llm.userToken;
+	const baseURL = llm.baseUrl;
+
+	const bridge = useMessageBridge();
+	const { code, msg } = await bridge.commandRequest('llm/models', {
+		apiKey,
+		baseURL
+	});
+
+	if (code === 200 && Array.isArray(msg)) {
+		const models = msg
+			.filter(item => item.object === 'model')
+			.map(item => item.id);
+		
+		llm.models = models;
+		saveLlmSetting();
+	} else {
+		ElMessage.error('模型列表更新失败' + msg);
+	}
+	updateModelLoading.value = false;
 }
 
 function updateProvider() {

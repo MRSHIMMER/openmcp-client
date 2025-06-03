@@ -1,8 +1,10 @@
 # Change Log
 
 ## [main] 0.1.4
-- 支持 Google Gemini 模型。
-- 支持 Grok3 的 tool call 流式传输。
+- 重新实现 openai 协议的底层网络实现，从而支持 Google Gemini 全系列模型。
+- 实现 index 适配器，从而支持 Grok3 全系列模型。
+- 解决 issue#23 插件创建连接时报错“Cannot read properties of undefined (reading 'name')”
+- 在填写 apikey 和 baseurl 的情况下，现在可以一键刷新模型列表，避免用户手动输入模型列表。
 
 ## [main] 0.1.3
 - 解决 issue#21 点击按钮后的发送文本后不会清空当前的输入框。

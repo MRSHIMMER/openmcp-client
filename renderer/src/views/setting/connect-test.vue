@@ -1,4 +1,7 @@
 <template>
+    <div class="extra-info warning" v-if="isGoogle">
+        当前模型组协议兼容性较差，特别是 gemini-2.0-flash 模型的函数调用能力不稳定；如果想要稳定使用 gemini 的服务，请尽可能使用最新的模型或者使用 newApi 进行协议转接。
+    </div>
     <div class="connect-test" v-if="simpleTestResult.done || simpleTestResult.error">
         <div class="test-result">
             <div class="result-item" v-if="simpleTestResult.done">
@@ -18,8 +21,18 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
 import { simpleTestResult } from './api';
+import { llmManager, llms } from './llm';
+import { computed } from '@vue/reactivity';
 
 const { t } = useI18n();
+
+const isGoogle = computed(() => {
+    const model = llms[llmManager.currentModelIndex];
+    return model.userModel.startsWith('gemini') || model.baseUrl.includes('googleapis');
+});
+
+console.log(llms[llmManager.currentModelIndex]);
+
 
 </script>
 
@@ -60,5 +73,13 @@ const { t } = useI18n();
 
 .result-item .iconfont {
     font-size: 16px;
+}
+
+.extra-info.warning {
+    background-color: rgba(230, 162, 60, 0.5);
+    padding: 10px;
+    border-radius: 4px;
+    margin-top: 15px;
+    margin-bottom: 10px;
 }
 </style>

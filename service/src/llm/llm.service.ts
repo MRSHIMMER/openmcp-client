@@ -31,19 +31,15 @@ export async function streamingChatCompletion(
 
             console.log('openai fetch begin, proxyServer:', proxyServer);
             
-            if (model.startsWith('gemini')) {
+            if (model.startsWith('gemini') && init) {
                 // 该死的 google
-                if (init) {
-                    init.headers = {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${apiKey}`
-                    }
+                init.headers = {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${apiKey}`
                 }
-                
-                return await axiosFetch(input, init, { proxyServer });
-            } else {
-                return await fetch(input, init);
             }
+            
+            return await axiosFetch(input, init, { proxyServer });
         }
     });
 
@@ -52,6 +48,9 @@ export async function streamingChatCompletion(
         undefined: model.startsWith('gemini') ? undefined : parallelToolCalls;
      
     await postProcessMessages(messages);
+
+    console.log('seriableTools', seriableTools);
+    console.log('seriableParallelToolCalls', seriableParallelToolCalls);
     
     const stream = await client.chat.completions.create({
         model,

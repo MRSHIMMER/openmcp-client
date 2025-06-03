@@ -1,4 +1,4 @@
-import axios, { AxiosProxyConfig } from "axios";
+import axios from "axios";
 import { HttpsProxyAgent } from 'https-proxy-agent';
 
 interface FetchOptions {
