@@ -214,8 +214,7 @@
     },
     "workspaces": [
         "service",
-        "renderer",
-        "software"
+        "renderer"
     ],
     "scripts": {
         "setup": "npm i && npm run prepare:ocr",

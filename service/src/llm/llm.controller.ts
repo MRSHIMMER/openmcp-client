@@ -5,6 +5,7 @@ import { PostMessageble } from "../hook/adapter.js";
 import { getClient } from "../mcp/connect.service.js";
 import { abortMessageService, streamingChatCompletion } from "./llm.service.js";
 import { OpenAI } from "openai";
+import { axiosFetch } from "src/hook/axios-fetch.js";
 export class LlmController {
 
     @Controller('llm/chat/completions')
@@ -41,9 +42,14 @@ export class LlmController {
         const {
             baseURL,
             apiKey,
-        } = data;        
+            proxyServer
+        } = data;
         
-        const client = new OpenAI({ apiKey, baseURL });
+
+        const client = new OpenAI({
+            apiKey,
+            baseURL,
+        });
         const models = await client.models.list();
 
         return {
