@@ -63,7 +63,7 @@
 				@click="updateModels"
 				:loading="updateModelLoading"
 			>
-				{{ "更新模型列表" }}
+				{{ t('update-model-list') }}
 			</el-button>
 
 			<el-button
@@ -240,10 +240,18 @@ async function updateModels() {
 		baseURL
 	});
 
+	const isGemini = baseURL.includes('googleapis');
+
 	if (code === 200 && Array.isArray(msg)) {
 		const models = msg
 			.filter(item => item.object === 'model')
-			.map(item => item.id);
+			.map(item => {
+				let modelName = item.id as string;
+				if (isGemini && modelName.includes('/')) {
+					modelName = modelName.split('/')[1];
+				}
+				return modelName;
+			});
 		
 		llm.models = models;
 		saveLlmSetting();

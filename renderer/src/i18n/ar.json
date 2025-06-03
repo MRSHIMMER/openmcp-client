@@ -157,5 +157,6 @@
     "feedback": "تعليقات",
     "waiting-mcp-server": "في انتظار استجابة خادم MCP",
     "parallel-tool-calls": "السماح للنموذج باستدعاء أدوات متعددة في رد واحد",
-    "proxy-server": "خادم وكيل"
+    "proxy-server": "خادم وكيل",
+    "update-model-list": "تحديث قائمة النماذج"
 }

@@ -1,5 +1,9 @@
 # Change Log
 
+## [main] 0.1.5
+- 修复 gemini 获取模型列表时存在 models 前缀的问题
+- 增加 web api 功能
+
 ## [main] 0.1.4
 - 重新实现 openai 协议的底层网络实现，从而支持 Google Gemini 全系列模型。
 - 实现 index 适配器，从而支持 Grok3 全系列模型。

@@ -157,5 +157,6 @@
     "feedback": "피드백",
     "waiting-mcp-server": "MCP 서버 응답 대기 중",
     "parallel-tool-calls": "모델이 단일 응답에서 여러 도구를 호출할 수 있도록 허용",
-    "proxy-server": "프록시 서버"
+    "proxy-server": "프록시 서버",
+    "update-model-list": "모델 목록 업데이트"
 }

@@ -157,5 +157,6 @@
     "feedback": "Feedback",
     "waiting-mcp-server": "Warten auf Antwort vom MCP-Server",
     "parallel-tool-calls": "Erlauben Sie dem Modell, mehrere Tools in einer einzigen Antwort aufzurufen",
-    "proxy-server": "Proxy-Server"
+    "proxy-server": "Proxy-Server",
+    "update-model-list": "Modellliste aktualisieren"
 }

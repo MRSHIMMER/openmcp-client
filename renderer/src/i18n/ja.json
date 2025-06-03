@@ -157,5 +157,6 @@
     "feedback": "フィードバック",
     "waiting-mcp-server": "MCPサーバーの応答を待機中",
     "parallel-tool-calls": "モデルが単一の返信で複数のツールを呼び出すことを許可する",
-    "proxy-server": "プロキシサーバー"
+    "proxy-server": "プロキシサーバー",
+    "update-model-list": "モデルリストを更新"
 }
