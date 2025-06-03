@@ -12,7 +12,7 @@
 		"postbuild": "node ./scripts/post-build.mjs",
 		"start": "node --experimental-specifier-resolution=node dist/main.js",
 		"start:prod": "NODE_ENV=production node --experimental-specifier-resolution=node dist/main.js",
-		"debug": "node --inspect --no-warnings=ExperimentalWarning -r tsx/esm src/main.ts", 
+		"debug": "node --inspect --no-warnings=ExperimentalWarning -r tsx/esm src/main.ts",
 		"clean": "rm -rf dist",
 		"lint": "eslint src --ext .ts,.tsx",
 		"typecheck": "tsc --noEmit"
@@ -37,8 +37,9 @@
 	"dependencies": {
 		"@modelcontextprotocol/sdk": "^1.12.1",
 		"@seald-io/nedb": "^4.1.1",
-		"open": "^10.1.2",
 		"axios": "^1.9.0",
+		"https-proxy-agent": "^7.0.6",
+		"open": "^10.1.2",
 		"openai": "^5.0.1",
 		"pako": "^2.1.0",
 		"pino": "^9.6.0",
