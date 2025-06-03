@@ -1,11 +1,11 @@
 import { WebSocketServer } from 'ws';
 import pino from 'pino';
 
-import { routeMessage } from './common/router';
-import { VSCodeWebViewLike } from './hook/adapter';
+import { routeMessage } from './common/router.js';
+import { VSCodeWebViewLike } from './hook/adapter.js';
 import path from 'node:path';
 import * as fs from 'node:fs';
-import { setRunningCWD } from './hook/setting';
+import { setRunningCWD } from './hook/setting.js';
 import { exit } from 'node:process';
 
 export interface VSCodeMessage {
@@ -14,7 +14,7 @@ export interface VSCodeMessage {
     callbackId?: string;
 }
 
-const logger = pino({
+const logger = pino.default({
     transport: {
         target: 'pino-pretty', // 启用 pino-pretty
         options: {

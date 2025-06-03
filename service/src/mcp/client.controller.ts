@@ -1,8 +1,8 @@
-import { Controller } from "../common";
-import { RequestData } from "../common/index.dto";
-import { PostMessageble } from "../hook/adapter";
-import { postProcessMcpToolcallResponse } from "./client.service";
-import { getClient } from "./connect.service";
+import { Controller } from "../common/index.js";
+import { RequestData } from "../common/index.dto.js";
+import { PostMessageble } from "../hook/adapter.js";
+import { postProcessMcpToolcallResponse } from "./client.service.js";
+import { getClient } from "./connect.service.js";
 
 export class ClientController {
 

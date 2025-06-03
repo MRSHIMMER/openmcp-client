@@ -16,25 +16,37 @@ export class McpWorkspaceConnectProvider implements vscode.TreeDataProvider<Conn
     getTreeItem(element: ConnectionViewItem): vscode.TreeItem {
         return element;
     }
-
     getChildren(element?: ConnectionViewItem): Thenable<ConnectionViewItem[]> {
         // TODO: 读取 configDir 下的所有文件，作为子节点
         const connection = getWorkspaceConnectionConfig();
-        const sidebarItems = connection.items.map((item, index) => {
-            // 连接的名字
-            const nItem = Array.isArray(item) ? item[0] : item;
-            const itemName = `${nItem.name} (${nItem.type || nItem.connectionType})`
-            return new ConnectionViewItem(itemName, vscode.TreeItemCollapsibleState.None, item, 'server');
-        })
+
+        // 校验 connection 和 connection.items
+        if (!connection || !Array.isArray(connection.items)) {
+            return Promise.resolve([]);
+        }
+
+        const sidebarItems = connection.items
+            .filter(item => item !== null && item !== undefined)
+            .map((item, index) => {
+                // 连接的名字
+                const nItem = Array.isArray(item) ? item[0] : item;
+                if (!nItem || typeof nItem !== 'object') {
+                    return null;
+                }
+                const name = nItem.name || '未命名';
+                const type = nItem.type || nItem.connectionType || '未知类型';
+                const itemName = `${name} (${type})`;
+                return new ConnectionViewItem(itemName, vscode.TreeItemCollapsibleState.None, item, 'server');
+            })
+            .filter(Boolean) as ConnectionViewItem[]; // 过滤掉为 null 的项
 
         // 返回子节点
         return Promise.resolve(sidebarItems);
     }
-
     @RegisterCommand('revealWebviewPanel')
     public revealWebviewPanel(context: vscode.ExtensionContext, view: ConnectionViewItem) {
         const item = view.item;
-        const masterNode = Array.isArray(item)? item[0] : item;
+        const masterNode = Array.isArray(item) ? item[0] : item;
         const name = masterNode.filePath || masterNode.name || '';
         revealOpenMcpWebviewPanel(context, 'workspace', name, item);
     }

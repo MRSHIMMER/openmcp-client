@@ -1,13 +1,13 @@
 import { exec, execSync, spawnSync } from 'node:child_process';
-import { RequestClientType } from '../common';
-import { connect } from './client.service';
-import { RestfulResponse } from '../common/index.dto';
-import { McpOptions } from './client.dto';
+import { RequestClientType } from '../common/index.dto.js';
+import { connect } from './client.service.js';
+import { RestfulResponse } from '../common/index.dto.js';
+import { McpOptions } from './client.dto.js';
 import * as crypto from 'node:crypto';
 import path from 'node:path';
 import fs from 'node:fs';
 import * as os from 'os';
-import { PostMessageble } from '../hook/adapter';
+import { PostMessageble } from '../hook/adapter.js';
 
 export const clientMap: Map<string, RequestClientType> = new Map();
 export function getClient(clientId?: string): RequestClientType | undefined {

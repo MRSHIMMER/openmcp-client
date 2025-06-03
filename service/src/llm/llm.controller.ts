@@ -1,9 +1,10 @@
+import {  RequestClientType } from "../common/index.dto.js";
+import { Controller } from "../common/index.js";
+import { RequestData } from "../common/index.dto.js";
+import { PostMessageble } from "../hook/adapter.js";
+import { getClient } from "../mcp/connect.service.js";
+import { abortMessageService, streamingChatCompletion } from "./llm.service.js";
 import { OpenAI } from "openai";
-import { Controller } from "../common";
-import { RequestData } from "../common/index.dto";
-import { PostMessageble } from "../hook/adapter";
-import { abortMessageService, streamingChatCompletion } from "./llm.service";
-
 export class LlmController {
 
     @Controller('llm/chat/completions')

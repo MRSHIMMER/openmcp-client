@@ -1,12 +1,12 @@
 import Tesseract from 'tesseract.js';
-import { PostMessageble } from '../hook/adapter';
+import { PostMessageble } from '../hook/adapter.js';
 import { v4 as uuidv4 } from 'uuid';
-import { OcrWorker } from './ocr.dto';
-import { diskStorage, ocrDB } from '../hook/db';
+import { OcrWorker } from './ocr.dto.js';
+import { diskStorage, ocrDB } from '../hook/db.js';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import { RUNNING_CWD } from '../hook/setting';
+import { RUNNING_CWD } from '../hook/setting.js';
 
 export const ocrWorkerStorage = new Map<string, OcrWorker>();
 

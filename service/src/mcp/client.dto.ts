@@ -1,7 +1,7 @@
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
-import { Implementation } from "@modelcontextprotocol/sdk/types";
+import { Implementation } from "@modelcontextprotocol/sdk/types.js";
 
 export interface GetPromptOption {
 	promptId: string;

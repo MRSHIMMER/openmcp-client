@@ -1,8 +1,8 @@
 import { WebSocket } from 'ws';
 import { EventEmitter } from 'events';
-import { routeMessage } from '../common/router';
-import { McpOptions } from '../mcp/client.dto';
-import { clientMap, connectService } from '../mcp/connect.service';
+import { routeMessage } from '../common/router.js';
+import { McpOptions } from '../mcp/client.dto.js';
+import { clientMap, connectService } from '../mcp/connect.service.js';
 
 // WebSocket 消息格式
 export interface WebSocketMessage {
@@ -136,7 +136,7 @@ export class TaskLoopAdapter {
         for (const client of clientMap.values()) {
             const clientTools = await client?.listTools();
             if (clientTools?.tools) {
-                const enabledTools = clientTools.tools.map((tool) => {
+                const enabledTools = clientTools.tools.map((tool: any) => {
                     const enabledTools = {...tool, enabled: true };
                     return enabledTools;
                 });

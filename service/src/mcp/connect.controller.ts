@@ -1,7 +1,7 @@
-import { Controller } from '../common';
-import { PostMessageble } from '../hook/adapter';
-import { RequestData } from '../common/index.dto';
-import { connectService, getClient } from './connect.service';
+import { Controller } from '../common/index.js';
+import { PostMessageble } from '../hook/adapter.js';
+import { RequestData } from '../common/index.dto.js';
+import { connectService, getClient } from './connect.service.js';
 
 export class ConnectController {
 
