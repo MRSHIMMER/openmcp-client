@@ -9,6 +9,7 @@ interface Entity {
 }
 
 const dbConnections: Record<string, any> = {};
+const DatastoreCtor = Datastore as unknown as { new(options: any): any };
 
 export class LocalDB<T extends Entity> {
     private db: any;
@@ -28,7 +29,7 @@ export class LocalDB<T extends Entity> {
         const filename = path.join(dbPath, `${this.tableName}.db`);
         
         if (!dbConnections[filename]) {
-            dbConnections[filename] = new Datastore.default({
+            dbConnections[filename] = new DatastoreCtor({
                 filename,
                 autoload: true,
                 timestampData: true
