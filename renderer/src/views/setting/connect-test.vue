@@ -28,7 +28,7 @@ const { t } = useI18n();
 
 const isGoogle = computed(() => {
     const model = llms[llmManager.currentModelIndex];
-    return model.userModel.startsWith('gemini') || model.baseUrl.includes('googleapis');
+    return model.userModel?.startsWith('gemini') || model.baseUrl.includes('googleapis');
 });
 
 console.log(llms[llmManager.currentModelIndex]);

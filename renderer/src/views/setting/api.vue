@@ -132,6 +132,7 @@ import ConnectInterfaceOpenai from './connect-interface-openai.vue';
 import ConnectTest from './connect-test.vue';
 import { llmSettingRef, makeSimpleTalk, simpleTestResult } from './api';
 import { useMessageBridge } from '@/api/message-bridge';
+import { mcpSetting } from '@/hook/mcp';
 
 defineComponent({ name: 'api' });
 const { t } = useI18n();
@@ -233,11 +234,13 @@ async function updateModels() {
 	const llm = llms[llmManager.currentModelIndex];
 	const apiKey = llm.userToken;
 	const baseURL = llm.baseUrl;
+    const proxyServer = mcpSetting.proxyServer;
 
 	const bridge = useMessageBridge();
 	const { code, msg } = await bridge.commandRequest('llm/models', {
 		apiKey,
-		baseURL
+		baseURL,
+        proxyServer
 	});
 
 	const isGemini = baseURL.includes('googleapis');

@@ -1,7 +1,8 @@
-import { Controller, RequestClientType } from "../common";
-import { PostMessageble } from "../hook/adapter";
-import { diskStorage } from "../hook/db";
-import { createOcrWorker, saveBase64ImageData } from "./ocr.service";
+import { RequestClientType } from "../common/index.dto.js";
+import { Controller } from "../common/index.js";
+import { PostMessageble } from "../hook/adapter.js";
+import { diskStorage } from "../hook/db.js";
+import { createOcrWorker, saveBase64ImageData } from "./ocr.service.js";
 
 export class OcrController {
     @Controller('ocr/get-ocr-image')

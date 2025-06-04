@@ -1,8 +1,8 @@
-import { Controller } from "../common";
-import { PostMessageble } from "../hook/adapter";
-import { RequestData } from "../common/index.dto";
-import { getClient } from "../mcp/connect.service";
-import { getTour, loadSetting, saveSetting, setTour } from "./setting.service";
+import { Controller } from "../common/index.js";
+import { PostMessageble } from "../hook/adapter.js";
+import { RequestData } from "../common/index.dto.js";
+import { getClient } from "../mcp/connect.service.js";
+import { getTour, loadSetting, saveSetting, setTour } from "./setting.service.js";
 
 export class SettingController {
 
