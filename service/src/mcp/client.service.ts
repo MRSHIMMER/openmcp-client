@@ -87,9 +87,9 @@ export class McpClient {
         // 建立连接
         if (this.transport) {
             try {
-                console.log(`🔌 Connecting to MCP server via ${this.options.connectionType}...`);
+                // console.log(`🔌 Connecting to MCP server via ${this.options.connectionType}...`);
                 await this.client.connect(this.transport);
-                console.log(`Connected to MCP server via ${this.options.connectionType}`);
+                // console.log(`✅ Connected to MCP server via ${this.options.connectionType}`);
             } catch (error) {
                 if (error instanceof UnauthorizedError) {
                     if (!(this.transport instanceof StreamableHTTPClientTransport) && !(this.transport instanceof SSEClientTransport)) {
@@ -125,7 +125,6 @@ export class McpClient {
     // 断开连接
     public async disconnect(): Promise<void> {
         await this.client.close();
-
         console.log('Disconnected from MCP server');
     }
 

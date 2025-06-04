@@ -63,8 +63,6 @@ export class TaskLoop {
         // 根据当前环境决定是否要开启 messageBridge
         const platform = getPlatform();
 
-        console.log('current platform is', platform);
-
         if (platform === 'nodejs') {
             const adapter = taskOptions.adapter;
 
@@ -73,7 +71,6 @@ export class TaskLoop {
             }
 
             createMessageBridge(adapter.emitter);
-            console.log('mcpClientAdapter launch');
             this.nodejsStatus.connectionFut = mcpClientAdapter.launch();
         }
 
@@ -143,8 +140,6 @@ export class TaskLoop {
                 // data.code 一定为 200，否则不会走这个 route
                 const { chunk } = data.msg as { chunk: ChatCompletionChunk };
 
-                console.log(chunk);
-
                 // 处理增量的 content 和 tool_calls
                 this.handleChunkDeltaContent(chunk);
                 this.handleChunkDeltaToolCalls(chunk, toolcallIndexAdapter);
@@ -185,6 +180,10 @@ export class TaskLoop {
         });
     }
 
+    public setProxyServer(proxyServer: string) {
+        mcpSetting.proxyServer = proxyServer;
+    }
+
     public makeChatData(tabStorage: ChatStorage): ChatCompletionCreateParamsBase | undefined {
         const baseURL = this.getLlmConfig().baseUrl;
         const apiKey = this.getLlmConfig().userToken || '';
@@ -197,7 +196,7 @@ export class TaskLoop {
             }
             return undefined;
         }
-    
+        
         const model = this.getLlmConfig().userModel;
         const temperature = tabStorage.settings.temperature;
         const tools = getToolSchema(tabStorage.settings.enableTools);
@@ -332,15 +331,19 @@ export class TaskLoop {
             await this.nodejsStatus.connectionFut;
         }
 
-        const allTools = {} as Record<string, ToolItem[]>;
+        const allTools = [] as ToolItem[];
         for (const client of mcpClientAdapter.clients) {
             if (!client.connected) {
                 continue;
             }
 
             const tools = await client.getTools();
-            const clientName = client.connectionResult.name as string;
-            allTools[clientName] = Array.from(tools.values());
+            allTools.push(...Array.from(tools.values()).map(
+                item => ({
+                    ...item,
+                    enabled: true
+                })
+            ));
         }
 
         return allTools;
@@ -394,9 +397,6 @@ export class TaskLoop {
 
             // 发送请求
             const doConverationResult = await this.doConversation(chatData, toolcallIndexAdapter);
-
-            console.log('[doConverationResult] Response');
-            console.log(doConverationResult);
 
             // 如果存在需要调度的工具
             if (this.streamingToolCalls.value.length > 0) {

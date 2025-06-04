@@ -8,6 +8,7 @@ import path from 'node:path';
 import fs from 'node:fs';
 import * as os from 'os';
 import { PostMessageble } from '../hook/adapter.js';
+import Table from 'cli-table3';
 
 export const clientMap: Map<string, RequestClientType> = new Map();
 export function getClient(clientId?: string): RequestClientType | undefined {
@@ -101,6 +102,10 @@ async function preprocessCommand(option: McpOptions, webview?: PostMessageble) {
 			}
 			return arg;
 		});
+	}
+
+	if (option.cwd && option.cwd.startsWith('~/')) {
+		option.cwd = option.cwd.replace('~', process.env.HOME || '');
 	}
 
 	if (option.connectionType === 'SSE' || option.connectionType === 'STREAMABLE_HTTP') {
@@ -239,12 +244,32 @@ export async function connectService(
 	option: McpOptions,
 	webview?: PostMessageble
 ): Promise<RestfulResponse> {
-	try {
-		const { env, ...others } = option; 
-		console.log('ready to connect', others);
+	try {		
+		// 使用cli-table3创建美观的表格
+		const table = new Table({
+			head: ['Property', 'Value'],
+			colWidths: [20, 60],
+			style: {
+				head: ['green'],
+				border: ['grey']
+			}
+		});
 		
+		table.push(
+			['Connection Type', option.connectionType],
+			['Command', option.command || 'N/A'],
+			['Arguments', option.args?.join(' ') || 'N/A'],
+			['Working Directory', option.cwd || 'N/A'],
+			['URL', option.url || 'N/A']
+		);
+		
+		console.log(table.toString());
+		
+
+
+		// 预处理字符串
 		await preprocessCommand(option, webview);
-		
+
 		// 通过 option 字符串进行 hash，得到唯一的 uuid
 		const uuid = await deterministicUUID(JSON.stringify(option));
 

@@ -6,6 +6,7 @@ import { ocrDB } from "../hook/db.js";
 import type { ToolCallContent } from "../mcp/client.dto.js";
 import { ocrWorkerStorage } from "../mcp/ocr.service.js";
 import { axiosFetch } from "../hook/axios-fetch.js";
+import Table from 'cli-table3';
 
 export let currentStream: AsyncIterable<any> | null = null;
 
@@ -24,12 +25,21 @@ export async function streamingChatCompletion(
         proxyServer = ''
     } = data;
 
+    // 创建请求参数表格
+    const requestTable = new Table({
+        head: ['Parameter', 'Value'],
+        colWidths: [20, 40],
+        style: {
+            head: ['cyan'],
+            border: ['grey']
+        }
+    });
+    
+
     const client = new OpenAI({
         baseURL,
         apiKey,
         fetch: async (input: string | URL | Request, init?: RequestInit) => {
-
-            console.log('openai fetch begin, proxyServer:', proxyServer);
             
             if (model.startsWith('gemini') && init) {
                 // 该死的 google
@@ -42,15 +52,25 @@ export async function streamingChatCompletion(
             return await axiosFetch(input, init, { proxyServer });
         }
     });
-
+    
     const seriableTools = (tools.length === 0) ? undefined: tools;
     const seriableParallelToolCalls = (tools.length === 0)? 
         undefined: model.startsWith('gemini') ? undefined : parallelToolCalls;
      
     await postProcessMessages(messages);
 
-    console.log('seriableTools', seriableTools);
-    console.log('seriableParallelToolCalls', seriableParallelToolCalls);
+    // 使用表格渲染请求参数
+    requestTable.push(
+        ['Model', model],
+        ['Base URL', baseURL || 'Default'],
+        ['Temperature', temperature],
+        ['Tools Count', tools.length],
+        ['Parallel Tool Calls', parallelToolCalls],
+        ['Proxy Server', proxyServer || 'No Proxy']
+    );
+    
+    console.log('\nOpenAI Request Parameters:');
+    console.log(requestTable.toString());
     
     const stream = await client.chat.completions.create({
         model,

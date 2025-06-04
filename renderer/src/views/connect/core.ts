@@ -200,7 +200,6 @@ export class McpClient {
         this.tools = new Map<string, ToolItem>();
         msg.tools.forEach(tool => {
             const standardSchema = _processSchemaNode(tool.inputSchema, tool.inputSchema.$defs || {});
-            console.log(standardSchema);
             
             tool.inputSchema = standardSchema;
             
@@ -530,7 +529,6 @@ class McpClientAdapter {
         }
 
         const launchSignature = await this.getLaunchSignature();
-        console.log('launchSignature', launchSignature);
                 
         let allOk = true;
 

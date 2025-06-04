@@ -1,7 +1,7 @@
 import { WebSocket } from 'ws';
 import { EventEmitter } from 'events';
 import { routeMessage } from '../common/router.js';
-import { McpOptions } from '../mcp/client.dto.js';
+import { ConnectionType, McpOptions } from '../mcp/client.dto.js';
 import { clientMap, connectService } from '../mcp/connect.service.js';
 
 // WebSocket 消息格式
@@ -19,6 +19,14 @@ export interface WebSocketResponse {
 
 export interface PostMessageble {
     postMessage(message: any): void;
+}
+
+export interface IConnectionArgs {
+    connectionType: ConnectionType;
+    commandString?: string;
+    cwd?: string;
+    url?: string;
+    oauth?: string;
 }
 
 // 监听器回调类型
@@ -72,7 +80,7 @@ export class VSCodeWebViewLike {
 export class TaskLoopAdapter {
     public emitter: EventEmitter;
     private messageHandlers: Set<MessageHandler>;
-    private connectionOptions: McpOptions[] = [];
+    private connectionOptions: IConnectionArgs[] = [];
 
     constructor(option?: any) {
         this.emitter = new EventEmitter(option);
@@ -133,7 +141,7 @@ export class TaskLoopAdapter {
      * @description 连接到 mcp 服务端
      * @param mcpOption 
      */
-    public addMcp(mcpOption: McpOptions) {
+    public addMcp(mcpOption: IConnectionArgs) {
 
         // 0.1.4 新版本开始，此处修改为懒加载连接
         // 实际的连接移交给前端 mcpAdapter 中进行统一的调度

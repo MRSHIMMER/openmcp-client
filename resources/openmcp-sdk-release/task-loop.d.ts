@@ -29,6 +29,7 @@ export interface ToolItem {
 	name: string;
 	description: string;
 	inputSchema: InputSchema;
+    enabled: boolean;
 	anyOf?: any;
 }
 
@@ -161,9 +162,15 @@ export class TaskLoop {
     connectToService(): Promise<void>;
 
     /**
+     * @description 设置代理服务器
+     * @param proxyServer 
+     */
+    setProxyServer(proxyServer: string): void;
+
+    /**
      * @description 获取所有可用的工具列表
      */
-    listTools(): Promise<Record<string, ToolItem[]>>;
+    listTools(): Promise<ToolItem[]>;
 
     /**
      * @description 开启循环，异步更新 DOM
