@@ -187,7 +187,7 @@ function handlePaste(event: ClipboardEvent) {
             if (selection && selection.rangeCount > 0) {
                 const range = selection.getRangeAt(0);
                 range.deleteContents();
-                const textNode = document.createTextNode(pastedText);
+                const textNode = document?.createTextNode(pastedText);
                 range.insertNode(textNode);
                 range.setStartAfter(textNode);
                 range.collapse(true);

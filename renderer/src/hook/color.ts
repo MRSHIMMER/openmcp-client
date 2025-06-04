@@ -151,12 +151,12 @@ export class MacroColor {
     private theme: 'light' | 'dark' = 'dark';
     public foregroundColor: RgbColor | undefined;
     public backgroundColor: RgbColor | undefined;
-    public foregroundColorString: string;
-    public backgroundColorString: string;
+    public foregroundColorString: string = '';
+    public backgroundColorString: string = '';
 
     constructor(option: ComputedColorOption = {}) {
         this.option = option;
-        this.rootStyles = getComputedStyle(document.documentElement);
+        this.rootStyles = getComputedStyle(document?.documentElement);
 
         const foregroundColorString = this.rootStyles.getPropertyValue(option.BaseForegroundColorMacroName || '--foreground');
         const backgroundColorString = this.rootStyles.getPropertyValue(option.BaseBackgroundColorMacroName || '--background');
@@ -178,8 +178,7 @@ export class MacroColor {
         if (sidebarColorString === backgroundColorString) {
             // trae 默认主题的特点：sidebarColorString 和 backgroundColorString 一样
             // 把 默认主题的特点：sidebarColorString 的颜色加深一些
-            const newSidebarColor = this.theme === 'dark' ? '#252a38' : '#edeff2';
-            document.documentElement.style.setProperty('--sidebar', 'var(--vscode-icube-colorBg2)');
+            document?.documentElement.style.setProperty('--sidebar', 'var(--vscode-icube-colorBg2)');
         }
     }
 

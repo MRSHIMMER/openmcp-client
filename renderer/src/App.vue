@@ -62,7 +62,7 @@ onMounted(async () => {
 		return;
 	}
 
-	document.addEventListener('click', () => {
+	document?.addEventListener('click', () => {
 		Connection.showPanel = false;
 	});
 

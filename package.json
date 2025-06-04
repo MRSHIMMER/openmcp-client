@@ -244,16 +244,20 @@
         "ws": "^8.18.1"
     },
     "devDependencies": {
-        "@types/node": "16.x",
+        "@types/node": "^22.15.29",
         "@types/pako": "^2.0.3",
         "@types/showdown": "^2.0.0",
         "@types/vscode": "^1.72.0",
+        "@vitejs/plugin-vue": "^5.2.4",
         "copy-webpack-plugin": "^13.0.0",
         "fork-ts-checker-webpack-plugin": "^9.1.0",
         "null-loader": "^4.0.1",
         "ts-loader": "^9.5.1",
         "turbo": "^2.5.3",
         "typescript": "^5.4.2",
+        "vite": "^6.3.5",
+        "vite-plugin-vue-devtools": "^7.7.6",
+        "vue-tsc": "^2.2.10",
         "webpack": "^5.99.5",
         "webpack-cli": "^5.1.4"
     },

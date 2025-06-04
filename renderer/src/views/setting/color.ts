@@ -11,7 +11,7 @@ export const colorManager = reactive({
     mainColor: 'white',
 
     initColor() {
-        const rootStyles = getComputedStyle(document.documentElement);            
+        const rootStyles = getComputedStyle(document?.documentElement);            
         this.mainColor = rootStyles.getPropertyValue('--main-color');
     }
 });
@@ -26,16 +26,11 @@ export function onGeneralColorChange(colorString: string) {
         return;
     }
     const { r, g, b } = color;
-
-    const myDocument = document as any;
-    if (!myDocument) {
-        return;
-    }
     
-    document.documentElement.style.setProperty(
+    document?.documentElement.style.setProperty(
         '--main-color', `rgb(${r}, ${g}, ${b})`);
 
-    document.documentElement.style.setProperty(
+    document?.documentElement.style.setProperty(
         '--main-light-color', `rgba(${r}, ${g}, ${b}, 0.7)`);
 }
 

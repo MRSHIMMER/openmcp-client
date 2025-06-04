@@ -70,7 +70,7 @@ async function whenGetPromptResponse(msg: PromptsGetResponse) {
             return;
         }
 
-        const container = document.createElement('div');
+        const container = document?.createElement('div');
         const promptChatItem = createApp(PromptChatItem, {
             messages: msg.messages
         });
@@ -88,7 +88,7 @@ async function whenGetPromptResponse(msg: PromptsGetResponse) {
         }
 
         // 设置光标到插入元素的后方
-        const newRange = document.createRange();
+        const newRange = document?.createRange();
         newRange.setStartAfter(firstElement);
         newRange.collapse(true);
         const selection = window.getSelection();

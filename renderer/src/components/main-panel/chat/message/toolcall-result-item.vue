@@ -110,7 +110,7 @@ const showFullImage = () => {
     const img = new Image();
     img.src = thumbnail.value;
     img.onload = () => {
-        const overlay = document.createElement('div');
+        const overlay = document?.createElement('div');
         overlay.style.position = 'fixed';
         overlay.style.top = '0';
         overlay.style.left = '0';
@@ -121,9 +121,9 @@ const showFullImage = () => {
         overlay.style.display = 'flex';
         overlay.style.justifyContent = 'center';
         overlay.style.alignItems = 'center';
-        overlay.onclick = () => document.body.removeChild(overlay);
+        overlay.onclick = () => document?.body.removeChild(overlay);
 
-        const imgContainer = document.createElement('div');
+        const imgContainer = document?.createElement('div');
         imgContainer.style.maxWidth = '90vw';
         imgContainer.style.maxHeight = '90vh';
         imgContainer.style.overflow = 'auto';
@@ -137,7 +137,7 @@ const showFullImage = () => {
 
         imgContainer.appendChild(fullImg);
         overlay.appendChild(imgContainer);
-        document.body.appendChild(overlay);
+        document?.body.appendChild(overlay);
     };
 };
 

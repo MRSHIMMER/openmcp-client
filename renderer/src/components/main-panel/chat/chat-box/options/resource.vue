@@ -82,7 +82,7 @@ async function whenGetResourceResponse(msg: ResourcesReadResponse) {
             return;
         }
 
-        const container = document.createElement('div');
+        const container = document?.createElement('div');
         const resourceChatItem = createApp(ResourceChatItem, {
             contents: msg.contents
         });
@@ -101,7 +101,7 @@ async function whenGetResourceResponse(msg: ResourcesReadResponse) {
             editor.appendChild(firstElement);
         }
 
-        const newRange = document.createRange();
+        const newRange = document?.createRange();
         newRange.setStartAfter(firstElement);
         newRange.collapse(true);
         const selection = window.getSelection();

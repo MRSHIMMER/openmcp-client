@@ -19,12 +19,7 @@ export function getThemeColor(): 'light' | 'dark' {
         return themeColor;
     }
 
-    const myDocument = document as any;
-    if (!myDocument) {
-        return 'dark';
-    }
-
-    const rootStyles = getComputedStyle(document.documentElement);
+    const rootStyles = getComputedStyle(document?.documentElement);
     const backgroundColorString = rootStyles.getPropertyValue('--background');
     const backgroundColor = Color.parseColor(backgroundColorString);
     if (backgroundColor) {
