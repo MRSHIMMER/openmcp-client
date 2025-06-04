@@ -10,6 +10,28 @@ export interface TaskLoopOptions {
     adapter?: any;
 }
 
+
+export interface SchemaProperty {
+	title: string;
+	type: string;
+	description?: string;
+}
+
+export interface InputSchema {
+	type: string;
+	properties: Record<string, SchemaProperty>;
+	required?: string[];
+	title?: string;
+	$defs?: any;
+}
+
+export interface ToolItem {
+	name: string;
+	description: string;
+	inputSchema: InputSchema;
+	anyOf?: any;
+}
+
 export type Ref<T> = {
     value: T;
 };
@@ -137,6 +159,12 @@ export class TaskLoop {
     setMaxEpochs(maxEpochs: number): void;
     bindStreaming(content: Ref<string>, toolCalls: Ref<ToolCall[]>): void;
     connectToService(): Promise<void>;
+
+    /**
+     * @description 获取所有可用的工具列表
+     */
+    listTools(): Promise<Record<string, ToolItem[]>>;
+
     /**
      * @description 开启循环，异步更新 DOM
      */

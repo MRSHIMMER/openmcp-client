@@ -10,6 +10,8 @@ import { getToolCallIndexAdapter, handleToolCalls, type IToolCallIndex, type Too
 import { getPlatform } from "@/api/platform";
 import { getSystemPrompt } from "../chat-box/options/system-prompt";
 import { mcpSetting } from "@/hook/mcp";
+import { mcpClientAdapter } from "@/views/connect/core";
+import type { ToolItem } from "@/hook/type";
 
 export type ChatCompletionChunk = OpenAI.Chat.Completions.ChatCompletionChunk;
 export type ChatCompletionCreateParamsBase = OpenAI.Chat.Completions.ChatCompletionCreateParams & { id?: string, proxyServer?: string };
@@ -47,6 +49,11 @@ export class TaskLoop {
     private completionUsage: ChatCompletionChunk['usage'] | undefined;
     private llmConfig?: BasicLlmDescription;
 
+    // 只会在 nodejs 环境下使用的部分变量
+    private nodejsStatus = {
+        connectionFut: new Promise<void>(resolve => resolve(void 0))
+    };
+
     constructor(
         private readonly taskOptions: TaskLoopOptions = { maxEpochs: 20, maxJsonParseRetry: 3, adapter: undefined },
     ) {
@@ -55,6 +62,9 @@ export class TaskLoop {
 
         // 根据当前环境决定是否要开启 messageBridge
         const platform = getPlatform();
+
+        console.log('current platform is', platform);
+
         if (platform === 'nodejs') {
             const adapter = taskOptions.adapter;
 
@@ -63,6 +73,8 @@ export class TaskLoop {
             }
 
             createMessageBridge(adapter.emitter);
+            console.log('mcpClientAdapter launch');
+            this.nodejsStatus.connectionFut = mcpClientAdapter.launch();
         }
 
         // web 环境下 bridge 会自动加载完成
@@ -313,14 +325,38 @@ export class TaskLoop {
         return llms[llmManager.currentModelIndex];
     }
 
-    public async connectToService() {
-        
+    public async listTools() {
+        const platform = getPlatform();
+        if (platform === 'nodejs') {
+            // 等待连接完成
+            await this.nodejsStatus.connectionFut;
+        }
+
+        const allTools = {} as Record<string, ToolItem[]>;
+        for (const client of mcpClientAdapter.clients) {
+            if (!client.connected) {
+                continue;
+            }
+
+            const tools = await client.getTools();
+            const clientName = client.connectionResult.name as string;
+            allTools[clientName] = Array.from(tools.values());
+        }
+
+        return allTools;
     }
 
     /**
      * @description 开启循环，异步更新 DOM
      */
     public async start(tabStorage: ChatStorage, userMessage: string) {
+
+        const platform = getPlatform();
+        if (platform === 'nodejs') {
+            // 等待连接完成
+            await this.nodejsStatus.connectionFut;
+        }
+
         // 添加目前的消息
         tabStorage.messages.push({
             role: 'user',

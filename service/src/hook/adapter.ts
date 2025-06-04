@@ -72,6 +72,7 @@ export class VSCodeWebViewLike {
 export class TaskLoopAdapter {
     public emitter: EventEmitter;
     private messageHandlers: Set<MessageHandler>;
+    private connectionOptions: McpOptions[] = [];
 
     constructor(option?: any) {
         this.emitter = new EventEmitter(option);
@@ -83,8 +84,27 @@ export class TaskLoopAdapter {
 
         // 默认需要将监听的消息导入到 routeMessage 中
         this.onDidReceiveMessage((message) => {
-            const { command, data } = message;        
-            routeMessage(command, data, this);
+            const { command, data } = message;
+            
+            switch (command) {
+                case 'nodejs/launch-signature':
+                    this.postMessage({
+                        command: 'nodejs/launch-signature',
+                        data: {
+                            code: 200,
+                            msg: this.connectionOptions
+                        }
+                    })
+                    break;
+
+                case 'nodejs/update-connection-signature':
+                    // sdk 模式下不需要自动保存连接参数
+                    break;
+            
+                default:
+                    routeMessage(command, data, this);
+                    break;
+            }
         });
     
     }
@@ -113,38 +133,14 @@ export class TaskLoopAdapter {
      * @description 连接到 mcp 服务端
      * @param mcpOption 
      */
-    public async connectMcpServer(mcpOption: McpOptions) {
-        const res = await connectService(mcpOption);
-        if (res.code === 200) {
-            console.log('✅ 成功连接 mcp 服务器： '  + res.msg);
+    public addMcp(mcpOption: McpOptions) {
 
-            const uuid = res.msg.uuid;
-            const client = clientMap.get(uuid);
-            const version = client?.getServerVersion();
-            console.log(version);
-        } else {
-            console.error('❌ 连接 mcp 服务器失败：' + res.msg);
-        }
-    }
+        // 0.1.4 新版本开始，此处修改为懒加载连接
+        // 实际的连接移交给前端 mcpAdapter 中进行统一的调度
+        // 调度步骤如下：
+        // getLaunchSignature 先获取访问签名，访问签名通过当前函数 push 到 class 中
 
-    /**
-     * @description 获取 mcp 服务器的工具列表
-     * @returns 
-     */
-    public async listTools() {
-        const tools = [];
-        for (const client of clientMap.values()) {
-            const clientTools = await client?.listTools();
-            if (clientTools?.tools) {
-                const enabledTools = clientTools.tools.map((tool: any) => {
-                    const enabledTools = {...tool, enabled: true };
-                    return enabledTools;
-                });
-                tools.push(...enabledTools);
-            }
-        }
-
-        return tools;
+        this.connectionOptions.push(mcpOption);
     }
 }
 

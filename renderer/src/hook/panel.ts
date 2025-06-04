@@ -1,7 +1,7 @@
 import { useMessageBridge } from "@/api/message-bridge";
 import { pinkLog } from "@/views/setting/util";
-import { debugModes, tabs } from "@/components/main-panel/panel";
-import { markRaw, ref, type Reactive } from "vue";
+import { tabs } from "@/components/main-panel/panel";
+import { ref, type Reactive } from "vue";
 import { v4 as uuidv4 } from 'uuid';
 import { mcpClientAdapter, type McpClient } from "@/views/connect/core";
 
@@ -45,15 +45,12 @@ export async function loadPanels(client: McpClient | Reactive<McpClient>) {
 
 		for (const tab of persistTab.tabs || []) {
 			
-			const component = tab.componentIndex >= 0? markRaw(debugModes[tab.componentIndex]) : undefined;
-
 			tabs.content.push({
 				id: uuidv4(),
 				name: tab.name,
 				icon: tab.icon,
 				type: tab.type,
 				componentIndex: tab.componentIndex,
-				component: component,
 				storage: tab.storage
 			});
 		}

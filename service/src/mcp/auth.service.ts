@@ -73,7 +73,7 @@ export class OAuthClient {
   callbackUrl: string;
 
   constructor() {
-    console.log('🔐 Initializing OAuth client...');
+    // console.log('🔐 Initializing OAuth client...');
     // 初始化OAuth客户端
     this.port = Math.floor(Math.random() * (50000 - 40000 + 1)) + 40000;
     //TODO: 如果端口被占用，重新生成一个端口
@@ -158,7 +158,7 @@ export class OAuthClient {
       token_endpoint_auth_method: 'none',
     };
 
-    console.log('🔐 Creating OAuth provider...');
+    // console.log('🔐 Creating OAuth provider...');
     const oauthProvider = new InMemoryOAuthClientProvider(
       this.callbackUrl,
       clientMetadata,
@@ -168,7 +168,7 @@ export class OAuthClient {
         this.openBrowser(redirectUrl.toString());
       }
     );
-    console.log('🔐 OAuth provider created');
+    // console.log('🔐 OAuth provider created');
     return oauthProvider;
   }
 

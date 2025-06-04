@@ -470,6 +470,7 @@ class McpClientAdapter {
      * @returns 
      */
     public async getLaunchSignature(): Promise<IConnectionArgs[]> {
+
         const bridge = useMessageBridge();
         const { code, msg } = await bridge.commandRequest(this.platform + '/launch-signature');
 
@@ -536,7 +537,6 @@ class McpClientAdapter {
         for (const item of launchSignature) {
 
             // 创建一个新的客户端            
-            // const client = reactive(new McpClient());
             const client = new McpClient();
 
             // 同步连接参数
@@ -549,6 +549,13 @@ class McpClientAdapter {
 
             // 连接
             const ok = await client.connect();
+
+            if (ok) {
+                console.log(`${client.name} connected successfully ✅`);
+            } else {
+                console.log(`${client.name} connected failed ❌`);
+            }
+
             allOk &&= ok;
         }
 

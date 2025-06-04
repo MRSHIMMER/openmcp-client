@@ -1,28 +1,21 @@
 import { watch, reactive } from 'vue';
 import { v4 as uuidv4 } from 'uuid';
 
-import Resource from './resource/index.vue';
-import Chat from './chat/index.vue';
-import Prompt from './prompt/index.vue';
-import Tool from './tool/index.vue';
 import I18n from '@/i18n/index';
-import { safeSavePanels, savePanels } from '@/hook/panel';
-
-const { t } = I18n.global;
+import { safeSavePanels } from '@/hook/panel';
 
 interface Tab {
 	id: string;
 	name: string;
 	icon: string;
 	type: string;
-	component: any;
 	componentIndex: number;
 	storage: Record<string, any>;
 }
 
-export const debugModes = [
-	Resource, Prompt, Tool, Chat
-]
+// export const debugModes = [
+// 	Resource, Prompt, Tool, Chat
+// ]
 
 // TODO: 实现对于 tabs 这个数据的可持久化
 export const tabs = reactive<{
@@ -54,6 +47,7 @@ watch(
 export function createTab(type: string, index: number): Tab {
 	let customName: string | null = null;
 	const id = uuidv4();
+	const { t } = I18n.global;
 
 	return {
 		get name() {
@@ -69,7 +63,6 @@ export function createTab(type: string, index: number): Tab {
 		type,
 		id,
 		componentIndex: -1,
-		component: undefined,
 		storage: {
 			// 默认打开一个 mcp server 的面板
 			activeNames: [0]
@@ -82,7 +75,6 @@ export function addNewTab() {
 	tabs.content.push(newTab);
 	tabs.activeIndex = tabs.content.length - 1;
 }
-
 
 export function closeTab(index: number) {
 	tabs.content.splice(index, 1);

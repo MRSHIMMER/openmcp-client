@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import { resolve } from 'path';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
+import { visualizer } from 'rollup-plugin-visualizer';
 import vue from '@vitejs/plugin-vue';
 
 export default defineConfig({
@@ -11,12 +12,11 @@ export default defineConfig({
 				'userAgent': 2
 			},
 		},
-		'document': {
-			body: {}
-		}
     },
     plugins: [
-        vue(),
+        vue({
+			isProduction: true
+		}),
         viteStaticCopy({
             targets: [
                 {
@@ -24,6 +24,10 @@ export default defineConfig({
                     dest: resolve(__dirname, '../openmcp-sdk')
                 }
             ]
+        }),
+		visualizer({
+            open: true,
+            filename: 'stats.html'
         })
     ],
     build: {
@@ -42,13 +46,13 @@ export default defineConfig({
                 'element-plus': './tools.js'
             }
         },
-        minify: true,
+        minify: false,
         sourcemap: false,  // 禁用sourcemap生成
         cssCodeSplit: false  // 禁用CSS文件生成
     },
     resolve: {
         alias: {
-            '@': resolve(__dirname, '..', 'renderer/src')
+            '@': resolve(__dirname, '..', 'renderer/src'),
         }
     }
 });

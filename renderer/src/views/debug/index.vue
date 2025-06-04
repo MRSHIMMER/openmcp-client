@@ -9,7 +9,7 @@
                 v-show="tab === tabs.content[tabs.activeIndex]"
                 v-for="(tab, index) of tabs.content"
 				:key="tab.id"
-				:is="tab.component"
+				:is="debugComponent[tab.componentIndex]"
                 :tab-id="index"
 			/>
 		</div>
@@ -18,16 +18,24 @@
 
 <script setup lang="ts">
 import { defineComponent, computed } from 'vue';
+import Resource from '@/components/main-panel/resource/index.vue';
+import Chat from '@/components/main-panel/chat/index.vue';
+import Prompt from '@/components/main-panel/prompt/index.vue';
+import Tool from '@/components/main-panel/tool/index.vue';
 
 import Welcome from './welcome.vue';
 import { tabs } from '@/components/main-panel/panel';
 import { panelLoaded } from '@/hook/panel';
 
+const debugComponent = [
+	Resource, Prompt, Tool, Chat
+]
+
 defineComponent({ name: 'debug' });
 
 const haveActiveTab = computed(() => {
 	const activeTab = tabs.activeTab;
-	if (activeTab && activeTab.component) {
+	if (activeTab && activeTab.componentIndex >= 0) {
 		return true;
 	}
 	return false;

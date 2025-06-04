@@ -1,5 +1,5 @@
-import { markRaw, reactive } from 'vue';
-import { createTab, debugModes, tabs } from '@/components/main-panel/panel';
+import { reactive } from 'vue';
+import { createTab, tabs } from '@/components/main-panel/panel';
 import type { ToolStorage } from '@/components/main-panel/tool/tools';
 import type { ToolCall } from '@/components/main-panel/chat/chat-box/chat';
 
@@ -28,7 +28,6 @@ export interface BasicLlmDescription {
 export function createTest(call: ToolCall) {
 	const tab = createTab('tool', 0);
 	tab.componentIndex = 2;
-	tab.component = markRaw(debugModes[2]);
 	tab.icon = 'icon-tool';
 	tab.name = t("tools");
 	

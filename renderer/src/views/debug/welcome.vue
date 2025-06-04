@@ -22,8 +22,8 @@
 </template>
 
 <script setup lang="ts">
-import { debugModes, tabs } from '@/components/main-panel/panel';
-import { defineComponent, markRaw, computed } from 'vue';
+import { tabs } from '@/components/main-panel/panel';
+import { defineComponent, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { ElMessage } from 'element-plus';
 import { welcomeRef } from './welcome';
@@ -61,8 +61,6 @@ function chooseDebugMode(index: number) {
 	// TODO: 支持更多的 server
 	if (mcpClientAdapter.connected) {
 		const activeTab = tabs.activeTab;
-		activeTab.component = markRaw(debugModes[index]);
-
 		activeTab.componentIndex = index;
 		activeTab.icon = debugOptions[index].icon;
 
