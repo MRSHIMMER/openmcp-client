@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite';
+import { defineConfig, normalizePath } from 'vite';
 import { resolve } from 'path';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 // import { visualizer } from 'rollup-plugin-visualizer';
@@ -22,8 +22,8 @@ export default defineConfig({
         viteStaticCopy({
             targets: [
                 {
-                    src: resolve(__dirname, '../resources/openmcp-sdk-release/*'),
-                    dest: resolve(__dirname, '../openmcp-sdk')
+                    src: normalizePath(resolve(__dirname, '../resources/openmcp-sdk-release/*')),
+                    dest: normalizePath(resolve(__dirname, '../openmcp-sdk'))
                 }
             ]
         }),

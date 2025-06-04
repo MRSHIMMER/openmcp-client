@@ -229,7 +229,7 @@
         "lint": "eslint src --ext ts",
         "test": "node ./out/test/runTest.js",
         "prepare:ocr": "webpack --config webpack/webpack.tesseract.js",
-        "build:task-loop": "npx vite build --config webpack/vite.config.task-loop.js && node renderer/scripts/task-loop.build.mjs"
+        "build:task-loop": "npx vite build --config webpack/vite.config.task-loop.mjs && node renderer/scripts/task-loop.build.mjs"
     },
     "dependencies": {
         "@modelcontextprotocol/sdk": "^1.12.1",
@@ -244,7 +244,9 @@
         "ws": "^8.18.1"
     },
     "devDependencies": {
+        "@esbuild/win32-x64": "^0.25.5",
         "@rollup/plugin-inject": "^5.0.5",
+        "@rollup/rollup-win32-x64-msvc": "^4.41.1",
         "@types/node": "^22.15.29",
         "@types/pako": "^2.0.3",
         "@types/showdown": "^2.0.0",

@@ -1,4 +1,5 @@
 {
+  "clientId": "1fa64d92-4d92-564d924e141-864d924e1413324-133245eb",
   "currentIndex": 1,
   "tabs": [
     {
@@ -159,36 +160,150 @@
             {
               "name": "puppeteer_navigate",
               "description": "Navigate to a URL",
+              "inputSchema": {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "type": "string",
+                    "description": "URL to navigate to"
+                  },
+                  "launchOptions": {
+                    "type": "object",
+                    "description": "PuppeteerJS LaunchOptions. Default null. If changed and not null, browser restarts. Example: { headless: true, args: ['--no-sandbox'] }"
+                  },
+                  "allowDangerous": {
+                    "type": "boolean",
+                    "description": "Allow dangerous LaunchOptions that reduce security. When false, dangerous args like --no-sandbox will throw errors. Default false."
+                  }
+                },
+                "required": [
+                  "url"
+                ]
+              },
               "enabled": true
             },
             {
               "name": "puppeteer_screenshot",
               "description": "Take a screenshot of the current page or a specific element",
+              "inputSchema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Name for the screenshot"
+                  },
+                  "selector": {
+                    "type": "string",
+                    "description": "CSS selector for element to screenshot"
+                  },
+                  "width": {
+                    "type": "number",
+                    "description": "Width in pixels (default: 800)"
+                  },
+                  "height": {
+                    "type": "number",
+                    "description": "Height in pixels (default: 600)"
+                  }
+                },
+                "required": [
+                  "name"
+                ]
+              },
               "enabled": true
             },
             {
               "name": "puppeteer_click",
               "description": "Click an element on the page",
+              "inputSchema": {
+                "type": "object",
+                "properties": {
+                  "selector": {
+                    "type": "string",
+                    "description": "CSS selector for element to click"
+                  }
+                },
+                "required": [
+                  "selector"
+                ]
+              },
               "enabled": true
             },
             {
               "name": "puppeteer_fill",
               "description": "Fill out an input field",
+              "inputSchema": {
+                "type": "object",
+                "properties": {
+                  "selector": {
+                    "type": "string",
+                    "description": "CSS selector for input field"
+                  },
+                  "value": {
+                    "type": "string",
+                    "description": "Value to fill"
+                  }
+                },
+                "required": [
+                  "selector",
+                  "value"
+                ]
+              },
               "enabled": true
             },
             {
               "name": "puppeteer_select",
               "description": "Select an element on the page with Select tag",
+              "inputSchema": {
+                "type": "object",
+                "properties": {
+                  "selector": {
+                    "type": "string",
+                    "description": "CSS selector for element to select"
+                  },
+                  "value": {
+                    "type": "string",
+                    "description": "Value to select"
+                  }
+                },
+                "required": [
+                  "selector",
+                  "value"
+                ]
+              },
               "enabled": true
             },
             {
               "name": "puppeteer_hover",
               "description": "Hover an element on the page",
+              "inputSchema": {
+                "type": "object",
+                "properties": {
+                  "selector": {
+                    "type": "string",
+                    "description": "CSS selector for element to hover"
+                  }
+                },
+                "required": [
+                  "selector"
+                ]
+              },
               "enabled": true
             },
             {
               "name": "puppeteer_evaluate",
               "description": "Execute JavaScript in the browser console",
+              "inputSchema": {
+                "type": "object",
+                "properties": {
+                  "script": {
+                    "type": "string",
+                    "description": "JavaScript code to execute"
+                  }
+                },
+                "required": [
+                  "script"
+                ]
+              },
               "enabled": true
             }
           ],
@@ -334,29 +449,57 @@
           },
           {
             "role": "user",
-            "content": "请将下面的更新日志翻译成 GitHub release 风格的英文说明，请只返回翻译后的结果，不要出现任何多余的前缀：  ",
+            "content": "error during build:\n[vite-plugin-static-copy:build] No file was found to copy on C:\\Users\\K\\project\\openmcp-client\\resources\\openmcp-sdk-release\\* src.\n\n但是实际上，这个文件夹下有东西的，mac 上可以运行，我的 配置如下：\nimport { defineConfig } from 'vite';\nimport { resolve } from 'path';\nimport { viteStaticCopy } from 'vite-plugin-static-copy';\n// import { visualizer } from 'rollup-plugin-visualizer';\n\nexport default defineConfig({\n    define: {\n        'window': {\n            'nodejs': true,\n            'navigator': {\n                'userAgent': 2\n            },\n            'performance': {\n                'now': () => performance.now()\n            },\n            'Date': {\n                'now': () => Date.now()\n            }\n        },\n    },\n    plugins: [\n        viteStaticCopy({\n            targets: [\n                {\n                    src: resolve(__dirname, '../resources/openmcp-sdk-release/*'),\n                    dest: resolve(__dirname, '../openmcp-sdk')\n                }\n            ]\n        }),\n        // visualizer({\n        //     open: true,\n        //     filename: 'stats.html'\n        // })\n    ],\n    build: {\n        target: 'node18',\n        lib: {\n            entry: resolve(__dirname, '..', 'renderer/src/components/main-panel/chat/core/task-loop.ts'),\n            name: 'TaskLoop',\n            fileName: 'task-loop',\n            formats: ['cjs']\n        },\n        outDir: resolve(__dirname, '..', 'openmcp-sdk'),\n        emptyOutDir: false,\n        rollupOptions: {\n            external: [\n                'vue',\n                'element-plus',\n            ],\n            output: {\n                globals: {\n                    vue: 'Vue',\n                    'element-plus': './tools.js'\n                }\n            }\n        },\n        minify: false,\n        sourcemap: false,  // 禁用sourcemap生成\n        cssCodeSplit: false  // 禁用CSS文件生成\n    },\n    resolve: {\n        alias: {\n            '@': resolve(__dirname, '..', 'renderer/src'),\n        }\n    }\n});",
             "extraInfo": {
-              "created": 1747598248965,
+              "created": 1749048385652,
               "state": "success",
               "serverName": "deepseek"
             }
           },
           {
             "role": "assistant",
-            "content": "Here’s the translation in GitHub release style:\n\n---\n\n### **New Features**\n- Added support for real-time data synchronization.\n- Introduced a new dashboard for analytics.\n\n### **Improvements**\n- Optimized query performance for large datasets.\n- Enhanced error handling for API requests.\n\n### **Bug Fixes**\n- Fixed an issue where the system crashed on invalid input.\n- Resolved a memory leak in the background service.\n\n### **Breaking Changes**\n- Removed deprecated endpoints (`/v1/old`).\n- Updated the authentication mechanism to use OAuth 2.0.\n\n### **Documentation**\n- Added detailed guides for API integration.\n- Improved inline code comments.",
+            "content": "这个错误是因为 `vite-plugin-static-copy` 在处理 Windows 路径时可能存在问题。以下是解决方案：\n\n### 问题分析\n1. 错误表明插件找不到要复制的文件，但文件确实存在\n2. 在 Mac 上可以运行，但在 Windows 上失败\n3. 问题可能出在路径解析或通配符处理上\n\n### 解决方案\n\n#### 方案 1：修改路径配置（推荐）\n```javascript\nviteStaticCopy({\n  targets: [\n    {\n      src: '../resources/openmcp-sdk-release/**/*', // 使用 **/* 匹配所有文件\n      dest: '../openmcp-sdk',\n      rename: (name, extension, fullPath) => {\n        // 移除路径前缀\n        const relativePath = path.relative(\n          path.resolve(__dirname, '../resources/openmcp-sdk-release'),\n          fullPath\n        );\n        return relativePath;\n      }\n    }\n  ]\n})\n```\n\n#### 方案 2：明确指定文件列表\n```javascript\nimport fs from 'fs';\nimport path from 'path';\n\n// 获取所有文件\nconst getFiles = (dir) => {\n  const files = [];\n  const walkSync = (currentDir) => {\n    fs.readdirSync(currentDir).forEach(file => {\n      const fullPath = path.join(currentDir, file);\n      if (fs.statSync(fullPath).isDirectory()) {\n        walkSync(fullPath);\n      } else {\n        files.push(fullPath);\n      }\n    });\n  };\n  walkSync(path.resolve(__dirname, '../resources/openmcp-sdk-release'));\n  return files;\n};\n\nconst filesToCopy = getFiles(path.resolve(__dirname, '../resources/openmcp-sdk-release'));\n\nexport default defineConfig({\n  plugins: [\n    viteStaticCopy({\n      targets: filesToCopy.map(file => ({\n        src: file,\n        dest: path.relative(\n          path.resolve(__dirname, '../resources/openmcp-sdk-release'),\n          path.dirname(file)\n        ),\n        rename: path.basename(file)\n      }))\n    })\n  ]\n})\n```\n\n#### 方案 3：使用绝对路径并转义\n```javascript\nviteStaticCopy({\n  targets: [\n    {\n      src: path.resolve(__dirname, '../resources/openmcp-sdk-release').replace(/\\\\/g, '/') + '/*',\n      dest: path.resolve(__dirname, '../openmcp-sdk').replace(/\\\\/g, '/')\n    }\n  ]\n})\n```\n\n### 其他注意事项\n\n1. **路径分隔符问题**：\n   - Windows 使用 `\\` 而 Mac/Linux 使用 `/`\n   - 可以统一使用 `path.posix` 方法：\n     ```javascript\n     const srcPath = path.posix.join('..', 'resources', 'openmcp-sdk-release', '*');\n     ```\n\n2. **文件权限问题**：\n   - 确保 Windows 用户有读取源目录的权限\n\n3. **调试建议**：\n   - 在插件前添加日志：\n     ```javascript\n     console.log('Source path exists:', fs.existsSync(path.resolve(__dirname, '../resources/openmcp-sdk-release')));\n     console.log('Source files:', fs.readdirSync(path.resolve(__dirname, '../resources/openmcp-sdk-release')));\n     ```\n\n4. **备选方案**：\n   如果仍然有问题，可以考虑使用 `vite-plugin-copy` 替代：\n   ```javascript\n   import copy from 'vite-plugin-copy';\n   \n   copy({\n     targets: [\n       { \n         src: 'resources/openmcp-sdk-release/*',\n         dest: 'openmcp-sdk'\n       }\n     ]\n   })\n   ```\n\n### 最终建议配置\n\n```javascript\nviteStaticCopy({\n  targets: [\n    {\n      src: path.posix.join('..', 'resources', 'openmcp-sdk-release', '**', '*'),\n      dest: path.posix.join('..', 'openmcp-sdk')\n    }\n  ]\n})\n```\n\n选择最适合你项目的一种方案，通常方案1或方案3就能解决Windows路径问题。如果仍有问题，可以尝试在Windows上使用WSL环境进行构建。",
             "extraInfo": {
-              "created": 1747598260799,
+              "created": 1749048431015,
               "state": "success",
               "serverName": "deepseek",
               "usage": {
-                "prompt_tokens": 7946,
-                "completion_tokens": 136,
-                "total_tokens": 8082,
+                "prompt_tokens": 7440,
+                "completion_tokens": 887,
+                "total_tokens": 8327,
                 "prompt_tokens_details": {
-                  "cached_tokens": 896
+                  "cached_tokens": 0
                 },
-                "prompt_cache_hit_tokens": 896,
-                "prompt_cache_miss_tokens": 7050
+                "prompt_cache_hit_tokens": 0,
+                "prompt_cache_miss_tokens": 7440
+              }
+            }
+          },
+          {
+            "role": "user",
+            "content": "error during build:\r\n[vite-plugin-static-copy:build] No file was found to copy on C:\\Users\\K\\project\\openmcp-client\\resources\\openmcp-sdk-release\\package.json src.，但是实际上这个路径是存在的",
+            "extraInfo": {
+              "created": 1749048724100,
+              "state": "success",
+              "serverName": "deepseek"
+            }
+          },
+          {
+            "role": "assistant",
+            "content": "这个错误表明 `vite-plugin-static-copy` 在尝试复制 `package.json` 文件时找不到文件，尽管文件确实存在。这通常是由于 Windows 路径处理或插件配置问题导致的。以下是详细的解决方案：\n\n---\n\n### **解决方案**\n\n#### **1. 使用明确的文件路径（推荐）**\n修改 `vite.config.ts`，明确指定要复制的文件路径：\n\n```javascript\nimport { defineConfig } from 'vite';\nimport { resolve } from 'path';\nimport { viteStaticCopy } from 'vite-plugin-static-copy';\n\nexport default defineConfig({\n  plugins: [\n    viteStaticCopy({\n      targets: [\n        {\n          // 明确指定要复制的文件\n          src: resolve(__dirname, '../resources/openmcp-sdk-release/package.json'),\n          dest: resolve(__dirname, '../openmcp-sdk'),\n        }\n      ]\n    })\n  ]\n});\n```\n\n#### **2. 检查路径是否正确**\n在配置文件中添加调试代码，验证路径是否存在：\n\n```javascript\nconst srcPath = resolve(__dirname, '../resources/openmcp-sdk-release/package.json');\nconsole.log('File exists:', require('fs').existsSync(srcPath)); // 检查文件是否存在\nconsole.log('Full path:', srcPath); // 打印完整路径\n```\n\n如果输出 `false`，说明路径解析有问题。\n\n#### **3. 使用 `path.posix` 统一路径格式**\nWindows 使用反斜杠 `\\`，而插件可能预期正斜杠 `/`。强制使用 POSIX 格式：\n\n```javascript\nimport { posix } from 'path';\n\nviteStaticCopy({\n  targets: [\n    {\n      src: posix.join('..', 'resources', 'openmcp-sdk-release', 'package.json'),\n      dest: posix.join('..', 'openmcp-sdk'),\n    }\n  ]\n})\n```\n\n#### **4. 禁用 `flatten` 选项**\n如果目标路径结构需要保留，添加 `flatten: false`：\n\n```javascript\nviteStaticCopy({\n  targets: [\n    {\n      src: resolve(__dirname, '../resources/openmcp-sdk-release/package.json'),\n      dest: resolve(__dirname, '../openmcp-sdk'),\n      flatten: false, // 保留原始目录结构\n    }\n  ]\n})\n```\n\n#### **5. 使用通配符的正确方式**\n如果需要复制多个文件，确保通配符语法正确：\n\n```javascript\nviteStaticCopy({\n  targets: [\n    {\n      src: resolve(__dirname, '../resources/openmcp-sdk-release') + '/*', // 显式拼接通配符\n      dest: resolve(__dirname, '../openmcp-sdk'),\n    }\n  ]\n})\n```\n\n#### **6. 替换为 `vite-plugin-copy`**\n如果问题依旧，尝试使用更简单的 [`vite-plugin-copy`](https://github.com/fengxinming/vite-plugins/tree/main/packages/vite-plugin-copy)：\n\n```bash\nnpm install vite-plugin-copy --save-dev\n```\n\n配置示例：\n```javascript\nimport copy from 'vite-plugin-copy';\n\ncopy({\n  targets: [\n    {\n      src: 'resources/openmcp-sdk-release/package.json',\n      dest: 'openmcp-sdk',\n    }\n  ]\n})\n```\n\n---\n\n### **验证步骤**\n1. **检查文件权限**：\n   - 确保当前用户对 `resources/openmcp-sdk-release/package.json` 有读取权限。\n\n2. **打印调试信息**：\n   ```javascript\n   console.log('Resolved src path:', resolve(__dirname, '../resources/openmcp-sdk-release/package.json'));\n   console.log('Resolved dest path:', resolve(__dirname, '../openmcp-sdk'));\n   ```\n\n3. **手动测试复制**：\n   在 Node 中运行以下代码，验证是否能复制文件：\n   ```javascript\n   const fs = require('fs');\n   const src = resolve(__dirname, '../resources/openmcp-sdk-release/package.json');\n   const dest = resolve(__dirname, '../openmcp-sdk/package.json');\n   fs.copyFileSync(src, dest);\n   ```\n\n---\n\n### **常见问题原因**\n1. **路径大小写敏感**：\n   - Windows 路径不区分大小写，但插件内部可能严格匹配。检查路径中的大小写是否完全一致。\n\n2. **符号链接或虚拟路径**：\n   - 如果路径包含符号链接（如 `node_modules` 中的依赖），插件可能无法解析。\n\n3. **防病毒软件拦截**：\n   - 某些安全软件会阻止构建工具访问特定目录，尝试临时禁用防护软件。\n\n---\n\n### **最终建议**\n优先使用 **方案1（明确文件路径）** 或 **方案6（替换插件）**。如果问题仍未解决，请提供以下信息：\n1. 完整的 `vite.config.ts`。\n2. 运行 `dir C:\\Users\\K\\project\\openmcp-client\\resources\\openmcp-sdk-release` 的输出。\n3. 构建时的完整错误日志。",
+            "extraInfo": {
+              "created": 1749048777709,
+              "state": "success",
+              "serverName": "deepseek",
+              "usage": {
+                "prompt_tokens": 8385,
+                "completion_tokens": 1071,
+                "total_tokens": 9456,
+                "prompt_tokens_details": {
+                  "cached_tokens": 8064
+                },
+                "prompt_cache_hit_tokens": 8064,
+                "prompt_cache_miss_tokens": 321
               }
             }
           }
@@ -367,37 +510,151 @@
             {
               "name": "puppeteer_navigate",
               "description": "Navigate to a URL",
-              "enabled": true
+              "inputSchema": {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "type": "string",
+                    "description": "URL to navigate to"
+                  },
+                  "launchOptions": {
+                    "type": "object",
+                    "description": "PuppeteerJS LaunchOptions. Default null. If changed and not null, browser restarts. Example: { headless: true, args: ['--no-sandbox'] }"
+                  },
+                  "allowDangerous": {
+                    "type": "boolean",
+                    "description": "Allow dangerous LaunchOptions that reduce security. When false, dangerous args like --no-sandbox will throw errors. Default false."
+                  }
+                },
+                "required": [
+                  "url"
+                ]
+              },
+              "enabled": false
             },
             {
               "name": "puppeteer_screenshot",
               "description": "Take a screenshot of the current page or a specific element",
-              "enabled": true
+              "inputSchema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Name for the screenshot"
+                  },
+                  "selector": {
+                    "type": "string",
+                    "description": "CSS selector for element to screenshot"
+                  },
+                  "width": {
+                    "type": "number",
+                    "description": "Width in pixels (default: 800)"
+                  },
+                  "height": {
+                    "type": "number",
+                    "description": "Height in pixels (default: 600)"
+                  }
+                },
+                "required": [
+                  "name"
+                ]
+              },
+              "enabled": false
             },
             {
               "name": "puppeteer_click",
               "description": "Click an element on the page",
-              "enabled": true
+              "inputSchema": {
+                "type": "object",
+                "properties": {
+                  "selector": {
+                    "type": "string",
+                    "description": "CSS selector for element to click"
+                  }
+                },
+                "required": [
+                  "selector"
+                ]
+              },
+              "enabled": false
             },
             {
               "name": "puppeteer_fill",
               "description": "Fill out an input field",
-              "enabled": true
+              "inputSchema": {
+                "type": "object",
+                "properties": {
+                  "selector": {
+                    "type": "string",
+                    "description": "CSS selector for input field"
+                  },
+                  "value": {
+                    "type": "string",
+                    "description": "Value to fill"
+                  }
+                },
+                "required": [
+                  "selector",
+                  "value"
+                ]
+              },
+              "enabled": false
             },
             {
               "name": "puppeteer_select",
               "description": "Select an element on the page with Select tag",
-              "enabled": true
+              "inputSchema": {
+                "type": "object",
+                "properties": {
+                  "selector": {
+                    "type": "string",
+                    "description": "CSS selector for element to select"
+                  },
+                  "value": {
+                    "type": "string",
+                    "description": "Value to select"
+                  }
+                },
+                "required": [
+                  "selector",
+                  "value"
+                ]
+              },
+              "enabled": false
             },
             {
               "name": "puppeteer_hover",
               "description": "Hover an element on the page",
-              "enabled": true
+              "inputSchema": {
+                "type": "object",
+                "properties": {
+                  "selector": {
+                    "type": "string",
+                    "description": "CSS selector for element to hover"
+                  }
+                },
+                "required": [
+                  "selector"
+                ]
+              },
+              "enabled": false
             },
             {
               "name": "puppeteer_evaluate",
               "description": "Execute JavaScript in the browser console",
-              "enabled": true
+              "inputSchema": {
+                "type": "object",
+                "properties": {
+                  "script": {
+                    "type": "string",
+                    "description": "JavaScript code to execute"
+                  }
+                },
+                "required": [
+                  "script"
+                ]
+              },
+              "enabled": false
             }
           ],
           "enableWebSearch": false,
