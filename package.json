@@ -248,7 +248,6 @@
         "@types/pako": "^2.0.3",
         "@types/showdown": "^2.0.0",
         "@types/vscode": "^1.72.0",
-        "@vitejs/plugin-vue": "^5.2.4",
         "copy-webpack-plugin": "^13.0.0",
         "fork-ts-checker-webpack-plugin": "^9.1.0",
         "null-loader": "^4.0.1",

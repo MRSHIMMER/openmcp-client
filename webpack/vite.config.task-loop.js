@@ -1,8 +1,7 @@
 import { defineConfig } from 'vite';
 import { resolve } from 'path';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
-import { visualizer } from 'rollup-plugin-visualizer';
-import vue from '@vitejs/plugin-vue';
+// import { visualizer } from 'rollup-plugin-visualizer';
 
 export default defineConfig({
     define: {
@@ -14,9 +13,6 @@ export default defineConfig({
 		},
     },
     plugins: [
-        vue({
-			isProduction: true
-		}),
         viteStaticCopy({
             targets: [
                 {
@@ -25,10 +21,10 @@ export default defineConfig({
                 }
             ]
         }),
-		visualizer({
-            open: true,
-            filename: 'stats.html'
-        })
+		// visualizer({
+        //     open: true,
+        //     filename: 'stats.html'
+        // })
     ],
     build: {
 		target: 'node18',
