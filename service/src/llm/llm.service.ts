@@ -59,18 +59,18 @@ export async function streamingChatCompletion(
      
     await postProcessMessages(messages);
 
-    // 使用表格渲染请求参数
-    requestTable.push(
-        ['Model', model],
-        ['Base URL', baseURL || 'Default'],
-        ['Temperature', temperature],
-        ['Tools Count', tools.length],
-        ['Parallel Tool Calls', parallelToolCalls],
-        ['Proxy Server', proxyServer || 'No Proxy']
-    );
+    // // 使用表格渲染请求参数
+    // requestTable.push(
+    //     ['Model', model],
+    //     ['Base URL', baseURL || 'Default'],
+    //     ['Temperature', temperature],
+    //     ['Tools Count', tools.length],
+    //     ['Parallel Tool Calls', parallelToolCalls],
+    //     ['Proxy Server', proxyServer || 'No Proxy']
+    // );
     
-    console.log('\nOpenAI Request Parameters:');
-    console.log(requestTable.toString());
+    // console.log('\nOpenAI Request Parameters:');
+    // console.log(requestTable.toString());
     
     const stream = await client.chat.completions.create({
         model,
