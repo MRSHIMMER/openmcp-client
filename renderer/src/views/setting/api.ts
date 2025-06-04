@@ -57,10 +57,10 @@ export async function makeSimpleTalk() {
         simpleTestResult.start = false;
     });
 
-    const startTime = performance.now();
+    const startTime = Date.now();
     await loop.start(chatStorage, testMessage);
 
-    const costTime = (performance.now() - startTime!) / 1000;
+    const costTime = (Date.now() - startTime!) / 1000;
     const message = chatStorage.messages[chatStorage.messages.length - 1];
     console.log(chatStorage.messages);
 

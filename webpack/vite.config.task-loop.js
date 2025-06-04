@@ -5,12 +5,18 @@ import { viteStaticCopy } from 'vite-plugin-static-copy';
 
 export default defineConfig({
     define: {
-		'window': {
-			'nodejs': true,
-			'navigator': {
-				'userAgent': 2
-			},
-		},
+        'window': {
+            'nodejs': true,
+            'navigator': {
+                'userAgent': 2
+            },
+            'performance': {
+                'now': () => performance.now()
+            },
+            'Date': {
+                'now': () => Date.now()
+            }
+        },
     },
     plugins: [
         viteStaticCopy({
@@ -21,13 +27,13 @@ export default defineConfig({
                 }
             ]
         }),
-		// visualizer({
+        // visualizer({
         //     open: true,
         //     filename: 'stats.html'
         // })
     ],
     build: {
-		target: 'node18',
+        target: 'node18',
         lib: {
             entry: resolve(__dirname, '..', 'renderer/src/components/main-panel/chat/core/task-loop.ts'),
             name: 'TaskLoop',
@@ -37,9 +43,15 @@ export default defineConfig({
         outDir: resolve(__dirname, '..', 'openmcp-sdk'),
         emptyOutDir: false,
         rollupOptions: {
-            external: {
-                vue: 'vue',
-                'element-plus': './tools.js'
+            external: [
+                'vue',
+                'element-plus',
+            ],
+            output: {
+                globals: {
+                    vue: 'Vue',
+                    'element-plus': './tools.js'
+                }
             }
         },
         minify: false,
