@@ -5,7 +5,6 @@ import { RestfulResponse } from "../common/index.dto.js";
 import { ocrDB } from "../hook/db.js";
 import type { ToolCallContent } from "../mcp/client.dto.js";
 import { ocrWorkerStorage } from "../mcp/ocr.service.js";
-import { axiosFetch } from "../hook/axios-fetch.js";
 import Table from 'cli-table3';
 
 export let currentStream: AsyncIterable<any> | null = null;
@@ -39,18 +38,6 @@ export async function streamingChatCompletion(
     const client = new OpenAI({
         baseURL,
         apiKey,
-        fetch: async (input: string | URL | Request, init?: RequestInit) => {
-            
-            if (model.startsWith('gemini') && init) {
-                // 该死的 google
-                init.headers = {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${apiKey}`
-                }
-            }
-            
-            return await axiosFetch(input, init, { proxyServer });
-        }
     });
     
     const seriableTools = (tools.length === 0) ? undefined: tools;

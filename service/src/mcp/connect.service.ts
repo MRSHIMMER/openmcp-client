@@ -264,8 +264,6 @@ export async function connectService(
 		);
 		
 		console.log(table.toString());
-		
-
 
 		// 预处理字符串
 		await preprocessCommand(option, webview);

@@ -62,8 +62,6 @@ function deserializeToolCallResponse(toolArgs: string) {
 
 function handleToolResponse(toolResponse: ToolCallResponse) {
     if (typeof toolResponse === 'string') {
-        // 如果是 string，说明是错误信息
-        redLog('error happen' + JSON.stringify(toolResponse));
 
         return {
             content: [{

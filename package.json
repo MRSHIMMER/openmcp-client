@@ -244,9 +244,7 @@
         "ws": "^8.18.1"
     },
     "devDependencies": {
-        "@esbuild/win32-x64": "^0.25.5",
         "@rollup/plugin-inject": "^5.0.5",
-        "@rollup/rollup-win32-x64-msvc": "^4.41.1",
         "@types/node": "^22.15.29",
         "@types/pako": "^2.0.3",
         "@types/showdown": "^2.0.0",
@@ -259,6 +257,7 @@
         "turbo": "^2.5.3",
         "typescript": "^5.4.2",
         "vite": "^6.3.5",
+        "vite-plugin-dts": "^4.5.4",
         "vite-plugin-static-copy": "^3.0.0",
         "vite-plugin-vue-devtools": "^7.7.6",
         "vue-tsc": "^2.2.10",

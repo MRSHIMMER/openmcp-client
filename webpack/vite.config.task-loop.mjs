@@ -1,7 +1,6 @@
 import { defineConfig, normalizePath } from 'vite';
 import { resolve } from 'path';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
-// import { visualizer } from 'rollup-plugin-visualizer';
 
 export default defineConfig({
     define: {
@@ -26,11 +25,7 @@ export default defineConfig({
                     dest: normalizePath(resolve(__dirname, '../openmcp-sdk'))
                 }
             ]
-        }),
-        // visualizer({
-        //     open: true,
-        //     filename: 'stats.html'
-        // })
+        })
     ],
     build: {
         target: 'node18',
@@ -45,18 +40,20 @@ export default defineConfig({
         rollupOptions: {
             external: [
                 'vue',
+                'chalk',
                 'element-plus',
             ],
             output: {
                 globals: {
-                    vue: 'Vue',
+                    vue: 'vue',
+                    chalk: 'chalk',
                     'element-plus': './tools.js'
-                }
+                },
+                esModule: true
             }
         },
         minify: false,
-        sourcemap: false,  // 禁用sourcemap生成
-        cssCodeSplit: false  // 禁用CSS文件生成
+        sourcemap: false
     },
     resolve: {
         alias: {

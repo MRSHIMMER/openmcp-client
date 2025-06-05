@@ -6,6 +6,7 @@ import { loadPanels } from "@/hook/panel";
 import { getPlatform } from "@/api/platform";
 import type { PromptsGetResponse, PromptsListResponse, PromptTemplate, Resources, ResourcesListResponse, ResourcesReadResponse, ResourceTemplate, ResourceTemplatesListResponse, ToolCallResponse, ToolItem, ToolsListResponse } from "@/hook/type";
 import { mcpSetting } from "@/hook/mcp";
+import chalk from "chalk";
 
 export const connectionSelectDataViewOption: ConnectionTypeOptionItem[] = [
     {
@@ -549,9 +550,16 @@ class McpClientAdapter {
             const ok = await client.connect();
 
             if (ok) {
-                console.log(`${client.name} connected successfully ✅`);
+                console.log(
+                    chalk.gray(`[${new Date().toLocaleString()}]`),
+                    chalk.green(`🚀 [${client.name}] ${client.version} connected`)
+                );
             } else {
-                console.log(`${client.name} connected failed ❌`);
+                console.log(
+                    chalk.gray(`[${new Date().toLocaleString()}]`),
+                    chalk.red(`× fail to connect `),
+                    chalk.red(JSON.stringify(client.connectionResult.logString, null, 2))
+                );
             }
 
             allOk &&= ok;

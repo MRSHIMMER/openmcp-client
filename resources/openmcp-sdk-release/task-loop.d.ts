@@ -8,8 +8,8 @@ export interface TaskLoopOptions {
     maxEpochs?: number;
     maxJsonParseRetry?: number;
     adapter?: any;
+    verbose?: 0 | 1 | 2 | 3;
 }
-
 
 export interface SchemaProperty {
 	title: string;

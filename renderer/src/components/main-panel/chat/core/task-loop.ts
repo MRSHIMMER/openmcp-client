@@ -4,7 +4,7 @@ import { type ToolCall, type ChatStorage, getToolSchema, MessageState } from "..
 import { useMessageBridge, MessageBridge, createMessageBridge } from "@/api/message-bridge";
 import type { OpenAI } from 'openai';
 import { llmManager, llms, type BasicLlmDescription } from "@/views/setting/llm";
-import { pinkLog, redLog } from "@/views/setting/util";
+import { redLog } from "@/views/setting/util";
 import { ElMessage } from "element-plus";
 import { getToolCallIndexAdapter, handleToolCalls, type IToolCallIndex, type ToolCallResult } from "./handle-tool-calls";
 import { getPlatform } from "@/api/platform";
@@ -12,6 +12,7 @@ import { getSystemPrompt } from "../chat-box/options/system-prompt";
 import { mcpSetting } from "@/hook/mcp";
 import { mcpClientAdapter } from "@/views/connect/core";
 import type { ToolItem } from "@/hook/type";
+import chalk from 'chalk';
 
 export type ChatCompletionChunk = OpenAI.Chat.Completions.ChatCompletionChunk;
 export type ChatCompletionCreateParamsBase = OpenAI.Chat.Completions.ChatCompletionCreateParams & { id?: string, proxyServer?: string };
@@ -19,6 +20,7 @@ export interface TaskLoopOptions {
     maxEpochs?: number;
     maxJsonParseRetry?: number;
     adapter?: any;
+    verbose?: 0 | 1 | 2 | 3;
 }
 
 export interface IErrorMssage {
@@ -40,12 +42,12 @@ export class TaskLoop {
     private streamingToolCalls: Ref<ToolCall[]>;
 
     private currentChatId = '';
-    private onError: (error: IErrorMssage) => void = (msg) => {};
-    private onChunk: (chunk: ChatCompletionChunk) => void = (chunk) => {};
-    private onDone: () => void = () => {};
+    private onError: (error: IErrorMssage) => void = (msg) => { };
+    private onChunk: (chunk: ChatCompletionChunk) => void = (chunk) => { };
+    private onDone: () => void = () => { };
     private onToolCall: (toolCall: ToolCall) => ToolCall = toolCall => toolCall;
     private onToolCalled: (toolCallResult: ToolCallResult) => ToolCallResult = toolCallResult => toolCallResult;
-    private onEpoch: () => void = () => {};
+    private onEpoch: () => void = () => { };
     private completionUsage: ChatCompletionChunk['usage'] | undefined;
     private llmConfig?: BasicLlmDescription;
 
@@ -55,7 +57,12 @@ export class TaskLoop {
     };
 
     constructor(
-        private readonly taskOptions: TaskLoopOptions = { maxEpochs: 20, maxJsonParseRetry: 3, adapter: undefined },
+        private readonly taskOptions: TaskLoopOptions = {
+            maxEpochs: 20,
+            maxJsonParseRetry: 3,
+            adapter: undefined,
+            verbose: 0
+        },
     ) {
         this.streamingContent = ref('');
         this.streamingToolCalls = ref([]);
@@ -87,7 +94,7 @@ export class TaskLoop {
 
     private handleChunkDeltaToolCalls(chunk: ChatCompletionChunk, toolcallIndexAdapter: (toolCall: ToolCall) => IToolCallIndex) {
         const toolCall = chunk.choices[0]?.delta?.tool_calls?.[0];
-        
+
         if (toolCall) {
             if (toolCall.index === undefined || toolCall.index === null) {
                 console.warn('tool_call.index is undefined or null');
@@ -118,12 +125,12 @@ export class TaskLoop {
                         currentCall.function!.name = toolCall.function.name;
                     }
                     if (toolCall.function?.arguments) {
-                        currentCall.function!.arguments += toolCall.function.arguments;                        
+                        currentCall.function!.arguments += toolCall.function.arguments;
                     }
                 }
             }
 
-        }        
+        }
     }
 
     private handleChunkUsage(chunk: ChatCompletionChunk) {
@@ -144,12 +151,13 @@ export class TaskLoop {
                 this.handleChunkDeltaContent(chunk);
                 this.handleChunkDeltaToolCalls(chunk, toolcallIndexAdapter);
                 this.handleChunkUsage(chunk);
-                
-                this.onChunk(chunk);
+
+                this.consumeChunks(chunk);
             }, { once: false });
-        
-            const doneHandler = this.bridge.addCommandListener('llm/chat/completions/done', data => {                
-                this.onDone();
+
+            const doneHandler = this.bridge.addCommandListener('llm/chat/completions/done', data => {
+                this.consumeDones();
+
                 chunkHandler();
                 errorHandler();
 
@@ -159,7 +167,7 @@ export class TaskLoop {
             }, { once: true });
 
             const errorHandler = this.bridge.addCommandListener('llm/chat/completions/error', data => {
-                this.onError({
+                this.consumeErrors({
                     state: MessageState.ReceiveChunkError,
                     msg: data.msg || '请求模型服务时发生错误'
                 });
@@ -187,16 +195,16 @@ export class TaskLoop {
     public makeChatData(tabStorage: ChatStorage): ChatCompletionCreateParamsBase | undefined {
         const baseURL = this.getLlmConfig().baseUrl;
         const apiKey = this.getLlmConfig().userToken || '';
-        
+
         if (apiKey.trim() === '') {
-            
+
             if (tabStorage.messages.length > 0 && tabStorage.messages[tabStorage.messages.length - 1].role === 'user') {
                 tabStorage.messages.pop();
                 ElMessage.error('请先设置 API Key');
             }
             return undefined;
         }
-        
+
         const model = this.getLlmConfig().userModel;
         const temperature = tabStorage.settings.temperature;
         const tools = getToolSchema(tabStorage.settings.enableTools);
@@ -209,7 +217,7 @@ export class TaskLoop {
         // 但是在 UI 模式下，systemPrompt 只是一个 index，需要从后端数据库中获取真实 prompt
         if (tabStorage.settings.systemPrompt) {
             const prompt = getSystemPrompt(tabStorage.settings.systemPrompt) || tabStorage.settings.systemPrompt;
-            
+
             userMessages.push({
                 role: 'system',
                 content: prompt
@@ -260,7 +268,7 @@ export class TaskLoop {
     public registerOnChunk(handler: (chunk: ChatCompletionChunk) => void) {
         this.onChunk = handler;
     }
-    
+
     /**
      * @description 注册 chat.completion 完成时触发的回调函数
      * @param handler 
@@ -291,6 +299,100 @@ export class TaskLoop {
      */
     public registerOnToolCalled(handler: (toolCallResult: ToolCallResult) => ToolCallResult) {
         this.onToolCalled = handler;
+    }
+
+    private consumeErrors(error: IErrorMssage) {
+        const { verbose = 0 } = this.taskOptions;
+        if (verbose > 0) {
+            console.log(
+                chalk.gray(`[${new Date().toLocaleString()}]`),
+                chalk.red('error happen in task loop '),
+                chalk.red(error.msg)
+            );
+        }
+        return this.onError(error);
+    }
+
+    private consumeChunks(chunk: ChatCompletionChunk) {
+        const { verbose = 0 } = this.taskOptions;
+        if (verbose > 1) {
+            console.log(
+                chalk.gray(`[${new Date().toLocaleString()}]`),
+                chalk.blue('receive chunk')
+            );
+        } else if (verbose > 2) {
+            const delta = chunk.choices[0]?.delta;
+            if (delta) {
+                console.log(
+                    chalk.gray(`[${new Date().toLocaleString()}]`),
+                    chalk.blue('receive chunk'),
+                    chalk.bold(JSON.stringify(delta, null, 2))
+                );
+            } else {
+                console.log(
+                    chalk.gray(`[${new Date().toLocaleString()}]`),
+                    chalk.blue('receive chunk'),
+                    chalk.blue('delta is empty')
+                );
+            }
+        }
+        return this.onChunk(chunk);
+    }
+
+    private consumeToolCalls(toolCall: ToolCall) {
+        const { verbose = 0 } = this.taskOptions;
+
+        if (verbose > 0) {
+            console.log(
+                chalk.gray(`[${new Date().toLocaleString()}]`),
+                chalk.blueBright('🔧 calling tool'),
+                chalk.blueBright(toolCall.function!.name)
+            );
+        }
+
+        return this.onToolCall(toolCall);
+    }
+
+    private consumeToolCalleds(result: ToolCallResult) {
+        const { verbose = 0 } = this.taskOptions;
+        if (verbose > 0) {
+            if (result.state === 'success') {
+                console.log(
+                    chalk.gray(`[${new Date().toLocaleString()}]`),
+                    chalk.green('✓ call tools okey dockey'),
+                    chalk.green(result.state)
+                );
+            } else {
+                console.log(
+                    chalk.gray(`[${new Date().toLocaleString()}]`),
+                    chalk.red('× fail to call tools'),
+                    chalk.red(result.content.map(item => item.text).join(', '))
+                );
+            }
+        }
+        return this.onToolCalled(result);
+    }
+
+    private consumeEpochs() {
+        const { verbose = 0 } = this.taskOptions;
+        if (verbose > 0) {
+            console.log(
+                chalk.gray(`[${new Date().toLocaleString()}]`),
+                chalk.blue('task loop enters a new epoch')
+            );
+        }
+        return this.onEpoch();
+    }
+
+    private consumeDones() {
+        const { verbose = 0 } = this.taskOptions;
+        if (verbose > 0) {
+            console.log(
+                chalk.gray(`[${new Date().toLocaleString()}]`),
+                chalk.green('task loop finish a epoch')
+            );
+        }
+        return this.onDone();
     }
 
     public setMaxEpochs(maxEpochs: number) {
@@ -356,7 +458,7 @@ export class TaskLoop {
 
         const platform = getPlatform();
         if (platform === 'nodejs') {
-            // 等待连接完成
+            // 等待连接完成            
             await this.nodejsStatus.connectionFut;
         }
 
@@ -372,11 +474,14 @@ export class TaskLoop {
         });
 
         let jsonParseErrorRetryCount = 0;
-        const maxEpochs = this.taskOptions.maxEpochs || 20;
+        const {
+            maxEpochs = 20,
+            verbose = 0
+        } = this.taskOptions || {};
 
-        for (let i = 0; i < maxEpochs; ++ i) {
+        for (let i = 0; i < maxEpochs; ++i) {
 
-            this.onEpoch();
+            this.consumeEpochs();
 
             // 初始累计清空
             this.streamingContent.value = '';
@@ -387,7 +492,7 @@ export class TaskLoop {
             const chatData = this.makeChatData(tabStorage);
 
             if (!chatData) {
-                this.onDone();
+                this.consumeDones();
                 break;
             }
 
@@ -411,22 +516,31 @@ export class TaskLoop {
                         serverName: this.getLlmConfig().id || 'unknown'
                     }
                 });
-                
-                pinkLog('调用工具数量：' + this.streamingToolCalls.value.length);
+
+                if (verbose > 0) {
+                    console.log(
+                        chalk.gray(`[${new Date().toLocaleString()}]`),
+                        chalk.yellow('🤖 llm wants to call these tools'),
+                        chalk.yellow(this.streamingToolCalls.value.map(tool => tool.function!.name || '').join(', '))
+                    );
+                }
 
                 for (let toolCall of this.streamingToolCalls.value || []) {
 
-                    toolCall = this.onToolCall(toolCall);
+                    // ready to call tools
+                    toolCall = this.consumeToolCalls(toolCall);
                     let toolCallResult = await handleToolCalls(toolCall);
-                    toolCallResult = this.onToolCalled(toolCallResult);
-    
+
+                    // hook : finish call tools
+                    toolCallResult = this.consumeToolCalleds(toolCallResult);
+
                     if (toolCallResult.state === MessageState.ParseJsonError) {
                         // 如果是因为解析 JSON 错误，则重新开始
                         tabStorage.messages.pop();
-                        jsonParseErrorRetryCount ++;
-    
+                        jsonParseErrorRetryCount++;
+
                         redLog('解析 JSON 错误 ' + toolCall?.function?.arguments);
-    
+
                         // 如果因为 JSON 错误而失败太多，就只能中断了
                         if (jsonParseErrorRetryCount >= (this.taskOptions.maxJsonParseRetry || 3)) {
                             tabStorage.messages.push({
@@ -455,7 +569,7 @@ export class TaskLoop {
                             }
                         });
                     } else if (toolCallResult.state === MessageState.ToolCall) {
-    
+
                         tabStorage.messages.push({
                             role: 'tool',
                             index: toolcallIndexAdapter(toolCall),
