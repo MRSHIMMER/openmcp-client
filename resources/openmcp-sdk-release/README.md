@@ -1,13 +1,14 @@
 <div align="center">
 
-<img src="./icons/openmcp.png" height="200px"/>
+<img src="./icons/openmcp-sdk.svg" height="200px"/>
 
-<h3>OpenMCP: 一体化 MCP Server 调试器</h3>
+<h3>openmcp-sdk : 适用于 openmcp 的部署框架</h3>
+<h4>闪电般将您的 agent 从实验室部署到生产环境</h4>
 
-<a href="https://qm.qq.com/cgi-bin/qm/qr?k=C6ZUTZvfqWoI12lWe7L93cWa1hUsuVT0&jump_from=webapi&authKey=McW6B1ogTPjPDrCyGttS890tMZGQ1KB3QLuG4aqVNRaYp4vlTSgf2c6dMcNjMuBD" target="_blank" style="display: inline-block; padding: 8px 16px; background-color: #CB81DA; color: white; border-radius: .5em; text-decoration: none;">👉 加入 OpenMCP正式级技术组</a>
+<a href="https://kirigaya.cn/openmcp" target="_blank" style="display: inline-block; padding: 8px 16px; background-color: #7D3FF8; color: white; border-radius: .5em; text-decoration: none;">📄 OpenMCP 官方文档</a>
 
 
-<a href="https://discord.gg/af5cfB9a" target="_blank" style="display: inline-block; padding: 8px 16px; background-color: rgb(84, 176, 84); color: white; border-radius: .5em; text-decoration: none;"> 加入 OpenMCP Discord频道</a>
+<a href="https://qm.qq.com/cgi-bin/qm/qr?k=C6ZUTZvfqWoI12lWe7L93cWa1hUsuVT0&jump_from=webapi&authKey=McW6B1ogTPjPDrCyGttS890tMZGQ1KB3QLuG4aqVNRaYp4vlTSgf2c6dMcNjMuBD" target="_blank" style="display: inline-block; padding: 8px 16px; background-color: #CB81DA; color: white; border-radius: .5em; text-decoration: none;">QQ 讨论群</a><a href="https://discord.gg/af5cfB9a" target="_blank" style="display: inline-block; padding: 8px 16px; background-color: rgb(84, 176, 84); color: white; border-radius: .5em; text-decoration: none; margin-left: 5px;">Discord频道</a>
 
 </div>
 
@@ -18,6 +19,8 @@
 npm install openmcp-sdk
 ```
 
+> 目前 openmcp-sdk 只支持 esm 模式的导入
+
 ## 使用
 
 文件名：main.ts
@@ -25,25 +28,28 @@ npm install openmcp-sdk
 ```typescript
 import { TaskLoop } from 'openmcp-sdk/task-loop';
 import { TaskLoopAdapter } from 'openmcp-sdk/service';
-
 async function main() {
     // 创建适配器，负责通信和 mcp 连接
     const adapter = new TaskLoopAdapter();
 
-    // 连接 mcp 服务器
-    await adapter.connectMcpServer({
+    // 添加 mcp 服务器
+    adapter.addMcp({
         connectionType: 'STDIO',
-        command: 'node',
-        args: [
-            '~/projects/mcp/servers/src/puppeteer/dist/index.js'
-        ]
+        commandString: 'uv run mcp run main.py',
+        cwd: '~/projects/openmcp-tutorial/crawl4ai-mcp'
     });
 
-    // 获取工具列表
-    const tools = await adapter.listTools();
+    adapter.addMcp({
+        connectionType: 'STDIO',
+        commandString: 'node index.js',
+        cwd: '~/projects/openmcp-tutorial/my-browser/dist'
+    });
 
     // 创建事件循环驱动器
     const taskLoop = new TaskLoop({ adapter });
+
+    // 获取所有工具
+    const tools = await taskLoop.getTools();
 
     // 配置改次事件循环使用的大模型
     taskLoop.setLlmConfig({
@@ -58,8 +64,11 @@ async function main() {
         messages: [],
         settings: {
             temperature: 0.7,
+            // 在本次对话使用所有工具
             enableTools: tools,
+            // 系统提示词
             systemPrompt: 'you are a clever bot',
+            // 对话上下文的轮数
             contextLength: 20
         }
     };
@@ -82,14 +91,27 @@ async function main() {
         console.log('taskLoop epoch');
     });
 
+    // 每一次工具调用前
+    taskLoop.registerOnToolCall((toolCall) => {
+        return toolCall;
+    });
+
+    // 每一次工具调用完后的结果
+    taskLoop.registerOnToolCalled((result) => {
+        return result;
+    });
+
     // 开启事件循环
     await taskLoop.start(storage, message);
 
     // 打印上下文，最终的回答在 messages.at(-1) 中
-    console.log(storage.messages);
-}
+    const content = storage.messages.at(-1).content;
+    console.log('最终回答：', content);
+} 
 
 main();
 ```
+
+更多使用请看官方文档：https://kirigaya.cn/openmcp/sdk-tutorial/
 
 star 我们的项目：https://github.com/LSTM-Kirigaya/openmcp-client

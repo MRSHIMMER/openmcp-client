@@ -5,8 +5,24 @@ async function main() {
     // 创建适配器，负责通信和 mcp 连接
     const adapter = new TaskLoopAdapter();
 
+    // 添加 mcp 服务器
+    adapter.addMcp({
+        connectionType: 'STDIO',
+        commandString: 'uv run mcp run main.py',
+        cwd: '~/projects/openmcp-tutorial/crawl4ai-mcp'
+    });
+
+    adapter.addMcp({
+        connectionType: 'STDIO',
+        commandString: 'node index.js',
+        cwd: '~/projects/openmcp-tutorial/my-browser/dist'
+    });
+
     // 创建事件循环驱动器
     const taskLoop = new TaskLoop({ adapter });
+
+    // 获取所有工具
+    const tools = await taskLoop.getTools();
 
     // 配置改次事件循环使用的大模型
     taskLoop.setLlmConfig({
@@ -21,8 +37,11 @@ async function main() {
         messages: [],
         settings: {
             temperature: 0.7,
-            enableTools: [],
+            // 在本次对话使用所有工具
+            enableTools: tools,
+            // 系统提示词
             systemPrompt: 'you are a clever bot',
+            // 对话上下文的轮数
             contextLength: 20
         }
     };
@@ -45,15 +64,22 @@ async function main() {
         console.log('taskLoop epoch');
     });
 
+    // 每一次工具调用前
+    taskLoop.registerOnToolCall((toolCall) => {
+        return toolCall;
+    });
+
+    // 每一次工具调用完后的结果
+    taskLoop.registerOnToolCalled((result) => {
+        return result;
+    });
+
     // 开启事件循环
     await taskLoop.start(storage, message);
 
     // 打印上下文，最终的回答在 messages.at(-1) 中
-    console.log(storage.messages);
-
     const content = storage.messages.at(-1).content;
-    console.log(content);
-    
+    console.log('最终回答：', content);
 } 
 
 main();
