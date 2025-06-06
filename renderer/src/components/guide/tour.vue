@@ -132,11 +132,35 @@
             </template>
             <div class="tour-common-text">
                 我们目前提供了四种主要调试选项，「资源」、「提词」、「工具」分别和 MCP 协议中的 resources、prompts、tools 对应。
+            </div>
+        </el-tour-step>
 
+        <el-tour-step
+            :target="welcomeRef"
+            :prev-button-props="{ children: '上一步' }"
+            :next-button-props="{ children: '下一步' }"
+            :show-close="false"
+            placement="right"
+        >
+            <template #header>
+                <TourTitle>调试</TourTitle>
+            </template>
+            <div class="tour-common-text">
                 而「交互测试」则允许你直接将写好的 mcp 服务器放入大模型中直接做全链路测试，从而更加获取更加真实的反馈和数据，进而改进的你的 mcp 服务器。
+            </div>
+        </el-tour-step>
 
-                <br><br>
-
+        <el-tour-step
+            :target="welcomeRef"
+            :prev-button-props="{ children: '上一步' }"
+            :next-button-props="{ children: '下一步' }"
+            :show-close="false"
+            placement="right"
+        >
+            <template #header>
+                <TourTitle>调试</TourTitle>
+            </template>
+            <div class="tour-common-text">
                 基于我们在 agent 和 rl 方向的最佳实践，我们后续还会推出更多的调试和数据集聚合制作选项，请期待吧！
             </div>
         </el-tour-step>
@@ -224,10 +248,15 @@
             :show-close="false"
         >
             <template #header>
-                <TourTitle>🎉恭喜</TourTitle>
+                <TourTitle>🎉 恭喜</TourTitle>
             </template>
             <div class="tour-common-text">
-                🎉恭喜，我的朋友，现在的你已经是半个 mcp 专家了，请充好一杯咖啡，慢慢享用快乐的开发时间吧！
+                🎉 恭喜，我的朋友，现在的你已经是半个 mcp 专家了，请充好一杯咖啡，慢慢享用快乐的开发时间吧！
+                
+                <br>
+                <br>
+                
+                <a href="https://kirigaya.cn/openmcp/" target="_blank">OpenMCP 官方文档</a> 是我们的文档站点，您在其中能找到非常完整的使用说明和案例教程。
 
                 <br><br>
 

@@ -6,6 +6,7 @@
 - 修复无法在对话框中使用 mcp resource 的 bug
 - 调试结果的工作区从 .vscode 迁移到 .openmcp，连接配置文件从 .vscode/openmcp_connection.json 迁移到 .openmcp/connection.json
 - 技术栈更新：openmcp 全链路组件切换为 esm
+- 优化引导界面文字布局。
 
 ## [main] 0.1.4
 - 重新实现 openai 协议的底层网络实现，从而支持 Google Gemini 全系列模型。
