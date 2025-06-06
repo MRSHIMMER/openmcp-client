@@ -35,18 +35,12 @@ async function main() {
     // 添加 mcp 服务器
     adapter.addMcp({
         connectionType: 'STDIO',
-        commandString: 'uv run mcp run main.py',
-        cwd: '~/projects/openmcp-tutorial/crawl4ai-mcp'
-    });
-
-    adapter.addMcp({
-        connectionType: 'STDIO',
         commandString: 'node index.js',
         cwd: '~/projects/openmcp-tutorial/my-browser/dist'
     });
 
-    // 创建事件循环驱动器
-    const taskLoop = new TaskLoop({ adapter });
+    // 创建事件循环驱动器, verbose 数值越高，输出的日志越详细
+    const taskLoop = new TaskLoop({ adapter, verbose: 1 });
 
     // 获取所有工具
     const tools = await taskLoop.getTools();
@@ -76,31 +70,6 @@ async function main() {
     // 本次发出的问题
     const message = 'hello world';
 
-    // 事件循环结束的句柄
-    taskLoop.registerOnDone(() => {
-        console.log('taskLoop done');
-    });
-
-    // 事件循环每一次 epoch 开始的句柄
-    taskLoop.registerOnError((error) => {
-        console.log('taskLoop error', error);
-    });
-
-    // 事件循环出现 error 时的句柄（出现 error 不一定会停止事件循环）
-    taskLoop.registerOnEpoch(() => {
-        console.log('taskLoop epoch');
-    });
-
-    // 每一次工具调用前
-    taskLoop.registerOnToolCall((toolCall) => {
-        return toolCall;
-    });
-
-    // 每一次工具调用完后的结果
-    taskLoop.registerOnToolCalled((result) => {
-        return result;
-    });
-
     // 开启事件循环
     await taskLoop.start(storage, message);
 
@@ -110,6 +79,44 @@ async function main() {
 } 
 
 main();
+```
+
+下面是可能的输出：
+
+```
+[6/5/2025, 8:16:15 PM] 🚀 [my-browser] 0.1.0 connected
+[6/5/2025, 8:16:15 PM] task loop enters a new epoch
+[6/5/2025, 8:16:23 PM] task loop finish a epoch
+[6/5/2025, 8:16:23 PM] 🤖 llm wants to call these tools k_navigate
+[6/5/2025, 8:16:23 PM] 🔧 calling tool k_navigate
+[6/5/2025, 8:16:34 PM] × fail to call tools McpError: MCP error -32603: net::ERR_CONNECTION_RESET at https://towardsdatascience.com/tag/editors-pick/
+[6/5/2025, 8:16:34 PM] task loop enters a new epoch
+[6/5/2025, 8:16:40 PM] task loop finish a epoch
+[6/5/2025, 8:16:40 PM] 🤖 llm wants to call these tools k_navigate
+[6/5/2025, 8:16:40 PM] 🔧 calling tool k_navigate
+[6/5/2025, 8:16:44 PM] ✓ call tools okey dockey success
+[6/5/2025, 8:16:44 PM] task loop enters a new epoch
+[6/5/2025, 8:16:57 PM] task loop finish a epoch
+[6/5/2025, 8:16:57 PM] 🤖 llm wants to call these tools k_evaluate
+[6/5/2025, 8:16:57 PM] 🔧 calling tool k_evaluate
+[6/5/2025, 8:16:57 PM] ✓ call tools okey dockey success
+[6/5/2025, 8:16:57 PM] task loop enters a new epoch
+[6/5/2025, 8:17:06 PM] task loop finish a epoch
+[6/5/2025, 8:17:06 PM] 🤖 llm wants to call these tools k_navigate, k_navigate
+[6/5/2025, 8:17:06 PM] 🔧 calling tool k_navigate
+[6/5/2025, 8:17:09 PM] ✓ call tools okey dockey success
+[6/5/2025, 8:17:09 PM] 🔧 calling tool k_navigate
+[6/5/2025, 8:17:12 PM] ✓ call tools okey dockey success
+[6/5/2025, 8:17:12 PM] task loop enters a new epoch
+[6/5/2025, 8:17:19 PM] task loop finish a epoch
+[6/5/2025, 8:17:19 PM] 🤖 llm wants to call these tools k_evaluate, k_evaluate
+[6/5/2025, 8:17:19 PM] 🔧 calling tool k_evaluate
+[6/5/2025, 8:17:19 PM] ✓ call tools okey dockey success
+[6/5/2025, 8:17:19 PM] 🔧 calling tool k_evaluate
+[6/5/2025, 8:17:19 PM] ✓ call tools okey dockey success
+[6/5/2025, 8:17:19 PM] task loop enters a new epoch
+[6/5/2025, 8:17:45 PM] task loop finish a epoch
+"以下是整理好的热门文章信息，并已翻译为简体中文：\n\n---\n\n### K1 标题  \n**《数据漂移并非真正问题：你的监控策略才是》**  \n\n**简介**  \n在机器学习领域，数据漂移常被视为模型性能下降的罪魁祸首，但本文作者提出了一种颠覆性的观点：数据漂移只是一个信号，真正的核心问题在于监控策略的不足。文章通过实际案例（如电商推荐系统和金融风控模型）揭示了传统统计监控的局限性，并提出了一个三层监控框架：  \n1. **统计监控**：快速检测数据分布变化，但仅作为初步信号。  \n2. **上下文监控**：结合业务逻辑，判断漂移是否对关键指标产生影响。  \n3. **行为监控**：追踪模型预测的实际效果，避免“无声漂移”。  \n\n亮点在于作者强调了监控系统需要与业务目标紧密结合，而非单纯依赖技术指标。  \n\n**原文链接**  \n[点击阅读原文](https://towardsdatascience.com/data-drift-is-not-the-actual-problem-your-monitoring-strategy-is/)  \n\n---\n\n### K2 标题  \n**《从 Jupyter 到程序员的快速入门指南》**  \n\n**简介**  \n本文为数据科学家和初学者提供了一条从 Jupyter Notebook 过渡到专业编程的清晰路径。作者通过实际代码示例和工具推荐（如 VS Code、Git 和 Docker），帮助读者摆脱 Notebook 的局限性，提升代码的可维护性和可扩展性。  \n\n亮点包括：  \n- 如何将 Notebook 代码模块化为可复用的 Python 脚本。  \n- 使用版本控制和容器化技术优化开发流程。  \n- 实战案例展示如何将实验性代码转化为生产级应用。  \n\n**原文链接**  \n[点击阅读原文](https://towardsdatascience.com/the-journey-from-jupyter-to-programmer-a-quick-start-guide/)  \n\n---\n\n如果需要进一步优化或补充其他内容，请随时告诉我！"
 ```
 
 更多使用请看官方文档：https://kirigaya.cn/openmcp/sdk-tutorial/

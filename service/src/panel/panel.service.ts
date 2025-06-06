@@ -18,10 +18,10 @@ function getTabSavePath(serverInfo: IServerVersion) {
 
     const tabSaveName = `tabs.${escapeName}.json`;
 
-    // 如果是 vscode 插件下，则修改为 ~/.vscode/openmcp.json
+    // 如果是 vscode 插件下，则修改为 ~/.openmcp/openmcp.json
     if (VSCODE_WORKSPACE) {
         // 在 VSCode 插件环境下
-        const configDir = path.join(VSCODE_WORKSPACE, '.vscode');
+        const configDir = path.join(VSCODE_WORKSPACE, '.openmcp');
         if (!fs.existsSync(configDir)) {
             fs.mkdirSync(configDir, { recursive: true });
         }

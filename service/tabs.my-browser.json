@@ -1,7 +1,50 @@
 {
-  "clientId": "83313e18-3e18-513e1883c06-813e1883c060a6b-60a6b641",
-  "currentIndex": 0,
+  "clientId": "b1d793bc-93bc-5793bc4c067-8793bc4c0679c55-79c55b8a",
+  "currentIndex": 1,
   "tabs": [
+    {
+      "name": "工具",
+      "icon": "icon-tool",
+      "type": "blank",
+      "componentIndex": 2,
+      "storage": {
+        "activeNames": [
+          0
+        ],
+        "formData": {
+          "params": {
+            "start": "",
+            "end": ""
+          },
+          "test1": "12",
+          "test2": "12",
+          "test3": "21"
+        },
+        "currentToolName": "test",
+        "lastToolCallResponse": {
+          "content": [
+            {
+              "type": "text",
+              "text": "12"
+            },
+            {
+              "type": "text",
+              "text": "12"
+            },
+            {
+              "type": "text",
+              "text": "21"
+            },
+            {
+              "type": "text",
+              "text": "{\n  \"start\": \"\",\n  \"end\": \"\"\n}"
+            }
+          ],
+          "isError": false
+        },
+        "currentPromptName": "translate"
+      }
+    },
     {
       "name": "交互测试",
       "icon": "icon-robot",
@@ -11,50 +54,103 @@
         "activeNames": [
           0
         ],
+        "formData": {
+          "params": {},
+          "test1": "",
+          "test2": "",
+          "test3": ""
+        },
+        "currentToolName": "test",
         "messages": [
           {
             "role": "user",
-            "content": "搜集 锦恢 的资料并整理成 word 文档",
+            "content": "hello",
             "extraInfo": {
-              "created": 1747826001541,
+              "created": 1749036022999,
               "state": "success",
-              "serverName": "Huoshan DeepSeek"
+              "serverName": "deepseek"
             }
           },
           {
             "role": "assistant",
-            "content": "",
+            "content": "Hello! How can I assist you today?",
+            "extraInfo": {
+              "created": 1749036027292,
+              "state": "success",
+              "serverName": "deepseek",
+              "usage": {
+                "prompt_tokens": 298,
+                "completion_tokens": 9,
+                "total_tokens": 307,
+                "prompt_tokens_details": {
+                  "cached_tokens": 256
+                },
+                "prompt_cache_hit_tokens": 256,
+                "prompt_cache_miss_tokens": 42
+              }
+            }
+          },
+          {
+            "role": "user",
+            "content": "我想查询美光的信息",
+            "extraInfo": {
+              "created": 1749207326948,
+              "state": "success",
+              "serverName": "qwen"
+            }
+          },
+          {
+            "role": "assistant",
+            "content": "为了帮助您查询美光（Micron）的相关信息，我可以访问网页来获取最新的内容。您具体想了解美光的哪些方面呢？例如公司新闻、产品信息、股票信息等。如果不确定，我将从他们的官方网站开始获取基本信息。\n\n接下来，我将导航到美光科技的官方网站。",
             "tool_calls": [
               {
-                "id": "call_lfhned4kdymj3c3gs3jtbwp4",
+                "id": "call_c908b1ff25a34eab9d4cae",
                 "index": 0,
                 "type": "function",
                 "function": {
                   "name": "k_navigate",
-                  "arguments": "{\"url\":\"https://www.baidu.com\"}"
+                  "arguments": "{\"url\": \"https://www.micron.com\"}"
                 }
               }
             ],
             "extraInfo": {
-              "created": 1747826003528,
+              "created": 1749207331567,
               "state": "success",
-              "serverName": "Huoshan DeepSeek"
+              "serverName": "qwen"
             }
           },
           {
             "role": "tool",
             "index": 0,
-            "tool_call_id": "call_lfhned4kdymj3c3gs3jtbwp4",
+            "tool_call_id": "call_c908b1ff25a34eab9d4cae",
             "content": [
               {
                 "type": "text",
-                "text": "Navigated to https://www.baidu.com"
+                "text": "Navigated to https://www.micron.com"
               }
             ],
             "extraInfo": {
-              "created": 1747826006262,
+              "created": 1749207348055,
               "state": "success",
-              "serverName": "Huoshan DeepSeek"
+              "serverName": "qwen"
+            }
+          },
+          {
+            "role": "assistant",
+            "content": "我已经成功导航到美光科技的官方网站。现在，您可以告诉我需要进一步采取什么行动，比如查找特定的产品信息、新闻更新等。如果您没有具体的要求，我可以截取当前页面的屏幕截图，或者获取页面上的文本内容供您查看。\n\n需要我进行截图或提取页面文本吗？请指示下一步操作。",
+            "extraInfo": {
+              "created": 1749207351088,
+              "state": "success",
+              "serverName": "qwen"
+            }
+          },
+          {
+            "role": "user",
+            "content": "需要",
+            "extraInfo": {
+              "created": 1749207398004,
+              "state": "success",
+              "serverName": "qwen"
             }
           },
           {
@@ -62,79 +158,7 @@
             "content": "",
             "tool_calls": [
               {
-                "id": "call_2kxsixghph65js038ifmzki1",
-                "index": 0,
-                "type": "function",
-                "function": {
-                  "name": "k_fill",
-                  "arguments": "{\"selector\":\"#kw\",\"value\":\"锦恢\"}"
-                }
-              }
-            ],
-            "extraInfo": {
-              "created": 1747826008183,
-              "state": "success",
-              "serverName": "Huoshan DeepSeek"
-            }
-          },
-          {
-            "role": "tool",
-            "index": 0,
-            "tool_call_id": "call_2kxsixghph65js038ifmzki1",
-            "content": [
-              {
-                "type": "text",
-                "text": "Filled #kw with: 锦恢"
-              }
-            ],
-            "extraInfo": {
-              "created": 1747826008235,
-              "state": "success",
-              "serverName": "Huoshan DeepSeek"
-            }
-          },
-          {
-            "role": "assistant",
-            "content": "",
-            "tool_calls": [
-              {
-                "id": "call_snyn18zlh8rkgc2b2du3yq99",
-                "index": 0,
-                "type": "function",
-                "function": {
-                  "name": "k_click",
-                  "arguments": "{\"selector\":\"#su\"}"
-                }
-              }
-            ],
-            "extraInfo": {
-              "created": 1747826009946,
-              "state": "success",
-              "serverName": "Huoshan DeepSeek"
-            }
-          },
-          {
-            "role": "tool",
-            "index": 0,
-            "tool_call_id": "call_snyn18zlh8rkgc2b2du3yq99",
-            "content": [
-              {
-                "type": "text",
-                "text": "Clicked: #su"
-              }
-            ],
-            "extraInfo": {
-              "created": 1747826009989,
-              "state": "success",
-              "serverName": "Huoshan DeepSeek"
-            }
-          },
-          {
-            "role": "assistant",
-            "content": "",
-            "tool_calls": [
-              {
-                "id": "call_r9hwuich0ye4dh9rt3gobpk2",
+                "id": "call_394e5298daa54a52b42d0a",
                 "index": 0,
                 "type": "function",
                 "function": {
@@ -144,25 +168,43 @@
               }
             ],
             "extraInfo": {
-              "created": 1747826011708,
+              "created": 1749207399328,
               "state": "success",
-              "serverName": "Huoshan DeepSeek"
+              "serverName": "qwen"
             }
           },
           {
             "role": "tool",
             "index": 0,
-            "tool_call_id": "call_r9hwuich0ye4dh9rt3gobpk2",
+            "tool_call_id": "call_394e5298daa54a52b42d0a",
             "content": [
               {
                 "type": "text",
-                "text": "Execution result:\n\"百度首页设置登录\\n\\n网页图片资讯视频笔记地图贴吧文库更多\\n锦恢\\n问AI\\n相关搜索\\n锦发集团有限公司\\n锦襜是什么意思\\n新宋锦和宋锦的区别\\n锦康集团有限公司\\n锦发集团有限公司董事长\\n锦里耆旧传\\n\\n换一换\\n热搜榜北京榜民生榜财经榜\\n\\n看工业“关节”有啥“绝活”\\n1\\n四川省公安厅厅长叶寒冰被查热\\n2\\n朱媛媛一个月前访谈状态曝光新\\n3\\n#北京范儿#\\n4\\n央视爆猛料：空战实现“A锁B射C导”新\\n5\\n偶遇王菲谢霆锋520一起旅行新\\n6\\n女孩拨打12309：我能换个爸爸吗？新\\n7\\n混双世界第一出局 栋曼组合输日本热\\n8\\n辛柏青发文时间有深意\\n9\\n718斤“中国第一胖”减掉半个自己\\n10\\n巴基斯坦一校车遇袭致5死40伤\\n11\\n有图就有真相吗？警惕AI图片造假\\n12\\n传9岁天才棋手被父亲家暴跳楼身亡新\\n13\\n超2.8万名妇女女童在加沙战火中丧生\\n14\\n今年已有22位演艺界名人逝世新\\n15\\n错过航班女子称考虑起诉视频发布者\\n收起工具\\n时间不限所有网页和文件站点内检索\\n搜索工具\\n百度为您找到以下结果\\n锦恢名字的寓意-锦恢什么意思-锦恢名字的含义-猎名网\\n2025年5月10日 恢的意思:恢字指弘大、恢张、发扬、扩大。查看锦恢名字打分 恢的含义:恢字取名含义为意厚德载物、力挽狂澜、海量汪涵之义。 恢的寓意:恢字取名寓意为气势恢宏...\\n猎名网\\n锦恢这个名字怎么样-锦恢的名字寓意及含义-锦恢这个名字好...\\n「锦恢」字义分析 87分 锦恢名字含义「锦」 (jǐn)意为指鲜艳华美的。用作人名意指鲜明、美丽、美好、尊贵之义; 锦的详细含义及解释>> 「恢」 (huī)意为本意是广大。引申指...\\nwww.91cm.cn/mz/锦恢.html\\n锦恢的个人空间-锦恢个人主页-哔哩哔哩视频\\n锦恢 主站 番剧 游戏中心 直播 会员购 漫画 赛事 下载客户端 登录 开通大会员 大会员 消息 动态 收藏 历史记录 创作中心 投稿 If you cannot be a poet, be the poem. 博客:kirigaya.cn 关...\\n哔哩哔哩\\n锦恢- 知乎\\n3天前 锦恢 ​ 直面恐惧,创造未来,https://kirigaya.cn 为了说明 ds 性价比到底多高,给大家看个东西吧。 这是我最近开发的 openmcp 工具,支持 mcp 全部协议,使用 deepseek 测试功能测试 open...\\n知乎\\n大家还在搜\\n锦发集团有限公司\\n锦襜是什么意思\\n新宋锦和宋锦的区别\\n锦康集团有限公司\\n锦发集团有限公司董事长\\n锦里耆旧传\\n重锦是什么意思\\n华锦股份重组最新消息\\n\\n绵恢725(籼型常规水稻) - 百度百科\\n\\n绵恢725，籼型常规水稻，绵阳市农业科学研究所选育。详情\\n\\n品种来源\\n特征特性\\n百度百科\\n最优化方法复习笔记(三)牛顿法及其收敛性分析 - 知乎\\n2024年3月22日 锦恢:最优化方法复习笔记(二)梯度下降法的全局收敛与收敛速率175 赞同 · 15 评论文章 最近四项目并行多线程,还有悬空欲坠的数据结构课设=_=,所以嘛。。。更得会时快时慢啦。...\\n知乎\\n锦恢:最优化复习笔记(总结向)\\n2024年03月22日-锦恢​ 直面恐惧,创造未来,https://kirigaya.cn 来自专栏 · 机器...\\n我只教一次!vscode remote-ssh 连接失败的基本原理和优雅的解决方案...\\n2024年04月28日-no丶mad 锦恢 commit id是一致的 1.Update the sshd_config file ...\\n机器人仿真pybullet资料整理 - 知乎\\n2023年12月13日-[1]锦恢:panda3d学习笔记(一)Hello World [2]锦恢:PyBullet笔记(...\\n更多同站结果 >\\n锦恢-CSDN博客\\n2023年2月16日 锦恢 博客等级 码龄6年 34 原创 209 点赞 808 收藏 51 粉丝 关注 私信 热门文章 在overleaf中使用bibtex引用参考文献 41990 ValueError: too many dimension...\\nCSDN博客\\n大穗型水稻恢复系绵恢 523\\n2022年12月13日 绵恢 523 是绵阳市农业科学研究院以内恢 99-14 为母本、（蜀恢 881/ 千粒稻） F1 为父本杂交后经系谱法选育而成的杂交水稻中籼迟熟大穗型恢复系。1、农艺性状：在四川绵阳 4...\\n小苏说稻\\n恢字起名男孩名字,带恢的名字男孩\\n恢字起名男孩名字,带恢的名字男孩,恢字取名男孩, 不重 (男) 顺恢 (男) 德恢 (男) 富忠 (男) 一植 (男) 一竹 (男) 椿治 (男) 文恢 (男) 锦恢 (男) 敬恢 (男) 浠中 (男) 昊中 (...\\nm.sanzang5.com/minfo/10/8440.....\\n相关搜索\\n锦发集团有限公司\\n\\t\\n华锦股份重组最新消息\\n重锦是什么意思\\n\\t\\n锦里耆旧传\\n宋锦和新宋锦的区别\\n\\t\\n锦婳怎么解释\\n汉锦都是什么品牌\\n\\t\\n宋锦蜀锦云锦哪个好\\n云锦蜀锦宋锦壮锦\\n\\t\\n锦绶新垂\\n1\\n2\\n3\\n4\\n5\\n6\\n7\\n8\\n9\\n10\\n下一页 >\\n帮助举报用户反馈企业推广\"\n\nConsole output:\n"
+                "text": "Execution result:\n\"menu\\nMENU\\nsearch\\nLOW-POWER MEMORY\\n\\nPowering mobile AI: World’s first 1γ LPDDR5X\\n\\nMicron 1γ (1-gamma) LPDDR5X is revolutionizing AI-powered smartphones by delivering top speed grades and power savings in the industry’s thinnest package. It is purpose-built for next-generation smartphones, ensuring seamless AI experiences. \\n\\nVISIT 1-GAMMA LPDDR5X\\npause\\n\\nDRAM\\n\\nHow DRAM is changing the world\\n\\nFor over 57 years, DRAM technology has transformed how we live and work. Micron leads in DRAM innovation, enhancing performance and power efficiency from cloud to edge for data-hungry applications like AI. Celebrate National DRAM Day on June 4!\\n\\nCELEBRATE DRAM WITH US\\n\\nMOBILE\\n\\nMotorola Razr 60 Ultra with Micron solutions\\nVisit mobile solutions​\\n\\nAI​\\n\\nUnlocking AI’s potential with storage IOPS\\nRead the blog\\n\\nAUTOMOTIVE\\n\\nISO 21434 Cybersecurity Certification\\nRead the blog\\n\\nDATA CENTER\\n\\nTransform AI data centers with modular memory\\nLearn about SOCAMM\\n\\nTECHNOLOGY\\n\\nNext-gen 1γ (1-gamma) memory process node\\nLearn about 1γ\\n\\nDATA CENTER SSD\\n\\nWorld's first 60TB Gen5 SSD\\nLearn about 6550 ION SSD\\n SEE MORE \\n\\nMARKET AND INDUSTRIES\\n\\nAccelerating mobile technology\\n\\nDiscover how Micron is transforming the mobile industry with cutting-edge memory and storage solutions. Through industry-leading performance and efficiency, Micron’s memory and storage accelerate AI-driven technologies that enable predictive, insightful and new experiences for smartphone end users. Explore our advancements in mobile memory and storage to stay ahead in AI mobile technology.\\n\\nVISIT MOBILE SOLUTIONS\\nInnovation makes new solutions possible\\n\\nData center\\n\\nChoose the right data center memory and storage solutions and get control over the essential systems affecting your business.\\n\\nLearn more\\n\\nClient PC\\n\\nMicron’s flexible memory and storage powers PCs from thin and light notebooks that last all day on a single battery charge to powerful data-hungry workstations.\\n\\nLearn more\\n\\nAutomotive\\n\\nFor more than 30 years and trillions of miles, Micron has been committed to bringing high-performance memory and storage technology to the automotive industry.\\n\\nLearn more\\n\\nMobile\\n\\nMobile memory and storage accelerate AI-driven technologies that enable predictive, insightful and new experiences for end users.\\n\\nLearn more\\n\\nMARKET AND INDUSTRIES\\n\\nAI data centers. Unboxed. Unlimited.\\n\\nBoxes are boring. They couldn’t possibly be beautiful, right? But, not all boxes are created equal. What if boxes could be a super-intelligent AI problem solver, taking on some of the world's most difficult challenges? With Micron's AI memory and storage solutions, boxes are beautiful.\\n\\nUNBOX NOW\\nFeatured blogs\\n\\nAUTOMOTIVE\\n\\nMaximize bandwidth in LPDDR5X with DLEP\\n\\nMike Basca | February 2025\\n\\nView automotive blog\\n\\nSSD\\n\\nHow Micron is leading the PCIe® Gen6 ecosystem\\n\\nJeremy Werner | February 2025\\n\\nView the storage blog\\n\\nCLIENT SSD\\n\\nUnlock high-performance computing with the Micron 4600 SSD\\n\\nPrasad Alluri | February 2025\\n\\nView the 4600 SSD blog\\n\\nMOBILE\\n\\nMost advanced G9 NAND technology for flagship smartphones\\n\\nRui Zhou | April 2025\\n\\nView mobile blog\\nSEE ALL BLOGS\\nDesign tools\\n\\nYour single source for tools and resources needed to maximize Micron's products and solutions for your design needs.\\n\\nFBGA & part decoder\\nDRAM power calculators\\n\\nNAND power calculator\\nSimulation models\\nChipset compatibility guides\\nSPD part number lookup\\nCross-reference tools\\n\\nUFSparm\\nSSD firmware\\nSoftware & drivers\\n\\nStorage Executive software\\nObsolete part catalogs\\nVIEW ALL DESIGN TOOLS\\n\\nCAREERS\\n\\nYour future starts here\\n\\nAt Micron, we foster a culture of inclusion and growth to bring out the best in each other. With global opportunities, team member development and career advancement, we invest in you. Help us drive tomorrow's technology to enrich life for all.\\n\\nInnovate with us\\n\\nMANUFACTURING EXPANSION\\n\\nBuilding leading-edge manufacturing in the U.S.\\n\\nMicron’s memory fabs in Idaho and New York will strengthen U.S. economic and national security and are expected to create approximately 75,000 direct and indirect jobs across the U.S. semiconductor supply chain.\\n\\nLearn more\\nCustomer support\\n\\nNeed to get a hold of us? Contact our support teams as well as get contact information for our individual locations.\\n\\nContact support\\nSearch for, filter and download data sheets\\n\\nGet in-depth information about product features, specifications, functionality, and more.\\n\\nSearch for data sheets\\nOrder a Micron sample\\n\\nYour online source for placing and tracking orders for Micron memory samples.\\n\\nOrder samples\\n\\nDownloads and technical documentation\\n\\nResources to help you design, test, build and optimize your innovative designs.\\n\\nDownloads and tech docs\\nProducts Markets & Industries Partners Sales & Support About Investor relations\\n \\n \\n \\nCONTACT US SALES SUPPORT CONTACT TECHNICAL SUPPORT CONTACT\\nLegal Micron privacy notice Suppliers Terms and conditions of sale Careers Your privacy choices\\n\\n©2025 Micron Technology, Inc. All rights reserved. Information, products, and/or specifications are subject to change without notice. All information is provided on an “AS IS” basis without warranties of any kind. Drawings may not be to scale. Micron, the Micron logo, and all other Micron trademarks are the property of Micron Technology, Inc. All other trademarks are the property of their respective owners.\\n\\n我们使用 Cookie 以允许我们网站的正常工作、个性化设计内容和广告、提供社交媒体功能并分析流量。我们还同社交媒体、广告和分析合作伙伴分享有关您使用我们网站的信息。\\n接受所有 Cookie 全部拒绝\\nCookie 设置\"\n\nConsole output:\n"
               }
             ],
             "extraInfo": {
-              "created": 1747826011749,
+              "created": 1749207399350,
               "state": "success",
-              "serverName": "Huoshan DeepSeek"
+              "serverName": "qwen"
+            }
+          },
+          {
+            "role": "assistant",
+            "content": "以下是从美光科技官方网站获取的部分文本内容摘要：\n\n- **低功耗内存**：美光的1γ (1-gamma) LPDDR5X 是革命性的移动AI技术，提供行业最薄封装中的顶级速度等级和节能效果。\n- **DRAM 技术**：自 DRAM 技术诞生以来的57年中，它已经改变了我们的生活和工作方式。美光在 DRAM 创新方面处于领先地位，为从云端到边缘的数据饥饿型应用（如 AI）提升了性能和能效。\n- **移动解决方案**：美光通过前沿的内存和存储解决方案，正在改变移动行业。其内存和存储加速了由 AI 驱动的技术，为智能手机终端用户提供预测性、洞察性和全新的体验。\n- **数据中⼼**：美光的 AI 内存和存储解决方案将普通的盒子变成了超级智能的问题解决者，能够应对世界上一些最困难的挑战。\n- **汽车领域**：美光致力于为汽车行业带来高性能的内存和存储技术，已有超过30年的历史。\n\n如果您对某个特定部分感兴趣或需要更多信息，请告诉我！此外，如果需要，我可以截取网站的屏幕截图。您是否需要我执行此操作？",
+            "extraInfo": {
+              "created": 1749207412450,
+              "state": "success",
+              "serverName": "qwen"
+            }
+          },
+          {
+            "role": "user",
+            "content": "需要",
+            "extraInfo": {
+              "created": 1749207416609,
+              "state": "success",
+              "serverName": "qwen"
             }
           },
           {
@@ -170,290 +212,54 @@
             "content": "",
             "tool_calls": [
               {
-                "id": "call_phlshy7mrhp4ef7gx51gxomf",
+                "id": "call_58f633c2bb774c5b94b55f",
                 "index": 0,
                 "type": "function",
                 "function": {
-                  "name": "create_document",
-                  "arguments": "{\"filename\":\"锦恢资料.docx\",\"title\":\"锦恢资料\",\"author\":\"Assistant\"}"
-                }
-              },
-              {
-                "id": "call_hchnnysnfbfcicf87kmndce8",
-                "index": 1,
-                "type": "function",
-                "function": {
-                  "name": "add_paragraph",
-                  "arguments": "{\"filename\":\"锦恢资料.docx\",\"text\":\"锦恢名字的寓意-锦恢什么意思-锦恢名字的含义-猎名网\\n2025年5月10日 恢的意思:恢字指弘大、恢张、发扬、扩大。查看锦恢名字打分 恢的含义:恢字取名含义为意厚德载物、力挽狂澜、海量汪涵之义。 恢的寓意:恢字取名寓意为气势恢宏...\"}"
-                }
-              },
-              {
-                "id": "call_166ali7u5fvogpoyyvsdu7tq",
-                "index": 2,
-                "type": "function",
-                "function": {
-                  "name": "add_paragraph",
-                  "arguments": "{\"filename\":\"锦恢资料.docx\",\"text\":\"锦恢这个名字怎么样-锦恢的名字寓意及含义-锦恢这个名字好...\\n「锦恢」字义分析 87分 锦恢名字含义「锦」 (jǐn)意为指鲜艳华美的。用作人名意指鲜明、美丽、美好、尊贵之义; 锦的详细含义及解释>> 「恢」 (huī)意为本意是广大。引申指...\"}"
-                }
-              },
-              {
-                "id": "call_1cdqr5pdjl7au5hrjdw7ewni",
-                "index": 3,
-                "type": "function",
-                "function": {
-                  "name": "add_paragraph",
-                  "arguments": "{\"filename\":\"锦恢资料.docx\",\"text\":\"锦恢的个人空间-锦恢个人主页-哔哩哔哩视频\\n锦恢 主站 番剧 游戏中心 直播 会员购 漫画 赛事 下载客户端 登录 开通大会员 大会员 消息 动态 收藏 历史记录 创作中心 投稿 If you cannot be a poet, be the poem. 博客:kirigaya.cn 关...\"}"
-                }
-              },
-              {
-                "id": "call_u5y0sjd02acduwscq72in5mk",
-                "index": 4,
-                "type": "function",
-                "function": {
-                  "name": "add_paragraph",
-                  "arguments": "{\"filename\":\"锦恢资料.docx\",\"text\":\"锦恢- 知乎\\n3天前 锦恢 ​ 直面恐惧,创造未来,https://kirigaya.cn 为了说明 ds 性价比到底多高,给大家看个东西吧。 这是我最近开发的 openmcp 工具,支持 mcp 全部协议,使用 deepseek 测试功能测试 open...\"}"
-                }
-              },
-              {
-                "id": "call_sr9xxaayb24mrp87fk8gu85m",
-                "index": 5,
-                "type": "function",
-                "function": {
-                  "name": "add_paragraph",
-                  "arguments": "{\"filename\":\"锦恢资料.docx\",\"text\":\"绵恢725(籼型常规水稻) - 百度百科\\n绵恢725，籼型常规水稻，绵阳市农业科学研究所选育。详情\\n品种来源\\n特征特性\\n百度百科\"}"
-                }
-              },
-              {
-                "id": "call_04i2zabn9w620efu9r02q2ti",
-                "index": 6,
-                "type": "function",
-                "function": {
-                  "name": "add_paragraph",
-                  "arguments": "{\"filename\":\"锦恢资料.docx\",\"text\":\"最优化方法复习笔记(三)牛顿法及其收敛性分析 - 知乎\\n2024年3月22日 锦恢:最优化方法复习笔记(二)梯度下降法的全局收敛与收敛速率175 赞同 · 15 评论文章 最近四项目并行多线程,还有悬空欲坠的数据结构课设=_=,所以嘛。。。更得会时快时慢啦。...\"}"
-                }
-              },
-              {
-                "id": "call_rdtaqvst4gzu6vrroy58u82x",
-                "index": 7,
-                "type": "function",
-                "function": {
-                  "name": "add_paragraph",
-                  "arguments": "{\"filename\":\"锦恢资料.docx\",\"text\":\"锦恢:最优化复习笔记(总结向)\\n2024年03月22日-锦恢​ 直面恐惧,创造未来,https://kirigaya.cn 来自专栏 · 机器...\\n我只教一次!vscode remote-ssh 连接失败的基本原理和优雅的解决方案...\\n2024年04月28日-no丶mad 锦恢 commit id是一致的 1.Update the sshd_config file ...\\n机器人仿真pybullet资料整理 - 知乎\\n2023年12月13日-[1]锦恢:panda3d学习笔记(一)Hello World [2]锦恢:PyBullet笔记(...\\n更多同站结果 >\"}"
-                }
-              },
-              {
-                "id": "call_q1gwv2j3bvi80a9zp7hv2q33",
-                "index": 8,
-                "type": "function",
-                "function": {
-                  "name": "add_paragraph",
-                  "arguments": "{\"filename\":\"锦恢资料.docx\",\"text\":\"锦恢-CSDN博客\\n2023年2月16日 锦恢 博客等级 码龄6年 34 原创 209 点赞 808 收藏 51 粉丝 关注 私信 热门文章 在overleaf中使用bibtex引用参考文献 41990 ValueError: too many dimension...\"}"
-                }
-              },
-              {
-                "id": "call_o8rg1egton6smvxp01cpey5e",
-                "index": 9,
-                "type": "function",
-                "function": {
-                  "name": "add_paragraph",
-                  "arguments": "{\"filename\":\"锦恢资料.docx\",\"text\":\"大穗型水稻恢复系绵恢 523\\n2022年12月13日 绵恢 523 是绵阳市农业科学研究院以内恢 99-14 为母本、（蜀恢 881/ 千粒稻） F1 为父本杂交后经系谱法选育而成的杂交水稻中籼迟熟大穗型恢复系。1、农艺性状：在四川绵阳 4...\"}"
-                }
-              },
-              {
-                "id": "call_o3n2i261030qzk18vz1mthsx",
-                "index": 10,
-                "type": "function",
-                "function": {
-                  "name": "add_paragraph",
-                  "arguments": "{\"filename\":\"锦恢资料.docx\",\"text\":\"恢字起名男孩名字,带恢的名字男孩\\n恢字起名男孩名字,带恢的名字男孩,恢字取名男孩, 不重 (男) 顺恢 (男) 德恢 (男) 富忠 (男) 一植 (男) 一竹 (男) 椿治 (男) 文恢 (男) 锦恢 (男) 敬恢 (男) 浠中 (男) 昊中 (...\\nm.sanzang5.com/minfo/10/8440.....\"}"
+                  "name": "k_screenshot",
+                  "arguments": "{\"name\": \"micron_homepage\", \"width\": 1200, \"height\": 800}"
                 }
               }
             ],
             "extraInfo": {
-              "created": 1747826035031,
+              "created": 1749207419020,
               "state": "success",
-              "serverName": "Huoshan DeepSeek"
+              "serverName": "qwen"
             }
           },
           {
             "role": "tool",
             "index": 0,
-            "tool_call_id": "call_phlshy7mrhp4ef7gx51gxomf",
+            "tool_call_id": "call_58f633c2bb774c5b94b55f",
             "content": [
               {
                 "type": "text",
-                "text": "Document 锦恢资料.docx created successfully"
+                "text": "Screenshot 'micron_homepage' taken at 1200x800"
+              },
+              {
+                "type": "image",
+                "data": "0d4196fb-e08c-4ce8-bbbe-a4a2060f1ac1.png",
+                "mimeType": "image/png"
               }
             ],
             "extraInfo": {
-              "created": 1747826035113,
+              "created": 1749207419560,
               "state": "success",
-              "serverName": "Huoshan DeepSeek"
+              "serverName": "qwen"
             }
           },
           {
-            "role": "tool",
-            "index": 1,
-            "tool_call_id": "call_hchnnysnfbfcicf87kmndce8",
-            "content": [
-              {
-                "type": "text",
-                "text": "Paragraph added to 锦恢资料.docx"
-              }
-            ],
+            "role": "assistant",
+            "content": "![](0d4196fb-e08c-4ce8-bbbe-a4a2060f1ac1.png)\n\n这是美光科技官方网站的截图。从图中可以看到关于低功耗内存（LPDDR5X）的信息，以及 DRAM 技术如何改变世界等内容。\n\n如果您需要进一步的信息或有其他具体需求，请随时告诉我！",
             "extraInfo": {
-              "created": 1747826035151,
+              "created": 1749207426552,
               "state": "success",
-              "serverName": "Huoshan DeepSeek"
-            }
-          },
-          {
-            "role": "tool",
-            "index": 2,
-            "tool_call_id": "call_166ali7u5fvogpoyyvsdu7tq",
-            "content": [
-              {
-                "type": "text",
-                "text": "Paragraph added to 锦恢资料.docx"
-              }
-            ],
-            "extraInfo": {
-              "created": 1747826035180,
-              "state": "success",
-              "serverName": "Huoshan DeepSeek"
-            }
-          },
-          {
-            "role": "tool",
-            "index": 3,
-            "tool_call_id": "call_1cdqr5pdjl7au5hrjdw7ewni",
-            "content": [
-              {
-                "type": "text",
-                "text": "Paragraph added to 锦恢资料.docx"
-              }
-            ],
-            "extraInfo": {
-              "created": 1747826035215,
-              "state": "success",
-              "serverName": "Huoshan DeepSeek"
-            }
-          },
-          {
-            "role": "tool",
-            "index": 4,
-            "tool_call_id": "call_u5y0sjd02acduwscq72in5mk",
-            "content": [
-              {
-                "type": "text",
-                "text": "Paragraph added to 锦恢资料.docx"
-              }
-            ],
-            "extraInfo": {
-              "created": 1747826035239,
-              "state": "success",
-              "serverName": "Huoshan DeepSeek"
-            }
-          },
-          {
-            "role": "tool",
-            "index": 5,
-            "tool_call_id": "call_sr9xxaayb24mrp87fk8gu85m",
-            "content": [
-              {
-                "type": "text",
-                "text": "Paragraph added to 锦恢资料.docx"
-              }
-            ],
-            "extraInfo": {
-              "created": 1747826035268,
-              "state": "success",
-              "serverName": "Huoshan DeepSeek"
-            }
-          },
-          {
-            "role": "tool",
-            "index": 6,
-            "tool_call_id": "call_04i2zabn9w620efu9r02q2ti",
-            "content": [
-              {
-                "type": "text",
-                "text": "Paragraph added to 锦恢资料.docx"
-              }
-            ],
-            "extraInfo": {
-              "created": 1747826035307,
-              "state": "success",
-              "serverName": "Huoshan DeepSeek"
-            }
-          },
-          {
-            "role": "tool",
-            "index": 7,
-            "tool_call_id": "call_rdtaqvst4gzu6vrroy58u82x",
-            "content": [
-              {
-                "type": "text",
-                "text": "Paragraph added to 锦恢资料.docx"
-              }
-            ],
-            "extraInfo": {
-              "created": 1747826035331,
-              "state": "success",
-              "serverName": "Huoshan DeepSeek"
-            }
-          },
-          {
-            "role": "tool",
-            "index": 8,
-            "tool_call_id": "call_q1gwv2j3bvi80a9zp7hv2q33",
-            "content": [
-              {
-                "type": "text",
-                "text": "Paragraph added to 锦恢资料.docx"
-              }
-            ],
-            "extraInfo": {
-              "created": 1747826035358,
-              "state": "success",
-              "serverName": "Huoshan DeepSeek"
-            }
-          },
-          {
-            "role": "tool",
-            "index": 9,
-            "tool_call_id": "call_o8rg1egton6smvxp01cpey5e",
-            "content": [
-              {
-                "type": "text",
-                "text": "Paragraph added to 锦恢资料.docx"
-              }
-            ],
-            "extraInfo": {
-              "created": 1747826035381,
-              "state": "success",
-              "serverName": "Huoshan DeepSeek"
-            }
-          },
-          {
-            "role": "tool",
-            "index": 10,
-            "tool_call_id": "call_o3n2i261030qzk18vz1mthsx",
-            "content": [
-              {
-                "type": "text",
-                "text": "Paragraph added to 锦恢资料.docx"
-              }
-            ],
-            "extraInfo": {
-              "created": 1747826035404,
-              "state": "success",
-              "serverName": "Huoshan DeepSeek"
+              "serverName": "qwen"
             }
           }
         ],
         "settings": {
-          "modelIndex": 7,
+          "modelIndex": 0,
           "enableTools": [
             {
               "name": "k_navigate",
@@ -623,20 +429,26 @@
       }
     },
     {
-      "name": "工具",
-      "icon": "icon-tool",
+      "name": "资源",
+      "icon": "icon-file",
       "type": "blank",
-      "componentIndex": 2,
+      "componentIndex": 0,
       "storage": {
         "activeNames": [
           0
         ],
-        "formData": {
-          "url": "",
-          "launchOptions": {},
-          "allowDangerous": false
-        },
-        "currentToolName": "k_navigate"
+        "formData": {},
+        "currentType": "resource",
+        "currentResourceName": "Browser console logs",
+        "lastResourceReadResponse": {
+          "contents": [
+            {
+              "uri": "console://logs",
+              "mimeType": "text/plain",
+              "text": ""
+            }
+          ]
+        }
       }
     }
   ]

@@ -43,7 +43,7 @@ export interface McpOptions {
 }
 
 
-export const CONNECTION_CONFIG_NAME = 'openmcp_connection.json';
+export const CONNECTION_CONFIG_NAME = 'connection.json';
 
 let _connectionConfig: IConnectionConfig | undefined;
 let _workspaceConnectionConfig: IConnectionConfig | undefined;
@@ -90,12 +90,12 @@ export function getConnectionConfig() {
 }
 
 /**
- * @description 获取工作区的连接信息，默认是 {workspace}/.vscode/openmcp_connection.json
+ * @description 获取工作区的连接信息，默认是 {workspace}/.openmcp/connection.json
  * @returns 
  */
 export function getWorkspaceConnectionConfigPath() {
     const workspace = getWorkspacePath();
-    const configDir = fspath.join(workspace, '.vscode');
+    const configDir = fspath.join(workspace, '.openmcp');
     const connectionConfig = fspath.join(configDir, CONNECTION_CONFIG_NAME);
     return connectionConfig;
 }
@@ -110,7 +110,7 @@ export function getWorkspaceConnectionConfig() {
     }
 
     const workspace = getWorkspacePath();
-    const configDir = fspath.join(workspace, '.vscode');
+    const configDir = fspath.join(workspace, '.openmcp');
     const connectionConfig = fspath.join(configDir, CONNECTION_CONFIG_NAME);
 
     if (!fs.existsSync(connectionConfig)) {
@@ -190,7 +190,7 @@ export function saveWorkspaceConnectionConfig(workspace: string) {
 
     const connectionConfig = JSON.parse(JSON.stringify(_workspaceConnectionConfig)) as IConnectionConfig;
 
-    const configDir = fspath.join(workspace, '.vscode');
+    const configDir = fspath.join(workspace, '.openmcp');
     const connectionConfigPath = fspath.join(configDir, CONNECTION_CONFIG_NAME);
 
     const workspacePath = getWorkspacePath();

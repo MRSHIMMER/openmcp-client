@@ -32,7 +32,7 @@ import ResourceReader from '@/components/main-panel/resource/resouce-reader.vue'
 import { ElMessage, ElTooltip, ElProgress, ElPopover } from 'element-plus';
 
 import ResourceChatItem from '../resource-chat-item.vue';
-import { useMessageBridge } from '@/api/message-bridge';
+import { mcpClientAdapter } from '@/views/connect/core';
 
 const { t } = useI18n();
 
@@ -60,8 +60,8 @@ function saveCursorPosition() {
 
 async function handleResourceSelected(resource: Resources) {
     selectResource.value = undefined;
-    const bridge = useMessageBridge();
-    const { code, msg } = await bridge.commandRequest('resources/read', { resourceUri: resource.uri });
+    const msg = await mcpClientAdapter.readResource(resource.uri);
+    
     if (msg) {
         await whenGetResourceResponse(msg as ResourcesReadResponse);
     }
@@ -123,4 +123,13 @@ async function whenGetResourceResponse(msg: ResourcesReadResponse) {
 .icon-length {
     font-size: 16px;
 }
+
+.el-dialog .el-collapse-item__header {
+    background-color: transparent !important;
+}
+
+.el-dialog .el-collapse-item__wrap {
+    background-color: transparent !important;
+}
+
 </style>
