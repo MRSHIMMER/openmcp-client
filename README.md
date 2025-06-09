@@ -16,7 +16,7 @@ English | [中文](./README.zh.md)
 
 An all-in-one vscode/trae/cursor plugin for MCP server debugging.
 
-[![IMAGE ALT TEXT HERE](https://picx.zhimg.com/80/v2-ed6a7eb80dfeb2f188f11d89ca6c4b5a_1440w.png)](https://www.youtube.com/watch?v=S7igsEhcLiw)
+[![IMAGE ALT TEXT HERE](https://pic1.zhimg.com/80/v2-951261f789708621a2c34faa5fa6f330_1440w.png)](https://www.youtube.com/watch?v=S7igsEhcLiw)
 ### [👆 Full Video](https://www.youtube.com/watch?v=S7igsEhcLiw)
 
 Integrated Inspector + MCP client basic functions, combining development and testing into one.
