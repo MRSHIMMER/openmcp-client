@@ -2,76 +2,70 @@
 
 <img src="./icons/openmcp.png" height="200px"/>
 
-<h3>OpenMCP: 一体化 MCP Server 调试器</h3>
+<h3>OpenMCP: All you need for MCP Development</h3>
 
-<a href="https://kirigaya.cn/openmcp" target="_blank" style="display: inline-block; padding: 8px 16px; background-color: rgb(84, 176, 84); color: white; border-radius: .5em; text-decoration: none;"> 📄 OpenMCP 文档网站</a>
+English | [中文](./README.zh.md)
 
-<a href="https://qm.qq.com/cgi-bin/qm/qr?k=C6ZUTZvfqWoI12lWe7L93cWa1hUsuVT0&jump_from=webapi&authKey=McW6B1ogTPjPDrCyGttS890tMZGQ1KB3QLuG4aqVNRaYp4vlTSgf2c6dMcNjMuBD" target="_blank" style="display: inline-block; padding: 8px 16px; background-color: #CB81DA; color: white; border-radius: .5em; text-decoration: none;">👉 加入 OpenMCP正式级技术组</a>
+<a href="https://kirigaya.cn/openmcp" target="_blank" style="display: inline-block; padding: 8px 16px; background-color: rgb(84, 176, 84); color: white; border-radius: .5em; text-decoration: none;"> 📄 OpenMCP Documentation</a>
 
-<a href="https://discord.gg/SKTZRf6NzU" target="_blank" style="display: inline-block; padding: 8px 16px; background-color: rgb(84, 176, 84); color: white; border-radius: .5em; text-decoration: none;"> 加入 OpenMCP Discord频道</a>
+<a href="https://discord.gg/SKTZRf6NzU" target="_blank" style="display: inline-block; padding: 8px 16px; background-color: rgb(84, 176, 84); color: white; border-radius: .5em; text-decoration: none;"> Join OpenMCP Discord Channel</a>
 
 </div>
 
 ## OpenMCP
 
-一款用于 MCP 服务端调试的一体化 vscode/trae/cursor 插件。
+An all-in-one vscode/trae/cursor plugin for MCP server debugging.
 
+<iframe width="560" height="315" src="https://www.youtube.com/embed/S7igsEhcLiw?si=CbcctmFRXHuZSemR" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
-<video src="https://github.com/user-attachments/assets/ab214d58-b77c-4bd3-8b6e-55552f4036ff" width="100%"></video>
-
-<video src="https://github.com/user-attachments/assets/c17a4ad7-83b4-47ff-8627-85b57ad18940" width="100%"></video>
-
-
-集成 Inspector + MCP 客户端基础功能，开发测试一体化。
+Integrated Inspector + MCP client basic functions, combining development and testing into one.
 
 ![](./icons/openmcp.welcome.png)
 
-进行资源协议、工具、Prompt 的 MCP 服务器测试。
+Test resource protocols, tools, and Prompts for MCP servers.
 
 ![](./icons/openmcp.resource.png)
 
-测试完成的工具可以放入 「交互测试」 模块之间进行大模型交互测试。
+Tested tools can be placed in the "Interactive Testing" module for large model interaction testing.
 
 ![](./icons/openmcp.chatbot.png)
 
-完整的项目级管理面板，更加方便的进行项目和全局的 mcp 项目管理。
+Complete project-level management panel for easier MCP project management at both project and global levels.
 
 ![](./icons/openmcp.management.png)
 
-支持多种大模型
+Supports multiple large models
 
 ![](./icons/openmcp.support.llm.png)
 
-
 ## TODO
 
-## 需求规划
+## Feature Roadmap
 
-| 所在模块 | 需求内容 | 功能优先级 | 当前状态 | 修复优先级 |
+| Module | Feature | Priority | Status | Fix Priority |
 |---------|---------|--------|---------|-----------|
-| `all` | 完成最基本的各类基础设施 | `完整版本` | 100% | `Done` |
-| `render` | chat 模式下支持进行成本分析 | `迭代版本` | 100% | `Done` |
-| `ext` | 支持基本的 MCP 项目管理 | `迭代版本` | 100% | `P0` |
-| `service` | 支持自定义支持 openai 接口协议的大模型接入 | `完整版本` | 100% | `Done` |
-| `service` | 支持自定义接口协议的大模型接入 | `MVP` | 0% | `P1` |
-| `all` | 支持同时调试多个 MCP Server | `MVP` | 100% | `P0` |
-| `all` | 支持通过大模型进行在线验证 | `迭代版本` | 100% | `Done` |
-| `all` | 支持对用户对应服务器的调试工作内容进行保存 | `迭代版本` | 100% | `Done` |
-| `render` | 高危操作权限确认 | `MVP` | 0% | `P1` |
-| `service` | 对于连接的 mcp server 进行热更新 | `MVP` | 0% | `P1` |
-| `service` | 系统配置信息云同步 | `MVP` | 0% | `P1` |
-| `all` | 系统提示词管理模块 | `迭代版本` | 100% | `Done` |
-| `service` | 工具 wise 的日志系统 | `MVP` | 0% | `P1` |
-| `service` | 自带 OCR 进行字符识别 | `迭代版本` | 100% | `Done` |
+| `all` | Complete basic infrastructure | `Full Version` | 100% | `Done` |
+| `render` | Support cost analysis in chat mode | `Iteration` | 100% | `Done` |
+| `ext` | Support basic MCP project management | `Iteration` | 100% | `P0` |
+| `service` | Support custom OpenAI-compatible large model integration | `Full Version` | 100% | `Done` |
+| `service` | Support custom protocol large model integration | `MVP` | 0% | `P1` |
+| `all` | Support debugging multiple MCP Servers simultaneously | `MVP` | 100% | `P0` |
+| `all` | Support online verification via large models | `Iteration` | 100% | `Done` |
+| `all` | Support saving user's server debugging work | `Iteration` | 100% | `Done` |
+| `render` | High-risk operation permission confirmation | `MVP` | 0% | `P1` |
+| `service` | Hot update for connected MCP servers | `MVP` | 0% | `P1` |
+| `service` | Cloud sync for system configuration | `MVP` | 0% | `P1` |
+| `all` | System prompt management module | `Iteration` | 100% | `Done` |
+| `service` | Tool-wise logging system | `MVP` | 0% | `P1` |
+| `service` | Built-in OCR for character recognition | `Iteration` | 100% | `Done` |
 
+## Project Concept
 
-## 项目概念
-
-openmcp 采用分层模块化设计，通过组装不同的模块，可以将它实现成不同平台上的不同模式。
+OpenMCP adopts a layered modular design. By assembling different modules, it can be implemented in different modes on different platforms.
 
 ```mermaid
 flowchart TD
-    subgraph OpenMCP核心组件
+    subgraph OpenMCP Core Components
         renderer[Renderer]
         openmcpservice[OpenMCPService]
     end
@@ -82,82 +76,77 @@ flowchart TD
         nginx[Nginx]
     end
 
-    subgraph OpenMCP_插件["OpenMCP 插件"]
+    subgraph OpenMCP_Plugin["OpenMCP Plugin"]
         renderer
         openmcpservice
-        vscode[VSCode 插件代码]
+        vscode[VSCode Plugin Code]
     end
 
     subgraph OpenMCP_App["OpenMCP App"]
         renderer
         openmcpservice
-        electron[Electron 代码]
+        electron[Electron Code]
     end
 
-    subgraph QQ机器人["基于 OpenMCP 的 QQ 机器人"]
+    subgraph QQBot["OpenMCP-based QQ Bot"]
         lagrange[Lagrange.OneBot]
         openmcpservice
     end
 
-    %% 依赖关系
-    OpenMCP_Web -->|前端渲染| renderer
-    OpenMCP_Web -->|后端服务| openmcpservice
-    OpenMCP_Web -->|反向代理| nginx
+    %% Dependencies
+    OpenMCP_Web -->|Frontend Rendering| renderer
+    OpenMCP_Web -->|Backend Service| openmcpservice
+    OpenMCP_Web -->|Reverse Proxy| nginx
 
-    OpenMCP_插件 -->|UI 界面| renderer
-    OpenMCP_插件 -->|核心逻辑| openmcpservice
-    OpenMCP_插件 -->|集成开发| vscode
+    OpenMCP_Plugin -->|UI Interface| renderer
+    OpenMCP_Plugin -->|Core Logic| openmcpservice
+    OpenMCP_Plugin -->|IDE Integration| vscode
 
-    OpenMCP_App -->|前端界面| renderer
-    OpenMCP_App -->|本地服务| openmcpservice
-    OpenMCP_App -->|桌面封装| electron
+    OpenMCP_App -->|Frontend UI| renderer
+    OpenMCP_App -->|Local Service| openmcpservice
+    OpenMCP_App -->|Desktop Packaging| electron
 
-    QQ机器人 -->|协议适配| lagrange
-    QQ机器人 -->|业务逻辑| openmcpservice
+    QQBot -->|Protocol Adaptation| lagrange
+    QQBot -->|Business Logic| openmcpservice
 ```
 
+## Development
+- renderer : Frontend UI definitions
+- service : Test components for renderer , including a simple forwarding layer
+- src : VSCode plugin definitions
 
----
-
-## Dev
-
-- `renderer`: 前端 UI 的定义
-- `service`: 测试 `renderer` 的部分，包含一个简易的转发层
-- `src`: vscode 插件端定义
-
-### Renderer & Service Dev
+### Renderer & Service Development
 
 ```mermaid
-flowchart LR
-D[renderer] <--> A[Dev Server] <--ws--> B[service]
-B <--mcp--> m(MCP Server)
+flowchart LR
+D[renderer] <--> A[Dev Server] 
+<--ws--> B[service]
+B <--mcp--> m(MCP Server)
 ```
-
-配置项目
+Project setup:
 
 ```bash
-npm run setup
+npm run setup
 ```
-
-启动 dev server
+Start dev server:
 
 ```bash
-npm run dev
+npm run dev
 ```
+Port usage: 8282 (renderer) + 8081 (service)
 
-> 端口占用： 8282 (renderer) + 8081 (service)
-
-### Extention Dev
+### Extension Development
 
 ```mermaid
-flowchart LR
-D[renderer] <--> A[extention.ts] <--> B[service]
-B <--mcp--> m(MCP Server)
+flowchart LR
+D[renderer] <--> A[extention.ts] <--> B
+[service]
+B <--mcp--> m(MCP Server)
 ```
 
-负载部署
+Build for deployment:
+
 ```bash
-npm run build
+npm run build
 ```
-
-and just press f5, いただきます
+Then just press F5, いただきます (Let's begin)
