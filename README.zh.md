@@ -16,8 +16,8 @@
 
 一款用于 MCP 服务端调试的一体化 vscode/trae/cursor 插件。
 
-
-<iframe width="560" height="315" src="https://www.youtube.com/embed/S7igsEhcLiw?si=CbcctmFRXHuZSemR" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+[![IMAGE ALT TEXT HERE](https://picx.zhimg.com/80/v2-ed6a7eb80dfeb2f188f11d89ca6c4b5a_1440w.png)](https://www.bilibili.com/video/BV1MFTBzpEtZ/?vd_source=3f248073d6ebdb61308992901b606f24)
+### [👆 完整视频](https://www.youtube.com/watch?v=S7igsEhcLiw)
 
 集成 Inspector + MCP 客户端基础功能，开发测试一体化。
 
