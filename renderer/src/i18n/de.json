@@ -158,5 +158,19 @@
     "waiting-mcp-server": "Warten auf Antwort vom MCP-Server",
     "parallel-tool-calls": "Erlauben Sie dem Modell, mehrere Tools in einer einzigen Antwort aufzurufen",
     "proxy-server": "Proxy-Server",
-    "update-model-list": "Modellliste aktualisieren"
+    "update-model-list": "Modellliste aktualisieren",
+    "ensure-delete-connection": "Möchten Sie die Verbindung $1 wirklich löschen?",
+    "choose-connection-type": "Bitte wählen Sie den Verbindungstyp",
+    "please-enter-connection-command": "Bitte geben Sie den Verbindungsbefehl ein",
+    "example-mcp-run": "Beispiel: mcp run main.py",
+    "please-enter-cwd": "Bitte geben Sie das Arbeitsverzeichnis (cwd) ein, optional",
+    "please-enter-cwd-placeholder": "Zum Beispiel: /path/to/project",
+    "please-enter-url": "Bitte geben Sie die Verbindungs-URL ein",
+    "example-as": "Zum Beispiel:",
+    "enter-optional-oauth": "Bitte geben Sie das OAuth-Token ein, optional",
+    "quick-start": "Einführung",
+    "read-document": "Dokumentation lesen",
+    "report-issue": "Problem melden",
+    "join-project": "Am Projekt teilnehmen",
+    "comment-plugin": "Kommentar-Plugin"
 }

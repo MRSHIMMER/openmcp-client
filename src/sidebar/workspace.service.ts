@@ -1,28 +1,28 @@
 import { getFirstValidPathFromCommand, getWorkspaceConnectionConfig, getWorkspacePath, McpOptions, panels, saveWorkspaceConnectionConfig } from "../global";
 import * as vscode from 'vscode';
+import { t } from "../i18n";
 
 export async function deleteUserConnection(item: McpOptions[] | McpOptions) {
     // 弹出确认对话框
     const masterNode = Array.isArray(item) ? item[0] : item;
-    const name = masterNode.name;
+    const name = masterNode.name || 'unknown node name';
 
-    console.log('enter delete');
-    
-    const confirm = await vscode.window.showWarningMessage(
-        `确定要删除连接 "${name}" 吗？`,
+    const res = await vscode.window.showWarningMessage(
+        t("ensure-delete-connection", name),
         { modal: true },
-        '确定'
+        { title: t('confirm'), value: true },
     );
 
-    if (confirm !== '确定') {
+    const confirm = res?.value;
+
+    if (!confirm) {
         return; // 用户取消删除
     }
 
     const workspaceConnectionConfig = getWorkspaceConnectionConfig();
 
     // 从配置中移除该连接项
-    console.log(item);
-    console.log(workspaceConnectionConfig.items);
+
     // TODO: 改成基于 path 进行搜索
     
     const index = workspaceConnectionConfig.items.indexOf(item);
@@ -53,14 +53,14 @@ export async function validateAndGetCommandPath(command: string, cwd?: string): 
         const { stdout } = await execAsync(`which ${command.split(' ')[0]}`, { cwd });
         return stdout.trim();
     } catch (error) {
-        throw new Error(`无法找到命令: ${command.split(' ')[0]}`);
+        throw new Error(`Cannot find command: ${command.split(' ')[0]}`);
     }
 }
 
 export async function acquireUserCustomConnection(): Promise<McpOptions[]> {
     // 让用户选择连接类型
     const connectionType = await vscode.window.showQuickPick(['STDIO', 'SSE', 'STREAMABLE_HTTP'], {
-        placeHolder: '请选择连接类型',
+        placeHolder: t('choose-connection-type'),
         canPickMany: false,
         ignoreFocusOut: true,
     });
@@ -72,8 +72,8 @@ export async function acquireUserCustomConnection(): Promise<McpOptions[]> {
     if (connectionType === 'STDIO') {
         // 获取 command
         const commandString = await vscode.window.showInputBox({
-            prompt: '请输入连接的 command',
-            placeHolder: '例如: mcp run main.py'
+            prompt: t('please-enter-connection-command'),
+            placeHolder: t('example-mcp-run')
         });
 
         if (!commandString) {
@@ -82,8 +82,8 @@ export async function acquireUserCustomConnection(): Promise<McpOptions[]> {
 
         // 获取 cwd
         const cwd = await vscode.window.showInputBox({
-            prompt: '请输入工作目录 (cwd)，可选',
-            placeHolder: '例如: /path/to/project'
+            prompt: t('please-enter-cwd'),
+            placeHolder: t('please-enter-cwd-placeholder')
         });
 
         // 校验 command + cwd 是否有效
@@ -91,7 +91,7 @@ export async function acquireUserCustomConnection(): Promise<McpOptions[]> {
             const commandPath = await validateAndGetCommandPath(commandString, cwd);
             console.log('Command Path:', commandPath);
         } catch (error) {
-            vscode.window.showErrorMessage(`无效的 command: ${error}`);
+            vscode.window.showErrorMessage(`Invalid command: ${error}`);
             return [];
         }
 
@@ -113,8 +113,8 @@ export async function acquireUserCustomConnection(): Promise<McpOptions[]> {
     } else if (connectionType === 'SSE') {
         // 获取 url
         const url = await vscode.window.showInputBox({
-            prompt: '请输入连接的 URL',
-            placeHolder: '例如: https://127.0.0.1:8282/sse'
+            prompt: t('please-enter-url'),
+            placeHolder: t('example-as') + 'https://127.0.0.1:8282/sse'
         });
 
         if (!url) {
@@ -123,8 +123,8 @@ export async function acquireUserCustomConnection(): Promise<McpOptions[]> {
 
         // 获取 oauth
         const oauth = await vscode.window.showInputBox({
-            prompt: '请输入 OAuth 令牌，可选',
-            placeHolder: '例如: your-oauth-token'
+            prompt: t('enter-optional-oauth'),
+            placeHolder: t('example-as') + ' your-oauth-token'
         });
 
         // 保存连接配置
@@ -138,8 +138,8 @@ export async function acquireUserCustomConnection(): Promise<McpOptions[]> {
     } else if (connectionType === 'STREAMABLE_HTTP') {
         // 获取 url
         const url = await vscode.window.showInputBox({
-            prompt: '请输入连接的 URL',
-            placeHolder: '例如: https://127.0.0.1:8282/stream'
+            prompt: t('please-enter-url'),
+            placeHolder: t('example-as') + ' https://127.0.0.1:8282/stream'
         });
 
         if (!url) {
@@ -148,8 +148,8 @@ export async function acquireUserCustomConnection(): Promise<McpOptions[]> {
 
         // 获取 oauth
         const oauth = await vscode.window.showInputBox({
-            prompt: '请输入 OAuth 令牌，可选',
-            placeHolder: '例如: your-oauth-token'
+            prompt: t('enter-optional-oauth'),
+            placeHolder: t('example-as') + ' your-oauth-token'
         });
 
         // 保存连接配置

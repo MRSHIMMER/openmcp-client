@@ -15,8 +15,7 @@ export class WebviewController {
             const signature = getDefaultLanunchSignature(uri.fsPath, cwd);
 
             if (!signature) {
-                vscode.window.showInformationMessage('OpenMCP: 无法获取启动参数');
-                vscode.window.showErrorMessage('OpenMCP: 无法获取启动参数');
+                vscode.window.showErrorMessage('OpenMCP: Cannot acquire launch parameters');
                 return;
             }
 

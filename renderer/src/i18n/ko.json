@@ -158,5 +158,19 @@
     "waiting-mcp-server": "MCP 서버 응답 대기 중",
     "parallel-tool-calls": "모델이 단일 응답에서 여러 도구를 호출할 수 있도록 허용",
     "proxy-server": "프록시 서버",
-    "update-model-list": "모델 목록 업데이트"
+    "update-model-list": "모델 목록 업데이트",
+    "ensure-delete-connection": "연결 $1을(를) 삭제하시겠습니까?",
+    "choose-connection-type": "연결 유형을 선택해 주세요",
+    "please-enter-connection-command": "연결 명령을 입력해 주세요",
+    "example-mcp-run": "예: mcp run main.py",
+    "please-enter-cwd": "작업 디렉토리 (cwd)를 입력하세요 (선택 사항)",
+    "please-enter-cwd-placeholder": "예: /path/to/project",
+    "please-enter-url": "연결 URL을 입력해 주세요",
+    "example-as": "예를 들어:",
+    "enter-optional-oauth": "OAuth 토큰을 입력하세요 (선택 사항)",
+    "quick-start": "시작하기",
+    "read-document": "문서 읽기",
+    "report-issue": "문제 신고",
+    "join-project": "프로젝트 참여",
+    "comment-plugin": "댓글 플러그인"
 }

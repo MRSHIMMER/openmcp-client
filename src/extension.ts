@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { setRunningCWD, setVscodeWorkspace } from '../openmcp-sdk/service';
 import { launch } from './common/entry';
+import { initialiseI18n } from './i18n';
 
 export function activate(context: vscode.ExtensionContext) {
     console.log('activate openmcp');
@@ -12,6 +13,7 @@ export function activate(context: vscode.ExtensionContext) {
 
     setVscodeWorkspace(workspace);
     setRunningCWD(context.extensionPath);
+    initialiseI18n(context);
 
     launch(context);
 }

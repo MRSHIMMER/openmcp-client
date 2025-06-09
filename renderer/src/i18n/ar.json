@@ -158,5 +158,19 @@
     "waiting-mcp-server": "في انتظار استجابة خادم MCP",
     "parallel-tool-calls": "السماح للنموذج باستدعاء أدوات متعددة في رد واحد",
     "proxy-server": "خادم وكيل",
-    "update-model-list": "تحديث قائمة النماذج"
+    "update-model-list": "تحديث قائمة النماذج",
+    "ensure-delete-connection": "هل أنت متأكد أنك تريد حذف الاتصال $1؟",
+    "choose-connection-type": "الرجاء اختيار نوع الاتصال",
+    "please-enter-connection-command": "الرجاء إدخال أمر الاتصال",
+    "example-mcp-run": "على سبيل المثال: mcp run main.py",
+    "please-enter-cwd": "الرجاء إدخال دليل العمل (cwd)، اختياري",
+    "please-enter-cwd-placeholder": "على سبيل المثال: /path/to/project",
+    "please-enter-url": "الرجاء إدخال عنوان URL للاتصال",
+    "example-as": "على سبيل المثال:",
+    "enter-optional-oauth": "الرجاء إدخال رمز OAuth، اختياري",
+    "quick-start": "مقدمة",
+    "read-document": "قراءة الوثائق",
+    "report-issue": "الإبلاغ عن مشكلة",
+    "join-project": "المشاركة في المشروع",
+    "comment-plugin": "ملحق التعليقات"
 }

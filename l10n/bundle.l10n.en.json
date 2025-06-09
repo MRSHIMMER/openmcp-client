@@ -1,0 +1,17 @@
+{
+    "ensure-delete-connection": "Are you sure you want to delete connection {0}?",
+    "confirm": "OK",
+    "choose-connection-type": "Please select the connection type",
+    "please-enter-connection-command": "Please enter the connection command",
+    "example-mcp-run": "For example: mcp run main.py",
+    "please-enter-cwd": "Please enter the working directory (cwd), optional",
+    "please-enter-cwd-placeholder": "For example: /path/to/project",
+    "please-enter-url": "Please enter the connection URL",
+    "example-as": "For example:",
+    "enter-optional-oauth": "Please enter the OAuth token, optional",
+    "quick-start": "Getting Started",
+    "read-document": "Read documentation",
+    "report-issue": "Report a problem",
+    "join-project": "Participate in the project",
+    "comment-plugin": "Comment Plugin"
+}

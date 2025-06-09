@@ -1,0 +1,17 @@
+{
+    "ensure-delete-connection": "确定要删除连接 {0} 吗？",
+    "confirm": "确定",
+    "choose-connection-type": "请选择连接类型",
+    "please-enter-connection-command": "请输入连接的 command",
+    "example-mcp-run": "例如: mcp run main.py",
+    "please-enter-cwd": "请输入工作目录 (cwd)，可选",
+    "please-enter-cwd-placeholder": "例如: /path/to/project",
+    "please-enter-url": "请输入连接的 URL",
+    "example-as": "例如:",
+    "enter-optional-oauth": "请输入 OAuth 令牌，可选",
+    "quick-start": "入门",
+    "read-document": "阅读文档",
+    "report-issue": "报告问题",
+    "join-project": "参与项目",
+    "comment-plugin": "评论插件"
+}

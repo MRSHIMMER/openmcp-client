@@ -158,5 +158,19 @@
     "waiting-mcp-server": "等待MCP伺服器響應",
     "parallel-tool-calls": "允許模型在單輪回覆中調用多個工具",
     "proxy-server": "代理伺服器",
-    "update-model-list": "更新模型列表"
+    "update-model-list": "更新模型列表",
+    "ensure-delete-connection": "確定要刪除連接 $1 嗎？",
+    "choose-connection-type": "請選擇連接類型",
+    "please-enter-connection-command": "請輸入連接命令",
+    "example-mcp-run": "例如: mcp run main.py",
+    "please-enter-cwd": "請輸入工作目錄 (cwd)，可選",
+    "please-enter-cwd-placeholder": "例如: /path/to/project",
+    "please-enter-url": "請輸入連接的 URL",
+    "example-as": "例如：",
+    "enter-optional-oauth": "請輸入 OAuth 令牌，可選",
+    "quick-start": "入門",
+    "read-document": "閱讀文件",
+    "report-issue": "報告問題",
+    "join-project": "參與專案",
+    "comment-plugin": "評論插件"
 }

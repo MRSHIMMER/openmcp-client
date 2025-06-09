@@ -12,8 +12,6 @@
 
 </div>
 
-
-
 ## OpenMCP
 
 一款用于 MCP 服务端调试的一体化 vscode/trae/cursor 插件。

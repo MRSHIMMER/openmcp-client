@@ -158,5 +158,19 @@
     "waiting-mcp-server": "En attente de la réponse du serveur MCP",
     "parallel-tool-calls": "Permettre au modèle d'appeler plusieurs outils en une seule réponse",
     "proxy-server": "Serveur proxy",
-    "update-model-list": "Mettre à jour la liste des modèles"
+    "update-model-list": "Mettre à jour la liste des modèles",
+    "ensure-delete-connection": "Êtes-vous sûr de vouloir supprimer la connexion $1 ?",
+    "choose-connection-type": "Veuillez sélectionner le type de connexion",
+    "please-enter-connection-command": "Veuillez saisir la commande de connexion",
+    "example-mcp-run": "Par exemple : mcp run main.py",
+    "please-enter-cwd": "Veuillez entrer le répertoire de travail (cwd), facultatif",
+    "please-enter-cwd-placeholder": "Par exemple : /path/to/project",
+    "please-enter-url": "Veuillez saisir l'URL de connexion",
+    "example-as": "Par exemple :",
+    "enter-optional-oauth": "Veuillez entrer le jeton OAuth, facultatif",
+    "quick-start": "Premiers pas",
+    "read-document": "Lire la documentation",
+    "report-issue": "Signaler un problème",
+    "join-project": "Participer au projet",
+    "comment-plugin": "Plugin de commentaires"
 }

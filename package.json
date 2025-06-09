@@ -22,10 +22,13 @@
     "main": "./dist/extension.js",
     "icon": "icons/openmcp.png",
     "contributes": {
+        "configuration": {
+            "properties": {}
+        },
         "commands": [
             {
                 "command": "openmcp.showOpenMCP",
-                "title": "展示 OpenMCP",
+                "title": "%openmcp.showOpenMCP.title%",
                 "category": "openmcp",
                 "icon": {
                     "light": "./icons/light/protocol.svg",
@@ -34,7 +37,7 @@
             },
             {
                 "command": "openmcp.sidebar.workspace-connection.revealWebviewPanel",
-                "title": "连接",
+                "title": "%openmcp.sidebar.workspace-connection.revealWebviewPanel.title%",
                 "category": "openmcp",
                 "icon": {
                     "light": "./icons/light/protocol.svg",
@@ -43,31 +46,31 @@
             },
             {
                 "command": "openmcp.sidebar.workspace-connection.deleteConnection",
-                "title": "删除连接",
+                "title": "%openmcp.sidebar.workspace-connection.deleteConnection.title%",
                 "category": "openmcp",
                 "icon": "$(trash)"
             },
             {
                 "command": "openmcp.sidebar.workspace-connection.refresh",
-                "title": "刷新",
+                "title": "%openmcp.sidebar.workspace-connection.refresh.title%",
                 "category": "openmcp",
                 "icon": "$(refresh)"
             },
             {
                 "command": "openmcp.sidebar.workspace-connection.addConnection",
-                "title": "添加连接",
+                "title": "%openmcp.sidebar.workspace-connection.addConnection.title%",
                 "category": "openmcp",
                 "icon": "$(add)"
             },
             {
                 "command": "openmcp.sidebar.workspace-connection.openConfiguration",
-                "title": "打开配置",
+                "title": "%openmcp.sidebar.workspace-connection.openConfiguration.title%",
                 "category": "openmcp",
                 "icon": "$(gear)"
             },
             {
                 "command": "openmcp.sidebar.installed-connection.revealWebviewPanel",
-                "title": "连接",
+                "title": "%openmcp.sidebar.installed-connection.revealWebviewPanel.title%",
                 "category": "openmcp",
                 "icon": {
                     "light": "./icons/light/protocol.svg",
@@ -76,31 +79,31 @@
             },
             {
                 "command": "openmcp.sidebar.installed-connection.deleteConnection",
-                "title": "删除连接",
+                "title": "%openmcp.sidebar.installed-connection.deleteConnection.title%",
                 "category": "openmcp",
                 "icon": "$(trash)"
             },
             {
                 "command": "openmcp.sidebar.installed-connection.refresh",
-                "title": "刷新",
+                "title": "%openmcp.sidebar.installed-connection.refresh.title%",
                 "category": "openmcp",
                 "icon": "$(refresh)"
             },
             {
                 "command": "openmcp.sidebar.installed-connection.addConnection",
-                "title": "添加连接",
+                "title": "%openmcp.sidebar.installed-connection.addConnection.title%",
                 "category": "openmcp",
                 "icon": "$(add)"
             },
             {
                 "command": "openmcp.sidebar.installed-connection.openConfiguration",
-                "title": "打开配置",
+                "title": "%openmcp.sidebar.installed-connection.openConfiguration.title%",
                 "category": "openmcp",
                 "icon": "$(gear)"
             },
             {
                 "command": "openmcp.hook.test-ocr",
-                "title": "测试 OCR",
+                "title": "%openmcp.hook.test-ocr.title%",
                 "category": "openmcp",
                 "icon": "$(test)"
             }
@@ -194,19 +197,19 @@
                 {
                     "id": "openmcp.sidebar.workspace-connection",
                     "icon": "./icons/protocol.svg",
-                    "name": "MCP 连接 (工作区)",
+                    "name": "%openmcp.sidebar.workspace-connection.view.title%",
                     "type": "tree"
                 },
                 {
                     "id": "openmcp.sidebar.installed-connection",
                     "icon": "./icons/protocol.svg",
-                    "name": "安装的 MCP 服务器",
+                    "name": "%openmcp.sidebar.installed-connection.view.title%",
                     "type": "tree"
                 },
                 {
                     "id": "openmcp.sidebar.help",
                     "icon": "./icons/protocol.svg",
-                    "name": "入门与帮助",
+                    "name": "%openmcp.sidebar.help.view.title%",
                     "type": "tree"
                 }
             ]

@@ -158,5 +158,19 @@
     "waiting-mcp-server": "Ожидание ответа от сервера MCP",
     "parallel-tool-calls": "Разрешить модели вызывать несколько инструментов в одном ответе",
     "proxy-server": "Прокси-сервер",
-    "update-model-list": "Обновить список моделей"
+    "update-model-list": "Обновить список моделей",
+    "ensure-delete-connection": "Вы уверены, что хотите удалить соединение $1?",
+    "choose-connection-type": "Пожалуйста, выберите тип подключения",
+    "please-enter-connection-command": "Пожалуйста, введите команду подключения",
+    "example-mcp-run": "Например: mcp run main.py",
+    "please-enter-cwd": "Пожалуйста, введите рабочий каталог (cwd), необязательно",
+    "please-enter-cwd-placeholder": "Например: /path/to/project",
+    "please-enter-url": "Пожалуйста, введите URL-адрес подключения",
+    "example-as": "Например:",
+    "enter-optional-oauth": "Пожалуйста, введите токен OAuth, необязательно",
+    "quick-start": "Начало работы",
+    "read-document": "Читать документацию",
+    "report-issue": "Сообщить о проблеме",
+    "join-project": "Участвовать в проекте",
+    "comment-plugin": "Плагин комментариев"
 }
