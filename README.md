@@ -140,8 +140,7 @@ Port usage: 8282 (renderer) + 8081 (service)
 
 ```mermaid
 flowchart LR
-D[renderer] <--> A[extention.ts] <--> B
-[service]
+D[renderer] <--> A[extention.ts] <--> B[service]
 B <--mcp--> m(MCP Server)
 ```
 
