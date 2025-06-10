@@ -13,5 +13,7 @@
     "read-document": "ドキュメントを読む",
     "report-issue": "問題を報告",
     "join-project": "プロジェクトに参加する",
-    "comment-plugin": "コメントプラグイン"
+    "comment-plugin": "コメントプラグイン",
+    "preset-env-sync": "プリセット環境変数の同期が完了しました",
+    "preset-env-sync.fail": "プリセット環境変数の同期に失敗しました"
 }

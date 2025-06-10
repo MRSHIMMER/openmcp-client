@@ -3,7 +3,7 @@
 		<div class="connection-container" @dragover.prevent="handleDragOver" @drop.prevent="handleDrop">
 			<div v-if="isDraging" class="drag-mask">
 				<span class="iconfont icon-connect"></span>
-				<span>拖拽以填充连接参数</span>
+				<span>{{ t('drag-to-fill-connect-parameters') }}</span>
 			</div>
 			<div class="connect-panel-container left" :ref="el => client.connectionSettingRef = el">
 				<ConnectionMethod :index="props.index" />

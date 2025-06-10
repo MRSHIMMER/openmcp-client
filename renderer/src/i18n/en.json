@@ -158,5 +158,17 @@
     "waiting-mcp-server": "Waiting for MCP server response",
     "parallel-tool-calls": "Allow the model to call multiple tools in a single reply",
     "proxy-server": "Proxy server",
-    "update-model-list": "Update model list"
+    "update-model-list": "Update model list",
+    "preset-env-sync.success": "Preset environment variables synchronized",
+    "preset-env-sync.fail": "Preset environment variables synchronization failed",
+    "drag-to-fill-connect-parameters": "Drag to fill connection parameters",
+    "connect-success": "Connected successfully",
+    "connect-fail": "Connection failed",
+    "preset": "Preset",
+    "openmcp-document": "OpenMCP official documentation",
+    "star-our-project": "Star our project",
+    "document": "Official documentation",
+    "join-discussion": "Join the discussion group",
+    "comment-for-us": "Write a review for us!",
+    "openmcp-developed-by": "OpenMCP Client {version} developed by {author}"
 }

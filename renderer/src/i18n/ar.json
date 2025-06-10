@@ -172,5 +172,17 @@
     "read-document": "قراءة الوثائق",
     "report-issue": "الإبلاغ عن مشكلة",
     "join-project": "المشاركة في المشروع",
-    "comment-plugin": "ملحق التعليقات"
+    "comment-plugin": "ملحق التعليقات",
+    "preset-env-sync.success": "تم مزامنة متغيرات البيئة المحددة مسبقًا",
+    "preset-env-sync.fail": "فشل مزامنة متغيرات البيئة المحددة مسبقًا",
+    "drag-to-fill-connect-parameters": "اسحب لملء معلمات الاتصال",
+    "connect-success": "تم الاتصال بنجاح",
+    "connect-fail": "فشل الاتصال",
+    "preset": "مسبق",
+    "openmcp-document": "الوثائق الرسمية لـ OpenMCP",
+    "star-our-project": "نجم مشروعنا",
+    "document": "الوثائق الرسمية",
+    "join-discussion": "انضم إلى مجموعة النقاش",
+    "comment-for-us": "اكتب تقييمًا لنا!",
+    "openmcp-developed-by": "OpenMCP Client {version} تم تطويره بواسطة {author}"
 }

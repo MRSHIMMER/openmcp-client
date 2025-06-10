@@ -158,5 +158,17 @@
     "waiting-mcp-server": "MCPサーバーの応答を待機中",
     "parallel-tool-calls": "モデルが単一の返信で複数のツールを呼び出すことを許可する",
     "proxy-server": "プロキシサーバー",
-    "update-model-list": "モデルリストを更新"
+    "update-model-list": "モデルリストを更新",
+    "preset-env-sync.success": "プリセット環境変数の同期が完了しました",
+    "preset-env-sync.fail": "プリセット環境変数の同期に失敗しました",
+    "drag-to-fill-connect-parameters": "接続パラメータを入力するためにドラッグしてください",
+    "connect-success": "接続に成功しました",
+    "connect-fail": "接続に失敗しました",
+    "preset": "プリセット",
+    "openmcp-document": "OpenMCP公式ドキュメント",
+    "star-our-project": "私たちのプロジェクトをスター",
+    "document": "公式ドキュメント",
+    "join-discussion": "ディスカッショングループに参加",
+    "comment-for-us": "私たちのためにレビューを書いてください！",
+    "openmcp-developed-by": "OpenMCP Client {version} は {author} によって開発されました"
 }

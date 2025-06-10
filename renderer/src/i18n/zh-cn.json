@@ -158,5 +158,17 @@
     "waiting-mcp-server": "等待 MCP 服务器响应",
     "parallel-tool-calls": "允许模型在单轮回复中调用多个工具",
     "proxy-server": "代理服务器",
-    "update-model-list": "更新模型列表"
+    "update-model-list": "更新模型列表",
+    "preset-env-sync.success": "预设环境变量同步完成",
+    "preset-env-sync.fail": "预设环境变量同步失败",
+    "drag-to-fill-connect-parameters": "拖拽以填充连接参数",
+    "connect-success": "连接成功",
+    "connect-fail": "连接失败",
+    "preset": "预设",
+    "openmcp-document": "OpenMCP 官方文档",
+    "star-our-project": "Star 我们的项目",
+    "document": "官方文档",
+    "join-discussion": "加入讨论群",
+    "comment-for-us": "为我们撰写评价！",
+    "openmcp-developed-by": "OpenMCP Client {version} 由 {author} 开发"
 }

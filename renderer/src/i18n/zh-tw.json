@@ -172,5 +172,17 @@
     "read-document": "閱讀文件",
     "report-issue": "報告問題",
     "join-project": "參與專案",
-    "comment-plugin": "評論插件"
+    "comment-plugin": "評論插件",
+    "preset-env-sync.success": "預設環境變數同步完成",
+    "preset-env-sync.fail": "預設環境變數同步失敗",
+    "drag-to-fill-connect-parameters": "拖曳以填充連接參數",
+    "connect-success": "連接成功",
+    "connect-fail": "連接失敗",
+    "preset": "預設",
+    "openmcp-document": "OpenMCP 官方文件",
+    "star-our-project": "給我們的項目加星",
+    "document": "官方文件",
+    "join-discussion": "加入討論群",
+    "comment-for-us": "為我們撰寫評價！",
+    "openmcp-developed-by": "OpenMCP Client {version} 由 {author} 開發"
 }

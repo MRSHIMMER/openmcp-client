@@ -172,5 +172,17 @@
     "read-document": "문서 읽기",
     "report-issue": "문제 신고",
     "join-project": "프로젝트 참여",
-    "comment-plugin": "댓글 플러그인"
+    "comment-plugin": "댓글 플러그인",
+    "preset-env-sync.success": "사전 설정 환경 변수 동기화 완료",
+    "preset-env-sync.fail": "사전 설정된 환경 변수 동기화 실패",
+    "drag-to-fill-connect-parameters": "연결 매개변수를 채우려면 드래그하세요",
+    "connect-success": "성공적으로 연결되었습니다",
+    "connect-fail": "연결 실패",
+    "preset": "프리셋",
+    "openmcp-document": "OpenMCP 공식 문서",
+    "star-our-project": "우리 프로젝트 스타",
+    "document": "공식 문서",
+    "join-discussion": "토론 그룹에 참여",
+    "comment-for-us": "우리를 위해 리뷰를 작성해 주세요!",
+    "openmcp-developed-by": "OpenMCP Client {version}은 {author}에 의해 개발되었습니다"
 }

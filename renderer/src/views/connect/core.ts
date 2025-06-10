@@ -7,6 +7,9 @@ import { getPlatform } from "@/api/platform";
 import type { PromptsGetResponse, PromptsListResponse, PromptTemplate, Resources, ResourcesListResponse, ResourcesReadResponse, ResourceTemplate, ResourceTemplatesListResponse, ToolCallResponse, ToolItem, ToolsListResponse } from "@/hook/type";
 import { mcpSetting } from "@/hook/mcp";
 import chalk from "chalk";
+import I18n from '@/i18n';
+
+const { t } = I18n.global;
 
 export const connectionSelectDataViewOption: ConnectionTypeOptionItem[] = [
     {
@@ -337,7 +340,7 @@ export class McpClient {
             const message = msg.toString();
             this.connectionResult.logString.push({
                 type: 'error',
-                title: '连接失败',
+                title: t('connect-fail'),
                 message
             });
 
@@ -346,7 +349,7 @@ export class McpClient {
         } else {
             this.connectionResult.logString.push({
                 type: 'info',
-                title: msg.name + ' ' + msg.version + ' 连接成功',
+                title: msg.name + ' ' + msg.version + ' ' + t('connect-success'),
                 message: JSON.stringify(msg, null, 2)
             });
         }
@@ -437,16 +440,17 @@ export class McpClient {
         });
 
         if (code === 200) {
+            
             this.connectionResult.logString.push({
                 type: 'info',
-                title: '预设环境变量同步完成'
+                title: t('preset-env-sync.success')
             });
 
             return msg;
         } else {
             this.connectionResult.logString.push({
                 type: 'error',
-                title: '预设环境变量同步失败',
+                title: t('preset-env-sync.fail'),
                 message: msg.toString()
             });
         }

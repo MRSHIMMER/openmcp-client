@@ -13,5 +13,7 @@
     "read-document": "阅读文档",
     "report-issue": "报告问题",
     "join-project": "参与项目",
-    "comment-plugin": "评论插件"
+    "comment-plugin": "评论插件",
+    "preset-env-sync": "预设环境变量同步完成",
+    "preset-env-sync.fail": "预设环境变量同步失败"
 }

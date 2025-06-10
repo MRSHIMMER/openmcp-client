@@ -172,5 +172,17 @@
     "read-document": "Lire la documentation",
     "report-issue": "Signaler un problème",
     "join-project": "Participer au projet",
-    "comment-plugin": "Plugin de commentaires"
+    "comment-plugin": "Plugin de commentaires",
+    "preset-env-sync.success": "Variables d'environnement prédéfinies synchronisées",
+    "preset-env-sync.fail": "Échec de la synchronisation des variables d'environnement prédéfinies",
+    "drag-to-fill-connect-parameters": "Faites glisser pour remplir les paramètres de connexion",
+    "connect-success": "Connexion réussie",
+    "connect-fail": "Échec de la connexion",
+    "preset": "Préréglage",
+    "openmcp-document": "Documentation officielle d'OpenMCP",
+    "star-our-project": "Star notre projet",
+    "document": "Documentation officielle",
+    "join-discussion": "Rejoindre le groupe de discussion",
+    "comment-for-us": "Écrivez un avis pour nous !",
+    "openmcp-developed-by": "OpenMCP Client {version} développé par {author}"
 }

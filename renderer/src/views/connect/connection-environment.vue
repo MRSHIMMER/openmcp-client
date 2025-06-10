@@ -7,8 +7,8 @@
 				v-model="envEnabled"
 				@change="(enable: boolean) => client.handleEnvSwitch(enable)"
 				inline-prompt
-				active-text="预设"
-				inactive-text="预设"
+				:active-text="t('preset')"
+				:inactive-text="t('preset')"
 			></el-switch>
 		</div>
 		<div class="input-env">

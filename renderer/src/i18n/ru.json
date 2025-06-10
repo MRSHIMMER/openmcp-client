@@ -172,5 +172,17 @@
     "read-document": "Читать документацию",
     "report-issue": "Сообщить о проблеме",
     "join-project": "Участвовать в проекте",
-    "comment-plugin": "Плагин комментариев"
+    "comment-plugin": "Плагин комментариев",
+    "preset-env-sync.success": "Предустановленные переменные среды синхронизированы",
+    "preset-env-sync.fail": "Не удалось синхронизировать предустановленные переменные среды",
+    "drag-to-fill-connect-parameters": "Перетащите, чтобы заполнить параметры подключения",
+    "connect-success": "Успешное подключение",
+    "connect-fail": "Ошибка подключения",
+    "preset": "Предустановка",
+    "openmcp-document": "Официальная документация OpenMCP",
+    "star-our-project": "Звезда нашего проекта",
+    "document": "Официальная документация",
+    "join-discussion": "Присоединиться к дискуссионной группе",
+    "comment-for-us": "Напишите отзыв для нас!",
+    "openmcp-developed-by": "OpenMCP Client {version} разработан {author}"
 }

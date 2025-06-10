@@ -1,36 +1,40 @@
 <template>
-	<div class="about-container" >
+	<div class="about-container">
 		<span class="about-icon-container">
 			<div class="openmcp-image"></div>
-			<span>openmcp</span>
+			<span>OpenMCP</span>
 		</span>
 
 		<p>
-			OpenMCP Client 0.1.5 由 OpenMCP@<a href="https://www.zhihu.com/people/can-meng-zhong-de-che-xian">锦恢</a> 开发
+			{{ t('openmcp-developed-by', { version, author }) }}
 		</p>
 
-		<p>
-			软件已开源 <a href="https://github.com/LSTM-Kirigaya/openmcp-client" target="_blank">
-				LSTM-Kirigaya/openmcp-client
-			</a>
-			<br>
-			请遵循开源协议进行分发和二次开发。
-		</p>
 
-		<p>
-			如果感兴趣，欢迎加入我们的QQ群和我们讨论
-		</p>
+		<div style="display: inline-flex;">
+			<el-button class="join-qq" type="primary"
+				@click="gotoWebsite('https://github.com/LSTM-Kirigaya/openmcp-client')">
+				<span class="iconfont icon-star"></span>
+				{{ t('star-our-project') }}
+			</el-button>
+
+			<el-button class="join-qq" type="primary" @click="gotoWebsite('https://kirigaya.cn/openmcp')">
+				<span class="iconfont icon-wendang"></span>
+				{{ t('document') }}
+			</el-button>
+		</div>
+
+		<br>
 
 		<div style="display: inline-flex;">
 			<el-button class="join-qq" type="primary"
 				@click="joinQQGroup('https://qm.qq.com/cgi-bin/qm/qr?k=C6ZUTZvfqWoI12lWe7L93cWa1hUsuVT0&jump_from=webapi&authKey=McW6B1ogTPjPDrCyGttS890tMZGQ1KB3QLuG4aqVNRaYp4vlTSgf2c6dMcNjMuBD')">
 				<span class="iconfont icon-QQ"></span>
-				加入 OpenMCP 技术群
+				{{ t('join-discussion') }}
 			</el-button>
 			<el-button type="success" class="join-qq"
 				@click="gotoWebsite('https://marketplace.visualstudio.com/items?itemName=kirigaya.openmcp&ssr=false#review-details')">
 				<span class="iconfont icon-star"></span>
-				为 OpenMCP 撰写评价！
+				{{ t('comment-for-us') }}
 			</el-button>
 		</div>
 
@@ -39,6 +43,12 @@
 
 <script setup lang="ts">
 import { defineComponent } from 'vue';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
+
+const version = '0.1.5';
+const author = 'LSTM-Kirigaya (锦恢)';
 
 defineComponent({ name: 'about' });
 
@@ -66,7 +76,6 @@ function gotoWebsite(url: string) {
 	box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.3);
 	border-radius: .8em;
 	padding: 20px 30px;
-	color: var(--main-color);
 	background-color: var(--background);
 	display: flex;
 	font-size: 30px;
@@ -74,6 +83,14 @@ function gotoWebsite(url: string) {
 	margin-bottom: 20px;
 }
 
+.about-icon-container span {
+	background: -webkit-linear-gradient(120deg, #bd34fe, #41d1ff);
+	-webkit-background-clip: text;
+	background-clip: text;
+	color: transparent;
+	font-weight: bold;
+	font-size: 45px;
+}
 
 .about-icon-container .iconfont {
 	font-size: 180px;
