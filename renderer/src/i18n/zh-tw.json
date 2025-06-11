@@ -184,5 +184,6 @@
     "document": "官方文件",
     "join-discussion": "加入討論群",
     "comment-for-us": "為我們撰寫評價！",
-    "openmcp-developed-by": "OpenMCP Client {version} 由 {author} 開發"
+    "openmcp-developed-by": "OpenMCP Client {version} 由 {author} 開發",
+    "error-parse-json": "JSON解析錯誤:"
 }

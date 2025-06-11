@@ -184,5 +184,6 @@
     "document": "공식 문서",
     "join-discussion": "토론 그룹에 참여",
     "comment-for-us": "우리를 위해 리뷰를 작성해 주세요!",
-    "openmcp-developed-by": "OpenMCP Client {version}은 {author}에 의해 개발되었습니다"
+    "openmcp-developed-by": "OpenMCP Client {version}은 {author}에 의해 개발되었습니다",
+    "error-parse-json": "JSON 구문 분석 오류:"
 }

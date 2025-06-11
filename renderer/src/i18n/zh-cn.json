@@ -170,5 +170,6 @@
     "document": "官方文档",
     "join-discussion": "加入讨论群",
     "comment-for-us": "为我们撰写评价！",
-    "openmcp-developed-by": "OpenMCP Client {version} 由 {author} 开发"
+    "openmcp-developed-by": "OpenMCP Client {version} 由 {author} 开发",
+    "error-parse-json": "JSON 解析错误:"
 }

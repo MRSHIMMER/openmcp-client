@@ -184,5 +184,6 @@
     "document": "Offizielle Dokumentation",
     "join-discussion": "Diskussionsgruppe beitreten",
     "comment-for-us": "Schreiben Sie eine Bewertung für uns!",
-    "openmcp-developed-by": "OpenMCP Client {version} entwickelt von {author}"
+    "openmcp-developed-by": "OpenMCP Client {version} entwickelt von {author}",
+    "error-parse-json": "JSON-Parsing-Fehler:"
 }

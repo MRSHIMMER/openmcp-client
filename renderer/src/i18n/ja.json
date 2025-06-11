@@ -170,5 +170,6 @@
     "document": "公式ドキュメント",
     "join-discussion": "ディスカッショングループに参加",
     "comment-for-us": "私たちのためにレビューを書いてください！",
-    "openmcp-developed-by": "OpenMCP Client {version} は {author} によって開発されました"
+    "openmcp-developed-by": "OpenMCP Client {version} は {author} によって開発されました",
+    "error-parse-json": "JSON解析エラー:"
 }

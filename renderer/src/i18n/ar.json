@@ -184,5 +184,6 @@
     "document": "الوثائق الرسمية",
     "join-discussion": "انضم إلى مجموعة النقاش",
     "comment-for-us": "اكتب تقييمًا لنا!",
-    "openmcp-developed-by": "OpenMCP Client {version} تم تطويره بواسطة {author}"
+    "openmcp-developed-by": "OpenMCP Client {version} تم تطويره بواسطة {author}",
+    "error-parse-json": "خطأ في تحليل JSON:"
 }

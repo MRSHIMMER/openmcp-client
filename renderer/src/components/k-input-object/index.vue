@@ -8,8 +8,9 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, watch, type PropType } from 'vue'
-import { EditorView, basicSetup } from 'codemirror'
+import { ref, onMounted, watch, type PropType } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { EditorView, basicSetup } from 'codemirror';
 import type { Completion, CompletionContext } from "@codemirror/autocomplete"
 import { jsonLanguage } from "@codemirror/lang-json"
 
@@ -45,7 +46,8 @@ const props = defineProps({
     }
 })
 
-const emit = defineEmits(['update:modelValue', 'parse-error'])
+const emit = defineEmits(['update:modelValue', 'parse-error']);
+const { t } = useI18n();
 
 const editorContainer = ref<any>(null);
 const editorView = ref<EditorView | null>(null);
@@ -69,7 +71,7 @@ const debouncedParse = debounce((value: string) => {
         emit('update:modelValue', parsed);
     } catch (error) {
         isInvalid.value = true;
-        errorMessage.value = 'JSON 解析错误: ' + (error as Error).message;
+        errorMessage.value = t('error-parse-json') + (error as Error).message;
         emit('parse-error', error);
     }
 }, props.debounceTime);

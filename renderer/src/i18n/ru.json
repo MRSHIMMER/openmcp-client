@@ -184,5 +184,6 @@
     "document": "Официальная документация",
     "join-discussion": "Присоединиться к дискуссионной группе",
     "comment-for-us": "Напишите отзыв для нас!",
-    "openmcp-developed-by": "OpenMCP Client {version} разработан {author}"
+    "openmcp-developed-by": "OpenMCP Client {version} разработан {author}",
+    "error-parse-json": "Ошибка разбора JSON:"
 }
