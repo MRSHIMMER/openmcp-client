@@ -45,6 +45,10 @@ function getCWD(option: McpOptions) {
 		// 如果是绝对路径，直接返回目录
 		if (path.isAbsolute(file)) {
 			// 如果是是文件，则返回文件所在的目录
+			if (!fs.existsSync(file)) {
+				return '';
+			}
+
 			if (fs.statSync(file).isDirectory()) {
 				return file;
 			} else {
@@ -53,6 +57,11 @@ function getCWD(option: McpOptions) {
 		} else {
 			// 如果是相对路径，根据 cwd 获取真实路径
 			const absPath = path.resolve(option.cwd || process.cwd(), file);
+
+			if (!fs.existsSync(absPath)) {
+				return '';
+			}
+
 			// 如果是是文件，则返回文件所在的目录
 			if (fs.statSync(absPath).isDirectory()) {
 				return absPath;

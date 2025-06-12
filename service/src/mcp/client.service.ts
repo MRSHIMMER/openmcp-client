@@ -44,6 +44,9 @@ export class McpClient {
         if (!this.oauthPovider){
             this.oauthPovider = await this.oAuthClient.getOAuthProvider();
         }
+
+        const env = { ...process.env, ...this.options.env } as Record<string, string>;
+
         // 根据连接类型创建传输层
         switch (this.options.connectionType) {
             case 'STDIO':
@@ -52,7 +55,7 @@ export class McpClient {
                     args: this.options.args || [],
                     cwd: this.options.cwd || process.cwd(),
                     stderr: 'pipe',
-                    env: this.options.env,
+                    env
                 });
 
                 break;
