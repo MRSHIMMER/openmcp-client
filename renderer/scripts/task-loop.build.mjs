@@ -9,7 +9,7 @@ if (fs.existsSync(targetFile)) {
     content = content.replace(/'element-plus'/g, "'./tools.js'");
     content = content.replace(/"element-plus"/g, "\"./tools.js\"");
 
-    content = content.replace(/const chalk = require\("chalk"\);/g, 'const chalk = require("chalk").default;');
+    // content = content.replace(/const chalk = require\("chalk"\);/g, 'const chalk = require("chalk").default;');
     
     // Replace define_window_default$number.performance with performance
     content = content.replace(/define_window_default\$\d+\.performance/g, 'performance');

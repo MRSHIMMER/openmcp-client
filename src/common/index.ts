@@ -1,4 +1,4 @@
-import { CommandHandlerDescriptor, IRegisterCommandItem, IRegisterTreeDataProviderItem, TreeDataProviderConstructor } from "./index.dto";
+import { CommandHandlerDescriptor, IRegisterCommandItem, IRegisterTreeDataProviderItem, TreeDataProviderConstructor } from "./index.dto.js";
 
 export const registerCommands = new Array<[string, IRegisterCommandItem]>();
 export const registerTreeDataProviders = new Map<string, IRegisterTreeDataProviderItem<any>>();

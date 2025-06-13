@@ -19,7 +19,7 @@
         "Other"
     ],
     "activationEvents": [],
-    "type":"module",
+    "type": "module",
     "main": "./dist/extension.js",
     "icon": "icons/openmcp.png",
     "contributes": {
@@ -226,13 +226,13 @@
         "build": "turbo build",
         "build:electron": "turbo build --filter=@openmcp/electron",
         "build:all": "turbo build",
-        "vscode:prepublish": "webpack --mode production",
+        "vscode:prepublish": "rollup --config rollup.config.js",
         "compile": "tsc -p ./",
         "watch": "tsc -watch -p ./",
         "pretest": "npm run compile && npm run lint",
         "lint": "eslint src --ext ts",
         "test": "node ./out/test/runTest.js",
-        "prepare:ocr": "webpack --config webpack/webpack.tesseract.js",
+        "prepare:ocr": "rollup --config rollup.tesseract.js",
         "build:task-loop": "npx vite build --config webpack/vite.config.task-loop.mjs && node renderer/scripts/task-loop.build.mjs"
     },
     "dependencies": {
@@ -244,11 +244,16 @@
         "openai": "^5.0.1",
         "pako": "^2.1.0",
         "tesseract.js": "^6.0.1",
+        "tslib": "^2.8.1",
         "uuid": "^11.1.0",
         "ws": "^8.18.1"
     },
     "devDependencies": {
+        "@rollup/plugin-commonjs": "^28.0.3",
         "@rollup/plugin-inject": "^5.0.5",
+        "@rollup/plugin-json": "^6.1.0",
+        "@rollup/plugin-node-resolve": "^16.0.1",
+        "@rollup/plugin-typescript": "^12.1.2",
         "@types/node": "^22.15.29",
         "@types/pako": "^2.0.3",
         "@types/showdown": "^2.0.0",
@@ -256,6 +261,7 @@
         "copy-webpack-plugin": "^13.0.0",
         "fork-ts-checker-webpack-plugin": "^9.1.0",
         "null-loader": "^4.0.1",
+        "rollup": "^4.43.0",
         "rollup-plugin-visualizer": "^6.0.1",
         "ts-loader": "^9.5.1",
         "turbo": "^2.5.3",
