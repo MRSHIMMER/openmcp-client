@@ -24,3 +24,5 @@ software/**
 .editorconfig
 .gitattributes
 *.vsix
+.turbo
+.github

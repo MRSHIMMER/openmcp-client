@@ -1,5 +1,9 @@
 # Change Log
 
+## [main] 0.1.6
+- 针对 0.1.5 无法在 Windows 启动的紧急修复。
+- 修复环境变量中添加 token 失效的问题。
+
 ## [main] 0.1.5
 - 修复 gemini 获取模型列表时存在 models 前缀的问题
 - 增加 web api 功能

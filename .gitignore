@@ -16,3 +16,4 @@ resources/service
 *.traineddata
 .turbo
 stats.html
+.openmcp
