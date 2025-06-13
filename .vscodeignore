@@ -26,3 +26,4 @@ software/**
 *.vsix
 .turbo
 .github
+webpack
