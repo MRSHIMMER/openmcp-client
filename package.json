@@ -19,6 +19,7 @@
         "Other"
     ],
     "activationEvents": [],
+    "type":"module",
     "main": "./dist/extension.js",
     "icon": "icons/openmcp.png",
     "contributes": {
