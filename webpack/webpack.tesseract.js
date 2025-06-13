@@ -1,18 +1,27 @@
-const path = require('path');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
+import { fileURLToPath } from 'url';
+import { dirname, resolve } from 'path';
+import CopyWebpackPlugin from 'copy-webpack-plugin';
 
-module.exports = {
-  entry: './node_modules/tesseract.js/src/worker-script/node/index.js',
+// 适配 ESM 的 __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// 统一路径变量
+const rootDir = resolve(__dirname, '..');
+const outDir = resolve(rootDir, 'resources', 'ocr');
+
+export default {
+  entry: resolve(rootDir, 'node_modules', 'tesseract.js', 'src', 'worker-script', 'node', 'index.js'),
   output: {
-    path: path.resolve(__dirname, '..', 'resources', 'ocr'),
+    path: outDir,
     filename: 'worker.js',
-    libraryTarget: 'commonjs2'
+    libraryTarget: 'commonjs', // 改为 ESM 兼容的 commonjs 格式
   },
   resolve: {
     fallback: {
       bufferutil: false,
-      'utf-8-validate': false
-    }	
+      'utf-8-validate': false,
+    },
   },
   mode: 'production',
   target: 'node',
@@ -20,8 +29,8 @@ module.exports = {
     new CopyWebpackPlugin({
       patterns: [
         {
-          from: path.resolve(__dirname, '..', 'node_modules', 'tesseract.js-core', 'tesseract*'),
-          to: path.resolve(__dirname, '..', 'resources', 'ocr', '[name][ext]'),
+          from: resolve(rootDir, 'node_modules', 'tesseract.js-core', 'tesseract*'),
+          to: resolve(outDir, '[name][ext]'),
         },
       ],
     }),
