@@ -35,7 +35,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, inject, onMounted } from 'vue';
+import { ref, computed, inject, onMounted, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { type ChatStorage, type EnableToolItem, getToolSchema } from '../chat';
 import { markdownToHtml } from '@/components/main-panel/chat/markdown/markdown';
@@ -79,32 +79,44 @@ const disableAllTools = () => {
     });
 };
 
-onMounted(async () => {
+// 更新工具列表的方法
+const updateToolsList = async () => {
     // 将新的 tool 和并进入 tabStorage.settings.enableTools 中
     // 只需要保证 enable 信息同步即可，其余工具默认开启
     const disableToolNames = new Set<string>(
         tabStorage.settings.enableTools
-        .filter(tool => !tool.enabled)
-        .map(tool => tool.name)
+            .filter(tool => !tool.enabled)
+            .map(tool => tool.name)
     );
 
     const newTools: EnableToolItem[] = [];
 
     for (const client of mcpClientAdapter.clients) {
-        const tools = await client.getTools();
-        for (const tool of tools.values()) {
-            const enabled = !disableToolNames.has(tool.name);
+        const tools = await client.getTools({ cache: false });
+        if (tools) {
+            for (const tool of tools.values()) {
+                const enabled = !disableToolNames.has(tool.name);
 
-            newTools.push({
-                name: tool.name,
-                description: tool.description,
-                inputSchema: tool.inputSchema,
-                enabled
-            });
+                newTools.push({
+                    name: tool.name,
+                    description: tool.description,
+                    inputSchema: tool.inputSchema,
+                    enabled
+                });
+            }
         }
     }
 
     tabStorage.settings.enableTools = newTools;
+}
+
+
+
+onMounted(async () => {
+    await updateToolsList();
+    watch(() => mcpClientAdapter.refreshSignal.value, async () => {
+        await updateToolsList();
+    });
 });
 
 </script>

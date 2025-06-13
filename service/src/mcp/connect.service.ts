@@ -3,6 +3,7 @@ import { RequestClientType } from '../common/index.dto.js';
 import { connect } from './client.service.js';
 import { RestfulResponse } from '../common/index.dto.js';
 import { McpOptions } from './client.dto.js';
+import { McpServerConnectMonitor } from './connect-monitor.service.js';
 import * as crypto from 'node:crypto';
 import path from 'node:path';
 import fs from 'node:fs';
@@ -14,7 +15,19 @@ export const clientMap: Map<string, RequestClientType> = new Map();
 export function getClient(clientId?: string): RequestClientType | undefined {
 	return clientMap.get(clientId || '');
 }
-
+export const clientMonitorMap: Map<string, McpServerConnectMonitor> = new Map();
+export async function updateClientMap(uuid: string, options: McpOptions): Promise<{ res: boolean; error?: any }> {
+	try {
+		const client = await connect(options);
+		clientMap.set(uuid, client);
+		const tools = await client.listTools();
+		console.log('[updateClientMap] tools:', tools);
+		return { res: true };
+	} catch (error) {
+		console.error('[updateClientMap] error:', error);
+		return { res: false, error };
+	}
+}
 export function tryGetRunCommandError(command: string, args: string[] = [], cwd?: string): string | null {
     try {
         const commandString = command + ' ' + args.join(' ');
@@ -290,6 +303,7 @@ export async function connectService(
 
 		const client = await connect(option);
 		clientMap.set(uuid, client);
+		clientMonitorMap.set(uuid, new McpServerConnectMonitor(uuid, option, updateClientMap, webview));
 
 		const versionInfo = client.getServerVersion();
 

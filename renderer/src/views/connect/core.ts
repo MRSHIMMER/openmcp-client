@@ -29,12 +29,12 @@ export const connectionSelectDataViewOption: ConnectionTypeOptionItem[] = [
 function prettifyMapKeys(keys: MapIterator<string>) {
     const result: string[] = [];
     for (const key of keys) {
-        result.push('+ ' +key);
+        result.push('+ ' + key);
     }
     return result.join('\n');
 }
 
-function _processSchemaNode(node: any, defs: Record<string, any> = {}): any {    
+function _processSchemaNode(node: any, defs: Record<string, any> = {}): any {
     // Handle $ref references
     if ('$ref' in node) {
         const refPath = node['$ref'];
@@ -195,18 +195,18 @@ export class McpClient {
         }
 
         const bridge = useMessageBridge();
-        
+
         const { code, msg } = await bridge.commandRequest<ToolsListResponse>('tools/list', { clientId: this.clientId });
-        if (code!== 200) {
+        if (code !== 200) {
             return new Map<string, ToolItem>();
         }
 
         this.tools = new Map<string, ToolItem>();
         msg.tools.forEach(tool => {
             const standardSchema = _processSchemaNode(tool.inputSchema, tool.inputSchema.$defs || {});
-            
+
             tool.inputSchema = standardSchema;
-            
+
             this.tools!.set(tool.name, tool);
         });
 
@@ -224,13 +224,13 @@ export class McpClient {
         }
 
         const bridge = useMessageBridge();
-        
-        const { code, msg } = await bridge.commandRequest<PromptsListResponse>('prompts/list', { clientId: this.clientId });        
 
-        if (code!== 200) {
+        const { code, msg } = await bridge.commandRequest<PromptsListResponse>('prompts/list', { clientId: this.clientId });
+
+        if (code !== 200) {
             return new Map<string, PromptTemplate>();
         }
-    
+
         this.promptTemplates = new Map<string, PromptTemplate>();
         msg.prompts.forEach(template => {
             this.promptTemplates!.set(template.name, template);
@@ -250,9 +250,9 @@ export class McpClient {
         }
 
         const bridge = useMessageBridge();
-        
+
         const { code, msg } = await bridge.commandRequest<ResourcesListResponse>('resources/list', { clientId: this.clientId });
-        if (code!== 200) {
+        if (code !== 200) {
             return new Map<string, Resources>();
         }
 
@@ -274,9 +274,9 @@ export class McpClient {
         }
 
         const bridge = useMessageBridge();
-        
+
         const { code, msg } = await bridge.commandRequest<ResourceTemplatesListResponse>('resources/templates/list', { clientId: this.clientId });
-        if (code!== 200) {
+        if (code !== 200) {
             return new Map();
         }
         this.resourceTemplates = new Map<string, ResourceTemplate>();
@@ -367,7 +367,7 @@ export class McpClient {
             title: `${this.name}'s tools loaded (${tools.size})`,
             message: prettifyMapKeys(tools.keys())
         });
-        
+
         const prompts = await this.getPromptTemplates({ cache: false });
         this.connectionResult.logString.push({
             type: 'info',
@@ -381,7 +381,7 @@ export class McpClient {
             title: `${this.name}'s resources loaded (${resources.size})`,
             message: prettifyMapKeys(resources.keys())
         });
-        
+
         const resourceTemplates = await this.getResourceTemplates({ cache: false });
         this.connectionResult.logString.push({
             type: 'info',
@@ -440,7 +440,7 @@ export class McpClient {
         });
 
         if (code === 200) {
-            
+
             this.connectionResult.logString.push({
                 type: 'info',
                 title: t('preset-env-sync.success')
@@ -455,19 +455,60 @@ export class McpClient {
             });
         }
     }
+
+    // 添加资源刷新方法，支持超时控制
+    public async refreshAllResources(timeoutMs = 30000): Promise<void> {
+        const controller = new AbortController();
+        const signal = controller.signal;
+
+        // 设置超时
+        const timeoutId = setTimeout(() => {
+            controller.abort();
+            console.error(`[REFRESH TIMEOUT] Client ${this.clientId}`);
+        }, timeoutMs);
+
+        try {
+            console.log(`[REFRESH START] Client ${this.clientId}`);
+
+            // 按顺序刷新资源
+            await this.getTools({ cache: false });
+            await this.getPromptTemplates({ cache: false });
+            await this.getResources({ cache: false });
+            await this.getResourceTemplates({ cache: false });
+            console.log(chalk.gray(`[${new Date().toLocaleString()}]`),
+                chalk.green(`🚀 [${this.name}] REFRESH COMPLETE`));
+        } catch (error) {
+            if (signal.aborted) {
+                throw new Error(`Refresh timed out after ${timeoutMs}ms`);
+            }
+            console.error(`[REFRESH ERROR] Client ${this.clientId}:`, error);
+            console.error(
+                chalk.gray(`[${new Date().toLocaleString()}]`),
+                chalk.red(`🚀 [${this.name}] REFRESH FAILED`),
+                error
+            );
+            throw error;
+        } finally {
+            clearTimeout(timeoutId);
+        }
+    }
 }
 
 
 class McpClientAdapter {
     public clients: Reactive<McpClient[]> = [];
     public currentClientIndex: number = 0;
+    public refreshSignal = reactive({ value: 0 });
 
     private defaultClient: McpClient = new McpClient();
     public connectLogListenerCancel: (() => void) | null = null;
+    public connectrefreshListener: (() => void) | null = null;
 
     constructor(
         public platform: string
-    ) { }
+    ) {
+        this.addConnectRefreshListener();
+    }
 
     /**
      * @description 获取连接参数签名
@@ -511,6 +552,43 @@ class McpClientAdapter {
         });
     }
 
+    private findClientIndexByUuid(uuid: string): number {
+        // 检查客户端数组是否存在且不为空
+        if (!this.clients || this.clients.length === 0) {
+            return -1;
+        }
+
+        const index = this.clients.findIndex(client => client.clientId === uuid);
+        return index;
+    }
+
+
+    public addConnectRefreshListener() {
+        // 创建对于 connect/refresh 的监听
+        if (!this.connectrefreshListener) {
+            const bridge = useMessageBridge();
+            this.connectrefreshListener = bridge.addCommandListener('connect/refresh', async (message) => {
+                const { code, msg } = message;
+
+                if (code === 200) {
+                    // 查找目标客户端
+                    const clientIndex = this.findClientIndexByUuid(msg.uuid);
+
+                    if (clientIndex > -1) {
+                        // 刷新该客户端的所有资源
+                        await this.clients[clientIndex].refreshAllResources();
+                        this.refreshSignal.value++;
+                    } else {
+                        console.error(
+                            chalk.gray(`[${new Date().toLocaleString()}]`),
+                            chalk.red(`No client found with ID: ${msg.uuid}`),
+                        );
+                    }
+                }
+            }, { once: false });
+        }
+    }
+    
     public async launch() {
         // 创建对于 log/output 的监听
         if (!this.connectLogListenerCancel) {
@@ -519,22 +597,22 @@ class McpClientAdapter {
                 const { code, msg } = message;
 
                 const client = this.clients.at(-1);
-                
+
                 if (!client) {
                     return;
                 }
 
                 client.connectionResult.logString.push({
-                    type: code === 200 ? 'info': 'error',
+                    type: code === 200 ? 'info' : 'error',
                     title: msg.title,
                     message: msg.message
                 });
 
-            }, { once: false });   
+            }, { once: false });
         }
 
         const launchSignature = await this.getLaunchSignature();
-                
+
         let allOk = true;
 
         for (const item of launchSignature) {
@@ -641,7 +719,7 @@ class McpClientAdapter {
                 timeout: mcpSetting.timeout * 1000
             }
         });
-    
+
         return msg;
     }
 
