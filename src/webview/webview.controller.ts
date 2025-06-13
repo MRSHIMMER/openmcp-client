@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
-import { RegisterCommand } from "../common";
-import { getDefaultLanunchSignature, getWorkspacePath, revealOpenMcpWebviewPanel } from './webview.service';
-import { getWorkspaceConnectionConfigItemByPath } from '../global';
+import { RegisterCommand } from "../common/index.js";
+import { getDefaultLanunchSignature, getWorkspacePath, revealOpenMcpWebviewPanel } from './webview.service.js';
+import { getWorkspaceConnectionConfigItemByPath } from '../global.js';
 import path from 'path';
 
 export class WebviewController {

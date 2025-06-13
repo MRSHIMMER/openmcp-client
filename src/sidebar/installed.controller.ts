@@ -1,9 +1,9 @@
 import * as vscode from 'vscode';
-import { RegisterCommand, RegisterTreeDataProvider } from '../common';
-import { ConnectionViewItem } from './common';
-import { getConnectionConfig, getInstalledConnectionConfigPath, saveConnectionConfig } from '../global';
-import { acquireInstalledConnection, deleteInstalledConnection } from './installed.service';
-import { revealOpenMcpWebviewPanel } from '../webview/webview.service';
+import { RegisterCommand, RegisterTreeDataProvider } from '../common/index.js';
+import { ConnectionViewItem } from './common.js';
+import { getConnectionConfig, getInstalledConnectionConfigPath, saveConnectionConfig } from '../global.js';
+import { acquireInstalledConnection, deleteInstalledConnection } from './installed.service.js';
+import { revealOpenMcpWebviewPanel } from '../webview/webview.service.js';
 
 @RegisterTreeDataProvider('openmcp.sidebar.installed-connection')
 export class McpInstalledConnectProvider implements vscode.TreeDataProvider<ConnectionViewItem> {

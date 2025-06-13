@@ -1,4 +1,4 @@
-import { RegisterCommand } from "../common";
+import { RegisterCommand } from "../common/index.js";
 import * as vscode from 'vscode';
 import * as path from 'path';
 import Tesseract from 'tesseract.js';

@@ -1,9 +1,9 @@
 import * as vscode from 'vscode';
-import { RegisterCommand, RegisterTreeDataProvider } from '../common';
-import { getWorkspaceConnectionConfig, getWorkspaceConnectionConfigPath, getWorkspacePath, saveWorkspaceConnectionConfig } from '../global';
-import { ConnectionViewItem } from './common';
-import { revealOpenMcpWebviewPanel } from '../webview/webview.service';
-import { acquireUserCustomConnection, deleteUserConnection } from './workspace.service';
+import { RegisterCommand, RegisterTreeDataProvider } from '../common/index.js';
+import { getWorkspaceConnectionConfig, getWorkspaceConnectionConfigPath, getWorkspacePath, saveWorkspaceConnectionConfig } from '../global.js';
+import { ConnectionViewItem } from './common.js';
+import { revealOpenMcpWebviewPanel } from '../webview/webview.service.js';
+import { acquireUserCustomConnection, deleteUserConnection } from './workspace.service.js';
 
 @RegisterTreeDataProvider('openmcp.sidebar.workspace-connection')
 export class McpWorkspaceConnectProvider implements vscode.TreeDataProvider<ConnectionViewItem> {
@@ -55,7 +55,7 @@ export class McpWorkspaceConnectProvider implements vscode.TreeDataProvider<Conn
     public refresh(context: vscode.ExtensionContext): void {
         console.log(this);
 
-        this._onDidChangeTreeData.fire();
+        this._onDidChangeTreeData.fire(undefined);
     }
 
     @RegisterCommand('addConnection')

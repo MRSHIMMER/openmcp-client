@@ -1,7 +1,7 @@
-import { getConnectionConfig, panels, saveConnectionConfig, getFirstValidPathFromCommand, McpOptions } from "../global";
+import { getConnectionConfig, panels, saveConnectionConfig, getFirstValidPathFromCommand, McpOptions } from "../global.js";
 import { exec, spawn } from 'node:child_process';
 import * as vscode from 'vscode';
-import { t } from "../i18n";
+import { t } from "../i18n/index.js";
 
 export async function deleteInstalledConnection(item: McpOptions[] | McpOptions) {
     // 弹出确认对话框
