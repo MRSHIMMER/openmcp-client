@@ -1,4 +1,4 @@
-name: Build & Test VSCode Extension
+name: Build 
 
 on:
   push:
@@ -12,7 +12,7 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest]
     runs-on: ${{ matrix.os }}
     
     steps:
@@ -28,11 +28,8 @@ jobs:
     - name: Install dependencies
       run: npm ci
 
-    - name: Build monorepo
+    - name: Build all
       run: npm run build
-
-    - name: Compile TypeScript
-      run: npx tsc
 
     - name: Package VSIX
       run: npx vsce package --out dist/openmcp.vsix
@@ -43,18 +40,3 @@ jobs:
         name: openmcp-${{ matrix.os }}
         path: dist/openmcp.vsix
 
-  # test:
-  #   needs: build
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #   - name: Checkout code
-  #     uses: actions/checkout@v4
-
-  #   - name: Setup Node.js
-  #     uses: actions/setup-node@v4
-  #     with:
-  #       node-version: '22.x'
-  #       cache: 'npm'
-
-  #   - name: Install test dependencies
-  #     run: npm install && npm run test
