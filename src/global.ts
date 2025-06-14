@@ -96,6 +96,9 @@ export function getConnectionConfig() {
 export function getWorkspaceConnectionConfigPath() {
     const workspace = getWorkspacePath();
     const configDir = fspath.join(workspace, '.openmcp');
+     if (!fs.existsSync(configDir)) {
+        fs.mkdirSync(configDir, { recursive: true }); // 递归创建目录
+    }
     const connectionConfig = fspath.join(configDir, CONNECTION_CONFIG_NAME);
     return connectionConfig;
 }
@@ -296,6 +299,7 @@ function normaliseConnectionFilePath(item: McpOptions, workspace: string) {
 
 export function getWorkspacePath() {
     const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+    console.log('getWorkspacePath: ', vscode.workspace.workspaceFolders);
     return (workspaceFolder?.uri.fsPath || '').replace(/\\/g, '/');
 }
 

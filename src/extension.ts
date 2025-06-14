@@ -10,12 +10,15 @@ export function activate(context: vscode.ExtensionContext) {
     // 获取当前打开的项目的路径
     const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
     const workspace = workspaceFolder?.uri.fsPath || '';
-
+    console.log("aaa")
     setVscodeWorkspace(workspace);
+    console.log("bbb")
     setRunningCWD(context.extensionPath);
+    console.log("ccc")
     initialiseI18n(context);
-
+    console.log("ddd")
     launch(context);
+    console.log("eee")
 }
 
 
