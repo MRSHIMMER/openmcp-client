@@ -60,6 +60,7 @@ Supports multiple large models
 | `service` | Cloud sync for system configuration | `MVP` | 0% | `P1` |
 | `all` | System prompt management module | `Iteration` | 100% | `Done` |
 | `service` | Tool-wise logging system | `MVP` | 0% | `P1` |
+| `service` | MCP security checks (prevent prompt injection, etc.) | `MVP` | 0% | `P1` |
 | `service` | Built-in OCR for character recognition | `Iteration` | 100% | `Done` |
 
 ## Project Concept
