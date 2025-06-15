@@ -35,9 +35,17 @@ export async function streamingChatCompletion(
     });
     
 
+    // 构建OpenRouter特定的请求头
+    const defaultHeaders: Record<string, string> = {};
+    if (baseURL && baseURL.includes('openrouter.ai')) {
+        defaultHeaders['HTTP-Referer'] = 'https://github.com/openmcp/openmcp-client';
+        defaultHeaders['X-Title'] = 'OpenMCP Client';
+    }
+
     const client = new OpenAI({
         baseURL,
         apiKey,
+        defaultHeaders: Object.keys(defaultHeaders).length > 0 ? defaultHeaders : undefined
     });
     
     const seriableTools = (tools.length === 0) ? undefined: tools;

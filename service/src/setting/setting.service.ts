@@ -53,9 +53,28 @@ export function loadSetting(): IConfig {
     try {
         const configData = fs.readFileSync(configPath, 'utf-8');
         const config = JSON.parse(configData) as IConfig;
+        
         if (!config.LLM_INFO || (Array.isArray(config.LLM_INFO) && config.LLM_INFO.length === 0)) {
             config.LLM_INFO = llms;
-        }        
+        } else {
+            // 自动同步新的提供商：检查默认配置中是否有新的提供商未在用户配置中
+            const existingIds = new Set(config.LLM_INFO.map((llm: any) => llm.id));
+            const newProviders = llms.filter((llm: any) => !existingIds.has(llm.id));
+            
+            if (newProviders.length > 0) {
+                console.log(`Adding ${newProviders.length} new providers:`, newProviders.map(p => p.name));
+                config.LLM_INFO.push(...newProviders);
+                
+                // 自动保存更新后的配置
+                try {
+                    fs.writeFileSync(configPath, JSON.stringify(config, null, 2), 'utf-8');
+                    console.log('Configuration updated with new providers');
+                } catch (saveError) {
+                    console.error('Failed to save updated configuration:', saveError);
+                }
+            }
+        }
+        
         return config;
     } catch (error) {
         console.error('Error loading config file, creating new one:', error);

@@ -1,11 +1,9 @@
-import {  RequestClientType } from "../common/index.dto.js";
 import { Controller } from "../common/index.js";
 import { RequestData } from "../common/index.dto.js";
 import { PostMessageble } from "../hook/adapter.js";
-import { getClient } from "../mcp/connect.service.js";
 import { abortMessageService, streamingChatCompletion } from "./llm.service.js";
 import { OpenAI } from "openai";
-import { axiosFetch } from "src/hook/axios-fetch.js";
+import { fetchOpenRouterModels, getSimplifiedModels } from "../hook/openrouter.js";
 export class LlmController {
 
     @Controller('llm/chat/completions')
@@ -55,6 +53,68 @@ export class LlmController {
         return {
             code: 200,
             msg: models.data
+        }
+    }
+
+    @Controller('llm/models/openrouter')
+    async getOpenRouterModels(data: RequestData, webview: PostMessageble) {
+        try {
+            const models = await fetchOpenRouterModels();
+            const simplifiedModels = getSimplifiedModels(models);
+        
+            // 转换为标准格式，与其他模型API保持一致
+            const standardModels = simplifiedModels.map(model => ({
+                id: model.id,
+                object: 'model',
+                name: model.name,
+                pricing: model.pricing
+            }));
+
+            return {
+                code: 200,
+                msg: standardModels
+            };
+        } catch (error) {
+            console.error('Failed to fetch OpenRouter models:', error);
+            return {
+                code: 500,
+                msg: `Failed to fetch OpenRouter models: ${error instanceof Error ? error.message : String(error)}`
+            };
+        }
+    }
+
+    @Controller('llm/models/dynamic')
+    async getDynamicModels(data: RequestData, webview: PostMessageble) {
+        const { providerId } = data;
+        
+        try {
+            if (providerId === 'openrouter') {
+                const models = await fetchOpenRouterModels();
+                const simplifiedModels = getSimplifiedModels(models);
+                
+                const standardModels = simplifiedModels.map(model => ({
+                    id: model.id,
+                    object: 'model',
+                    name: model.name,
+                    pricing: model.pricing
+                }));
+
+                return {
+                    code: 200,
+                    msg: standardModels
+                };
+            } else {
+                return {
+                    code: 400,
+                    msg: `Unsupported dynamic provider: ${providerId}`
+                };
+            }
+        } catch (error) {
+            console.error(`Failed to fetch dynamic models for ${providerId}:`, error);
+            return {
+                code: 500,
+                msg: `Failed to fetch models: ${error instanceof Error ? error.message : String(error)}`
+            };
         }
     }
 }
