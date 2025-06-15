@@ -130,6 +130,21 @@ export const llms = [
 		website: 'https://kimi.moonshot.cn',
 		userToken: '',
 		userModel: 'moonshot-v1-8k'
+	},
+	{
+		id: 'openrouter',
+		name: 'OpenRouter',
+		baseUrl: 'https://openrouter.ai/api/v1',
+		models: [], // 动态加载
+		provider: 'OpenRouter',
+		isOpenAICompatible: true,
+		description: '400+ AI models from multiple providers in one API',
+		website: 'https://openrouter.ai',
+		userToken: '',
+		userModel: '',
+		isDynamic: true,
+		modelsEndpoint: 'https://openrouter.ai/api/v1/models',
+		supportsPricing: true
 	}
 ];
 

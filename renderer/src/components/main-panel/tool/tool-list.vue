@@ -17,7 +17,13 @@
                         <div class="item" :class="{ 'active': tabStorage.currentToolName === tool.name }"
                             v-for="tool of client.tools?.values()" :key="tool.name" @click="handleClick(tool)">
                             <span>{{ tool.name }}</span>
-                            <span>{{ tool.description || '' }}</span>
+                            <el-tooltip 
+                                :content="tool.description || ''"
+                                :disabled="!tool.description || tool.description.length <= 30"
+                                placement="top"
+                                :show-after="500">
+                                <span class="tool-description">{{ tool.description || '' }}</span>
+                            </el-tooltip>
                         </div>
                     </div>
                 </el-scrollbar>
@@ -27,7 +33,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, defineProps, ref, type Reactive } from 'vue';
+import { onMounted, defineProps, type Reactive } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { ToolStorage } from './tools';
 import { tabs } from '../panel';
@@ -122,16 +128,18 @@ onMounted(async () => {
 }
 
 .tool-list-container>.item>span:first-child {
-    max-width: 200px;
+    min-width: 120px;
+    max-width: 250px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    flex-shrink: 0;
 }
 
-.tool-list-container>.item>span:last-child {
+.tool-description {
     opacity: 0.6;
     font-size: 12.5px;
-    max-width: 200px;
+    max-width: 150px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
