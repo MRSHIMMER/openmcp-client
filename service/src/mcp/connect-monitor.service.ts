@@ -7,15 +7,7 @@ import { pino } from 'pino';
 
 // 保留现有 logger 配置
 const logger = pino({
-    transport: {
-        target: 'pino-pretty',
-        options: {
-            colorize: true,
-            levelFirst: true,
-            translateTime: 'SYS:yyyy-mm-dd HH:MM:ss',
-            ignore: 'pid,hostname',
-        }
-    }
+  
 });
 
 function getFilePath(options: {

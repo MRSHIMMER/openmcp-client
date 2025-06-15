@@ -24,15 +24,7 @@ const serverPath = join(devHome, 'servers');
 const envPath = join(__dirname, '..', '.env');
 
 const logger = pino({
-    transport: {
-        target: 'pino-pretty',
-        options: {
-            colorize: true,
-            levelFirst: true,
-            translateTime: 'SYS:yyyy-mm-dd HH:MM:ss',
-            ignore: 'pid,hostname',
-        }
-    }
+  
 });
 
 export type MessageHandler = (message: VSCodeMessage) => void;

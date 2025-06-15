@@ -20,15 +20,7 @@ export interface VSCodeMessage {
 }
 
 const logger = pino.default({
-    transport: {
-        target: 'pino-pretty',
-        options: {
-            colorize: true,
-            levelFirst: true,
-            translateTime: 'SYS:yyyy-mm-dd HH:MM:ss',
-            ignore: 'pid,hostname',
-        }
-    }
+   
 });
 
 export type MessageHandler = (message: VSCodeMessage) => void;
