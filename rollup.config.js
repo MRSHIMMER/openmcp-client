@@ -11,7 +11,7 @@ export default {
     sourcemap: true
   },
   plugins: [
-     json(),
+    json(),
     resolve({ browser: true }),  // 支持 node_modules 解析
     commonjs(),                    // 转换 CommonJS 模块
     typescript()                   // 处理 TypeScript

@@ -151,4 +151,11 @@ Build for deployment:
 ```bash
 npm run build
 ```
+
+build vscode extension:
+
+```bash
+npm run build:plugin
+```
+
 Then just press F5, いただきます (Let's begin)
