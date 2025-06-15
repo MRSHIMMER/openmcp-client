@@ -135,9 +135,8 @@ npm run setup
 Start dev server:
 
 ```bash
-npm run dev
+npm run serve
 ```
-Port usage: 8282 (renderer) + 8081 (service)
 
 ### Extension Development
 
