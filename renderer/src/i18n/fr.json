@@ -159,20 +159,6 @@
     "parallel-tool-calls": "Permettre au modèle d'appeler plusieurs outils en une seule réponse",
     "proxy-server": "Serveur proxy",
     "update-model-list": "Mettre à jour la liste des modèles",
-    "ensure-delete-connection": "Êtes-vous sûr de vouloir supprimer la connexion $1 ?",
-    "choose-connection-type": "Veuillez sélectionner le type de connexion",
-    "please-enter-connection-command": "Veuillez saisir la commande de connexion",
-    "example-mcp-run": "Par exemple : mcp run main.py",
-    "please-enter-cwd": "Veuillez entrer le répertoire de travail (cwd), facultatif",
-    "please-enter-cwd-placeholder": "Par exemple : /path/to/project",
-    "please-enter-url": "Veuillez saisir l'URL de connexion",
-    "example-as": "Par exemple :",
-    "enter-optional-oauth": "Veuillez entrer le jeton OAuth, facultatif",
-    "quick-start": "Premiers pas",
-    "read-document": "Lire la documentation",
-    "report-issue": "Signaler un problème",
-    "join-project": "Participer au projet",
-    "comment-plugin": "Plugin de commentaires",
     "preset-env-sync.success": "Variables d'environnement prédéfinies synchronisées",
     "preset-env-sync.fail": "Échec de la synchronisation des variables d'environnement prédéfinies",
     "drag-to-fill-connect-parameters": "Faites glisser pour remplir les paramètres de connexion",
@@ -185,5 +171,6 @@
     "join-discussion": "Rejoindre le groupe de discussion",
     "comment-for-us": "Écrivez un avis pour nous !",
     "openmcp-developed-by": "OpenMCP Client {version} développé par {author}",
-    "error-parse-json": "Erreur d'analyse JSON :"
+    "error-parse-json": "Erreur d'analyse JSON :",
+    "enable-xml-wrapper": "Activer l'encapsulation de commande XML"
 }

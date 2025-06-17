@@ -1,6 +1,6 @@
 <template>
     <el-tooltip :content="t('context-length')" placement="top">
-        <div class="setting-button" @click="showContextLengthDialog = true">
+        <div class="setting-button width-30" @click="showContextLengthDialog = true">
             <span class="iconfont icon-length"></span>
             <span class="value-badge">{{ tabStorage.settings.contextLength }}</span>
         </div>
@@ -10,7 +10,7 @@
     <el-dialog v-model="showContextLengthDialog" :title="t('context-length') + ' ' + tabStorage.settings.contextLength"
         width="400px">
         <div class="slider-container">
-            <el-slider v-model="tabStorage.settings.contextLength" :min="1" :max="99" :step="1" />
+            <el-slider v-model="tabStorage.settings.contextLength" :min="1" :max="500" :step="1" />
             <div class="slider-tips">
                 <span> 1: {{ t('single-dialog') }}</span>
                 <span> >1: {{ t('multi-dialog') }}</span>
@@ -38,5 +38,9 @@ const showContextLengthDialog = ref(false);
 <style>
 .icon-length {
 	font-size: 16px;
+}
+
+.width-30 {
+	width: 30px;
 }
 </style>

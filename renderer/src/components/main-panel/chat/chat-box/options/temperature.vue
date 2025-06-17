@@ -1,6 +1,6 @@
 <template>
 		<el-tooltip :content="t('temperature-parameter')" placement="top">
-			<div class="setting-button" @click="showTemperatureSlider = true">
+			<div class="setting-button width-30" @click="showTemperatureSlider = true">
 				<span class="iconfont icon-temperature"></span>
 				<span class="value-badge">{{ tabStorage.settings.temperature.toFixed(1) }}</span>
 			</div>
@@ -34,9 +34,13 @@ const showTemperatureSlider = ref(false);
 
 </script>
 
-<style>
+<style scoped>
 .icon-temperature {
-	font-size: 18px;
+	font-size: 16px;
+}
+
+.width-30 {
+	width: 30px;
 }
 
 </style>

@@ -8,6 +8,7 @@
 		<ParallelToolCalls />
 		<Temperature />
 		<ContextLength />
+		<XmlWrapper />
 	</div>
 </template>
 
@@ -25,6 +26,7 @@ import Resource from './resource.vue';
 import ParallelToolCalls from './parallel-tool-calls.vue';
 import Temperature from './temperature.vue';
 import ContextLength from './context-length.vue';
+import XmlWrapper from './xml-wrapper.vue';
 
 const props = defineProps({
 	modelValue: {
@@ -58,8 +60,9 @@ if (!tabStorage.settings) {
 		enableTools: [],
 		enableWebSearch: false,
 		temperature: 0.6,
-		contextLength: 20,
+		contextLength: 100,
 		systemPrompt: '',
+		enableXmlWrapper: false,
 		parallelToolCalls: true
 	} as ChatSetting;
 }

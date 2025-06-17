@@ -7,6 +7,12 @@
                 <h3 class="resource-template">
                     <span>tools/list</span>
                     <span class="iconfont icon-restart" @click.stop="reloadTools(client, { first: false })"></span>
+
+                   <span>
+                        <span class="cilent-name-tag">
+                            {{ client.name }}
+                        </span>
+                   </span>
                 </h3>
             </template>
 
@@ -17,13 +23,8 @@
                         <div class="item" :class="{ 'active': tabStorage.currentToolName === tool.name }"
                             v-for="tool of client.tools?.values()" :key="tool.name" @click="handleClick(tool)">
                             <span>{{ tool.name }}</span>
-                            <el-tooltip 
-                                :content="tool.description || ''"
-                                :disabled="!tool.description || tool.description.length <= 30"
-                                placement="top"
-                                :show-after="500">
-                                <span class="tool-description">{{ tool.description || '' }}</span>
-                            </el-tooltip>
+                            <br>
+                            <span class="tool-description">{{ tool.description || '' }}</span>
                         </div>
                     </div>
                 </el-scrollbar>
@@ -105,13 +106,12 @@ onMounted(async () => {
     width: 175px;
 }
 
-.tool-list-container>.item {
+.tool-list-container > .item {
     margin: 3px;
     padding: 5px 10px;
     border-radius: .3em;
     user-select: none;
     cursor: pointer;
-    display: flex;
     align-items: center;
     justify-content: space-between;
     transition: var(--animation-3s);
@@ -134,6 +134,25 @@ onMounted(async () => {
     text-overflow: ellipsis;
     white-space: nowrap;
     flex-shrink: 0;
+}
+
+.tool-list-container>.item>span:last-child {
+    min-width: 120px;
+    max-width: 250px;
+    overflow: visible;
+    white-space: normal;
+    word-wrap: break-word;
+}
+
+.resource-template .cilent-name-tag {
+    margin-left: 10px;
+    background-color: var(--main-color);
+    padding: 2px 5px;
+    border-radius: .5em;
+    height: fit-content;
+    font-size: 10px;
+
+    color: black;
 }
 
 .tool-description {

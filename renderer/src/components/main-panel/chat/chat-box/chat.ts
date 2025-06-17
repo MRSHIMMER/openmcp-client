@@ -63,6 +63,7 @@ export interface ChatSetting {
     enableWebSearch: boolean
     contextLength: number
     parallelToolCalls: boolean
+    enableXmlWrapper: boolean
 }
 
 export interface ChatStorage {
