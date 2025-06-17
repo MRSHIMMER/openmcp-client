@@ -1,10 +1,47 @@
-import type { InputSchema } from "@/hook/type";
+import type { ToolItem } from "@/hook/type";
 
-export function toolSchemaToPromptDescription(tool: InputSchema) {
-
+export function toolSchemaToPromptDescription(tools: ToolItem[]) {
+    let prompt = '';
+    
+    // 无参数的工具
+    const noParamTools = tools.filter(tool => 
+        !tool.inputSchema.required || tool.inputSchema.required.length === 0
+    );
+    
+    if (noParamTools.length > 0) {
+        noParamTools.forEach(tool => {
+            prompt += `- ${tool.name}\n`;
+            prompt += `**Description**: ${tool.description}\n\n`;
+        });
+    }
+    
+    // 有参数的工具
+    const paramTools = tools.filter(tool => 
+        tool.inputSchema.required && tool.inputSchema.required.length > 0
+    );
+    
+    if (paramTools.length > 0) {
+        paramTools.forEach(tool => {
+            prompt += `- ${tool.name}\n`;
+            prompt += `**Description**: ${tool.description}\n`;
+            prompt += `**Parameters**:\n`;
+            
+            Object.entries(tool.inputSchema.properties).forEach(([name, prop]) => {
+                const required = tool.inputSchema.required?.includes(name) || false;
+                prompt += `- \`${name}\`: ${prop.description || '无描述'} (${prop.type}) ${required ? '(required)' : ''}\n`;
+            });
+            
+            prompt += '\n';
+        });
+    }
+    
+    return prompt;
 }
 
-export function getXmlWrapperPrompt(tools: any) {
+export function getXmlWrapperPrompt(tools: ToolItem[]) {
+
+    const toolPrompt = toolSchemaToPromptDescription(tools);
+
     return `
 [Start Fresh Session from here]
 
@@ -94,21 +131,7 @@ Answer the user's request using the relevant tool(s), if they are available. Che
 Do not use <Start HERE> and <End HERE> in your output, that is just output format reference to where to start and end your output.
 ## AVAILABLE TOOLS FOR SUPERASSISTANT
 
-- neo4j-mcp.executeReadOnlyCypherQuery
-**Description**: [neo4j-mcp] 执行只读的 Cypher 查询
-**Parameters**:
-- \`cypher\`: Cypher 查询语句，必须是只读的 (string) (required)
-
-- neo4j-mcp.getAllNodeTypes
-**Description**: [neo4j-mcp] 获取所有的节点类型
-
-- neo4j-mcp.getAllRelationTypes
-**Description**: [neo4j-mcp] 获取所有的关系类型
-
-- neo4j-mcp.getNodeField
-**Description**: [neo4j-mcp] 获取节点的字段
-**Parameters**:
-- \`nodeLabel\`: 节点的标签 (string) (required)
+${toolPrompt}
 
 - list_servers
 **Description**: List all connected MCP servers and their capabilities

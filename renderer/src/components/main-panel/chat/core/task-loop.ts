@@ -15,7 +15,12 @@ import type { ToolItem } from "@/hook/type";
 import chalk from 'chalk';
 
 export type ChatCompletionChunk = OpenAI.Chat.Completions.ChatCompletionChunk;
-export type ChatCompletionCreateParamsBase = OpenAI.Chat.Completions.ChatCompletionCreateParams & { id?: string, proxyServer?: string };
+export interface TaskLoopChatOption {
+    id?: string
+    proxyServer?: string
+    enableXmlWrapper?: boolean
+}
+export type ChatCompletionCreateParamsBase = OpenAI.Chat.Completions.ChatCompletionCreateParams & TaskLoopChatOption;
 export interface TaskLoopOptions {
     maxEpochs?: number;
     maxJsonParseRetry?: number;
@@ -148,9 +153,15 @@ export class TaskLoop {
                 const { chunk } = data.msg as { chunk: ChatCompletionChunk };
 
                 // 处理增量的 content 和 tool_calls
-                this.handleChunkDeltaContent(chunk);
-                this.handleChunkDeltaToolCalls(chunk, toolcallIndexAdapter);
-                this.handleChunkUsage(chunk);
+                if (chatData.enableXmlWrapper) {
+                    this.handleChunkDeltaContent(chunk);
+                    // no tool call in enableXmlWrapper
+                    this.handleChunkUsage(chunk);
+                } else {
+                    this.handleChunkDeltaContent(chunk);
+                    this.handleChunkDeltaToolCalls(chunk, toolcallIndexAdapter);
+                    this.handleChunkUsage(chunk);
+                }
 
                 this.consumeChunks(chunk);
             }, { once: false });
@@ -210,6 +221,7 @@ export class TaskLoop {
         const tools = getToolSchema(tabStorage.settings.enableTools);
         const parallelToolCalls = tabStorage.settings.parallelToolCalls;
         const proxyServer = mcpSetting.proxyServer || '';
+        const enableXmlWrapper = tabStorage.settings.enableXmlWrapper;
 
         const userMessages = [];
 
@@ -240,7 +252,8 @@ export class TaskLoop {
             tools,
             parallelToolCalls,
             messages: userMessages,
-            proxyServer
+            proxyServer,
+            enableXmlWrapper
         } as ChatCompletionCreateParamsBase;
 
         return chatData;
