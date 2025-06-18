@@ -1,7 +1,21 @@
-import type { ToolItem } from "@/hook/type";
+import { parseString } from 'xml2js';
+import { MessageState, type ToolCall } from '../chat-box/chat';
+import { mcpClientAdapter } from '@/views/connect/core';
+import { handleToolResponse, type IToolCallIndex, type ToolCallResult } from './handle-tool-calls';
+import type { ChatStorage, EnableToolItem } from "../chat-box/chat";
 
-export function toolSchemaToPromptDescription(tools: ToolItem[]) {
+export interface XmlToolCall {
+    server: string;
+    name: string;
+    callId: string;
+    parameters: Record<string, string>;
+}
+
+
+export function toolSchemaToPromptDescription(enableTools: EnableToolItem[]) {
     let prompt = '';
+
+    const tools = enableTools.filter(tool => tool.enabled);
     
     // 无参数的工具
     const noParamTools = tools.filter(tool => 
@@ -38,15 +52,32 @@ export function toolSchemaToPromptDescription(tools: ToolItem[]) {
     return prompt;
 }
 
-export function getXmlWrapperPrompt(tools: ToolItem[]) {
+export function getXmlWrapperPrompt(tools: EnableToolItem[], tabStorage: ChatStorage) {
 
     const toolPrompt = toolSchemaToPromptDescription(tools);
+    const requests = [
+        `ALWAYS analyze what function calls would be appropriate for the task`,
+        `ALWAYS format your function call usage EXACTLY as specified in the schema`,
+        `NEVER skip required parameters in function calls`,
+        `NEVER invent functions that arent available to you`,
+        `ALWAYS wait for function call execution results before continuing`,
+        `After invoking a function, wait for the output in <function_results> tag and then continue with your response`,
+        `NEVER mock or form <function_results> on your own, it will be provided to you after the execution`,
+    ];
+
+    if (!tabStorage.settings.parallelToolCalls) {
+        requests.push(`NEVER invoke multiple functions in a single response`);
+    }
+
+    const requestString = requests.map((text, index) => {
+        return `${index + 1}. ${text}`;
+    }).join('\n');
 
     return `
 [Start Fresh Session from here]
 
 <SYSTEM>
-You are SuperAssistant with the capabilities of invoke functions and make the best use of it during your assistance, a knowledgeable assistant focused on answering questions and providing information on any topics.
+You are OpenMCP Assistant with the capabilities of invoke functions and make the best use of it during your assistance, a knowledgeable assistant focused on answering questions and providing information on any topics.
 In this environment you have access to a set of tools you can use to answer the user's question.
 You have access to a set of functions you can use to answer the user's question. You do NOT currently have the ability to inspect files or interact with external resources, except by invoking the below functions.
 
@@ -94,15 +125,7 @@ You can invoke one or more functions by writing a "<function_calls>" block like 
 String and scalar parameters should be specified as is, while lists and objects should use JSON format. Note that spaces for string values are not stripped. The output is not expected to be valid XML and is parsed with regular expressions.
 
 When a user makes a request:
-1. ALWAYS analyze what function calls would be appropriate for the task
-2. ALWAYS format your function call usage EXACTLY as specified in the schema
-3. NEVER skip required parameters in function calls
-4. NEVER invent functions that arent available to you
-5. ALWAYS wait for function call execution results before continuing
-6. After invoking a function, wait for the output in <function_results> tag and then continue with your response
-7. NEVER invoke multiple functions in a single response
-8. NEVER mock or form <function_results> on your own, it will be provided to you after the execution
-
+${requestString}
 
 Answer the user's request using the relevant tool(s), if they are available. Check that all the required parameters for each tool call are provided or can reasonably be inferred from context. IF there are no relevant tools or there are missing values for required parameters, ask the user to supply these values; otherwise proceed with the tool calls. If the user provides a specific value for a parameter (for example provided in quotes), make sure to use that value EXACTLY. DO NOT make up values for or ask about optional parameters. Carefully analyze descriptive terms in the request as they may indicate required parameter values that should be included even if not explicitly quoted.
 
@@ -148,6 +171,90 @@ User Interaction Starts here:
 }
 
 
-export function getXmlWrapperPromptCn() {
+export function getXmlResultPrompt(callId: string, result: string) {
+    return `
+\`\`\`xml
+<function_results>
+<result call_id="${callId}">
+${result}
+</result>
+</function_results>
+\`\`\`
+    `.trim() + '\n\n';
+}
 
+export function getXmlsFromString(content: string) {
+    const matches = content.matchAll(/```xml\n([\s\S]*?)\n```/g);
+    return Array.from(matches).map(match => match[1].trim());
+}
+
+
+export async function getToolCallFromXmlString(xmlString: string): Promise<XmlToolCall | null> {
+    try {
+        const result = await new Promise<any>((resolve, reject) => {
+            parseString(xmlString, (err, result) => {
+                if (err) reject(err);
+                else resolve(result);
+            });
+        });
+
+        if (!result?.function_calls?.invoke) {
+            return null;
+        }
+
+        const invoke = result.function_calls.invoke[0].$;
+        const parameters: Record<string, any> = {};
+
+        if (result.function_calls.invoke[0].parameter) {
+            result.function_calls.invoke[0].parameter.forEach((param: any) => {
+                const name = param.$.name as string;
+                parameters[name] = param._;
+            });
+        }
+
+        // name 可能是 neo4j-mcp.executeReadOnlyCypherQuery
+        return {
+            server: '',
+            name: invoke.name,
+            callId: invoke.call_id,
+            parameters
+        };
+    } catch (error) {
+        console.error('Failed to parse function calls:', error);
+        return null;
+    }
+}
+
+export function toNormaliseToolcall(xmlToolcall: XmlToolCall, toolcallIndexAdapter: (toolCall: ToolCall) => IToolCallIndex): ToolCall {
+    const toolcall = {
+        id: xmlToolcall.callId,
+        index: -1,
+        type: 'function',
+        function: {
+            name: xmlToolcall.name,
+            arguments: JSON.stringify(xmlToolcall.parameters)
+        }
+    } as ToolCall;
+
+    toolcall.index = toolcallIndexAdapter(toolcall);
+
+    return toolcall;
+}
+
+export async function handleXmlWrapperToolcall(toolcall: XmlToolCall): Promise<ToolCallResult> {
+    if (!toolcall) {
+        return {
+            content: [{
+                type: 'error',
+                text: 'invalid xml'
+            }],
+            state: MessageState.InvalidXml
+        }
+    }
+
+    // 进行调用，根据结果返回不同的值
+    console.log(toolcall);
+    
+    const toolResponse = await mcpClientAdapter.callTool(toolcall.name, toolcall.parameters);
+    return handleToolResponse(toolResponse);
 }
