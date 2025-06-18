@@ -1,11 +1,6 @@
 import * as path from 'path';
 
 import { runTests } from '@vscode/test-electron';
-import { fileURLToPath } from 'url';
-
-// 将 import.meta.url 转换为文件路径
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 async function main() {
 	try {
