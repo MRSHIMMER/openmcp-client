@@ -93,7 +93,6 @@ export class TaskLoop {
 
     /**
      * @description 处理 streaming 输出的每一个分块的 content 部分 
-     * 值得一提的是，如果开启了 xml 指令包裹，那么 toocall 模块部分也由此处来完成
      * @param chunk 
      * @param chatData 
      */
