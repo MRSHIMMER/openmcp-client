@@ -172,5 +172,8 @@
     "comment-for-us": "Écrivez un avis pour nous !",
     "openmcp-developed-by": "OpenMCP Client {version} développé par {author}",
     "error-parse-json": "Erreur d'analyse JSON :",
-    "enable-xml-wrapper": "開啟 XML 指令包裹"
+    "enable-xml-wrapper": "開啟 XML 指令包裹",
+    "tool-manage": "工具管理",
+    "enable-all-tools": "啟用所有工具",
+    "disable-all-tools": "禁用所有工具"
 }

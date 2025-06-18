@@ -28,7 +28,7 @@ export function toolSchemaToPromptDescription(tools: ToolItem[]) {
             
             Object.entries(tool.inputSchema.properties).forEach(([name, prop]) => {
                 const required = tool.inputSchema.required?.includes(name) || false;
-                prompt += `- \`${name}\`: ${prop.description || '无描述'} (${prop.type}) ${required ? '(required)' : ''}\n`;
+                prompt += `- \`${name}\`: ${prop.description || 'No Description'} (${prop.type}) ${required ? '(required)' : ''}\n`;
             });
             
             prompt += '\n';

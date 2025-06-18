@@ -1,5 +1,5 @@
 <template>
-    <el-tooltip :content="t('tool-use')" placement="top">
+    <el-tooltip :content="t('tool-use')" placement="top" effect="light">
         <div class="setting-button" :class="{ 'active': availableToolsNum > 0 }" size="small" @click="toggleTools">
             <span class="iconfont icon-tool badge-outer">
                 <span class="badge-inner">
@@ -10,7 +10,21 @@
 
     </el-tooltip>
 
-    <el-dialog v-model="showToolsDialog" title="工具管理" width="800px">
+    <el-dialog v-model="showToolsDialog" width="800px">
+
+        <template #header>
+            <div>
+                <span>{{ t('tool-manage') }}</span>
+                <el-tooltip :content="t('enable-xml-wrapper')" placement="top" effect="light">
+                        <span class="xml-tag" :class="{
+                        'active': tabStorage.settings.enableXmlWrapper
+                    }"
+                        @click="tabStorage.settings.enableXmlWrapper = !tabStorage.settings.enableXmlWrapper"
+                    >xml</span>
+                </el-tooltip>
+            </div>
+        </template>
+
         <div class="tools-dialog-container">
             <el-scrollbar height="400px" class="tools-list">
                 <div v-for="(tool, index) in tabStorage.settings.enableTools" :key="index" class="tool-item">
@@ -23,12 +37,15 @@
             </el-scrollbar>
 
             <el-scrollbar height="400px" class="schema-viewer">
-                <div v-html="activeToolsSchemaHTML"></div>
+                <!-- 如果激活 xml 指令包裹，则展示对应的 prompt -->
+                <div v-if="tabStorage.settings.enableXmlWrapper" v-html="activeToolsXmlPrompt" />
+                <!-- 如果是普通模式，则展示普通的工具列表 -->
+                <div v-else v-html="activeToolsSchemaHTML" />
             </el-scrollbar>
         </div>
         <template #footer>
-            <el-button type="primary" @click="enableAllTools">激活所有工具</el-button>
-            <el-button type="danger" @click="disableAllTools">禁用所有工具</el-button>
+            <el-button type="primary" @click="enableAllTools">{{ t('enable-all-tools') }}</el-button>
+            <el-button type="danger" @click="disableAllTools">{{ t('disable-all-tools') }}</el-button>
             <el-button type="primary" @click="showToolsDialog = false">{{ t("cancel") }}</el-button>
         </template>
     </el-dialog>
@@ -40,6 +57,7 @@ import { useI18n } from 'vue-i18n';
 import { type ChatStorage, type EnableToolItem, getToolSchema } from '../chat';
 import { markdownToHtml } from '@/components/main-panel/chat/markdown/markdown';
 import { mcpClientAdapter } from '@/views/connect/core';
+import { toolSchemaToPromptDescription } from '../../core/prompt';
 
 const { t } = useI18n();
 
@@ -63,6 +81,17 @@ const activeToolsSchemaHTML = computed(() => {
 	return markdownToHtml(
 		"```json\n" + jsonString + "\n```"
 	);
+});
+
+const activeToolsXmlPrompt = computed(() => {
+    if (tabStorage.settings.enableXmlWrapper) {
+	    const prompt = toolSchemaToPromptDescription(tabStorage.settings.enableTools);
+        return markdownToHtml(
+            "```markdown\n" + prompt + "\n```"
+        );
+    } else {
+        return '';
+    }
 });
 
 // 新增方法 - 激活所有工具
@@ -121,4 +150,24 @@ onMounted(async () => {
 
 </script>
 
-<style></style>
+<style scoped>
+
+.xml-tag {
+    margin-left: 10px;
+    border-radius: .5em;
+    padding: 2px 5px;
+    font-size: 12px;
+    font-weight: 900;
+    color: black;
+    background-color: var(--main-color);
+    opacity: 0.3;
+    transition: var(--animation-3s);
+    cursor: pointer;
+}
+
+.xml-tag.active {
+    opacity: 1;
+    transition: var(--animation-3s);
+}
+
+</style>

@@ -1,5 +1,5 @@
 <template>
-    <el-tooltip :content="t('enable-xml-wrapper')" placement="top">
+    <el-tooltip :content="t('enable-xml-wrapper')" placement="top" effect="light">
         <div class="setting-button" :class="{ 'active': tabStorage.settings.enableXmlWrapper }" size="small"
             @click="toggle">
             <span class="iconfont icon-suffix-xml"></span>

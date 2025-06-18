@@ -1,5 +1,5 @@
 <template>
-    <el-tooltip :content="props.messages[0].content.text" placement="top">
+    <el-tooltip :content="props.messages[0].content.text" placement="top" effect="light">
         <span class="chat-prompt-item" contenteditable="false">
             <span class="iconfont icon-chat"></span>
             <span class="real-text">{{ props.messages[0].content.text }}</span>

@@ -1,5 +1,5 @@
 <template>
-    <el-tooltip :content="t('choose-model')" placement="top">
+    <el-tooltip :content="t('choose-model')" placement="top" effect="light">
         <div class="setting-button" @click="showModelDialog = true">
             <span class="iconfont icon-model">
                 {{ currentServerName }}/{{ currentModelName }}
