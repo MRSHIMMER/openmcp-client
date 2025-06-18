@@ -16,11 +16,9 @@
             <div>
                 <span>{{ t('tool-manage') }}</span>
                 <el-tooltip :content="t('enable-xml-wrapper')" placement="top" effect="light">
-                        <span class="xml-tag" :class="{
+                    <span class="xml-tag" :class="{
                         'active': tabStorage.settings.enableXmlWrapper
-                    }"
-                        @click="tabStorage.settings.enableXmlWrapper = !tabStorage.settings.enableXmlWrapper"
-                    >xml</span>
+                    }" @click="tabStorage.settings.enableXmlWrapper = !tabStorage.settings.enableXmlWrapper">xml</span>
                 </el-tooltip>
             </div>
         </template>
@@ -57,7 +55,7 @@ import { useI18n } from 'vue-i18n';
 import { type ChatStorage, type EnableToolItem, getToolSchema } from '../chat';
 import { markdownToHtml } from '@/components/main-panel/chat/markdown/markdown';
 import { mcpClientAdapter } from '@/views/connect/core';
-import { toolSchemaToPromptDescription } from '../../core/prompt';
+import { toolSchemaToPromptDescription } from '../../core/xml-wrapper';
 
 const { t } = useI18n();
 
@@ -66,37 +64,34 @@ const tabStorage = inject('tabStorage') as ChatStorage;
 const showToolsDialog = ref(false);
 
 const availableToolsNum = computed(() => {
-	return tabStorage.settings.enableTools.filter(tool => tool.enabled).length;
+    return tabStorage.settings.enableTools.filter(tool => tool.enabled).length;
 });
 
 // 修改 toggleTools 方法
 const toggleTools = () => {
-	showToolsDialog.value = true;
+    showToolsDialog.value = true;
 };
 
-const activeToolsSchemaHTML = computed(() => {
-	const toolsSchema = getToolSchema(tabStorage.settings.enableTools);
-	const jsonString = JSON.stringify(toolsSchema, null, 2);
 
-	return markdownToHtml(
-		"```json\n" + jsonString + "\n```"
-	);
+const activeToolsSchemaHTML = computed(() => {
+    const toolsSchema = getToolSchema(tabStorage.settings.enableTools);
+    const jsonString = JSON.stringify(toolsSchema, null, 2);
+
+    return markdownToHtml(
+        "```json\n" + jsonString + "\n```"
+    );
 });
 
-const activeToolsXmlPrompt = computed(() => {
-    if (tabStorage.settings.enableXmlWrapper) {
-	    const prompt = toolSchemaToPromptDescription(tabStorage.settings.enableTools);
-        return markdownToHtml(
-            "```markdown\n" + prompt + "\n```"
-        );
-    } else {
-        return '';
-    }
+const activeToolsXmlPrompt = computed(() => {    
+    const prompt = toolSchemaToPromptDescription(tabStorage.settings.enableTools);
+    return markdownToHtml(
+        "```markdown\n" + prompt + "\n```"
+    );
 });
 
 // 新增方法 - 激活所有工具
 const enableAllTools = () => {
-	tabStorage.settings.enableTools.forEach(tool => {
+    tabStorage.settings.enableTools.forEach(tool => {
         tool.enabled = true;
     });
 };
@@ -151,7 +146,6 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-
 .xml-tag {
     margin-left: 10px;
     border-radius: .5em;
@@ -169,5 +163,4 @@ onMounted(async () => {
     opacity: 1;
     transition: var(--animation-3s);
 }
-
 </style>

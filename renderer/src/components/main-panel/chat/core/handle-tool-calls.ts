@@ -2,7 +2,14 @@ import type { ToolCallContent, ToolCallResponse } from "@/hook/type";
 import { MessageState, type ToolCall } from "../chat-box/chat";
 import { mcpClientAdapter } from "@/views/connect/core";
 import type { BasicLlmDescription } from "@/views/setting/llm";
-import { redLog } from "@/views/setting/util";
+import type OpenAI from "openai";
+
+export interface TaskLoopChatOption {
+    id?: string
+    proxyServer?: string
+    enableXmlWrapper?: boolean
+}
+export type ChatCompletionCreateParamsBase = OpenAI.Chat.Completions.ChatCompletionCreateParams & TaskLoopChatOption;
 
 export interface ToolCallResult {
     state: MessageState;
@@ -60,7 +67,7 @@ function deserializeToolCallResponse(toolArgs: string) {
     }
 }
 
-function handleToolResponse(toolResponse: ToolCallResponse) {
+export function handleToolResponse(toolResponse: ToolCallResponse) {
     if (typeof toolResponse === 'string') {
 
         return {
@@ -98,7 +105,14 @@ function parseErrorObject(error: any): string {
     }
 }
 
-function grokIndexAdapter(toolCall: ToolCall, callId2Index: Map<string, number>): IToolCallIndex {
+
+/**
+ * @description 将工具调用的ID映射为索引
+ * @param toolCall 工具调用对象
+ * @param callId2Index ID到索引的映射表
+ * @returns 映射后的索引值
+ */
+export function idAsIndexAdapter(toolCall: ToolCall, callId2Index: Map<string, number>): IToolCallIndex {
     // grok 采用 id 作为 index，需要将 id 映射到 zero-based 的 index
     if (!toolCall.id) {
         return 0;
@@ -109,24 +123,42 @@ function grokIndexAdapter(toolCall: ToolCall, callId2Index: Map<string, number>)
     return callId2Index.get(toolCall.id)!;
 }
 
-function geminiIndexAdapter(toolCall: ToolCall): IToolCallIndex {
+
+/**
+ * @description 单次调用的索引适配器（暂未实现）
+ * @param toolCall 工具调用对象
+ * @returns 固定返回0
+ */
+export function singleCallIndexAdapter(toolCall: ToolCall): IToolCallIndex {
     // TODO: 等待后续支持
     return 0;
 }
 
-function defaultIndexAdapter(toolCall: ToolCall): IToolCallIndex {
+/**
+ * @description
+ * @param toolCall 
+ * @returns 
+ */
+export function defaultIndexAdapter(toolCall: ToolCall): IToolCallIndex {
     return toolCall.index || 0;
 }
 
-export function getToolCallIndexAdapter(llm: BasicLlmDescription) {
+export function getToolCallIndexAdapter(llm: BasicLlmDescription, chatData: ChatCompletionCreateParamsBase) {
+
+    // 如果是 xml 模式，那么 index adapter 必须是 idAsIndexAdapter
+
+    if (chatData.enableXmlWrapper) {
+        const callId2Index = new Map<string, number>();
+        return (toolCall: ToolCall) => idAsIndexAdapter(toolCall, callId2Index);
+    }
 
     if (llm.userModel.startsWith('gemini')) {
-        return geminiIndexAdapter;
+        return singleCallIndexAdapter;
     }
 
     if (llm.userModel.startsWith('grok')) {
         const callId2Index = new Map<string, number>();
-        return (toolCall: ToolCall) => grokIndexAdapter(toolCall, callId2Index);
+        return (toolCall: ToolCall) => idAsIndexAdapter(toolCall, callId2Index);
     }
 
     return defaultIndexAdapter;
