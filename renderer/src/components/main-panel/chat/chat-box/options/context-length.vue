@@ -1,5 +1,5 @@
 <template>
-    <el-tooltip :content="t('context-length')" placement="top">
+    <el-tooltip :content="t('context-length')" placement="top" effect="light">
         <div class="setting-button width-30" @click="showContextLengthDialog = true">
             <span class="iconfont icon-length"></span>
             <span class="value-badge">{{ tabStorage.settings.contextLength }}</span>

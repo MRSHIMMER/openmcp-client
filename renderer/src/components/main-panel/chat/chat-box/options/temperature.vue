@@ -1,5 +1,5 @@
 <template>
-		<el-tooltip :content="t('temperature-parameter')" placement="top">
+		<el-tooltip :content="t('temperature-parameter')" placement="top" effect="light">
 			<div class="setting-button width-30" @click="showTemperatureSlider = true">
 				<span class="iconfont icon-temperature"></span>
 				<span class="value-badge">{{ tabStorage.settings.temperature.toFixed(1) }}</span>

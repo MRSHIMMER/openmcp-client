@@ -2,7 +2,7 @@
 	<div v-if="!isConnecting" class="connected-status-container" id="connected-status-container"
 		@click.stop="toggleConnectionPanel()" :class="{ 'connected': client.connectionResult.success }">
 		<span class="mcp-server-info">
-			<el-tooltip class="extra-connect-container" effect="dark" placement="right"
+			<el-tooltip class="extra-connect-container" effect="light" placement="right"
 				:content="fullDisplayServerName">
 				<span class="name">{{ displayServerName }}</span>
 			</el-tooltip>
@@ -20,7 +20,7 @@
 	</div>
 	<div v-else class="connected-status-container">
 		<span class="mcp-server-info">
-			<el-tooltip class="extra-connect-container" effect="dark" placement="right"
+			<el-tooltip class="extra-connect-container" effect="light" placement="right"
 				:content="fullDisplayServerName">
 				<span class="name">
 					加载中

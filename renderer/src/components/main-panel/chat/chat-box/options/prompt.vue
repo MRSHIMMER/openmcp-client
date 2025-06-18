@@ -1,5 +1,5 @@
 <template>
-    <el-tooltip :content="t('prompts')" placement="top">
+    <el-tooltip :content="t('prompts')" placement="top" effect="light">
         <div class="setting-button" @click="showChoosePrompt = true; saveCursorPosition();">
             <span class="iconfont icon-chat"></span>
         </div>

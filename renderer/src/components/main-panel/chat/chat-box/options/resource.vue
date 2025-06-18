@@ -1,5 +1,5 @@
 <template>
-    <el-tooltip :content="t('resources')" placement="top">
+    <el-tooltip :content="t('resources')" placement="top" effect="light">
         <div class="setting-button" @click="showChooseResource = true; saveCursorPosition();">
             <span class="iconfont icon-file"></span>
         </div>
