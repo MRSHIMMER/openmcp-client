@@ -3,6 +3,7 @@ import { MessageState, type ToolCall } from '../chat-box/chat';
 import { mcpClientAdapter } from '@/views/connect/core';
 import { handleToolResponse, type IToolCallIndex, type ToolCallResult } from './handle-tool-calls';
 import type { ChatStorage, EnableToolItem } from "../chat-box/chat";
+import type { ToolCallContent } from '@/hook/type';
 
 export interface XmlToolCall {
     server: string;
@@ -221,6 +222,42 @@ export async function getToolCallFromXmlString(xmlString: string): Promise<XmlTo
         };
     } catch (error) {
         console.error('Failed to parse function calls:', error);
+        return null;
+    }
+}
+
+
+export async function getToolResultFromXmlString(xmlString: string) {
+    try {
+        const result = await new Promise<any>((resolve, reject) => {
+            parseString(xmlString, (err, result) => {
+                if (err) reject(err);
+                else resolve(result);
+            });
+        });
+
+        if (!result?.function_results?.result) {
+            return null;
+        }
+
+        const resultData = result.function_results.result[0];
+        const callId = resultData.$.call_id;
+        
+        // 提取所有评论文本
+        const toolcallContent = [] as ToolCallContent[];
+        const content = resultData._;
+
+        toolcallContent.push({
+            type: 'text',
+            text: content
+        });
+
+        return {
+            callId,
+            toolcallContent
+        };
+    } catch (error) {
+        console.error('Failed to parse function results:', error);
         return null;
     }
 }

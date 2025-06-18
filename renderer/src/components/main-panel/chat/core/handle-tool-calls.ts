@@ -112,15 +112,16 @@ function parseErrorObject(error: any): string {
  * @param callId2Index ID到索引的映射表
  * @returns 映射后的索引值
  */
-export function idAsIndexAdapter(toolCall: ToolCall, callId2Index: Map<string, number>): IToolCallIndex {
+export function idAsIndexAdapter(toolCall: ToolCall | string, callId2Index: Map<string, number>): IToolCallIndex {
     // grok 采用 id 作为 index，需要将 id 映射到 zero-based 的 index
-    if (!toolCall.id) {
+    const id = typeof toolCall === 'string' ? toolCall : toolCall.id;
+    if (!id) {
         return 0;
     }
-    if (!callId2Index.has(toolCall.id)) {
-        callId2Index.set(toolCall.id, callId2Index.size);
+    if (!callId2Index.has(id)) {
+        callId2Index.set(id, callId2Index.size);
     }
-    return callId2Index.get(toolCall.id)!;
+    return callId2Index.get(id)!;
 }
 
 
@@ -162,4 +163,9 @@ export function getToolCallIndexAdapter(llm: BasicLlmDescription, chatData: Chat
     }
 
     return defaultIndexAdapter;
+}
+
+export function getIdAsIndexAdapter() {
+    const callId2Index = new Map<string, number>();
+    return (toolCall: ToolCall) => idAsIndexAdapter(toolCall, callId2Index);
 }

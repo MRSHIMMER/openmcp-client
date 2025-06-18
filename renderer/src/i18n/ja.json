@@ -175,5 +175,6 @@
     "enable-xml-wrapper": "XMLコマンドラッピングを有効にする",
     "tool-manage": "ツール管理",
     "enable-all-tools": "すべてのツールを有効にする",
-    "disable-all-tools": "すべてのツールを無効にする"
+    "disable-all-tools": "すべてのツールを無効にする",
+    "using-tool": "ツール使用中"
 }
