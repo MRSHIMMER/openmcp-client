@@ -175,5 +175,6 @@
     "enable-xml-wrapper": "تمكين تغليف تعليمات XML",
     "tool-manage": "إدارة الأدوات",
     "enable-all-tools": "تفعيل جميع الأدوات",
-    "disable-all-tools": "تعطيل جميع الأدوات"
+    "disable-all-tools": "تعطيل جميع الأدوات",
+    "using-tool": "جاري استخدام الأداة"
 }

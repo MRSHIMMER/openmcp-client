@@ -1,7 +1,7 @@
 <template>
     <div class="message-role">
         <span class="message-reminder" v-if="callingTools">
-            Agent 正在使用工具
+            Agent {{ t('using-tool') }}
             <span class="tool-loading iconfont icon-double-loading">
             </span>
         </span>

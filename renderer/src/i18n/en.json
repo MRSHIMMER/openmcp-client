@@ -175,5 +175,6 @@
     "enable-xml-wrapper": "Enable XML command wrapping",
     "tool-manage": "Tool Management",
     "enable-all-tools": "Activate all tools",
-    "disable-all-tools": "Disable all tools"
+    "disable-all-tools": "Disable all tools",
+    "using-tool": "Using tool"
 }
