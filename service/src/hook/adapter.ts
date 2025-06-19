@@ -190,10 +190,6 @@ export interface OmAgentConfiguration {
     }
 }
 
-export interface OmAgentStartOption {
-
-}
-
 import { MessageState, type ChatMessage, type ChatSetting, type TaskLoop, type TextMessage } from '../../task-loop.js';
 
 export function UserMessage(content: string): TextMessage {
