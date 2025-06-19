@@ -1,5 +1,5 @@
 <template>
-    <el-tooltip :content="t('system-prompt')" placement="top">
+    <el-tooltip :content="t('system-prompt')" placement="top" effect="light">
         <div class="setting-button" :class="{ 'active': hasSystemPrompt }" size="small"
             @click="showSystemPromptDialog = true">
             <span class="iconfont icon-prompt"></span>

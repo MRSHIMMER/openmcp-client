@@ -1,10 +1,10 @@
 import * as vscode from 'vscode';
-import { registerCommands, registerTreeDataProviders } from '.';
-import { HelpProvider } from '../sidebar/help.controller';
-import { McpWorkspaceConnectProvider } from '../sidebar/workspace.controller';
-import { McpInstalledConnectProvider } from '../sidebar/installed.controller';
-import { WebviewController } from '../webview/webview.controller';
-import { HookController } from '../hook/hook.controller';
+import { registerCommands, registerTreeDataProviders } from './index.js';
+import { HelpProvider } from '../sidebar/help.controller.js';
+import { McpWorkspaceConnectProvider } from '../sidebar/workspace.controller.js';
+import { McpInstalledConnectProvider } from '../sidebar/installed.controller.js';
+import { WebviewController } from '../webview/webview.controller.js';
+import { HookController } from '../hook/hook.controller.js';
 
 export const InstallModules = [
     McpWorkspaceConnectProvider,

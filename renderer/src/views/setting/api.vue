@@ -237,13 +237,22 @@ async function updateModels() {
     const proxyServer = mcpSetting.proxyServer;
 
 	const bridge = useMessageBridge();
-	const { code, msg } = await bridge.commandRequest('llm/models', {
-		apiKey,
-		baseURL,
-        proxyServer
-	});
+	
+	// 检查是否为动态模型加载（如OpenRouter）
+	let result;
+	if (llm.isDynamic && llm.id === 'openrouter') {
+		result = await bridge.commandRequest('llm/models/openrouter', {});
+	} else {
+		result = await bridge.commandRequest('llm/models', {
+			apiKey,
+			baseURL,
+			proxyServer
+		});
+	}
 
+	const { code, msg } = result;
 	const isGemini = baseURL.includes('googleapis');
+	const isOpenRouter = llm.id === 'openrouter';
 
 	if (code === 200 && Array.isArray(msg)) {
 		const models = msg
@@ -257,9 +266,27 @@ async function updateModels() {
 			});
 		
 		llm.models = models;
+		
+		// 如果是OpenRouter且尚未设置默认模型，设置一个推荐的模型
+		if (isOpenRouter && !llm.userModel && models.length > 0) {
+			// 寻找GPT-4或类似的推荐模型
+			const recommendedModel = models.find(model => 
+				model.includes('gpt-4') || 
+				model.includes('claude') || 
+				model.includes('gemini')
+			) || models[0];
+			llm.userModel = recommendedModel;
+		}
+		
 		saveLlmSetting();
+		
+		if (isOpenRouter) {
+			ElMessage.success(`已更新 ${models.length} 个 OpenRouter 模型`);
+		} else {
+			ElMessage.success('模型列表更新成功');
+		}
 	} else {
-		ElMessage.error('模型列表更新失败' + msg);
+		ElMessage.error('模型列表更新失败: ' + msg);
 	}
 	updateModelLoading.value = false;
 }

@@ -1,6 +1,8 @@
-import { getFirstValidPathFromCommand, getWorkspaceConnectionConfig, getWorkspacePath, McpOptions, panels, saveWorkspaceConnectionConfig } from "../global";
+import { getFirstValidPathFromCommand, getWorkspaceConnectionConfig, getWorkspacePath, McpOptions, panels, saveWorkspaceConnectionConfig } from "../global.js";
 import * as vscode from 'vscode';
-import { t } from "../i18n";
+import { t } from "../i18n/index.js";
+import { exec } from 'child_process';
+import { promisify } from 'util';
 
 export async function deleteUserConnection(item: McpOptions[] | McpOptions) {
     // 弹出确认对话框
@@ -24,7 +26,7 @@ export async function deleteUserConnection(item: McpOptions[] | McpOptions) {
     // 从配置中移除该连接项
 
     // TODO: 改成基于 path 进行搜索
-    
+
     const index = workspaceConnectionConfig.items.indexOf(item);
     if (index !== -1) {
         workspaceConnectionConfig.items.splice(index, 1);
@@ -35,7 +37,7 @@ export async function deleteUserConnection(item: McpOptions[] | McpOptions) {
 
         // 刷新侧边栏视图
         vscode.commands.executeCommand('openmcp.sidebar.workspace-connection.refresh');
-        
+
         // 如果该连接有对应的webview面板，则关闭它
         const filePath = masterNode.filePath || '';
         const panel = panels.get(filePath);
@@ -45,8 +47,7 @@ export async function deleteUserConnection(item: McpOptions[] | McpOptions) {
 }
 
 export async function validateAndGetCommandPath(command: string, cwd?: string): Promise<string> {
-    const { exec } = require('child_process');
-    const { promisify } = require('util');
+
     const execAsync = promisify(exec);
 
     try {

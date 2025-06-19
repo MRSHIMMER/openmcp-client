@@ -22,6 +22,9 @@ export interface BasicLlmDescription {
 	website: string,
 	userToken: string,
 	userModel: string,
+	isDynamic?: boolean,
+	modelsEndpoint?: string,
+	supportsPricing?: boolean,
 	[key: string]: any
 }
 

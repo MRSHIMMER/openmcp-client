@@ -1,4 +1,4 @@
-import type { ToolCallContent, ToolItem } from "@/hook/type";
+import type { InputSchema, ToolCallContent, ToolItem } from "@/hook/type";
 import { type Ref, ref } from "vue";
 
 import type { OpenAI } from 'openai';
@@ -16,6 +16,7 @@ export enum MessageState {
     Success = 'success',
     ParseJsonError = 'parse json error',
     NoToolFunction = 'no tool function',
+    InvalidXml = 'invalid xml',
 }
 
 export interface IExtraInfo {
@@ -23,6 +24,7 @@ export interface IExtraInfo {
     state: MessageState,
     serverName: string,
     usage?: ChatCompletionChunk['usage'];
+    enableXmlWrapper: boolean;
     [key: string]: any;
 }
 
@@ -52,7 +54,7 @@ export interface EnableToolItem {
     name: string;
     description: string;
     enabled: boolean;
-    inputSchema: any;
+    inputSchema: InputSchema;
 }
 
 export interface ChatSetting {
@@ -63,6 +65,7 @@ export interface ChatSetting {
     enableWebSearch: boolean
     contextLength: number
     parallelToolCalls: boolean
+    enableXmlWrapper: boolean
 }
 
 export interface ChatStorage {
@@ -107,7 +110,7 @@ export interface IToolRenderMessage {
 
 export type IRenderMessage = ICommonRenderMessage | IToolRenderMessage;
 
-export function getToolSchema(enableTools: EnableToolItem[]) {
+export function getToolSchema(enableTools: EnableToolItem[]): any[] {
     const toolsSchema = [];
     for (let i = 0; i < enableTools.length; i++) {
         const enableTool = enableTools[i];

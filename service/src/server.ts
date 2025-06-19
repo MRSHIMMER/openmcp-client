@@ -1,12 +1,17 @@
 import { WebSocketServer } from 'ws';
 import pino from 'pino';
-
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
 import { routeMessage } from './common/router.js';
 import { VSCodeWebViewLike } from './hook/adapter.js';
-import path from 'node:path';
-import * as fs from 'node:fs';
+import fs from 'fs';
+import path from 'path';
 import { setRunningCWD } from './hook/setting.js';
-import { exit } from 'node:process';
+import { exit } from 'process';
+
+// 适配 ESM 的 __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 export interface VSCodeMessage {
     command: string;
@@ -15,22 +20,13 @@ export interface VSCodeMessage {
 }
 
 const logger = pino.default({
-    transport: {
-        target: 'pino-pretty', // 启用 pino-pretty
-        options: {
-            colorize: true,      // 开启颜色
-            levelFirst: true,    // 先打印日志级别
-            translateTime: 'SYS:yyyy-mm-dd HH:MM:ss', // 格式化时间
-            ignore: 'pid,hostname',     // 忽略部分字段
-        }
-    }
+   
 });
 
 export type MessageHandler = (message: VSCodeMessage) => void;
 
 function refreshConnectionOption(envPath: string) {
-    const serverPath = path.join(__dirname, '..', '..', 'servers');
-
+    const serverPath = join(__dirname, '..', '..', 'servers');
     const defaultOption = {
         connectionType: 'STDIO',
         commandString: 'mcp run main.py',
@@ -38,12 +34,11 @@ function refreshConnectionOption(envPath: string) {
     };
 
     fs.writeFileSync(envPath, JSON.stringify(defaultOption, null, 4));
-
     return { items: [defaultOption] };
 }
 
 function acquireConnectionOption() {
-    const envPath = path.join(__dirname, '..', '.env');
+    const envPath = join(__dirname, '..', '.env');
 
     if (!fs.existsSync(envPath)) {
         return refreshConnectionOption(envPath);
@@ -52,11 +47,7 @@ function acquireConnectionOption() {
     try {
         const option = JSON.parse(fs.readFileSync(envPath, 'utf-8'));
 
-        if (!option.items) {
-            return refreshConnectionOption(envPath);
-        }
-
-        if (option.items && option.items.length === 0) {
+        if (!option.items || option.items.length === 0) {
             return refreshConnectionOption(envPath);
         }
 
@@ -67,7 +58,6 @@ function acquireConnectionOption() {
             } else {
                 item.url = item.url;
             }
-
             return item;
         });
 
@@ -79,20 +69,22 @@ function acquireConnectionOption() {
     }
 }
 
-if (!fs.existsSync(path.join(__dirname, '..', '.env.website.local'))) {
+// 验证 .env.website.local 存在性
+const localEnvPath = join(__dirname, '..', '.env.website.local');
+if (!fs.existsSync(localEnvPath)) {
     console.log('.env.website.local 不存在！');
     exit(0);
 }
 
-const authPassword = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '.env.website.local'), 'utf-8')).password;
+// 读取认证密码
+const authPassword = JSON.parse(fs.readFileSync(localEnvPath, 'utf-8')).password;
 
 function updateConnectionOption(data: any) {
-    const envPath = path.join(__dirname, '..', '.env');
-    const connection = { items: data };
-    fs.writeFileSync(envPath, JSON.stringify(connection, null, 4));
+    const envPath = join(__dirname, '..', '.env');
+    fs.writeFileSync(envPath, JSON.stringify({ items: data }, null, 4));
 }
 
-const devHome = path.join(__dirname, '..', '..');
+const devHome = join(__dirname, '..', '..');
 setRunningCWD(devHome);
 
 function verifyToken(url: string) {
@@ -104,30 +96,25 @@ function verifyToken(url: string) {
     }
 }
 
-const wss = new WebSocketServer(
-    {
-        port: 8282,
-        verifyClient: (info, callback) => {
-            console.log(info.req.url);
-            const ok = verifyToken(info.req.url || '');
-
-            if (!ok) {
-                callback(false, 401, 'Unauthorized: Invalid token');
-            } else {
-                callback(true); // 允许连接
-            }
+const wss = new WebSocketServer({
+    port: 8282,
+    verifyClient: (info, callback) => {
+        const url = info.req.url || '';
+        const ok = verifyToken(url);
+        
+        if (!ok) {
+            callback(false, 401, 'Unauthorized: Invalid token');
+        } else {
+            callback(true);
         }
-    },
-);
+    }
+});
 
 console.log('listen on ws://localhost:8282');
 
-wss.on('connection', (ws: any) => {
-
-    // 仿造 webview 进行统一接口访问
+wss.on('connection', (ws) => {
     const webview = new VSCodeWebViewLike(ws);
 
-    // 先发送成功建立的消息
     webview.postMessage({
         command: 'hello',
         data: {
@@ -138,23 +125,19 @@ wss.on('connection', (ws: any) => {
 
     const option = acquireConnectionOption();
 
-    // 注册消息接受的管线
     webview.onDidReceiveMessage(message => {
         logger.info(`command: [${message.command || 'No Command'}]`);
         const { command, data } = message;
 
         switch (command) {
             case 'web/launch-signature':
-                const launchResult = {
-                    code: 200,
-                    msg: option.items
-                };
-
                 webview.postMessage({
                     command: 'web/launch-signature',
-                    data: launchResult
+                    data: {
+                        code: 200,
+                        msg: option.items
+                    }
                 });
-
                 break;
 
             case 'web/update-connection-signature':

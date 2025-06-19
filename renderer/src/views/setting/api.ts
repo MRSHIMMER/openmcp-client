@@ -37,6 +37,7 @@ export async function makeSimpleTalk() {
             enableTools: [],
             enableWebSearch: false,
             contextLength: 5,
+            enableXmlWrapper: false,
             parallelToolCalls: true
         }
     };

@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { McpOptions } from '../global';
+import { McpOptions } from '../global.js';
 
 export class SidebarItem extends vscode.TreeItem {
     constructor(

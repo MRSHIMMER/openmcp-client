@@ -60,6 +60,7 @@ Supports multiple large models
 | `service` | Cloud sync for system configuration | `MVP` | 0% | `P1` |
 | `all` | System prompt management module | `Iteration` | 100% | `Done` |
 | `service` | Tool-wise logging system | `MVP` | 0% | `P1` |
+| `service` | MCP security checks (prevent prompt injection, etc.) | `MVP` | 0% | `P1` |
 | `service` | Built-in OCR for character recognition | `Iteration` | 100% | `Done` |
 
 ## Project Concept
@@ -134,9 +135,8 @@ npm run setup
 Start dev server:
 
 ```bash
-npm run dev
+npm run serve
 ```
-Port usage: 8282 (renderer) + 8081 (service)
 
 ### Extension Development
 
@@ -151,4 +151,11 @@ Build for deployment:
 ```bash
 npm run build
 ```
+
+build vscode extension:
+
+```bash
+npm run build:plugin
+```
+
 Then just press F5, いただきます (Let's begin)

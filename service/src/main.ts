@@ -1,12 +1,11 @@
 import { WebSocketServer } from 'ws';
-import {pino} from 'pino';
+import { pino } from 'pino';
 import { fileURLToPath } from 'url';
-import { dirname } from 'path';
+import { dirname, join } from 'path';
 import { routeMessage } from './common/router.js';
 import { VSCodeWebViewLike } from './hook/adapter.js';
-import path from 'node:path';
-import * as fs from 'node:fs';
-import { setRunningCWD } from './hook/setting.js';
+import fs from 'fs/promises'; // 使用 Promise API 替代回调
+import path from 'path';
 import axios from 'axios';
 
 export interface VSCodeMessage {
@@ -15,91 +14,83 @@ export interface VSCodeMessage {
     callbackId?: string;
 }
 
+// 适配 ESM 的 __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// 统一路径变量
+const devHome = join(__dirname, '..', '..');
+const serverPath = join(devHome, 'servers');
+const envPath = join(__dirname, '..', '.env');
+
 const logger = pino({
-    transport: {
-        target: 'pino-pretty', // 启用 pino-pretty
-        options: {
-            colorize: true,      // 开启颜色
-            levelFirst: true,    // 先打印日志级别
-            translateTime: 'SYS:yyyy-mm-dd HH:MM:ss', // 格式化时间
-            ignore: 'pid,hostname',     // 忽略部分字段
-        }
-    }
+  
 });
 
 export type MessageHandler = (message: VSCodeMessage) => void;
 
-function refreshConnectionOption(envPath: string) {
-    const serverPath = path.join(__dirname, '..', '..', 'servers');
-
+async function refreshConnectionOption() {
     const defaultOption = {
         connectionType: 'STDIO',
         commandString: 'mcp run main.py',
         cwd: serverPath
     };
 
-    fs.writeFileSync(envPath, JSON.stringify(defaultOption, null, 4));   
-
-    return { items: [ defaultOption ] };
+    try {
+        await fs.writeFile(envPath, JSON.stringify(defaultOption, null, 4), 'utf-8');
+        return { items: [defaultOption] };
+    } catch (error) {
+        logger.error('刷新连接配置失败:', error);
+        throw error;
+    }
 }
 
-function acquireConnectionOption() {
-    const envPath = path.join(__dirname, '..', '.env');
-
-    if (!fs.existsSync(envPath)) {
-        return refreshConnectionOption(envPath);
-    }
-
+async function acquireConnectionOption() {
     try {
-        const option = JSON.parse(fs.readFileSync(envPath, 'utf-8'));
+        const data = await fs.readFile(envPath, 'utf-8');
+        const option = JSON.parse(data);
 
-        if (!option.items) {
-            return refreshConnectionOption(envPath);
-        }
-
-        if (option.items && option.items.length === 0) {
-            return refreshConnectionOption(envPath);
+        if (!option.items || option.items.length === 0) {
+            return await refreshConnectionOption();
         }
 
         // 按照前端的规范，整理成 commandString 样式
-        option.items = option.items.map((item: any) => {
+        option.items = option.items.map((item: { connectionType: string; commandString: string; command: any; args: any; url: any; }) => {
             if (item.connectionType === 'STDIO') {
                 item.commandString = [item.command, ...item.args]?.join(' ');
             } else {
                 item.url = item.url;
             }
-
             return item;
         });
 
         return option;
-
     } catch (error) {
-        logger.error('读取 .env 配置文件');
-        return refreshConnectionOption(envPath);
+        logger.error('读取 .env 配置文件失败:', error);
+        return await refreshConnectionOption();
     }
 }
 
-function updateConnectionOption(data: any) {
-    const envPath = path.join(__dirname, '..', '.env');
-    const connection = { items: data };
-    fs.writeFileSync(envPath, JSON.stringify(connection, null, 4));
+async function updateConnectionOption(data: any) {
+    try {
+        await fs.writeFile(envPath, JSON.stringify({ items: data }, null, 4), 'utf-8');
+    } catch (error) {
+        logger.error('更新连接配置失败:', error);
+        throw error;
+    }
 }
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const devHome = path.join(__dirname, '..', '..');
+// 设置运行时路径
+import { setRunningCWD } from './hook/setting.js';
 setRunningCWD(devHome);
 
+// 启动 WebSocket 服务器
 const wss = new WebSocketServer({ port: 8282 });
+console.log('WebSocket 服务器已启动:', 'ws://localhost:8282');
 
-console.log('listen on ws://localhost:8282');
-
-wss.on('connection', (ws: any) => {
-
-    // 仿造 webview 进行统一接口访问
+wss.on('connection', (ws) => {
     const webview = new VSCodeWebViewLike(ws);
 
-    // 先发送成功建立的消息
     webview.postMessage({
         command: 'hello',
         data: {
@@ -108,34 +99,33 @@ wss.on('connection', (ws: any) => {
         }
     });
 
-    const option = acquireConnectionOption();
+    acquireConnectionOption().then(option => {
+        webview.onDidReceiveMessage(async (message) => {
+            logger.info(`收到命令: [${message.command || '未定义'}]`);
 
-    // 注册消息接受的管线
-    webview.onDidReceiveMessage(message => {
-        logger.info(`command: [${message.command || 'No Command'}]`);        
-        const { command, data } = message;
+            const { command, data } = message;
 
-        switch (command) {
-            case 'web/launch-signature':
-                const launchResult = {
-                    code: 200,
-                    msg: option.items
-                };
+            switch (command) {
+                case 'web/launch-signature':
+                    webview.postMessage({
+                        command: 'web/launch-signature',
+                        data: {
+                            code: 200,
+                            msg: option.items
+                        }
+                    });
+                    break;
 
-                webview.postMessage({
-                    command: 'web/launch-signature',
-                    data: launchResult
-                });
+                case 'web/update-connection-signature':
+                    await updateConnectionOption(data);
+                    break;
 
-                break;
-            
-            case 'web/update-connection-signature':
-                updateConnectionOption(data);
-                break;
-        
-            default:
-                routeMessage(command, data, webview);
-                break;
-        }
+                default:
+                    routeMessage(command, data, webview);
+                    break;
+            }
+        });
+    }).catch(error => {
+        logger.error('初始化连接配置失败:', error);
     });
 });

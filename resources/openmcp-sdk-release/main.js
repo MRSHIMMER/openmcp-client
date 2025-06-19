@@ -1,5 +1,5 @@
-const { TaskLoop } = require('../../openmcp-sdk/task-loop');
-const { TaskLoopAdapter } = require('../../openmcp-sdk/service');
+import { TaskLoop } from '../../openmcp-sdk/task-loop.js';
+import { TaskLoopAdapter } from '../../openmcp-sdk/service.js';
 
 async function main() {
     // 创建适配器，负责通信和 mcp 连接
