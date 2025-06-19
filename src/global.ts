@@ -95,6 +95,9 @@ export function getConnectionConfig() {
  */
 export function getWorkspaceConnectionConfigPath() {
     const workspace = getWorkspacePath();
+    if (!workspace) {
+        throw new Error('No workspace found. Please open a folder in VSCode first.');
+    }
     const configDir = fspath.join(workspace, '.openmcp');
      if (!fs.existsSync(configDir)) {
         fs.mkdirSync(configDir, { recursive: true }); // 递归创建目录
@@ -113,6 +116,9 @@ export function getWorkspaceConnectionConfig() {
     }
 
     const workspace = getWorkspacePath();
+    if (!workspace) {
+        throw new Error('No workspace found. Please open a folder in VSCode first.');
+    }
     const configDir = fspath.join(workspace, '.openmcp');
     const connectionConfig = fspath.join(configDir, CONNECTION_CONFIG_NAME);
 
