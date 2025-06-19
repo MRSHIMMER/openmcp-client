@@ -236,6 +236,7 @@
     "dependencies": {
         "@modelcontextprotocol/sdk": "^1.12.1",
         "@seald-io/nedb": "^4.1.1",
+        "@types/glob": "^7.2.0",
         "@types/node-fetch": "^2.6.4",
         "abort-controller": "^3.0.0",
         "agentkeepalive": "^4.2.1",
@@ -243,7 +244,9 @@
         "bson": "^6.8.0",
         "form-data-encoder": "^1.7.2",
         "formdata-node": "^4.3.2",
+        "glob": "^7.2.3",
         "https-proxy-agent": "^7.0.6",
+        "mocha": "^10.8.2",
         "openai": "^5.0.1",
         "pako": "^2.1.0",
         "pkce-challenge": "^5.0.0",
