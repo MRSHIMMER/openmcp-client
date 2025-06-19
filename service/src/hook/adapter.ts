@@ -152,3 +152,60 @@ export class TaskLoopAdapter {
     }
 }
 
+import { TaskLoop } from '../../task-loop.js';
+import * as fs from 'fs';
+import chalk from 'chalk';
+
+export class OAgent {
+    private adapter: TaskLoopAdapter;
+    constructor() {
+        this.adapter = new TaskLoopAdapter();
+    }
+
+    public addMcp(mcpOption: IConnectionArgs) {
+        this.adapter.addMcp(mcpOption);
+    }
+
+    /**
+     * @description Load MCP configuration from file.
+     * Supports multiple MCP backends and a default LLM model configuration.
+     * 
+     * Configuration below can be generated from OpenMCP Client directly: https://kirigaya.cn/openmcp
+     *
+     * @example
+     * Example configuration:
+     * {
+     *   "version": "1.0.0",
+     *   "mcpServers": {
+     *     "openmemory": {
+     *       "command": "npx",
+     *       "args": ["-y", "openmemory"],
+     *       "env": {
+     *         "OPENMEMORY_API_KEY": "YOUR_API_KEY",
+     *         "CLIENT_NAME": "openmemory"
+     *       },
+     *       "description": "A MCP for long-term memory support",
+     *       "prompt": "You are a helpful assistant."
+     *     }
+     *   },
+     *   "llm": {
+     *     "baseURL": "https://api.deepseek.com",
+     *     "apiToken": "YOUR_API_KEY",
+     *     "model": "deepseek-chat"
+     *   }
+     * }
+     *
+     * @param configPath - Path to the configuration file
+     */
+    public loadMcpConfig(configPath: string) {
+        if (!fs.existsSync(configPath)) {
+            console.log(
+                chalk.red(`× configPath not exists! ${configPath}`),
+            );
+            throw new Error(`× configPath not exists! ${configPath}`);
+        }
+
+        const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
+
+    }
+}

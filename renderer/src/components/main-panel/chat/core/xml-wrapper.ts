@@ -288,9 +288,6 @@ export async function handleXmlWrapperToolcall(toolcall: XmlToolCall): Promise<T
             state: MessageState.InvalidXml
         }
     }
-
-    // 进行调用，根据结果返回不同的值
-    console.log(toolcall);
     
     const toolResponse = await mcpClientAdapter.callTool(toolcall.name, toolcall.parameters);
     return handleToolResponse(toolResponse);
