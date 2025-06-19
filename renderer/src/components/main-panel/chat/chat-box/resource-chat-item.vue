@@ -1,5 +1,5 @@
 <template>
-    <el-tooltip placement="top">
+    <el-tooltip placement="top" effect="light">
         <template #content>
             <div class="resource-chat-item-tooltip">
                 <div v-for="(item, index) of toolRenderItems" :key="index">

@@ -1,6 +1,6 @@
 /* eslint-disable */
 import { ref, type Ref } from "vue";
-import { type ToolCall, type ChatStorage, getToolSchema, MessageState } from "../chat-box/chat";
+import { type ToolCall, type ChatStorage, getToolSchema, MessageState, type ChatMessage, type ChatSetting, type EnableToolItem } from "../chat-box/chat";
 import { useMessageBridge, MessageBridge, createMessageBridge } from "@/api/message-bridge";
 import type { OpenAI } from 'openai';
 import { llmManager, llms, type BasicLlmDescription } from "@/views/setting/llm";
@@ -13,6 +13,7 @@ import { mcpSetting } from "@/hook/mcp";
 import { mcpClientAdapter } from "@/views/connect/core";
 import type { ToolItem } from "@/hook/type";
 import chalk from 'chalk';
+import { getXmlWrapperPrompt, getToolCallFromXmlString, getXmlsFromString, handleXmlWrapperToolcall, toNormaliseToolcall, getXmlResultPrompt } from "./xml-wrapper";
 
 export type ChatCompletionChunk = OpenAI.Chat.Completions.ChatCompletionChunk;
 export interface TaskLoopChatOption {
@@ -90,14 +91,25 @@ export class TaskLoop {
         this.bridge = useMessageBridge();
     }
 
-    private handleChunkDeltaContent(chunk: ChatCompletionChunk) {
+    /**
+     * @description 处理 streaming 输出的每一个分块的 content 部分 
+     * @param chunk 
+     * @param chatData 
+     */
+    private handleChunkDeltaContent(chunk: ChatCompletionChunk, chatData: ChatCompletionCreateParamsBase) {
         const content = chunk.choices[0]?.delta?.content || '';
         if (content) {
             this.streamingContent.value += content;
         }
     }
 
-    private handleChunkDeltaToolCalls(chunk: ChatCompletionChunk, toolcallIndexAdapter: (toolCall: ToolCall) => IToolCallIndex) {
+    /**
+     * @description 处理 streaming 输出的每一个 chunk 的 tool_calls 部分
+     * @param chunk 
+     * @param chatData 
+     * @param toolcallIndexAdapter 
+     */
+    private handleChunkDeltaToolCalls(chunk: ChatCompletionChunk, chatData: ChatCompletionCreateParamsBase, toolcallIndexAdapter: (toolCall: ToolCall) => IToolCallIndex) {
         const toolCall = chunk.choices[0]?.delta?.tool_calls?.[0];
 
         if (toolCall) {
@@ -154,12 +166,12 @@ export class TaskLoop {
 
                 // 处理增量的 content 和 tool_calls
                 if (chatData.enableXmlWrapper) {
-                    this.handleChunkDeltaContent(chunk);
+                    this.handleChunkDeltaContent(chunk, chatData);
                     // no tool call in enableXmlWrapper
                     this.handleChunkUsage(chunk);
                 } else {
-                    this.handleChunkDeltaContent(chunk);
-                    this.handleChunkDeltaToolCalls(chunk, toolcallIndexAdapter);
+                    this.handleChunkDeltaContent(chunk, chatData);
+                    this.handleChunkDeltaToolCalls(chunk, chatData, toolcallIndexAdapter);
                     this.handleChunkUsage(chunk);
                 }
 
@@ -218,23 +230,34 @@ export class TaskLoop {
 
         const model = this.getLlmConfig().userModel;
         const temperature = tabStorage.settings.temperature;
-        const tools = getToolSchema(tabStorage.settings.enableTools);
         const parallelToolCalls = tabStorage.settings.parallelToolCalls;
         const proxyServer = mcpSetting.proxyServer || '';
+
+        // 如果是 xml 模式，则 tools 为空
         const enableXmlWrapper = tabStorage.settings.enableXmlWrapper;
+        const tools = enableXmlWrapper ? []: getToolSchema(tabStorage.settings.enableTools);
 
         const userMessages = [];
 
         // 尝试获取 system prompt，在 api 模式下，systemPrompt 就是目标提词
         // 但是在 UI 模式下，systemPrompt 只是一个 index，需要从后端数据库中获取真实 prompt
-        if (tabStorage.settings.systemPrompt) {
-            const prompt = getSystemPrompt(tabStorage.settings.systemPrompt) || tabStorage.settings.systemPrompt;
 
-            userMessages.push({
-                role: 'system',
-                content: prompt
-            });
+        let prompt = '';
+
+        // 如果存在系统提示词，则从数据库中获取对应的数据
+        if (tabStorage.settings.systemPrompt) {
+            prompt += getSystemPrompt(tabStorage.settings.systemPrompt) || tabStorage.settings.systemPrompt;
         }
+
+        // 如果是 xml 模式，则在开头注入 xml
+        if (enableXmlWrapper) {
+            prompt += getXmlWrapperPrompt(tabStorage.settings.enableTools, tabStorage);
+        }
+
+        userMessages.push({
+            role: 'system',
+            content: prompt
+        });
 
         // 如果超出了 tabStorage.settings.contextLength, 则删除最早的消息
         const loadMessages = tabStorage.messages.slice(- tabStorage.settings.contextLength);
@@ -253,7 +276,7 @@ export class TaskLoop {
             parallelToolCalls,
             messages: userMessages,
             proxyServer,
-            enableXmlWrapper
+            enableXmlWrapper,
         } as ChatCompletionCreateParamsBase;
 
         return chatData;
@@ -474,6 +497,7 @@ export class TaskLoop {
             // 等待连接完成            
             await this.nodejsStatus.connectionFut;
         }
+        const enableXmlWrapper = tabStorage.settings.enableXmlWrapper;
 
         // 添加目前的消息
         tabStorage.messages.push({
@@ -482,7 +506,8 @@ export class TaskLoop {
             extraInfo: {
                 created: Date.now(),
                 state: MessageState.Success,
-                serverName: this.getLlmConfig().id || 'unknown'
+                serverName: this.getLlmConfig().id || 'unknown',
+                enableXmlWrapper
             }
         });
 
@@ -511,7 +536,7 @@ export class TaskLoop {
 
             this.currentChatId = chatData.id!;
             const llm = this.getLlmConfig();
-            const toolcallIndexAdapter = getToolCallIndexAdapter(llm);
+            const toolcallIndexAdapter = getToolCallIndexAdapter(llm, chatData);
 
             // 发送请求
             const doConverationResult = await this.doConversation(chatData, toolcallIndexAdapter);
@@ -526,7 +551,8 @@ export class TaskLoop {
                     extraInfo: {
                         created: Date.now(),
                         state: MessageState.Success,
-                        serverName: this.getLlmConfig().id || 'unknown'
+                        serverName: this.getLlmConfig().id || 'unknown',
+                        enableXmlWrapper
                     }
                 });
 
@@ -563,7 +589,8 @@ export class TaskLoop {
                                     created: Date.now(),
                                     state: toolCallResult.state,
                                     serverName: this.getLlmConfig().id || 'unknown',
-                                    usage: undefined
+                                    usage: undefined,
+                                    enableXmlWrapper
                                 }
                             });
                             break;
@@ -578,7 +605,8 @@ export class TaskLoop {
                                 created: Date.now(),
                                 state: toolCallResult.state,
                                 serverName: this.getLlmConfig().id || 'unknown',
-                                usage: this.completionUsage
+                                usage: this.completionUsage,
+                                enableXmlWrapper
                             }
                         });
                     } else if (toolCallResult.state === MessageState.ToolCall) {
@@ -592,7 +620,8 @@ export class TaskLoop {
                                 created: Date.now(),
                                 state: toolCallResult.state,
                                 serverName: this.getLlmConfig().id || 'unknown',
-                                usage: this.completionUsage
+                                usage: this.completionUsage,
+                                enableXmlWrapper
                             }
                         });
                     }
@@ -606,10 +635,96 @@ export class TaskLoop {
                         created: Date.now(),
                         state: MessageState.Success,
                         serverName: this.getLlmConfig().id || 'unknown',
-                        usage: this.completionUsage
+                        usage: this.completionUsage,
+                        enableXmlWrapper
                     }
                 });
-                break;
+
+                // 如果 xml 模型，需要检查内部是否含有有效的 xml 进行调用
+                if (tabStorage.settings.enableXmlWrapper) {
+                    const xmls = getXmlsFromString(this.streamingContent.value);
+                    if (xmls.length === 0) {
+                        // 没有 xml 了，说明对话结束
+                        break;
+                    }
+
+                    // 使用 user 作为身份来承载 xml 调用的结果
+                    // 并且在 extra 内存储结构化信息
+                    const fakeUserMessage = {
+                        role: 'user',
+                        content: '',
+                        extraInfo: {
+                            created: Date.now(),
+                            state: MessageState.Success,
+                            serverName: this.getLlmConfig().id || 'unknown',
+                            usage: this.completionUsage,
+                            enableXmlWrapper,
+                        }
+                    } as ChatMessage;
+
+                    // 有 xml 了，需要检查 xml 内部是否有有效的 xml 进行调用
+                    for (const xml of xmls) {
+                        const toolcall = await getToolCallFromXmlString(xml);
+
+                        if (!toolcall) {
+                            continue;
+                        }
+                        
+                        // toolcall 事件
+                        // 此处使用的是 xml 使用的 toolcall，为了保持一致性，需要转换成 openai 标准下的 toolcall
+                        const normaliseToolcall = toNormaliseToolcall(toolcall, toolcallIndexAdapter);
+                        this.consumeToolCalls(normaliseToolcall);
+
+                        // 调用 XML 调用，其实可以考虑后续把这个循环改成 Promise.race
+                        const toolCallResult = await handleXmlWrapperToolcall(toolcall);
+
+                        // toolcalled 事件
+                        // 因为是交付给后续进行统一消费的，所以此处的输出满足 openai 接口规范
+                        this.consumeToolCalleds(toolCallResult);
+
+                        // XML 模式下只存在 assistant 和 user 这两个角色，因此，以 user 为身份来存储
+                        if (toolCallResult.state === MessageState.InvalidXml) {
+                            // 如果是因为解析 XML 错误，则重新开始
+                            tabStorage.messages.pop();
+                            jsonParseErrorRetryCount ++;
+    
+                            redLog('解析 XML 错误 ' + normaliseToolcall?.function?.arguments);
+    
+                            // 如果因为 XML 错误而失败太多，就只能中断了
+                            if (jsonParseErrorRetryCount >= (this.taskOptions.maxJsonParseRetry || 3)) {
+
+                                const prompt = getXmlResultPrompt(toolcall.callId, `解析 XML 错误，无法继续调用工具 (累计错误次数 ${this.taskOptions.maxJsonParseRetry})`);
+
+                                fakeUserMessage.content += prompt;
+
+                                break;
+                            }
+                        } else if (toolCallResult.state === MessageState.Success) {
+                            // TODO: xml 目前只支持 text 类型的回复
+                            const toolCallResultString = toolCallResult.content
+                                .filter(c => c.type === 'text')
+                                .map(c => c.text)
+                                .join('\n');
+
+                            fakeUserMessage.content += getXmlResultPrompt(toolcall.callId, toolCallResultString);
+
+                        } else if (toolCallResult.state === MessageState.ToolCall) {
+                            // TODO: xml 目前只支持 text 类型的回复
+                            const toolCallResultString = toolCallResult.content
+                                .filter(c => c.type === 'text')
+                                .map(c => c.text)
+                                .join('\n');
+
+                            fakeUserMessage.content += getXmlResultPrompt(toolcall.callId, toolCallResultString);
+                        }
+                    }
+
+                    tabStorage.messages.push(fakeUserMessage);
+
+                } else {
+                    // 普通对话直接结束
+                    break;
+                }
 
             } else {
                 // 一些提示
@@ -620,6 +735,42 @@ export class TaskLoop {
             if (doConverationResult.stop) {
                 break;
             }
+        }
+    }
+
+    public async createStorage(settings?: ChatSetting): Promise<ChatStorage> {
+        let {
+            enableXmlWrapper = false,
+            systemPrompt = '',
+            temperature = 0.6,
+            contextLength = 100,
+            parallelToolCalls = true,
+            enableWebSearch = false,
+            enableTools = undefined,
+        } = settings || {};
+
+        if (enableTools === undefined) {
+            // 默认缺省的情况下使用全部工具
+            const tools = await this.listTools();
+            enableTools = tools.map(tool => ({
+                ...tool,
+                enabled: true
+            })) as EnableToolItem[];
+        }
+
+        const _settings = {
+            enableXmlWrapper,
+            systemPrompt,
+            temperature,
+            contextLength,
+            parallelToolCalls,
+            enableTools,
+            enableWebSearch
+        } as ChatSetting;
+
+        return {
+            messages: [],
+            settings: _settings
         }
     }
 }

@@ -158,9 +158,5 @@ onMounted(async () => {
 .tool-description {
     opacity: 0.6;
     font-size: 12.5px;
-    max-width: 150px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
 }
 </style>

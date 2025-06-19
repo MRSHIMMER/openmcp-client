@@ -172,5 +172,9 @@
     "comment-for-us": "Écrivez un avis pour nous !",
     "openmcp-developed-by": "OpenMCP Client {version} développé par {author}",
     "error-parse-json": "Erreur d'analyse JSON :",
-    "enable-xml-wrapper": "XML-Befehlsverpackung aktivieren"
+    "enable-xml-wrapper": "XML-Befehlsverpackung aktivieren",
+    "tool-manage": "Werkzeugverwaltung",
+    "enable-all-tools": "Alle Tools aktivieren",
+    "disable-all-tools": "Alle Tools deaktivieren",
+    "using-tool": "Werkzeug wird verwendet"
 }
