@@ -1,6 +1,6 @@
 /* eslint-disable */
 import { ref, type Ref } from "vue";
-import { type ToolCall, type ChatStorage, getToolSchema, MessageState, type ChatMessage } from "../chat-box/chat";
+import { type ToolCall, type ChatStorage, getToolSchema, MessageState, type ChatMessage, type ChatSetting, type EnableToolItem } from "../chat-box/chat";
 import { useMessageBridge, MessageBridge, createMessageBridge } from "@/api/message-bridge";
 import type { OpenAI } from 'openai';
 import { llmManager, llms, type BasicLlmDescription } from "@/views/setting/llm";
@@ -735,6 +735,42 @@ export class TaskLoop {
             if (doConverationResult.stop) {
                 break;
             }
+        }
+    }
+
+    public async createStorage(settings?: ChatSetting): Promise<ChatStorage> {
+        let {
+            enableXmlWrapper = false,
+            systemPrompt = '',
+            temperature = 0.6,
+            contextLength = 100,
+            parallelToolCalls = true,
+            enableWebSearch = false,
+            enableTools = undefined,
+        } = settings || {};
+
+        if (enableTools === undefined) {
+            // 默认缺省的情况下使用全部工具
+            const tools = await this.listTools();
+            enableTools = tools.map(tool => ({
+                ...tool,
+                enabled: true
+            })) as EnableToolItem[];
+        }
+
+        const _settings = {
+            enableXmlWrapper,
+            systemPrompt,
+            temperature,
+            contextLength,
+            parallelToolCalls,
+            enableTools,
+            enableWebSearch
+        } as ChatSetting;
+
+        return {
+            messages: [],
+            settings: _settings
         }
     }
 }
