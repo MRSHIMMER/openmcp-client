@@ -65,7 +65,7 @@ export class TaskLoop {
     };
 
     constructor(
-        private readonly taskOptions: TaskLoopOptions = {
+        private taskOptions: TaskLoopOptions = {
             maxEpochs: 50,
             maxJsonParseRetry: 3,
             adapter: undefined,
@@ -97,6 +97,25 @@ export class TaskLoop {
 
         // 注册 HMR
         mcpClientAdapter.addConnectRefreshListener();
+    }
+
+    public async waitConnection() {
+        await this.nodejsStatus.connectionFut;
+    }
+
+    public setTaskLoopOptions(taskOptions: TaskLoopOptions) {
+        const {
+            maxEpochs = 50,
+            maxJsonParseRetry = 3,
+            verbose = 1,
+        } = taskOptions;
+        
+        this.taskOptions = {
+            maxEpochs,
+            maxJsonParseRetry,
+            verbose,
+            ...this.taskOptions
+        };
     }
 
     /**
@@ -784,9 +803,11 @@ export class TaskLoop {
         }
     }
 
-    public async getPrompt(promptId: string, args: Record<string, any>) {
+    public async getPrompt(promptId: string, args?: Record<string, any>) {
         const prompt = await mcpClientAdapter.readPromptTemplate(promptId, args);
-        return prompt;
+        // transform prompt to string
+        const promptString = prompt.messages.map(m => m.content.text).join('\n');
+        return promptString;
     }
 
     public async getResource(resourceUri: string) {

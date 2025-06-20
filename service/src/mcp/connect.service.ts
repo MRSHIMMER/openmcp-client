@@ -268,24 +268,24 @@ export async function connectService(
 ): Promise<RestfulResponse> {
 	try {		
 		// 使用cli-table3创建美观的表格
-		const table = new Table({
-			head: ['Property', 'Value'],
-			colWidths: [20, 60],
-			style: {
-				head: ['green'],
-				border: ['grey']
-			}
-		});
+		// const table = new Table({
+		// 	head: ['Property', 'Value'],
+		// 	colWidths: [20, 60],
+		// 	style: {
+		// 		head: ['green'],
+		// 		border: ['grey']
+		// 	}
+		// });
 		
-		table.push(
-			['Connection Type', option.connectionType],
-			['Command', option.command || 'N/A'],
-			['Arguments', option.args?.join(' ') || 'N/A'],
-			['Working Directory', option.cwd || 'N/A'],
-			['URL', option.url || 'N/A']
-		);
+		// table.push(
+		// 	['Connection Type', option.connectionType],
+		// 	['Command', option.command || 'N/A'],
+		// 	['Arguments', option.args?.join(' ') || 'N/A'],
+		// 	['Working Directory', option.cwd || 'N/A'],
+		// 	['URL', option.url || 'N/A']
+		// );
 		
-		console.log(table.toString());
+		// console.log(table.toString());
 
 		// 预处理字符串
 		await preprocessCommand(option, webview);

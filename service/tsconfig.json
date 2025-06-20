@@ -10,7 +10,7 @@
         "forceConsistentCasingInFileNames": true,
         "outDir": "./dist",
         "declaration": true,
-        "declarationMap": true,
+        "declarationMap": false,
         "experimentalDecorators": true,
     },
     "paths": {

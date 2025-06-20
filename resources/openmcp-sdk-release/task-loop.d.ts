@@ -190,6 +190,17 @@ export class TaskLoop {
     constructor(taskOptions?: TaskLoopOptions);
 
     /**
+     * @description wait for connection
+     */
+    waitConnection(): Promise<void>;
+
+    /**
+     * @description Set the task loop options
+     * @param taskOptions 
+     */
+    setTaskLoopOptions(taskOptions: TaskLoopOptions): void;
+
+    /**
      * @description make chat data
      * @param tabStorage 
      */
@@ -294,7 +305,7 @@ export class TaskLoop {
     /**
      * @description Get prompt template from mcp server
      */
-    getPrompt(promptId: string, args: Record<string, any>): Promise<string>;
+    getPrompt(promptId: string, args?: Record<string, any>): Promise<string>;
 
     /**
      * @description Get resource template from mcp server

@@ -5,25 +5,25 @@ export type ChatCompletionChunk = OpenAI.Chat.Completions.ChatCompletionChunk;
 export type ChatCompletionCreateParamsBase = OpenAI.Chat.Completions.ChatCompletionCreateParams & { id?: string };
 
 interface SchemaProperty {
-	title: string;
-	type: string;
-	description?: string;
+    title: string;
+    type: string;
+    description?: string;
 }
 
 interface InputSchema {
-	type: string;
-	properties: Record<string, SchemaProperty>;
-	required?: string[];
-	title?: string;
-	$defs?: any;
+    type: string;
+    properties: Record<string, SchemaProperty>;
+    required?: string[];
+    title?: string;
+    $defs?: any;
 }
 
 interface ToolItem {
-	name: string;
-	description: string;
-	inputSchema: InputSchema;
+    name: string;
+    description: string;
+    inputSchema: InputSchema;
     enabled: boolean;
-	anyOf?: any;
+    anyOf?: any;
 }
 
 interface IExtraInfo {
@@ -87,7 +87,7 @@ export interface ToolCall {
 export interface ToolCallContent {
     type: string;
     text: string;
-	[key: string]: any;
+    [key: string]: any;
 }
 
 export interface ToolCallResult {
@@ -188,6 +188,17 @@ interface ChatSetting {
  */
 export class TaskLoop {
     constructor(taskOptions?: TaskLoopOptions);
+
+    /**
+     * @description wait for connection
+     */
+    waitConnection(): Promise<void>;
+
+    /**
+     * @description Set the task loop options
+     * @param taskOptions 
+     */
+    setTaskLoopOptions(taskOptions: TaskLoopOptions): void;
 
     /**
      * @description make chat data
@@ -294,7 +305,7 @@ export class TaskLoop {
     /**
      * @description Get prompt template from mcp server
      */
-    getPrompt(promptId: string, args: Record<string, any>): Promise<string>;
+    getPrompt(promptId: string, args?: Record<string, any>): Promise<string>;
 
     /**
      * @description Get resource template from mcp server

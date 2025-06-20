@@ -610,7 +610,7 @@ class McpClientAdapter {
 
             }, { once: false });
         }
-
+        
         const launchSignature = await this.getLaunchSignature();
 
         let allOk = true;
@@ -677,7 +677,7 @@ class McpClientAdapter {
         return msg;
     }
 
-    public async readPromptTemplate(promptId: string, args: Record<string, any>) {
+    public async readPromptTemplate(promptId: string, args?: Record<string, any>) {
         // TODO: 如果遇到不同服务器的同名 tool，请拓展解决方案
         // 目前只找到第一个匹配 toolName 的工具进行调用
         let clientId = this.clients[0].clientId;
@@ -690,6 +690,8 @@ class McpClientAdapter {
                 break;
             }
         }
+
+        console.log(args);
 
         const bridge = useMessageBridge();
         const { code, msg } = await bridge.commandRequest<PromptsGetResponse>('prompts/get', { clientId, promptId, args });
