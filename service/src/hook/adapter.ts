@@ -164,7 +164,8 @@ interface StdioMCPConfig {
         [key: string]: string;
     };
     description?: string;
-    prompt?: string;
+    prompts?: string[];
+    resources?: string[];
 }
 
 interface HttpMCPConfig {
@@ -174,7 +175,8 @@ interface HttpMCPConfig {
         [key: string]: string;
     };
     description?: string;
-    prompt?: string;
+    prompts?: string[];
+    resources?: string[];
 }
 
 export interface OmAgentConfiguration {
@@ -255,8 +257,7 @@ export class OmAgent {
      *         "OPENMEMORY_API_KEY": "YOUR_API_KEY",
      *         "CLIENT_NAME": "openmemory"
      *       },
-     *       "description": "A MCP for long-term memory support",
-     *       "prompt": "You are a helpful assistant."
+     *       "description": "A MCP for long-term memory support"
      *     }
      *   },
      *   "defaultLLM": {
@@ -287,7 +288,6 @@ export class OmAgent {
                     connectionType: 'STDIO',
                     env: mcpConfig.env,
                     description: mcpConfig.description,
-                    prompt: mcpConfig.prompt,
                 });
             } else {
                 const connectionType: ConnectionType = mcpConfig.type === 'http' ? 'STREAMABLE_HTTP' : 'SSE';
@@ -296,10 +296,16 @@ export class OmAgent {
                     env: mcpConfig.env,
                     connectionType,
                     description: mcpConfig.description,
-                    prompt: mcpConfig.prompt,
                 });
             }
         }
+    }
+
+    /**
+     * @description Add MCP server
+     */
+    public addMcpServer(connectionArgs: IConnectionArgs) {
+        this._adapter.addMcp(connectionArgs);
     }
 
     private async getLoop(loopOption?: TaskLoopOptions) {
@@ -322,6 +328,12 @@ export class OmAgent {
 
     public setDefaultLLM(option: DefaultLLM) {
         this._defaultLLM = option;
+    }
+
+    public async getPrompt(promptId: string, args: Record<string, any>) {
+        const loop = await this.getLoop();
+        const prompt = await loop.getPrompt(promptId, args);
+        return prompt;
     }
 
     /**

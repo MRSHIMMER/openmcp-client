@@ -290,6 +290,16 @@ export class TaskLoop {
      * @description Create single conversation context
      */
     createStorage(settings?: ChatSetting): Promise<ChatStorage>;
+
+    /**
+     * @description Get prompt template from mcp server
+     */
+    getPrompt(promptId: string, args: Record<string, any>): Promise<string>;
+
+    /**
+     * @description Get resource template from mcp server
+     */
+    getResource(resourceUri: string): Promise<string>;
 }
 
 export declare const getToolSchema: any;

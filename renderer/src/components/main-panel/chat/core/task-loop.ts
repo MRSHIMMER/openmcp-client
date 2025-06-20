@@ -783,4 +783,14 @@ export class TaskLoop {
             settings: _settings
         }
     }
+
+    public async getPrompt(promptId: string, args: Record<string, any>) {
+        const prompt = await mcpClientAdapter.readPromptTemplate(promptId, args);
+        return prompt;
+    }
+
+    public async getResource(resourceUri: string) {
+        const resource = await mcpClientAdapter.readResource(resourceUri);
+        return resource;
+    }
 }

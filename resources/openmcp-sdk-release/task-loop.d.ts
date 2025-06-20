@@ -5,25 +5,25 @@ export type ChatCompletionChunk = OpenAI.Chat.Completions.ChatCompletionChunk;
 export type ChatCompletionCreateParamsBase = OpenAI.Chat.Completions.ChatCompletionCreateParams & { id?: string };
 
 interface SchemaProperty {
-	title: string;
-	type: string;
-	description?: string;
+    title: string;
+    type: string;
+    description?: string;
 }
 
 interface InputSchema {
-	type: string;
-	properties: Record<string, SchemaProperty>;
-	required?: string[];
-	title?: string;
-	$defs?: any;
+    type: string;
+    properties: Record<string, SchemaProperty>;
+    required?: string[];
+    title?: string;
+    $defs?: any;
 }
 
 interface ToolItem {
-	name: string;
-	description: string;
-	inputSchema: InputSchema;
+    name: string;
+    description: string;
+    inputSchema: InputSchema;
     enabled: boolean;
-	anyOf?: any;
+    anyOf?: any;
 }
 
 interface IExtraInfo {
@@ -87,7 +87,7 @@ export interface ToolCall {
 export interface ToolCallContent {
     type: string;
     text: string;
-	[key: string]: any;
+    [key: string]: any;
 }
 
 export interface ToolCallResult {
@@ -290,6 +290,16 @@ export class TaskLoop {
      * @description Create single conversation context
      */
     createStorage(settings?: ChatSetting): Promise<ChatStorage>;
+
+    /**
+     * @description Get prompt template from mcp server
+     */
+    getPrompt(promptId: string, args: Record<string, any>): Promise<string>;
+
+    /**
+     * @description Get resource template from mcp server
+     */
+    getResource(resourceUri: string): Promise<string>;
 }
 
 export declare const getToolSchema: any;
