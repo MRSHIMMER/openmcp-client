@@ -34,6 +34,8 @@ export interface IErrorMssage {
     msg: string
 }
 
+export { MessageState };
+
 export interface IDoConversationResult {
     stop: boolean;
 }
@@ -63,8 +65,8 @@ export class TaskLoop {
     };
 
     constructor(
-        private readonly taskOptions: TaskLoopOptions = {
-            maxEpochs: 20,
+        private taskOptions: TaskLoopOptions = {
+            maxEpochs: 50,
             maxJsonParseRetry: 3,
             adapter: undefined,
             verbose: 0
@@ -83,12 +85,37 @@ export class TaskLoop {
                 throw new Error('adapter is required');
             }
 
+            // 根据 adapter 创建 nodejs 下特殊的、基于 event 的 message bridge （不占用任何端口）
             createMessageBridge(adapter.emitter);
+
+            // 用于进行连接同步
             this.nodejsStatus.connectionFut = mcpClientAdapter.launch();
         }
 
         // web 环境下 bridge 会自动加载完成
         this.bridge = useMessageBridge();
+
+        // 注册 HMR
+        mcpClientAdapter.addConnectRefreshListener();
+    }
+
+    public async waitConnection() {
+        await this.nodejsStatus.connectionFut;
+    }
+
+    public setTaskLoopOptions(taskOptions: TaskLoopOptions) {
+        const {
+            maxEpochs = 50,
+            maxJsonParseRetry = 3,
+            verbose = 1,
+        } = taskOptions;
+        
+        this.taskOptions = {
+            maxEpochs,
+            maxJsonParseRetry,
+            verbose,
+            ...this.taskOptions
+        };
     }
 
     /**
@@ -381,7 +408,7 @@ export class TaskLoop {
         if (verbose > 0) {
             console.log(
                 chalk.gray(`[${new Date().toLocaleString()}]`),
-                chalk.blueBright('🔧 calling tool'),
+                chalk.blueBright('🔧 using tool'),
                 chalk.blueBright(toolCall.function!.name)
             );
         }
@@ -395,13 +422,13 @@ export class TaskLoop {
             if (result.state === 'success') {
                 console.log(
                     chalk.gray(`[${new Date().toLocaleString()}]`),
-                    chalk.green('✓ call tools okey dockey'),
+                    chalk.green('✓  use tools'),
                     chalk.green(result.state)
                 );
             } else {
                 console.log(
                     chalk.gray(`[${new Date().toLocaleString()}]`),
-                    chalk.red('× fail to call tools'),
+                    chalk.red('×  use tools'),
                     chalk.red(result.content.map(item => item.text).join(', '))
                 );
             }
@@ -411,7 +438,7 @@ export class TaskLoop {
 
     private consumeEpochs() {
         const { verbose = 0 } = this.taskOptions;
-        if (verbose > 0) {
+        if (verbose > 1) {
             console.log(
                 chalk.gray(`[${new Date().toLocaleString()}]`),
                 chalk.blue('task loop enters a new epoch')
@@ -422,12 +449,14 @@ export class TaskLoop {
 
     private consumeDones() {
         const { verbose = 0 } = this.taskOptions;
-        if (verbose > 0) {
+
+        if (verbose > 1) {
             console.log(
                 chalk.gray(`[${new Date().toLocaleString()}]`),
                 chalk.green('task loop finish a epoch')
             );
         }
+
         return this.onDone();
     }
 
@@ -513,7 +542,7 @@ export class TaskLoop {
 
         let jsonParseErrorRetryCount = 0;
         const {
-            maxEpochs = 20,
+            maxEpochs = 50,
             verbose = 0
         } = this.taskOptions || {};
 
@@ -559,7 +588,7 @@ export class TaskLoop {
                 if (verbose > 0) {
                     console.log(
                         chalk.gray(`[${new Date().toLocaleString()}]`),
-                        chalk.yellow('🤖 llm wants to call these tools'),
+                        chalk.yellow('🤖 Agent wants to use these tools'),
                         chalk.yellow(this.streamingToolCalls.value.map(tool => tool.function!.name || '').join(', '))
                     );
                 }
@@ -772,5 +801,17 @@ export class TaskLoop {
             messages: [],
             settings: _settings
         }
+    }
+
+    public async getPrompt(promptId: string, args?: Record<string, any>) {
+        const prompt = await mcpClientAdapter.readPromptTemplate(promptId, args);
+        // transform prompt to string
+        const promptString = prompt.messages.map(m => m.content.text).join('\n');
+        return promptString;
+    }
+
+    public async getResource(resourceUri: string) {
+        const resource = await mcpClientAdapter.readResource(resourceUri);
+        return resource;
     }
 }

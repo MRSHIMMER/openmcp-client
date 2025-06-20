@@ -137,7 +137,7 @@ export class McpClient {
     }
 
     // 获取提示
-    public async getPrompt(name: string, args: Record<string, any> = {}) {
+    public async getPrompt(name: string, args: Record<string, any> = {}) {        
         return await this.client.getPrompt({
             name, arguments: args
         });

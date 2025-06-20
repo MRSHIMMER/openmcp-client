@@ -101,8 +101,6 @@ function handleSend(newMessage?: string) {
     loop.bindStreaming(streamingContent, streamingToolCalls);
 
     loop.registerOnError((error) => {
-        console.log('error.msg');
-        console.log(error.msg);
         
         const errorMessage = clearErrorMessage(error.msg);
         ElMessage.error(errorMessage);
@@ -114,7 +112,8 @@ function handleSend(newMessage?: string) {
                 extraInfo: {
                     created: Date.now(),
                     state: error.state,
-                    serverName: llms[llmManager.currentModelIndex].id || 'unknown'
+                    serverName: llms[llmManager.currentModelIndex].id || 'unknown',
+                    enableXmlWrapper: false
                 }
             });
         }

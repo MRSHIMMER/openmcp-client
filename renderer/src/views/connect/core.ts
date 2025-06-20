@@ -506,9 +506,7 @@ class McpClientAdapter {
 
     constructor(
         public platform: string
-    ) {
-        this.addConnectRefreshListener();
-    }
+    ) {}
 
     /**
      * @description 获取连接参数签名
@@ -562,7 +560,9 @@ class McpClientAdapter {
         return index;
     }
 
-
+    /**
+     * @description register HMR
+     */
     public addConnectRefreshListener() {
         // 创建对于 connect/refresh 的监听
         if (!this.connectrefreshListener) {
@@ -610,7 +610,7 @@ class McpClientAdapter {
 
             }, { once: false });
         }
-
+        
         const launchSignature = await this.getLaunchSignature();
 
         let allOk = true;
@@ -677,7 +677,7 @@ class McpClientAdapter {
         return msg;
     }
 
-    public async readPromptTemplate(promptId: string, args: Record<string, any>) {
+    public async readPromptTemplate(promptId: string, args?: Record<string, any>) {
         // TODO: 如果遇到不同服务器的同名 tool，请拓展解决方案
         // 目前只找到第一个匹配 toolName 的工具进行调用
         let clientId = this.clients[0].clientId;

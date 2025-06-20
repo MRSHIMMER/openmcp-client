@@ -159,3 +159,13 @@ npm run build:plugin
 ```
 
 Then just press F5, いただきます (Let's begin)
+
+---
+
+## CI Pipeline
+
+✅ npm run build
+✅ npm run build:task-loop
+✅ openmcp-client UT
+✅ openmcp-sdk UT
+✅ vscode extension UT

@@ -38,7 +38,7 @@ export class McpServerConnectMonitor {
         this.filePath = getFilePath(options);
 
         // 记录实例创建
-        logger.info({ uuid, connectionType: options.connectionType }, 'Created new connection monitor instance');
+        // logger.info({ uuid, connectionType: options.connectionType }, 'Created new connection monitor instance');
 
         switch (options.connectionType) {
             case 'STDIO':
@@ -94,7 +94,7 @@ export class McpServerConnectMonitor {
             },
             onStart: () => {
                 // 使用 info 级别记录监控开始
-                logger.info({ uuid: this.uuid, filePath: path.resolve(fileConfig.filePath) }, 'Started monitoring file');
+                // logger.info({ uuid: this.uuid, filePath: path.resolve(fileConfig.filePath) }, 'Started monitoring file');
 
                 try {
                     const stats = fs.statSync(fileConfig.filePath);

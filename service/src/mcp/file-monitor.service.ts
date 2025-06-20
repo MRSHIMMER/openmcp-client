@@ -71,7 +71,7 @@ class SingleFileMonitor {
                     this.handleFileChange(true);
                 }
             });
-            console.log(`正在监控文件: ${this.filePath}`);
+            // console.log(`正在监控文件: ${this.filePath}`);
         } catch (error) {
             this.onError(error as Error);
         }
@@ -171,7 +171,7 @@ class SingleFileMonitor {
         if (this.watcher) {
             // 明确指定close方法的类型，解决TS2554错误
             (this.watcher.close as (callback?: () => void) => void)(() => {
-                console.log(`已停止监控文件: ${this.filePath}`);
+                // console.log(`已停止监控文件: ${this.filePath}`);
             });
             this.watcher = null;
         }

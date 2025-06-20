@@ -27,3 +27,4 @@ software/**
 .turbo
 .github
 webpack
+.openmcp

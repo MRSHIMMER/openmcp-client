@@ -67,7 +67,7 @@ async function connect() {
 }
 
 const isDraging = ref(false);
-let dragHandler: number;
+let dragHandler: NodeJS.Timeout;
 
 function handleDragOver(event: DragEvent) {
 	event.preventDefault();

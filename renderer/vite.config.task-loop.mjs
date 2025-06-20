@@ -32,8 +32,8 @@ export default defineConfig({
         lib: {
             entry: resolve(__dirname, '..', 'renderer/src/components/main-panel/chat/core/task-loop.ts'),
             name: 'TaskLoop',
-            fileName: 'task-loop',
-            formats: ['cjs']
+            fileName: (format) => `task-loop.js`,
+            formats: ['es']
         },
         outDir: resolve(__dirname, '..', 'openmcp-sdk'),
         emptyOutDir: false,

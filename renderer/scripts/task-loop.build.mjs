@@ -3,11 +3,11 @@ import * as fs from 'node:fs';
 const targetFile = './openmcp-sdk/task-loop.js';
 
 if (fs.existsSync(targetFile)) {
-    let content = fs.readFileSync(targetFile, 'utf8');
+    let content = fs.readFileSync(targetFile, 'utf-8');
     
     // Replace element-plus with ./tools.js
-    content = content.replace(/'element-plus'/g, "'./tools.js'");
-    content = content.replace(/"element-plus"/g, "\"./tools.js\"");
+    content = content.replace(/'element-plus'/g, "'./tools.mjs'");
+    content = content.replace(/"element-plus"/g, "\"./tools.mjs\"");
 
     // content = content.replace(/const chalk = require\("chalk"\);/g, 'const chalk = require("chalk").default;');
     
