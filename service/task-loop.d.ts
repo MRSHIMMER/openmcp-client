@@ -284,7 +284,7 @@ export class TaskLoop {
     /**
      * @description Start the loop and asynchronously update the DOM
      */
-    start(tabStorage: any, userMessage: string): Promise<void>;
+    start(tabStorage: ChatStorage, userMessage: string): Promise<void>;
 
     /**
      * @description Create single conversation context
