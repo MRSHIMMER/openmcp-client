@@ -691,8 +691,6 @@ class McpClientAdapter {
             }
         }
 
-        console.log(args);
-
         const bridge = useMessageBridge();
         const { code, msg } = await bridge.commandRequest<PromptsGetResponse>('prompts/get', { clientId, promptId, args });
         return msg;

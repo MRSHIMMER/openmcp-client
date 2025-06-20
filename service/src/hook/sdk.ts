@@ -261,7 +261,7 @@ export class OmAgent {
     public async getPrompt(promptId: string, args: Record<string, any>) {
         const loop = await this.getLoop();
 
-        const prompt = await loop.getPrompt(promptId, args);
+        const prompt = await loop.getPrompt(promptId, JSON.parse(JSON.stringify(args)));
                 
         return prompt;
     }
