@@ -506,9 +506,7 @@ class McpClientAdapter {
 
     constructor(
         public platform: string
-    ) {
-        this.addConnectRefreshListener();
-    }
+    ) {}
 
     /**
      * @description 获取连接参数签名
@@ -562,7 +560,9 @@ class McpClientAdapter {
         return index;
     }
 
-
+    /**
+     * @description register HMR
+     */
     public addConnectRefreshListener() {
         // 创建对于 connect/refresh 的监听
         if (!this.connectrefreshListener) {

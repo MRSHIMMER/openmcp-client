@@ -1,6 +1,7 @@
 {
     "name": "openmcp-sdk",
     "version": "0.0.8",
+    "type": "module",
     "description": "openmcp-sdk",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1"

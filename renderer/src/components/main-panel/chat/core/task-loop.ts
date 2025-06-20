@@ -34,6 +34,8 @@ export interface IErrorMssage {
     msg: string
 }
 
+export { MessageState };
+
 export interface IDoConversationResult {
     stop: boolean;
 }
@@ -83,12 +85,18 @@ export class TaskLoop {
                 throw new Error('adapter is required');
             }
 
+            // 根据 adapter 创建 nodejs 下特殊的、基于 event 的 message bridge （不占用任何端口）
             createMessageBridge(adapter.emitter);
+
+            // 用于进行连接同步
             this.nodejsStatus.connectionFut = mcpClientAdapter.launch();
         }
 
         // web 环境下 bridge 会自动加载完成
         this.bridge = useMessageBridge();
+
+        // 注册 HMR
+        mcpClientAdapter.addConnectRefreshListener();
     }
 
     /**
@@ -381,7 +389,7 @@ export class TaskLoop {
         if (verbose > 0) {
             console.log(
                 chalk.gray(`[${new Date().toLocaleString()}]`),
-                chalk.blueBright('🔧 calling tool'),
+                chalk.blueBright('🔧 using tool'),
                 chalk.blueBright(toolCall.function!.name)
             );
         }
@@ -395,13 +403,13 @@ export class TaskLoop {
             if (result.state === 'success') {
                 console.log(
                     chalk.gray(`[${new Date().toLocaleString()}]`),
-                    chalk.green('✓ call tools okey dockey'),
+                    chalk.green('✓  use tools'),
                     chalk.green(result.state)
                 );
             } else {
                 console.log(
                     chalk.gray(`[${new Date().toLocaleString()}]`),
-                    chalk.red('× fail to call tools'),
+                    chalk.red('×  use tools'),
                     chalk.red(result.content.map(item => item.text).join(', '))
                 );
             }
@@ -413,7 +421,12 @@ export class TaskLoop {
         const { verbose = 0 } = this.taskOptions;
         if (verbose > 0) {
             console.log(
-                chalk.gray(`[${new Date().toLocaleString()}]`),
+                chalk.gray(`[${new Date().toLocaleString()}]`)
+            );
+        }
+
+        if (verbose > 1) {
+            console.log(
                 chalk.blue('task loop enters a new epoch')
             );
         }
@@ -425,9 +438,15 @@ export class TaskLoop {
         if (verbose > 0) {
             console.log(
                 chalk.gray(`[${new Date().toLocaleString()}]`),
+            );
+        }
+
+        if (verbose > 1) {
+            console.log(
                 chalk.green('task loop finish a epoch')
             );
         }
+
         return this.onDone();
     }
 
@@ -559,7 +578,7 @@ export class TaskLoop {
                 if (verbose > 0) {
                     console.log(
                         chalk.gray(`[${new Date().toLocaleString()}]`),
-                        chalk.yellow('🤖 llm wants to call these tools'),
+                        chalk.yellow('🤖 Agent wants to use these tools'),
                         chalk.yellow(this.streamingToolCalls.value.map(tool => tool.function!.name || '').join(', '))
                     );
                 }
