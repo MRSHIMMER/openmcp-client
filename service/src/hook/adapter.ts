@@ -189,7 +189,13 @@ export interface OmAgentConfiguration {
     }
 }
 
-import { MessageState, type ChatMessage, type ChatSetting, type TaskLoop, type TextMessage } from '../../task-loop.js';
+export interface DefaultLLM {
+    baseURL: string;
+    apiToken?: string;
+    model: string;
+}
+
+import { MessageState, TaskLoopOptions, type ChatMessage, type ChatSetting, type TaskLoop, type TextMessage } from '../../task-loop.js';
 
 export function UserMessage(content: string): TextMessage {
     return {
@@ -218,8 +224,9 @@ export function AssistantMessage(content: string): TextMessage {
 }
 
 export class OmAgent {
-    public _adapter: TaskLoopAdapter;
-    public _loop?: TaskLoop;
+    private _adapter: TaskLoopAdapter;
+    private _loop?: TaskLoop;
+    private _defaultLLM?: DefaultLLM;
 
     constructor() {
         this._adapter = new TaskLoopAdapter();
@@ -257,6 +264,10 @@ export class OmAgent {
     public loadMcpConfig(configPath: string) {
         const config = JSON.parse(fs.readFileSync(configPath, 'utf-8')) as OmAgentConfiguration;
         const { mcpServers, defaultLLM } = config;
+
+        // set default llm
+        this.setDefaultLLM(defaultLLM);
+
         for (const key in mcpServers) {
             const mcpConfig = mcpServers[key];
             if ('command' in mcpConfig) {
@@ -284,28 +295,48 @@ export class OmAgent {
         }
     }
 
-    public async getLoop() {
+    private async getLoop(loopOption?: TaskLoopOptions) {
         if (this._loop) {
             return this._loop;
         }
 
+        const {
+            verbose = 1,
+            maxEpochs = 50,
+            maxJsonParseRetry = 3,
+        } = loopOption || {}
+
         const adapter = this._adapter;
         const { TaskLoop } = await import('../../task-loop.js');
-        this._loop = new TaskLoop({ adapter, verbose: 1 });
+        this._loop = new TaskLoop({ adapter, verbose, maxEpochs, maxJsonParseRetry });
         return this._loop;
+    }
+
+    public setDefaultLLM(option: DefaultLLM) {
+        this._defaultLLM = option;
     }
 
     public async start(
         messages: ChatMessage[] | string,
-        settings?: ChatSetting
+        settings?: ChatSetting & Partial<TaskLoopOptions>
     ) {
         if (messages.length === 0) {
             throw new Error('messages is empty');
         }
 
-        const loop = await this.getLoop();
+        // detach taskloop option from settings and set default value
+        const {
+            maxEpochs = 50,
+            maxJsonParseRetry = 3,
+            verbose = 1
+        } = settings || {};
+
+        const loop = await this.getLoop({ maxEpochs, maxJsonParseRetry, verbose });
         const storage = await loop.createStorage(settings);
         
+        // set input message
+        // user can invoke [UserMessage("CONTENT")] to make messages quickly
+        // or use string directly
         let userMessage: string;
         if (typeof messages === 'string') {
             userMessage = messages;
@@ -316,6 +347,20 @@ export class OmAgent {
             } else {
                 throw new Error('last message content is undefined');
             }
+        }
+
+        // select correct llm config
+        // user can set llm config via omagent.setDefaultLLM()
+        // or write "defaultLLM" in mcpconfig.json to specify
+        if (this._defaultLLM) {
+            loop.setLlmConfig({
+                baseUrl: this._defaultLLM.baseURL,
+                userToken: this._defaultLLM.apiToken,
+                userModel: this._defaultLLM.model,
+            });
+        } else {
+            // throw error to user and give the suggestion
+            throw new Error('default LLM is not set, please set it via omagent.setDefaultLLM() or write "defaultLLM" in mcpconfig.json');
         }
 
         return await loop.start(storage, userMessage);

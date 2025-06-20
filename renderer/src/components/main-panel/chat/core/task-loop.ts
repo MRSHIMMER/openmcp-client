@@ -64,7 +64,7 @@ export class TaskLoop {
 
     constructor(
         private readonly taskOptions: TaskLoopOptions = {
-            maxEpochs: 20,
+            maxEpochs: 50,
             maxJsonParseRetry: 3,
             adapter: undefined,
             verbose: 0
@@ -513,7 +513,7 @@ export class TaskLoop {
 
         let jsonParseErrorRetryCount = 0;
         const {
-            maxEpochs = 20,
+            maxEpochs = 50,
             verbose = 0
         } = this.taskOptions || {};
 

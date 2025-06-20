@@ -37,6 +37,8 @@
 		"open": "^10.1.2",
         "ws": "^8.18.1",
 		"cli-table3": "^0.6.5",
-        "https-proxy-agent": "^7.0.6"
+        "https-proxy-agent": "^7.0.6",
+        "pino": "^9.6.0",
+		"pino-pretty": "^13.0.0"
     }
 }
