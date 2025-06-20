@@ -3,8 +3,7 @@ import * as fs from 'fs';
 import { WebSocket } from 'ws';
 import { EventEmitter } from 'events';
 import { routeMessage } from '../common/router.js';
-import { ConnectionType, McpOptions } from '../mcp/client.dto.js';
-import { clientMap, connectService } from '../mcp/connect.service.js';
+import { ConnectionType } from '../mcp/client.dto.js';
 
 // WebSocket 消息格式
 export interface WebSocketMessage {

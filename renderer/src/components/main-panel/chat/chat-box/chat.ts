@@ -1,5 +1,5 @@
 import type { InputSchema, ToolCallContent, ToolItem } from "@/hook/type";
-import { type Ref, ref } from "vue";
+import type { Ref } from "vue";
 
 import type { OpenAI } from 'openai';
 type ChatCompletionChunk = OpenAI.Chat.Completions.ChatCompletionChunk;
@@ -95,7 +95,7 @@ export type RichTextItem = PromptTextItem | ResourceTextItem | TextItem;
 export interface ICommonRenderMessage {
     role: 'user' | 'assistant/content';
     content: string;
-    showJson?: Ref<boolean>;
+    showJson?: any;
     extraInfo: IExtraInfo;
 }
 
@@ -104,7 +104,7 @@ export interface IToolRenderMessage {
     content: string;
     toolResults: ToolCallContent[][];
     tool_calls: ToolCall[];
-    showJson?: Ref<boolean>;
+    showJson?: any;
     extraInfo: IExtraInfo;
 }
 

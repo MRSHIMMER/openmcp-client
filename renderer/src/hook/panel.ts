@@ -61,7 +61,7 @@ export async function loadPanels(client: McpClient | Reactive<McpClient>) {
 	panelLoaded.value = true;
 }
 
-let debounceHandler: number;
+let debounceHandler: NodeJS.Timeout;
 
 export function safeSavePanels() {
 	clearTimeout(debounceHandler);

@@ -171,9 +171,6 @@ watchEffect(async () => {
                     }
                     const renderAssistantMessage = message.content.replace(/```xml[\s\S]*?```/g, '');
 
-                    console.log(toolCalls);
-
-
                     renderMessages.value.push({
                         role: 'assistant/tool_calls',
                         content: renderAssistantMessage,
