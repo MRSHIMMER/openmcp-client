@@ -419,14 +419,9 @@ export class TaskLoop {
 
     private consumeEpochs() {
         const { verbose = 0 } = this.taskOptions;
-        if (verbose > 0) {
-            console.log(
-                chalk.gray(`[${new Date().toLocaleString()}]`)
-            );
-        }
-
         if (verbose > 1) {
             console.log(
+                chalk.gray(`[${new Date().toLocaleString()}]`),
                 chalk.blue('task loop enters a new epoch')
             );
         }
@@ -435,14 +430,10 @@ export class TaskLoop {
 
     private consumeDones() {
         const { verbose = 0 } = this.taskOptions;
-        if (verbose > 0) {
-            console.log(
-                chalk.gray(`[${new Date().toLocaleString()}]`),
-            );
-        }
 
         if (verbose > 1) {
             console.log(
+                chalk.gray(`[${new Date().toLocaleString()}]`),
                 chalk.green('task loop finish a epoch')
             );
         }
