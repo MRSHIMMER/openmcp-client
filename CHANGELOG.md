@@ -1,5 +1,14 @@
 # Change Log
 
+## [main] 0.1.8
+- 增加 STDIO 下的热更新，现在用户修改 mcp 代码，openmcp 会自动完成一切相关功能的热更新，无需用户手动重启。
+- 完成 mcpconfig.json 的导出功能，导出的 配置文件 可以通过 openmcp-sdk 框架完成低代码 agent 部署；也可以直接载入 Claude Desktop 等等 MCP 客户端中，实现 MCP 的快速部署和使用。
+- 修复若干 vscode 插件端 bug
+
+## [main] 0.1.7
+- 新的构建系统
+- 修复无法在 trae & cursor 中使用的 bug
+
 ## [main] 0.1.6
 - 针对 0.1.5 无法在 Windows 启动的紧急修复。
 - 修复环境变量中添加 token 失效的问题。
