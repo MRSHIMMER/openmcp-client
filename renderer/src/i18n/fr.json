@@ -176,5 +176,11 @@
     "tool-manage": "Gestion des outils",
     "enable-all-tools": "Activer tous les outils",
     "disable-all-tools": "Désactiver tous les outils",
-    "using-tool": "Utilisation de l'outil"
+    "using-tool": "Utilisation de l'outil",
+    "copy-success": "Copié avec succès",
+    "copy-fail": "Échec de la copie",
+    "copy": "Copier",
+    "export": "Exporter",
+    "export-filename": "Nom du fichier d'exportation",
+    "how-to-use": "Comment utiliser ?"
 }

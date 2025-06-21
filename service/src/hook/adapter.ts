@@ -57,6 +57,7 @@ export class VSCodeWebViewLike {
      * @param message - 包含 command 和 args 的消息
      */
     postMessage(message: WebSocketMessage): void {
+        
         if (this.ws.readyState === WebSocket.OPEN) {
             this.ws.send(JSON.stringify(message));
         } else {

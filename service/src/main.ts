@@ -5,8 +5,7 @@ import { dirname, join } from 'path';
 import { routeMessage } from './common/router.js';
 import { VSCodeWebViewLike } from './hook/adapter.js';
 import fs from 'fs/promises'; // 使用 Promise API 替代回调
-import path from 'path';
-import axios from 'axios';
+import chalk from 'chalk';
 
 export interface VSCodeMessage {
     command: string;
@@ -101,7 +100,10 @@ wss.on('connection', (ws) => {
 
     acquireConnectionOption().then(option => {
         webview.onDidReceiveMessage(async (message) => {
-            logger.info(`收到命令: [${message.command || '未定义'}]`);
+            console.log(
+                chalk.white('receive command') + 
+                chalk.blue(` [${message.command || '未定义'}]`)
+            );
 
             const { command, data } = message;
 

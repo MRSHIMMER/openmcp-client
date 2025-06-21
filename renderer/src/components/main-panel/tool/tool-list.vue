@@ -18,7 +18,7 @@
 
             <!-- body -->
             <div class="tool-list-container-scrollbar">
-                <el-scrollbar height="500px">
+                <el-scrollbar height="fit-content">
                     <div class="tool-list-container">
                         <div class="item" :class="{ 'active': tabStorage.currentToolName === tool.name }"
                             v-for="tool of client.tools?.values()" :key="tool.name" @click="handleClick(tool)">
@@ -148,10 +148,9 @@ onMounted(async () => {
     margin-left: 10px;
     background-color: var(--main-color);
     padding: 2px 5px;
-    border-radius: .5em;
+    border-radius: .3em;
     height: fit-content;
-    font-size: 10px;
-
+    font-size: 13px;
     color: black;
 }
 

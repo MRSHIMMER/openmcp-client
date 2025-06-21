@@ -4,6 +4,8 @@ import { PostMessageble } from '../hook/adapter.js';
 import * as fs from 'fs';
 import * as path from 'path';
 import { pino } from 'pino';
+import chalk from 'chalk';
+
 
 // 保留现有 logger 配置
 const logger = pino({
@@ -59,15 +61,11 @@ export class McpServerConnectMonitor {
             debounceTime: 500,
             duplicateCheckTime: 500,
             onChange: async (curr, prev) => {
-                // 使用 info 级别记录文件修改
-                logger.info({
-                    uuid: this.uuid,
-                    size: curr.size,
-                    mtime: new Date(curr.mtime).toLocaleString()
-                }, 'File modified');
-
                 try {
                     await onchange(this.uuid, this.Options);
+
+                    console.log('send something');
+                    
                     this.sendWebviewMessage('connect/refresh', {
                         code: 200,
                         msg: {
@@ -75,7 +73,11 @@ export class McpServerConnectMonitor {
                             uuid: this.uuid,
                         }
                     });
-                    logger.info({ uuid: this.uuid }, 'Connection refresh successful');
+
+                    console.log(
+                        chalk.green('Connection refresh successfully')
+                    );
+                    
                 } catch (err) {
                     this.sendWebviewMessage('connect/refresh', {
                         code: 500,
@@ -122,4 +124,9 @@ export class McpServerConnectMonitor {
         // 发送消息到webview
         this.webview?.postMessage({ command, data });
     }
+
+    public close() {
+        this.Monitor?.close();
+    }
+
 }

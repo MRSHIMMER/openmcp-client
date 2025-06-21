@@ -176,5 +176,11 @@
     "tool-manage": "도구 관리",
     "enable-all-tools": "모든 도구 활성화",
     "disable-all-tools": "모든 도구 비활성화",
-    "using-tool": "도구 사용 중"
+    "using-tool": "도구 사용 중",
+    "copy-success": "성공적으로 복사되었습니다",
+    "copy-fail": "복사 실패",
+    "copy": "복사",
+    "export": "내보내기",
+    "export-filename": "내보내기 파일 이름",
+    "how-to-use": "사용 방법?"
 }
