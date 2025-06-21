@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as fspath from 'path';
-import { ConnectionType, McpOptions, panels, updateInstalledConnectionConfig, updateWorkspaceConnectionConfig } from '../global.js';
+import { ConnectionType, exportFile, McpOptions, panels, updateInstalledConnectionConfig, updateWorkspaceConnectionConfig } from '../global.js';
 import { routeMessage } from '../../openmcp-sdk/service/index.js';
 
 export function getWebviewContent(context: vscode.ExtensionContext, panel: vscode.WebviewPanel): string | undefined {
@@ -99,6 +99,10 @@ export function revealOpenMcpWebviewPanel(
                 } else {
                     updateWorkspaceConnectionConfig(panelKey, data);
                 }
+                break;
+
+            case 'vscode/export-file':
+                exportFile(data.filename, data.content);
                 break;
 
             case 'vscode/clipboard/writeText':

@@ -155,7 +155,7 @@ const copyCode = async () => {
 const exportCode = async () => {
     const bridge = useMessageBridge();
     bridge.postMessage({
-        command: 'export-file',
+        command: 'vscode/export-file',
         data: {
             filename: exportFileName.value,
             content: generateExportData.value
