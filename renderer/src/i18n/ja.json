@@ -176,5 +176,11 @@
     "tool-manage": "ツール管理",
     "enable-all-tools": "すべてのツールを有効にする",
     "disable-all-tools": "すべてのツールを無効にする",
-    "using-tool": "ツール使用中"
+    "using-tool": "ツール使用中",
+    "copy-success": "コピーしました",
+    "copy-fail": "コピーに失敗しました",
+    "copy": "コピー",
+    "export": "エクスポート",
+    "export-filename": "エクスポートファイル名",
+    "how-to-use": "使い方は？"
 }

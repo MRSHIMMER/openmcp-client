@@ -176,5 +176,11 @@
     "tool-manage": "工具管理",
     "enable-all-tools": "激活所有工具",
     "disable-all-tools": "禁用所有工具",
-    "using-tool": "正在使用工具"
+    "using-tool": "正在使用工具",
+    "copy-success": "复制成功",
+    "copy-fail": "复制失败",
+    "copy": "复制",
+    "export": "导出",
+    "export-filename": "导出文件名",
+    "how-to-use": "如何使用?"
 }

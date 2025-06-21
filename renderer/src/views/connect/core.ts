@@ -506,7 +506,11 @@ class McpClientAdapter {
 
     constructor(
         public platform: string
-    ) {}
+    ) {
+        if (platform !== 'nodejs') {
+            this.addConnectRefreshListener();
+        }
+    }
 
     /**
      * @description 获取连接参数签名
@@ -564,11 +568,14 @@ class McpClientAdapter {
      * @description register HMR
      */
     public addConnectRefreshListener() {
-        // 创建对于 connect/refresh 的监听
+        // 创建对于 connect/refresh 的监听        
         if (!this.connectrefreshListener) {
             const bridge = useMessageBridge();
-            this.connectrefreshListener = bridge.addCommandListener('connect/refresh', async (message) => {
+            this.connectrefreshListener = bridge.addCommandListener('connect/refresh', async (message) => {                
                 const { code, msg } = message;
+
+                console.log('refresh');
+                
 
                 if (code === 200) {
                     // 查找目标客户端
@@ -576,6 +583,8 @@ class McpClientAdapter {
 
                     if (clientIndex > -1) {
                         // 刷新该客户端的所有资源
+                        console.log('clientIndex', clientIndex);
+                        
                         await this.clients[clientIndex].refreshAllResources();
                         this.refreshSignal.value++;
                     } else {

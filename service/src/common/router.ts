@@ -22,7 +22,6 @@ export async function routeMessage(command: string, data: any, webview: PostMess
         const { handler, option = {} } = handlerStore;
 
         try {
-            // TODO: select client based on something
             const res = await handler(data, webview);
             
             // res.code = -1 代表当前请求不需要返回发送

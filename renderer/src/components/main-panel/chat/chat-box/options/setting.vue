@@ -9,6 +9,7 @@
 		<Temperature />
 		<ContextLength />
 		<XmlWrapper />
+		<Export />
 	</div>
 </template>
 
@@ -27,6 +28,7 @@ import ParallelToolCalls from './parallel-tool-calls.vue';
 import Temperature from './temperature.vue';
 import ContextLength from './context-length.vue';
 import XmlWrapper from './xml-wrapper.vue';
+import Export from './export.vue';
 
 const props = defineProps({
 	modelValue: {

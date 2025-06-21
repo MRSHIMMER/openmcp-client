@@ -47,7 +47,7 @@ import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 
-const version = '0.1.7';
+const version = '0.1.8';
 const author = 'LSTM-Kirigaya (锦恢)';
 
 defineComponent({ name: 'about' });

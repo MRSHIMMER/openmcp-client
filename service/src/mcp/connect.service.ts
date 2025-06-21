@@ -9,7 +9,7 @@ import path from 'node:path';
 import fs from 'node:fs';
 import * as os from 'os';
 import { PostMessageble } from '../hook/adapter.js';
-import Table from 'cli-table3';
+import chalk from 'chalk';
 
 export const clientMap: Map<string, RequestClientType> = new Map();
 export function getClient(clientId?: string): RequestClientType | undefined {
@@ -21,7 +21,10 @@ export async function updateClientMap(uuid: string, options: McpOptions): Promis
 		const client = await connect(options);
 		clientMap.set(uuid, client);
 		const tools = await client.listTools();
-		console.log('[updateClientMap] tools:', tools);
+		console.log(
+			chalk.white('update client tools'),
+			chalk.blue(tools.tools.map(tool => tool.name).join(','))
+		);
 		return { res: true };
 	} catch (error) {
 		console.error('[updateClientMap] error:', error);
@@ -267,25 +270,6 @@ export async function connectService(
 	webview?: PostMessageble
 ): Promise<RestfulResponse> {
 	try {		
-		// 使用cli-table3创建美观的表格
-		// const table = new Table({
-		// 	head: ['Property', 'Value'],
-		// 	colWidths: [20, 60],
-		// 	style: {
-		// 		head: ['green'],
-		// 		border: ['grey']
-		// 	}
-		// });
-		
-		// table.push(
-		// 	['Connection Type', option.connectionType],
-		// 	['Command', option.command || 'N/A'],
-		// 	['Arguments', option.args?.join(' ') || 'N/A'],
-		// 	['Working Directory', option.cwd || 'N/A'],
-		// 	['URL', option.url || 'N/A']
-		// );
-		
-		// console.log(table.toString());
 
 		// 预处理字符串
 		await preprocessCommand(option, webview);
@@ -300,6 +284,11 @@ export async function connectService(
 		// 	clientMap.set(uuid, client);
 		// }
 		// const client = clientMap.get(uuid)!;
+
+		{
+			clientMap.get(uuid)?.disconnect();
+			clientMonitorMap.get(uuid)?.close();
+		}
 
 		const client = await connect(option);
 		clientMap.set(uuid, client);

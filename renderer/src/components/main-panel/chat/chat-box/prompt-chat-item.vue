@@ -22,9 +22,6 @@ const props = defineProps({
 <style>
 .chat-prompt-item {
     max-width: 80px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
     display: inline-flex;
     border-radius: .3em;
     align-items: center;
@@ -34,9 +31,17 @@ const props = defineProps({
     font-size: 12px;
     margin-left: 3px;
     margin-right: 3px;
+    user-select: none;
 }
 
 .chat-prompt-item .iconfont {
     margin-right: 4px;
+}
+
+.chat-prompt-item .real-text {
+    max-width: 60px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 </style>

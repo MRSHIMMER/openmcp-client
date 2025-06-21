@@ -377,3 +377,18 @@ export async function getFirstValidPathFromCommand(command: string, cwd: string)
 
     return undefined;
 }
+
+
+export async function exportFile(filename: string, content: any) {
+    // 使用 vscode 的 api，创建文件导出窗口，询问用户
+    const uri = await vscode.window.showSaveDialog({
+        defaultUri: vscode.Uri.file(filename),
+        filters: {
+            'JSON': ['json']
+        }
+    });
+
+    if (uri) {
+        fs.writeFileSync(uri.fsPath, content, 'utf-8');
+    }
+}

@@ -176,5 +176,11 @@
     "tool-manage": "إدارة الأدوات",
     "enable-all-tools": "تفعيل جميع الأدوات",
     "disable-all-tools": "تعطيل جميع الأدوات",
-    "using-tool": "جاري استخدام الأداة"
+    "using-tool": "جاري استخدام الأداة",
+    "copy-success": "تم النسخ بنجاح",
+    "copy-fail": "فشل النسخ",
+    "copy": "نسخ",
+    "export": "تصدير",
+    "export-filename": "اسم ملف التصدير",
+    "how-to-use": "كيفية الاستخدام؟"
 }
