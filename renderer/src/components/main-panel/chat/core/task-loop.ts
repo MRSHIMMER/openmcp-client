@@ -767,7 +767,7 @@ export class TaskLoop {
         }
     }
 
-    public async createStorage(settings?: ChatSetting): Promise<ChatStorage> {
+    public async createStorage(settings?: Partial<ChatSetting>): Promise<ChatStorage> {
         let {
             enableXmlWrapper = false,
             systemPrompt = '',

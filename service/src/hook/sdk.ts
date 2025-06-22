@@ -83,6 +83,7 @@ interface StdioMCPConfig {
     env?: {
         [key: string]: string;
     };
+    cwd?: string,
     description?: string;
     prompts?: string[];
     resources?: string[];
@@ -207,6 +208,7 @@ export class OmAgent {
 
                 this._adapter.addMcp({
                     commandString,
+                    cwd: mcpConfig.cwd,
                     connectionType: 'STDIO',
                     env: mcpConfig.env,
                     description: mcpConfig.description,
@@ -230,7 +232,7 @@ export class OmAgent {
         this._adapter.addMcp(connectionArgs);
     }
 
-    private async getLoop(loopOption?: TaskLoopOptions) {
+    public async getLoop(loopOption?: TaskLoopOptions) {
 
         if (this._loop) {
             if (loopOption) {
@@ -273,7 +275,7 @@ export class OmAgent {
      * @returns 
      */
     public async ainvoke(
-        { messages, settings }: { messages: ChatMessage[] | string; settings?: ChatSetting & Partial<TaskLoopOptions>; }
+        { messages, settings }: { messages: ChatMessage[] | string; settings?: Partial<ChatSetting & TaskLoopOptions>; }
     ) {
         if (messages.length === 0) {
             throw new Error('messages is empty');
@@ -296,11 +298,20 @@ export class OmAgent {
         if (typeof messages === 'string') {
             userMessage = messages;
         } else {
-            const lastMessageContent = messages.at(-1)?.content;
-            if (typeof lastMessageContent === 'string') {
-                userMessage = lastMessageContent;
+            // 获取messages数组
+            const messagesArray = Array.isArray(messages) ? messages : [messages];
+            
+            // 将最后一个消息赋值给lastMessage
+            const lastMessage = messagesArray.at(-1);
+            if (lastMessage && typeof lastMessage.content === 'string') {
+                userMessage = lastMessage.content;
             } else {
                 throw new Error('last message content is undefined');
+            }
+            
+            // 将剩余消息存入storage.messages
+            if (messagesArray.length > 1) {
+                storage.messages = messagesArray.slice(0, -1);
             }
         }
 

@@ -7,7 +7,7 @@
 
     </el-tooltip>
 
-    <el-dialog v-model="showDialog" width="fit-content">
+    <el-dialog v-model="showDialog" width="800px">
 
         <template #header>
             <div>
@@ -81,6 +81,7 @@ const generateExportData = computed(() => {
             mcpServers[client.name] = {
                 command: option.command,
                 args: option.args,
+                cwd: option.cwd,
                 description: "",
             }
         } else if (type === 'SSE') {

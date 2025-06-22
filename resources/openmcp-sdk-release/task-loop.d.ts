@@ -300,7 +300,7 @@ export class TaskLoop {
     /**
      * @description Create single conversation context
      */
-    createStorage(settings?: ChatSetting): Promise<ChatStorage>;
+    createStorage(settings?: Partial<ChatSetting>): Promise<ChatStorage>;
 
     /**
      * @description Get prompt template from mcp server

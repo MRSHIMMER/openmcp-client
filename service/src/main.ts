@@ -13,6 +13,7 @@ export interface VSCodeMessage {
     callbackId?: string;
 }
 
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // 统一路径变量
 const devHome = join(__dirname, '..', '..');
