@@ -1,6 +1,6 @@
 {
     "name": "openmcp-sdk",
-    "version": "0.0.8",
+    "version": "0.0.9",
     "type": "module",
     "description": "openmcp-sdk",
     "scripts": {
