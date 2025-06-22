@@ -8,9 +8,13 @@ build({
   format: 'cjs',
   outfile: 'dist/extension.cjs.js',
   sourcemap: true,
-  external: ['vscode'], // 只排除 vscode，其他依赖全部打包进来
-  target: ['node18'],   // 你可以根据实际 node 版本调整
+  external: ['vscode'], 
+  target: ['node22'],   
   loader: {
     '.json': 'json'
-  }
+  },
+  define: { 'import.meta.url': '_importMetaUrl' },
+  banner: {
+    js: "const _importMetaUrl=require('url').pathToFileURL(__filename)",
+  },
 }).catch(() => process.exit(1));

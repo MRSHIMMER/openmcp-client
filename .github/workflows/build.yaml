@@ -5,6 +5,8 @@ on:
     branches:
       - main
       - dev
+      - hotfix
+      - hotfix/*
   release:
     types:
       - published
@@ -24,13 +26,13 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: '22.x'
-        cache: 'npm'
+        cache: 'yarn'
 
     - name: Install dependencies
-      run: npm ci
+      run: yarn install --frozen-lockfile
 
     - name: Build all
-      run: npm run build
+      run: yarn build
 
     - name: Package VSIX
       run: npx vsce package --out dist/openmcp.vsix
