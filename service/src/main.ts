@@ -13,9 +13,6 @@ export interface VSCodeMessage {
     callbackId?: string;
 }
 
-// 适配 ESM 的 __dirname
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 // 统一路径变量
 const devHome = join(__dirname, '..', '..');

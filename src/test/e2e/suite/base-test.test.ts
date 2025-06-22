@@ -2,9 +2,11 @@ import * as assert from 'assert';
 import * as vscode from 'vscode';
 
 suite('测试基础插件激活和命令注册', () => {
-	vscode.window.showInformationMessage('Start base tests.');
-
-	test('Sample test', () => {
+	vscode.window.showInformationMessage('开始测试基础插件激活和命令注册');
+	setup(async () => {
+		await vscode.commands.executeCommand('workbench.view.extension.openmcp-sidebar');
+	});
+	test('测试的测试', () => {
 		assert.strictEqual([1, 2, 3].indexOf(5), -1);
 		assert.strictEqual([1, 2, 3].indexOf(0), -1);
 	});
@@ -25,9 +27,5 @@ suite('测试基础插件激活和命令注册', () => {
 		assert.ok(commands.includes('openmcp.showOpenMCP'), '命令未注册');
 	});
 
-	test('等待 10 秒以便观察窗口', async function () {
-		this.timeout(15000); 
-		await new Promise(resolve => setTimeout(resolve, 10000));
-	});
 	// 
 });

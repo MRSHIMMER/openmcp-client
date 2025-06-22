@@ -9,9 +9,6 @@ import path from 'path';
 import { setRunningCWD } from './hook/setting.js';
 import { exit } from 'process';
 
-// 适配 ESM 的 __dirname
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 export interface VSCodeMessage {
     command: string;
