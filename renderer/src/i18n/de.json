@@ -182,5 +182,6 @@
     "copy": "Kopieren",
     "export": "Exportieren",
     "export-filename": "Exportdateiname",
-    "how-to-use": "Wie benutzt man?"
+    "how-to-use": "Wie benutzt man?",
+    "is-required": "ist ein Pflichtfeld"
 }

@@ -318,6 +318,9 @@ function updateToolCallResultItem(value: any, toolIndex: number, index: number) 
 .tool-call-header {
     display: flex;
     align-items: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 .tool-call-header.result {

@@ -182,5 +182,6 @@
     "copy": "복사",
     "export": "내보내기",
     "export-filename": "내보내기 파일 이름",
-    "how-to-use": "사용 방법?"
+    "how-to-use": "사용 방법?",
+    "is-required": "는 필수 필드입니다"
 }

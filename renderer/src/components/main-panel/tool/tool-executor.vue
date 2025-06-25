@@ -5,42 +5,24 @@
     <div class="tool-executor-container">
         <el-form :model="tabStorage.formData" :rules="formRules" ref="formRef" label-position="top">
             <template v-if="currentTool?.inputSchema?.properties">
-                <el-form-item 
-                    v-for="[name, property] in Object.entries(currentTool.inputSchema.properties)" 
-                    :key="name"
-                    :label="property.title || name" 
-                    :prop="name"
-                    :required="currentTool.inputSchema.required?.includes(name)"
-                >
-                    <el-input 
-                        v-if="property.type === 'string'" 
-                        v-model="tabStorage.formData[name]"
-                        type="text"
+                <el-form-item v-for="[name, property] in Object.entries(currentTool.inputSchema.properties)" :key="name"
+                    :label="property.title || name" :prop="name"
+                    :required="currentTool.inputSchema.required?.includes(name)">
+                    <el-input v-if="property.type === 'string'" v-model="tabStorage.formData[name]" type="text"
                         :placeholder="property.description || t('enter') + ' ' + (property.title || name)"
-                        @keydown.enter.prevent="handleExecute"
-                    />
+                        @keydown.enter.prevent="handleExecute" />
 
-                    <el-input-number 
-                        v-else-if="property.type === 'number' || property.type === 'integer'" 
-                        v-model="tabStorage.formData[name]"
-                        controls-position="right"
+                    <el-input-number v-else-if="property.type === 'number' || property.type === 'integer'"
+                        v-model="tabStorage.formData[name]" controls-position="right"
                         :placeholder="property.description || t('enter') + ' ' + (property.title || name)"
-                        @keydown.enter.prevent="handleExecute" 
-                    />
+                        @keydown.enter.prevent="handleExecute" />
 
-                    <el-switch 
-                        v-else-if="property.type === 'boolean'"
-                        active-text="true"
-                        inactive-text="false"
-                        v-model="tabStorage.formData[name]"
-                    />
+                    <el-switch v-else-if="property.type === 'boolean'" active-text="true" inactive-text="false"
+                        v-model="tabStorage.formData[name]" />
 
-                    <k-input-object
-                        v-else-if="property.type === 'object'"
-                        v-model="tabStorage.formData[name]"
+                    <k-input-object v-else-if="property.type === 'object'" v-model="tabStorage.formData[name]"
                         :schema="property"
-                        :placeholder="property.description || t('enter') + ' ' + (property.title || name)"
-                    />
+                        :placeholder="property.description || t('enter') + ' ' + (property.title || name)" />
                 </el-form-item>
             </template>
 
@@ -50,6 +32,9 @@
                 </el-button>
                 <el-button @click="resetForm">
                     {{ t('reset') }}
+                </el-button>
+                <el-button @click="generateMockData">
+                    {{ 'mook' }}
                 </el-button>
             </el-form-item>
         </el-form>
@@ -66,6 +51,8 @@ import { getDefaultValue, normaliseJavascriptType } from '@/hook/mcp';
 
 import KInputObject from '@/components/k-input-object/index.vue';
 import { mcpClientAdapter } from '@/views/connect/core';
+import { JSONSchemaFaker } from 'json-schema-faker';
+import { faker } from '@faker-js/faker';
 
 defineComponent({ name: 'tool-executor' });
 
@@ -91,9 +78,9 @@ const loading = ref(false);
 const currentTool = computed(() => {
     for (const client of mcpClientAdapter.clients) {
         const tool = client.tools?.get(tabStorage.currentToolName);
-        if (tool) {            
+        if (tool) {
             console.log(tool);
-            
+
             return tool;
         }
     }
@@ -102,9 +89,9 @@ const currentTool = computed(() => {
 
 const formRules = computed<FormRules>(() => {
     const rules: FormRules = {};
-    
+
     if (!currentTool.value?.inputSchema?.properties) return rules;
-    
+
     Object.entries(currentTool.value.inputSchema.properties).forEach(([name, property]) => {
         if (currentTool.value?.inputSchema?.required?.includes(name)) {
             rules[name] = [
@@ -128,14 +115,14 @@ const initFormData = () => {
 
     if (!currentTool.value?.inputSchema?.properties) return;
 
-    const newSchemaDataForm: Record<string, number | boolean | string | object> = {};    
-    
+    const newSchemaDataForm: Record<string, number | boolean | string | object> = {};
+
     Object.entries(currentTool.value.inputSchema.properties).forEach(([name, property]) => {
         newSchemaDataForm[name] = getDefaultValue(property);
-        const originType = normaliseJavascriptType(typeof tabStorage.formData[name]);        
+        const originType = normaliseJavascriptType(typeof tabStorage.formData[name]);
 
         if (tabStorage.formData[name] !== undefined && originType === property.type) {
-            newSchemaDataForm[name] = tabStorage.formData[name]; 
+            newSchemaDataForm[name] = tabStorage.formData[name];
         }
     });
 
@@ -144,6 +131,26 @@ const initFormData = () => {
 
 const resetForm = () => {
     formRef.value?.resetFields();
+};
+
+const generateMockData = async () => {
+    if (!currentTool.value?.inputSchema) return;
+
+    // 注册faker到json-schema-faker
+    JSONSchemaFaker.option({
+        useDefaultValue: true,
+        alwaysFakeOptionals: true
+    });
+
+    // 生成mock数据
+    const mockData = await JSONSchemaFaker.resolve(currentTool.value.inputSchema as any);
+
+    console.log(mockData);
+    
+    // 更新表单数据
+    // Object.keys(mockData).forEach(key => {
+    //     tabStorage.formData[key] = mockData[key];
+    // });
 };
 
 async function handleExecute() {
@@ -184,5 +191,4 @@ watch(() => tabStorage.currentToolName, () => {
 .tool-executor-container .el-switch__core {
     border: 1px solid var(--main-color) !important;
 }
-
 </style>

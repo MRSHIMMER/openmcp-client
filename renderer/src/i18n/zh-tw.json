@@ -182,5 +182,6 @@
     "copy": "複製",
     "export": "導出",
     "export-filename": "導出文件名",
-    "how-to-use": "如何使用?"
+    "how-to-use": "如何使用?",
+    "is-required": "是必填欄位"
 }

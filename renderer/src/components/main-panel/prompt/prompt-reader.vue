@@ -86,7 +86,7 @@ const formRules = computed<FormRules>(() => {
     currentPrompt.value?.arguments.forEach(param => {
         rules[param.name] = [
             {
-                message: `${param.name} 是必填字段`,
+                message: `${param.name} ` + t('is-required'),
                 trigger: 'blur'
             }
         ]
