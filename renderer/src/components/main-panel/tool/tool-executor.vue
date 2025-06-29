@@ -52,7 +52,6 @@ import { getDefaultValue, normaliseJavascriptType } from '@/hook/mcp';
 import KInputObject from '@/components/k-input-object/index.vue';
 import { mcpClientAdapter } from '@/views/connect/core';
 import { JSONSchemaFaker } from 'json-schema-faker';
-import { faker } from '@faker-js/faker';
 
 defineComponent({ name: 'tool-executor' });
 
@@ -149,6 +148,7 @@ const generateMockData = async () => {
     // 将 mock 数据绑定到表单
     Object.keys(mockData).forEach(key => {
         tabStorage.formData[key] = mockData[key];
+        console.log(mockData[key]);
     });
 
     // 如果需要刷新表单校验，可以加上
