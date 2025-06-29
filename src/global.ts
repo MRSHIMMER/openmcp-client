@@ -223,24 +223,13 @@ export function saveWorkspaceConnectionConfig(workspace: string) {
 
 
 export function updateWorkspaceConnectionConfig(
-    absPath: string,
+    name: string,
     data: McpOptions[]
 ) {
-    const connectionItem = getWorkspaceConnectionConfigItemByPath(absPath);
+    const connectionItem = getWorkspaceConnectionConfigItemByName(name);
     const workspaceConnectionConfig = getWorkspaceConnectionConfig();
 
-    // 如果存在，删除老的 connectionItem
-    if (connectionItem) {
-        const index = workspaceConnectionConfig.items.indexOf(connectionItem);
-        if (index !== -1) {
-            workspaceConnectionConfig.items.splice(index, 1);
-        }
-    }
-
-    // 对于第一个 item 添加 filePath
-    // 对路径进行标准化
     data.forEach(item => {
-        item.filePath = absPath.replace(/\\/g, '/');
         item.cwd = item.cwd?.replace(/\\/g, '/');
         item.name = item.serverInfo?.name;
         item.version = item.serverInfo?.version;
@@ -249,8 +238,25 @@ export function updateWorkspaceConnectionConfig(
 
     console.log('get connectionItem: ', data);
 
-    // 插入到第一个
-    workspaceConnectionConfig.items.unshift(data);
+    // 如果存在，替换老的 connectionItem
+    if (connectionItem) {
+        console.log("存在的 connection")
+        const index = workspaceConnectionConfig.items.indexOf(connectionItem);
+        if (index !== -1) {
+            // 替换现有项目而不是删除后插入到开头
+            console.log("替换现有项目而不是删除后插入到开头")
+            workspaceConnectionConfig.items[index] = data;
+        } else {
+            // 如果索引查找失败，则插入到第一个
+            console.log("没有找到现有项目，插入到第一个")
+            workspaceConnectionConfig.items.unshift(data);
+        }
+    } else {
+        // 没有找到现有项目，插入到第一个
+        console.log("没有找到现有项目，插入到第一个")
+        workspaceConnectionConfig.items.unshift(data);
+    }
+    
     const workspacePath = getWorkspacePath();
     saveWorkspaceConnectionConfig(workspacePath);
     vscode.commands.executeCommand('openmcp.sidebar.workspace-connection.refresh');
@@ -258,24 +264,15 @@ export function updateWorkspaceConnectionConfig(
 }
 
 export function updateInstalledConnectionConfig(
-    absPath: string,
+    name: string,
     data: McpOptions[]
 ) {
-    const connectionItem = getInstalledConnectionConfigItemByPath(absPath);
+    const connectionItem = getInstalledConnectionConfigItemByName(name);
     const installedConnectionConfig = getConnectionConfig();
-
-    // 如果存在，删除老的 connectionItem
-    if (connectionItem) {
-        const index = installedConnectionConfig.items.indexOf(connectionItem);
-        if (index !== -1) {
-            installedConnectionConfig.items.splice(index, 1);
-        }
-    }
 
     // 对于第一个 item 添加 filePath
     // 对路径进行标准化
     data.forEach(item => {
-        item.filePath = absPath.replace(/\\/g, '/');
         item.cwd = item.cwd?.replace(/\\/g, '/');
         item.name = item.serverInfo?.name;
         item.version = item.serverInfo?.version;
@@ -284,8 +281,21 @@ export function updateInstalledConnectionConfig(
 
     console.log('get connectionItem: ', data);
 
-    // 插入到第一个
-    installedConnectionConfig.items.unshift(data);
+    // 如果存在，替换老的 connectionItem
+    if (connectionItem) {
+        const index = installedConnectionConfig.items.indexOf(connectionItem);
+        if (index !== -1) {
+            // 替换现有项目而不是删除后插入到开头
+            installedConnectionConfig.items[index] = data;
+        } else {
+            // 如果索引查找失败，则插入到第一个
+            installedConnectionConfig.items.unshift(data);
+        }
+    } else {
+        // 没有找到现有项目，插入到第一个
+        installedConnectionConfig.items.unshift(data);
+    }
+    
     saveConnectionConfig();
     vscode.commands.executeCommand('openmcp.sidebar.installed-connection.refresh');
 }
@@ -329,6 +339,43 @@ export function getWorkspaceConnectionConfigItemByPath(absPath: string) {
 
     return undefined;
 }
+
+/**
+ * @description 根据输入的名称，获取该文件的 mcp 连接签名
+ * @param absPath 
+ */
+export function getWorkspaceConnectionConfigItemByName(name: string) {
+    const workspacePath = getWorkspacePath();
+    const workspaceConnectionConfig = getWorkspaceConnectionConfig();
+
+    for (let item of workspaceConnectionConfig.items) {
+        const nItem = Array.isArray(item) ? item[0] : item;
+        if (nItem.name === name) {
+            return item;
+        }
+    }
+
+    return undefined;
+}
+
+/**
+ * @description 根据输入的名称，获取该文件的 mcp 连接签名
+ * @param absPath 
+ */
+export function getInstalledConnectionConfigItemByName(name: string) {
+    const installedConnectionConfig = getConnectionConfig();
+
+    for (let item of installedConnectionConfig.items) {
+        const nItem = Array.isArray(item) ? item[0] : item;
+
+        if (nItem.name) {
+            return item;
+        }
+    }
+
+    return undefined;
+}
+
 
 /**
  * @description 根据输入的文件路径，获取该文件的 mcp 连接签名
