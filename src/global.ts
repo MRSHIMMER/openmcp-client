@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import * as os from 'os';
 import * as fspath from 'path';
 import * as fs from 'fs';
+import { t } from './i18n';
 
 export type FsPath = string;
 export const panels = new Map<FsPath, vscode.WebviewPanel>();
@@ -96,7 +97,7 @@ export function getConnectionConfig() {
 export function getWorkspaceConnectionConfigPath() {
     const workspace = getWorkspacePath();
     if (!workspace) {
-        throw new Error('No workspace found. Please open a folder in VSCode first.');
+       return null; // 如果没有工作区，则返回 null
     }
     const configDir = fspath.join(workspace, '.openmcp');
      if (!fs.existsSync(configDir)) {
@@ -110,14 +111,14 @@ export function getWorkspaceConnectionConfigPath() {
  * @description 获取工作区的连接信息，工作区的连接文件的路径都是相对路径，以 {workspace} 开头
  * @param workspace 
  */
-export function getWorkspaceConnectionConfig() {
+export function getWorkspaceConnectionConfig():IConnectionConfig| null {
     if (_workspaceConnectionConfig) {
         return _workspaceConnectionConfig;
     }
 
     const workspace = getWorkspacePath();
     if (!workspace) {
-        throw new Error('No workspace found. Please open a folder in VSCode first.');
+       return null; // 如果没有工作区，则返回 null
     }
     const configDir = fspath.join(workspace, '.openmcp');
     const connectionConfig = fspath.join(configDir, CONNECTION_CONFIG_NAME);
@@ -228,6 +229,10 @@ export function updateWorkspaceConnectionConfig(
 ) {
     const connectionItem = getWorkspaceConnectionConfigItemByName(name);
     const workspaceConnectionConfig = getWorkspaceConnectionConfig();
+    if (!workspaceConnectionConfig) {
+        console.error('没有工作区连接配置文件，请先创建一个工作区连接');
+        return;
+    }
 
     data.forEach(item => {
         item.cwd = item.cwd?.replace(/\\/g, '/');
@@ -326,6 +331,10 @@ export function getWorkspacePath() {
 export function getWorkspaceConnectionConfigItemByPath(absPath: string) {
     const workspacePath = getWorkspacePath();
     const workspaceConnectionConfig = getWorkspaceConnectionConfig();
+    if (!workspaceConnectionConfig) {
+        return null; // 如果没有工作区连接配置文件，则返回 null
+    }
+
 
     const normaliseAbsPath = absPath.replace(/\\/g, '/');
     for (let item of workspaceConnectionConfig.items) {
@@ -345,9 +354,10 @@ export function getWorkspaceConnectionConfigItemByPath(absPath: string) {
  * @param absPath 
  */
 export function getWorkspaceConnectionConfigItemByName(name: string) {
-    const workspacePath = getWorkspacePath();
     const workspaceConnectionConfig = getWorkspaceConnectionConfig();
-
+    if (!workspaceConnectionConfig) {
+        return null; // 如果没有工作区连接配置文件，则返回 null
+    }
     for (let item of workspaceConnectionConfig.items) {
         const nItem = Array.isArray(item) ? item[0] : item;
         if (nItem.name === name) {

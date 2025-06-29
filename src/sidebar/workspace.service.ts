@@ -22,6 +22,10 @@ export async function deleteUserConnection(item: McpOptions[] | McpOptions) {
     }
 
     const workspaceConnectionConfig = getWorkspaceConnectionConfig();
+    if (!workspaceConnectionConfig) {
+        vscode.window.showErrorMessage(t('error.notOpenWorkspace'));
+        return; // 没有打开工作区
+    }
 
     // 从配置中移除该连接项
 
