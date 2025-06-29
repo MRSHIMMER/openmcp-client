@@ -1,8 +1,8 @@
 import { getFirstValidPathFromCommand, getWorkspaceConnectionConfig, getWorkspacePath, McpOptions, panels, saveWorkspaceConnectionConfig } from "../global.js";
 import * as vscode from 'vscode';
 import { t } from "../i18n/index.js";
-import { exec } from 'child_process';
 import { promisify } from 'util';
+import { spawn } from 'node:child_process';
 
 export async function deleteUserConnection(item: McpOptions[] | McpOptions) {
     // 弹出确认对话框
@@ -46,18 +46,6 @@ export async function deleteUserConnection(item: McpOptions[] | McpOptions) {
     }
 }
 
-export async function validateAndGetCommandPath(command: string, cwd?: string): Promise<string> {
-
-    const execAsync = promisify(exec);
-
-    try {
-        const { stdout } = await execAsync(`which ${command.split(' ')[0]}`, { cwd });
-        return stdout.trim();
-    } catch (error) {
-        throw new Error(`Cannot find command: ${command.split(' ')[0]}`);
-    }
-}
-
 export async function acquireUserCustomConnection(): Promise<McpOptions[]> {
     // 让用户选择连接类型
     const connectionType = await vscode.window.showQuickPick(['STDIO', 'SSE', 'STREAMABLE_HTTP'], {
@@ -87,14 +75,6 @@ export async function acquireUserCustomConnection(): Promise<McpOptions[]> {
             placeHolder: t('please-enter-cwd-placeholder')
         });
 
-        // 校验 command + cwd 是否有效
-        try {
-            const commandPath = await validateAndGetCommandPath(commandString, cwd);
-            console.log('Command Path:', commandPath);
-        } catch (error) {
-            vscode.window.showErrorMessage(`Invalid command: ${error}`);
-            return [];
-        }
 
         const commands = commandString.split(' ');
         const command = commands[0];

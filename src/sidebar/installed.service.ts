@@ -44,20 +44,6 @@ export async function deleteInstalledConnection(item: McpOptions[] | McpOptions)
     }
 }
 
-export async function validateAndGetCommandPath(commandString: string, cwd?: string): Promise<string> {
-    try {
-        const commands = commandString.split(' ');
-        const command = commands[0];
-        const args = commands.slice(1);
-        const process = spawn(command, args || [], { shell: true, cwd });
-        process.disconnect();
-
-        return '';
-    } catch (error) {
-        console.log(error);
-        throw new Error(`Cannot find command: ${commandString.split(' ')[0]}`);
-    }
-}
 
 export async function acquireInstalledConnection(): Promise<McpOptions[]> {
     // 让用户选择连接类型
@@ -88,14 +74,6 @@ export async function acquireInstalledConnection(): Promise<McpOptions[]> {
             placeHolder: t('please-enter-cwd-placeholder')
         });
 
-        // 校验 command + cwd 是否有效
-        try {
-            const commandPath = await validateAndGetCommandPath(commandString, cwd);
-            console.log('Command Path:', commandPath);
-        } catch (error) {
-            vscode.window.showErrorMessage(`Invalid command: ${error}`);
-            return [];
-        }
 
         const commands = commandString.split(' ');
         const command = commands[0];
