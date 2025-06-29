@@ -143,14 +143,16 @@ const generateMockData = async () => {
     });
 
     // 生成mock数据
-    const mockData = await JSONSchemaFaker.resolve(currentTool.value.inputSchema as any);
+    // TODO: as any ?
+    const mockData = await JSONSchemaFaker.resolve(currentTool.value.inputSchema as any) as any;
 
-    console.log(mockData);
-    
-    // 更新表单数据
-    // Object.keys(mockData).forEach(key => {
-    //     tabStorage.formData[key] = mockData[key];
-    // });
+    // 将 mock 数据绑定到表单
+    Object.keys(mockData).forEach(key => {
+        tabStorage.formData[key] = mockData[key];
+    });
+
+    // 如果需要刷新表单校验，可以加上
+    formRef.value?.clearValidate?.();
 };
 
 async function handleExecute() {
