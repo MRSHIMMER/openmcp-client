@@ -33,9 +33,36 @@
                 <el-button @click="resetForm">
                     {{ t('reset') }}
                 </el-button>
-                <el-button @click="generateMockData">
+                <el-button @click="generateMockData" :loading="mockLoading"
+                    :disabled="loading || aiMockLoading || mockLoading">
                     {{ 'mook' }}
                 </el-button>
+
+
+                <el-popover placement="top" width="350" trigger="click" v-model:visible="aiPromptVisible">
+                    <template #reference>
+                        <el-button :loading="aiMockLoading" :disabled="loading || aiMockLoading || mockLoading">
+                            {{ 'ai-mook' }}
+                        </el-button>
+                    </template>
+                    <div style="margin-bottom: 8px; font-weight: bold;">
+                        {{ t('edit-ai-mook-prompt') }}
+                    </div>
+                    <el-input type="textarea" v-model="aiMookPrompt" :rows="2" style="margin-bottom: 8px;" />
+                    <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                        <el-switch
+                            v-model="enableXmlWrapper"
+                            style="margin-right: 8px;"
+                        />
+                        <span style="opacity: 0.7;">XML</span>
+                    </div>
+                    <div style="text-align: right;">
+                        <el-button size="small" @click="aiPromptVisible = false">{{ t('cancel') }}</el-button>
+                        <el-button size="small" type="primary" :loading="aiMockLoading" @click="onAIMookConfirm">
+                            {{ t('confirm') }}
+                        </el-button>
+                    </div>
+                </el-popover>
             </el-form-item>
         </el-form>
     </div>
@@ -44,7 +71,7 @@
 <script setup lang="ts">
 import { defineComponent, defineProps, watch, ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import type { FormInstance, FormRules } from 'element-plus';
+import { ElMessage, type FormInstance, type FormRules } from 'element-plus';
 import { tabs } from '../panel';
 import type { ToolStorage } from './tools';
 import { getDefaultValue, normaliseJavascriptType } from '@/hook/mcp';
@@ -54,6 +81,10 @@ import { mcpClientAdapter } from '@/views/connect/core';
 import { JSONSchemaFaker } from 'json-schema-faker';
 
 defineComponent({ name: 'tool-executor' });
+const mockLoading = ref(false);
+const aiMockLoading = ref(false);
+const aiPromptVisible = ref(false);
+const enableXmlWrapper = ref(false);
 
 const { t } = useI18n();
 
@@ -85,6 +116,7 @@ const currentTool = computed(() => {
     }
 });
 
+const aiMookPrompt = ref(`please call the tool ${currentTool.value?.name || ''} to make some test`);
 
 const formRules = computed<FormRules>(() => {
     const rules: FormRules = {};
@@ -132,27 +164,89 @@ const resetForm = () => {
     formRef.value?.resetFields();
 };
 
+import { TaskLoop } from '@/components/main-panel/chat/core/task-loop';
+import type { ChatStorage } from '../chat/chat-box/chat';
+
+const onAIMookConfirm = async () => {
+    aiPromptVisible.value = false;
+    await generateAIMockData(aiMookPrompt.value);
+};
+
+const generateAIMockData = async (prompt?: string) => {
+    if (!currentTool.value?.inputSchema) return;
+    aiMockLoading.value = true;
+    try {
+        const loop = new TaskLoop({ maxEpochs: 1 });
+        const usePrompt = prompt || `please call the tool ${currentTool.value.name} to make some test`;
+        const chatStorage = {
+            messages: [],
+            settings: {
+                temperature: 0.6,
+                systemPrompt: '',
+                enableTools: [{
+                    name: currentTool.value.name,
+                    description: currentTool.value.description,
+                    inputSchema: currentTool.value.inputSchema,
+                    enabled: true
+                }],
+                enableWebSearch: false,
+                contextLength: 5,
+                enableXmlWrapper: enableXmlWrapper.value,
+                parallelToolCalls: false
+            }
+        } as ChatStorage;
+
+        loop.setMaxEpochs(1);
+
+        let aiMockJson: any = undefined;
+
+        loop.registerOnToolCall(toolCall => {
+            if (toolCall.function?.name === currentTool.value?.name) {
+                try {
+                    const toolArgs = JSON.parse(toolCall.function?.arguments || '{}');
+                    aiMockJson = toolArgs;
+                } catch (e) {
+                    ElMessage.error('AI 生成的 JSON 解析错误');
+                }
+            } else {
+                ElMessage.error('AI 调用了未知的工具');
+            }
+            loop.abort();
+            return toolCall;
+        });
+
+        loop.registerOnError(error => {
+            ElMessage.error(error + '');
+        });
+
+        await loop.start(chatStorage, usePrompt);
+
+        if (aiMockJson && typeof aiMockJson === 'object') {
+            Object.keys(aiMockJson).forEach(key => {
+                tabStorage.formData[key] = aiMockJson[key];
+            });
+            formRef.value?.clearValidate?.();
+        }
+    } finally {
+        aiMockLoading.value = false;
+    }
+};
 const generateMockData = async () => {
     if (!currentTool.value?.inputSchema) return;
-
-    // 注册faker到json-schema-faker
-    JSONSchemaFaker.option({
-        useDefaultValue: true,
-        alwaysFakeOptionals: true
-    });
-
-    // 生成mock数据
-    // TODO: as any ?
-    const mockData = await JSONSchemaFaker.resolve(currentTool.value.inputSchema as any) as any;
-
-    // 将 mock 数据绑定到表单
-    Object.keys(mockData).forEach(key => {
-        tabStorage.formData[key] = mockData[key];
-        console.log(mockData[key]);
-    });
-
-    // 如果需要刷新表单校验，可以加上
-    formRef.value?.clearValidate?.();
+    mockLoading.value = true;
+    try {
+        JSONSchemaFaker.option({
+            useDefaultValue: true,
+            alwaysFakeOptionals: true
+        });
+        const mockData = await JSONSchemaFaker.resolve(currentTool.value.inputSchema as any) as any;
+        Object.keys(mockData).forEach(key => {
+            tabStorage.formData[key] = mockData[key];
+        });
+        formRef.value?.clearValidate?.();
+    } finally {
+        mockLoading.value = false;
+    }
 };
 
 async function handleExecute() {
@@ -167,10 +261,15 @@ async function handleExecute() {
     }
 }
 
+watch(currentTool, (tool) => {
+    aiMookPrompt.value = `please call the tool ${tool?.name || ''} to make some test`;
+});
+
 watch(() => tabStorage.currentToolName, () => {
     initFormData();
     resetForm();
 }, { immediate: true });
+
 </script>
 
 <style>

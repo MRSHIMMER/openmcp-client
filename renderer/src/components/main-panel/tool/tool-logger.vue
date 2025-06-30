@@ -20,8 +20,14 @@
 
                 <div v-else>
                     <!-- 展示原本的信息 -->
-                    <template v-if="!showRawJson">
-                        {{tabStorage.lastToolCallResponse?.content.map(c => c.text).join('\n')}}
+                    <template v-if="!showRawJson && tabStorage.lastToolCallResponse">
+                        <div
+                            v-for="(c, idx) in tabStorage.lastToolCallResponse!.content"
+                            :key="idx"
+                            class="tool-call-block"
+                        >
+                            <pre class="tool-call-text">{{ c.text }}</pre>
+                        </div>
                     </template>
 
                     <!-- 展示 json -->
@@ -104,5 +110,22 @@ const showRawJson = ref(false);
     background-color: rgba(245, 108, 108, 0.5);
     padding: 5px 9px;
     border-radius: .5em;
+}
+
+.tool-call-block {
+    margin-bottom: 12px;
+    padding: 10px 12px;
+    background: rgba(0,0,0,0.04);
+    border-radius: 6px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}
+
+.tool-call-text {
+    font-family: var(--code-font-family, monospace);
+    font-size: 15px;
+    white-space: pre-wrap;
+    word-break: break-all;
+    margin: 0;
+    color: var(--el-text-color-primary, #222);
 }
 </style>

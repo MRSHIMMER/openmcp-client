@@ -183,5 +183,6 @@
     "export": "エクスポート",
     "export-filename": "エクスポートファイル名",
     "how-to-use": "使用方法",
-    "is-required": "は必須フィールドです"
+    "is-required": "は必須フィールドです",
+    "edit-ai-mook-prompt": "AI Mookプロンプトを編集"
 }

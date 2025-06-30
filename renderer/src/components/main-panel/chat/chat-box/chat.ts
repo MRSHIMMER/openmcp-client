@@ -58,7 +58,7 @@ export interface EnableToolItem {
 }
 
 export interface ChatSetting {
-    modelIndex: number
+    modelIndex?: number
     systemPrompt: string
     enableTools: EnableToolItem[]
     temperature: number

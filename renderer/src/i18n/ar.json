@@ -183,5 +183,6 @@
     "export": "تصدير",
     "export-filename": "اسم ملف التصدير",
     "how-to-use": "كيفية الاستخدام؟",
-    "is-required": "هو حقل مطلوب"
+    "is-required": "هو حقل مطلوب",
+    "edit-ai-mook-prompt": "تحرير إشارات AI Mook"
 }

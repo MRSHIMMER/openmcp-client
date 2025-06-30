@@ -162,16 +162,15 @@ provide('tabStorage', tabStorage);
 	color: var(--el-text-color-secondary);
 }
 
-.tools-dialog-container .el-switch__core {
+.el-switch__core {
 	border: 1px solid var(--main-color) !important;
 }
 
-
-.tools-dialog-container .el-switch .el-switch__action {
+.el-switch .el-switch__action {
 	background-color: var(--main-color);
 }
 
-.tools-dialog-container .el-switch.is-checked .el-switch__action {
+.el-switch.is-checked .el-switch__action {
 	background-color: var(--sidebar);
 }
 

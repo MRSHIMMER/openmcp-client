@@ -183,5 +183,6 @@
     "export": "Exporter",
     "export-filename": "Nom du fichier d'exportation",
     "how-to-use": "Comment utiliser ?",
-    "is-required": "est un champ obligatoire"
+    "is-required": "est un champ obligatoire",
+    "edit-ai-mook-prompt": "Modifier les invites AI Mook"
 }

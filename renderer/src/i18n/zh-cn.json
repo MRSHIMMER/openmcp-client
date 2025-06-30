@@ -183,5 +183,6 @@
     "export": "导出",
     "export-filename": "导出文件名",
     "how-to-use": "如何使用?",
-    "is-required": "是必填字段"
+    "is-required": "是必填字段",
+    "edit-ai-mook-prompt": "编辑 AI Mook 提示词"
 }

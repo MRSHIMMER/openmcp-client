@@ -183,5 +183,6 @@
     "export": "Export",
     "export-filename": "Export filename",
     "how-to-use": "How to use?",
-    "is-required": "is a required field"
+    "is-required": "is a required field",
+    "edit-ai-mook-prompt": "Edit AI Mook prompts"
 }
