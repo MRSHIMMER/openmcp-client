@@ -128,7 +128,7 @@ const formRules = computed<FormRules>(() => {
             rules[name] = [
                 {
                     required: true,
-                    message: `${property.title || name} 是必填字段`,
+                    message: `${property.title || name} ` + t("is-required"),
                     trigger: 'blur'
                 }
             ];
@@ -293,5 +293,10 @@ watch(() => tabStorage.currentToolName, () => {
 
 .tool-executor-container .el-switch__core {
     border: 1px solid var(--main-color) !important;
+}
+
+.el-button:active {
+    transform: scale(1.05);
+    transition: transform 0.08s;
 }
 </style>

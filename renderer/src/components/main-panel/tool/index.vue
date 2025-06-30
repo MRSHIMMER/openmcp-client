@@ -1,5 +1,6 @@
 <template>
     <el-scrollbar height="100%">
+        <AutoDetector />
         <div class="tool-module">
             <div class="left">
                 <h2>
@@ -24,6 +25,7 @@ import { defineProps } from 'vue';
 import ToolList from './tool-list.vue';
 import ToolExecutor from './tool-executor.vue';
 import ToolLogger from './tool-logger.vue';
+import AutoDetector from './auto-detector.vue';
 
 const props = defineProps({
     tabId: {

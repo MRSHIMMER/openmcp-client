@@ -121,6 +121,11 @@ function setActiveTab(index: number) {
 	position: relative;
 }
 
+.tabs-container .tab:active {
+	transform: scale(1.05);
+	transition: var(--animation-3s);
+}
+
 .tabs-container .tab > span:first-child {
     display: flex;
     align-items: center;

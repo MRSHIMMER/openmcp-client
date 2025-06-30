@@ -64,4 +64,15 @@ const onRadioGroupChange = () => {
 
 </script>
 
-<style></style>
+<style>
+
+.setting-button:hover {
+    background: var(--main-light-color, #f0f8ff);
+    box-shadow: 0 2px 8px 0 rgba(64,158,255,0.08);
+    border-color: var(--el-color-primary-light-7, #c6e2ff);
+}
+
+.setting-button:active {
+    transform: scale(1.1);
+}
+</style>
