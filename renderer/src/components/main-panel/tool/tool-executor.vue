@@ -42,7 +42,7 @@
                 <el-popover placement="top" width="350" trigger="click" v-model:visible="aiPromptVisible">
                     <template #reference>
                         <el-button :loading="aiMockLoading" :disabled="loading || aiMockLoading || mockLoading">
-                            {{ 'ai-mook' }}
+                            {{ 'AI' }}
                         </el-button>
                     </template>
                     <div style="margin-bottom: 8px; font-weight: bold;">
@@ -201,6 +201,8 @@ const generateAIMockData = async (prompt?: string) => {
         let aiMockJson: any = undefined;
 
         loop.registerOnToolCall(toolCall => {
+            console.log(toolCall);
+            
             if (toolCall.function?.name === currentTool.value?.name) {
                 try {
                     const toolArgs = JSON.parse(toolCall.function?.arguments || '{}');
