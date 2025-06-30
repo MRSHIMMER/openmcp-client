@@ -1,5 +1,7 @@
 <template>
-    <div ref="svgContainer" class="diagram-container"></div>
+    <div style="display: flex; align-items: center; gap: 16px;">
+        <div ref="svgContainer" class="diagram-container"></div>
+    </div>
 </template>
 
 <script setup lang="ts">
@@ -105,7 +107,7 @@ function renderSvg() {
             .append('svg')
             .attr('width', width)
             .attr('height', height)
-            .style('user-select', 'none');
+            .style('user-select', 'none') as any;
     } else {
         svg.attr('width', width).attr('height', height);
         svg.selectAll('defs').remove();
@@ -116,21 +118,21 @@ function renderSvg() {
         .append('defs')
         .append('marker')
         .attr('id', 'arrow')
-        .attr('viewBox', '0 0 10 10')
-        .attr('refX', 8)
-        .attr('refY', 5)
-        .attr('markerWidth', 6)
-        .attr('markerHeight', 6)
+        .attr('viewBox', '0 0 8 8')
+        .attr('refX', 6)
+        .attr('refY', 4)
+        .attr('markerWidth', 5)
+        .attr('markerHeight', 5)
         .attr('orient', 'auto')
         .append('path')
-        .attr('d', 'M 0 0 L 10 5 L 0 10 z')
+        .attr('d', 'M 0 0 L 8 4 L 0 8 z')
         .attr('fill', 'var(--main-color)');
 
     // Draw edges with enter animation
     const allSections: { id: string, section: any }[] = [];
     (state.edges || []).forEach(edge => {
         const sections = edge.sections || [];
-        sections.forEach((section, idx) => {
+        sections.forEach((section: any, idx: number) => {
             allSections.push({
                 id: (edge.id || '') + '-' + (section.id || idx),
                 section
@@ -201,6 +203,7 @@ function renderSvg() {
 
     nodeGroup.exit().remove();
 
+    // 节点 enter
     const nodeGroupEnter = nodeGroup.enter()
         .append('g')
         .attr('class', 'node')
@@ -235,7 +238,7 @@ function renderSvg() {
         .attr('width', d => d.width)
         .attr('height', d => d.height)
         .attr('rx', 16)
-        .attr('fill', d => state.selectedNodeId === d.id ? 'var(--main-color)' : 'var(--main-color)')
+        .attr('fill', 'var(--main-color)')
         .attr('opacity', d => state.selectedNodeId === d.id ? 0.25 : 0.12)
         .attr('stroke', 'var(--main-color)')
         .attr('stroke-width', 2);
@@ -263,9 +266,35 @@ function renderSvg() {
         .ease(d3.easeCubicInOut)
         .attr('transform', d => `translate(${(d.x || 0) + 30}, ${(d.y || 0) + 30})`);
 
+    // 高亮选中节点动画
+    nodeGroup.select('rect')
+        .transition()
+        .duration(400)
+        .attr('opacity', d => state.selectedNodeId === d.id ? 0.55 : 0.12)
+        .attr('stroke-width', d => state.selectedNodeId === d.id ? 4 : 2)
+        .attr('stroke', d => state.selectedNodeId === d.id ? 'var(--main-color)' : 'var(--main-color)')
+        .attr('fill', d => state.selectedNodeId === d.id ? 'var(--main-color)' : 'var(--main-color)');
+
     // 渲染结束后保存当前快照
     prevNodes = state.nodes.map(n => ({ ...n }));
-    prevEdges = (state.edges || []).map(e => ({ ...e, sections: e.sections ? e.sections.map(s => ({ ...s })) : [] }));
+    prevEdges = (state.edges || []).map(e => ({ ...e, sections: e.sections ? e.sections.map((s: any) => ({ ...s })) : [] }));
+}
+
+// 重置连接为链表结构
+function resetConnections() {
+    if (!state.nodes.length) return;
+    const edges = [];
+    for (let i = 0; i < state.nodes.length - 1; ++i) {
+        const prev = state.nodes[i];
+        const next = state.nodes[i + 1];
+        edges.push({
+            id: prev.id + '-' + next.id,
+            sources: [prev.id],
+            targets: [next.id]
+        });
+    }
+    state.edges = edges;
+    recomputeLayout().then(renderSvg);
 }
 
 onMounted(() => {
