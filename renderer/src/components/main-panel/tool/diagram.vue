@@ -9,6 +9,8 @@ import ELK, { type ElkNode } from 'elkjs/lib/elk.bundled.js';
 import { mcpClientAdapter } from '@/views/connect/core';
 
 const svgContainer = ref<HTMLDivElement | null>(null);
+let prevNodes: any[] = [];
+let prevEdges: any[] = [];
 
 type Node = ElkNode & {
     [key: string]: any;
@@ -59,26 +61,39 @@ const recomputeLayout = async () => {
 
 const drawDiagram = async () => {
     const tools = await getAllTools();
+    
     state.nodes = tools.map((tool, i) => ({
-        id: String(i),
+        id: tool.name,
         width: 160,
         height: 48,
         labels: [{ text: tool.name || 'Tool' }]
     }));
 
     // 默认按照链表进行串联
-    state.edges = tools.slice(1).map((_, i) => ({
-        id: `e${i}`,
-        sources: [String(i)],
-        targets: [String(i + 1)]
-    }));
+    const edges = [];
+    for (let i = 0; i < tools.length - 1; ++ i) {
+        const prev = tools[i];
+        const next = tools[i + 1];
+        edges.push({
+            id: prev.name + '-' + next.name,
+            sources: [prev.name],
+            targets: [next.name]
+        })
+    }
 
+    state.edges = edges;
+
+    // 重新计算布局
     await recomputeLayout();
 
+    // 绘制 svg
     renderSvg();
 };
 
 function renderSvg() {
+    const prevNodeMap = new Map(prevNodes.map(n => [n.id, n]));
+    const prevEdgeMap = new Map(prevEdges.map(e => [e.id, e]));
+
     const width = Math.max(...state.nodes.map(n => (n.x || 0) + (n.width || 160)), 400) + 60;
     const height = Math.max(...state.nodes.map(n => (n.y || 0) + (n.height || 48)), 300) + 60;
 
@@ -131,10 +146,30 @@ function renderSvg() {
     const edgeEnter = edgeSelection.enter()
         .append('line')
         .attr('class', 'edge')
-        .attr('x1', d => d.section.startPoint.x + 30)
-        .attr('y1', d => d.section.startPoint.y + 30)
-        .attr('x2', d => d.section.endPoint.x + 30)
-        .attr('y2', d => d.section.endPoint.y + 30)
+        .attr('x1', d => {
+            const prev = prevEdgeMap.get(d.id);
+            return prev && prev.sections && prev.sections[0]
+                ? prev.sections[0].startPoint.x + 30
+                : d.section.startPoint.x + 30;
+        })
+        .attr('y1', d => {
+            const prev = prevEdgeMap.get(d.id);
+            return prev && prev.sections && prev.sections[0]
+                ? prev.sections[0].startPoint.y + 30
+                : d.section.startPoint.y + 30;
+        })
+        .attr('x2', d => {
+            const prev = prevEdgeMap.get(d.id);
+            return prev && prev.sections && prev.sections[0]
+                ? prev.sections[0].endPoint.x + 30
+                : d.section.endPoint.x + 30;
+        })
+        .attr('y2', d => {
+            const prev = prevEdgeMap.get(d.id);
+            return prev && prev.sections && prev.sections[0]
+                ? prev.sections[0].endPoint.y + 30
+                : d.section.endPoint.y + 30;
+        })
         .attr('stroke', 'var(--main-color)')
         .attr('stroke-width', 2.5)
         .attr('marker-end', 'url(#arrow)')
@@ -143,8 +178,13 @@ function renderSvg() {
     edgeEnter
         .transition()
         .duration(600)
-        .attr('opacity', 1);
+        .attr('opacity', 1)
+        .attr('x1', d => d.section.startPoint.x + 30)
+        .attr('y1', d => d.section.startPoint.y + 30)
+        .attr('x2', d => d.section.endPoint.x + 30)
+        .attr('y2', d => d.section.endPoint.y + 30);
 
+    // update + 动画（注意这里不再 transition opacity）
     edgeSelection.merge(edgeEnter)
         .transition()
         .duration(600)
@@ -152,7 +192,8 @@ function renderSvg() {
         .attr('x1', d => d.section.startPoint.x + 30)
         .attr('y1', d => d.section.startPoint.y + 30)
         .attr('x2', d => d.section.endPoint.x + 30)
-        .attr('y2', d => d.section.endPoint.y + 30);
+        .attr('y2', d => d.section.endPoint.y + 30)
+        .attr('opacity', 1); // 保证 update 阶段 opacity 始终为 1
 
     // --- 节点动画部分 ---
     const nodeGroup = svg.selectAll<SVGGElement, any>('.node')
@@ -163,7 +204,13 @@ function renderSvg() {
     const nodeGroupEnter = nodeGroup.enter()
         .append('g')
         .attr('class', 'node')
-        .attr('transform', d => `translate(${(d.x || 0) + 30}, ${(d.y || 0) + 30})`)
+        .attr('transform', d => {
+            const prev = prevNodeMap.get(d.id);
+            if (prev) {
+                return `translate(${(prev.x || 0) + 30}, ${(prev.y || 0) + 30})`;
+            }
+            return `translate(${(d.x || 0) + 30}, ${(d.y || 0) + 30})`;
+        })
         .style('cursor', 'pointer')
         .attr('opacity', 0)
         .on('mousedown', null)
@@ -206,7 +253,8 @@ function renderSvg() {
     nodeGroupEnter
         .transition()
         .duration(600)
-        .attr('opacity', 1);
+        .attr('opacity', 1)
+        .attr('transform', d => `translate(${(d.x || 0) + 30}, ${(d.y || 0) + 30})`);
 
     // 节点 update 动画
     nodeGroup
@@ -214,6 +262,10 @@ function renderSvg() {
         .duration(600)
         .ease(d3.easeCubicInOut)
         .attr('transform', d => `translate(${(d.x || 0) + 30}, ${(d.y || 0) + 30})`);
+
+    // 渲染结束后保存当前快照
+    prevNodes = state.nodes.map(n => ({ ...n }));
+    prevEdges = (state.edges || []).map(e => ({ ...e, sections: e.sections ? e.sections.map(s => ({ ...s })) : [] }));
 }
 
 onMounted(() => {
