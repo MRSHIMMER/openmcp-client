@@ -91,3 +91,15 @@ export function getImageBlobUrlByBase64(base64String: string, mimeType: string, 
     }
     return blobUrl;
 }
+
+export function gotoWebsite(url: string) {
+	const platform = getPlatform();
+	const bridge = useMessageBridge();
+	if (platform === 'vscode') {
+		// For VSCode, use the webview API to open external links
+		bridge.commandRequest('vscode/openExternal', { url });
+	} else if (platform === 'web') {
+		// For web, use the standard window.open method
+		window.open(url, '_blank');
+	}
+}

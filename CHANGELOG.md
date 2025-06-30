@@ -1,5 +1,10 @@
 # Change Log
 
+## [main] 0.1.9
+- 增加 mook 功能：可以利用随机种子或者AI生成来自动化填充测试 tool 的表单数据
+- 修复 issue #44: 完成链接跳转的平台适配
+- 修复 issue #36: 完成非文件夹打开下的成功启动
+
 ## [main] 0.1.8
 - 增加 STDIO 下的热更新，现在用户修改 mcp 代码，openmcp 会自动完成一切相关功能的热更新，无需用户手动重启。
 - 完成 mcpconfig.json 的导出功能，导出的 配置文件 可以通过 openmcp-sdk 框架完成低代码 agent 部署；也可以直接载入 Claude Desktop 等等 MCP 客户端中，实现 MCP 的快速部署和使用。

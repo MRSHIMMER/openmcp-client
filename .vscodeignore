@@ -28,3 +28,4 @@ software/**
 .github
 webpack
 .openmcp
+.vscode

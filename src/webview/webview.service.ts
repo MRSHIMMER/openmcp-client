@@ -105,6 +105,12 @@ export function revealOpenMcpWebviewPanel(
                 exportFile(data.filename, data.content);
                 break;
 
+            case 'vscode/openExternal':
+                if (data.url) {
+                    vscode.env.openExternal(vscode.Uri.parse(data.url));
+                }
+                break;
+
             case 'vscode/clipboard/writeText':
                 vscode.env.clipboard.writeText(data.text);
                 break;

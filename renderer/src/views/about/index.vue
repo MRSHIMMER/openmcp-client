@@ -27,7 +27,7 @@
 
 		<div style="display: inline-flex;">
 			<el-button class="join-qq" type="primary"
-				@click="joinQQGroup('https://qm.qq.com/cgi-bin/qm/qr?k=C6ZUTZvfqWoI12lWe7L93cWa1hUsuVT0&jump_from=webapi&authKey=McW6B1ogTPjPDrCyGttS890tMZGQ1KB3QLuG4aqVNRaYp4vlTSgf2c6dMcNjMuBD')">
+				@click="gotoWebsite('https://qm.qq.com/cgi-bin/qm/qr?k=C6ZUTZvfqWoI12lWe7L93cWa1hUsuVT0&jump_from=webapi&authKey=McW6B1ogTPjPDrCyGttS890tMZGQ1KB3QLuG4aqVNRaYp4vlTSgf2c6dMcNjMuBD')">
 				<span class="iconfont icon-QQ"></span>
 				{{ t('join-discussion') }}
 			</el-button>
@@ -42,23 +42,16 @@
 </template>
 
 <script setup lang="ts">
+import { gotoWebsite } from '@/hook/util';
 import { defineComponent } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 
-const version = '0.1.8';
+const version = '0.1.9';
 const author = 'LSTM-Kirigaya (锦恢)';
 
 defineComponent({ name: 'about' });
-
-function joinQQGroup(url: string) {
-	window.open(url, '_blank');
-}
-
-function gotoWebsite(url: string) {
-	window.open(url, '_blank');
-}
 
 </script>
 
