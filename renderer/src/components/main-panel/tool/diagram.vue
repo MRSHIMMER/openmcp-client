@@ -65,6 +65,8 @@ const drawDiagram = async () => {
         height: 48,
         labels: [{ text: tool.name || 'Tool' }]
     }));
+
+    // 默认按照链表进行串联
     state.edges = tools.slice(1).map((_, i) => ({
         id: `e${i}`,
         sources: [String(i)],
@@ -80,14 +82,19 @@ function renderSvg() {
     const width = Math.max(...state.nodes.map(n => (n.x || 0) + (n.width || 160)), 400) + 60;
     const height = Math.max(...state.nodes.map(n => (n.y || 0) + (n.height || 48)), 300) + 60;
 
-    d3.select(svgContainer.value).selectAll('*').remove();
-
-    const svg = d3
-        .select(svgContainer.value)
-        .append('svg')
-        .attr('width', width)
-        .attr('height', height)
-        .style('user-select', 'none');
+    // 不再全量清空，只清空 svg 元素
+    let svg = d3.select(svgContainer.value).select('svg');
+    if (svg.empty()) {
+        svg = d3
+            .select(svgContainer.value)
+            .append('svg')
+            .attr('width', width)
+            .attr('height', height)
+            .style('user-select', 'none');
+    } else {
+        svg.attr('width', width).attr('height', height);
+        svg.selectAll('defs').remove();
+    }
 
     // Arrow marker
     svg
@@ -104,41 +111,65 @@ function renderSvg() {
         .attr('d', 'M 0 0 L 10 5 L 0 10 z')
         .attr('fill', 'var(--main-color)');
 
-    // Draw edges
+    // Draw edges with enter animation
+    const allSections: { id: string, section: any }[] = [];
     (state.edges || []).forEach(edge => {
         const sections = edge.sections || [];
-        sections.forEach(section => {
-            svg.append('line')
-                .attr('x1', section.startPoint.x + 30)
-                .attr('y1', section.startPoint.y + 30)
-                .attr('x2', section.endPoint.x + 30)
-                .attr('y2', section.endPoint.y + 30)
-                .attr('stroke', 'var(--main-color)')
-                .attr('stroke-width', 2.5)
-                .attr('marker-end', 'url(#arrow)');
+        sections.forEach((section, idx) => {
+            allSections.push({
+                id: (edge.id || '') + '-' + (section.id || idx),
+                section
+            });
         });
     });
 
-    // Draw nodes
-    const nodeGroup = svg.selectAll('.node')
-        .data(state.nodes, d => d.id)
-        .enter()
+    const edgeSelection = svg.selectAll<SVGLineElement, any>('.edge')
+        .data(allSections, d => d.id);
+
+    edgeSelection.exit().remove();
+
+    const edgeEnter = edgeSelection.enter()
+        .append('line')
+        .attr('class', 'edge')
+        .attr('x1', d => d.section.startPoint.x + 30)
+        .attr('y1', d => d.section.startPoint.y + 30)
+        .attr('x2', d => d.section.endPoint.x + 30)
+        .attr('y2', d => d.section.endPoint.y + 30)
+        .attr('stroke', 'var(--main-color)')
+        .attr('stroke-width', 2.5)
+        .attr('marker-end', 'url(#arrow)')
+        .attr('opacity', 0);
+
+    edgeEnter
+        .transition()
+        .duration(600)
+        .attr('opacity', 1);
+
+    edgeSelection.merge(edgeEnter)
+        .transition()
+        .duration(600)
+        .ease(d3.easeCubicInOut)
+        .attr('x1', d => d.section.startPoint.x + 30)
+        .attr('y1', d => d.section.startPoint.y + 30)
+        .attr('x2', d => d.section.endPoint.x + 30)
+        .attr('y2', d => d.section.endPoint.y + 30);
+
+    // --- 节点动画部分 ---
+    const nodeGroup = svg.selectAll<SVGGElement, any>('.node')
+        .data(state.nodes, d => d.id);
+
+    nodeGroup.exit().remove();
+
+    const nodeGroupEnter = nodeGroup.enter()
         .append('g')
         .attr('class', 'node')
         .attr('transform', d => `translate(${(d.x || 0) + 30}, ${(d.y || 0) + 30})`)
         .style('cursor', 'pointer')
-        .on('mousedown', function (event, d) {
-            event.stopPropagation();
-            state.draggingNodeId = d.id;
-            state.offset = {
-                x: event.offsetX - ((d.x || 0) + 30),
-                y: event.offsetY - ((d.y || 0) + 30)
-            };
-        })
+        .attr('opacity', 0)
+        .on('mousedown', null)
         .on('mouseup', function (event, d) {
             event.stopPropagation();
             if (state.selectedNodeId && state.selectedNodeId !== d.id) {
-                // Add new edge
                 state.edges.push({
                     id: `e${state.selectedNodeId}_${d.id}_${Date.now()}`,
                     sources: [state.selectedNodeId],
@@ -153,7 +184,7 @@ function renderSvg() {
             state.draggingNodeId = null;
         });
 
-    nodeGroup.append('rect')
+    nodeGroupEnter.append('rect')
         .attr('width', d => d.width)
         .attr('height', d => d.height)
         .attr('rx', 16)
@@ -162,7 +193,7 @@ function renderSvg() {
         .attr('stroke', 'var(--main-color)')
         .attr('stroke-width', 2);
 
-    nodeGroup.append('text')
+    nodeGroupEnter.append('text')
         .attr('x', d => d.width / 2)
         .attr('y', d => d.height / 2 + 6)
         .attr('text-anchor', 'middle')
@@ -171,24 +202,18 @@ function renderSvg() {
         .attr('font-weight', 600)
         .text(d => d.labels?.[0]?.text || 'Tool');
 
-    // Drag behavior
-    d3.select(window)
-        .on('mousemove.diagram', event => {
-            if (state.draggingNodeId) {
-                const node = state.nodes.find(n => n.id === state.draggingNodeId);
-                if (node) {
-                    node.x = event.offsetX - state.offset.x - 30;
-                    node.y = event.offsetY - state.offset.y - 30;
-                    renderSvg();
-                }
-            }
-        })
-        .on('mouseup.diagram', () => {
-            if (state.draggingNodeId) {
-                state.draggingNodeId = null;
-                recomputeLayout().then(renderSvg);
-            }
-        });
+    // 节点 enter 动画
+    nodeGroupEnter
+        .transition()
+        .duration(600)
+        .attr('opacity', 1);
+
+    // 节点 update 动画
+    nodeGroup
+        .transition()
+        .duration(600)
+        .ease(d3.easeCubicInOut)
+        .attr('transform', d => `translate(${(d.x || 0) + 30}, ${(d.y || 0) + 30})`);
 }
 
 onMounted(() => {
