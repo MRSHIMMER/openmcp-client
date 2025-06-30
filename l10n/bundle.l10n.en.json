@@ -15,5 +15,6 @@
     "join-project": "Participate in the project",
     "comment-plugin": "Comment Plugin",
     "preset-env-sync": "Preset environment variables synchronized successfully",
-    "preset-env-sync.fail": "Failed to sync preset environment variables"
+    "preset-env-sync.fail": "Failed to sync preset environment variables",
+    "error.notOpenWorkspace": "No workspace is currently open in VSCode. Please open a workspace (e.g., open a folder) first."
 }

@@ -4,6 +4,7 @@ import { getWorkspaceConnectionConfig, getWorkspaceConnectionConfigPath, getWork
 import { ConnectionViewItem } from './common.js';
 import { revealOpenMcpWebviewPanel } from '../webview/webview.service.js';
 import { acquireUserCustomConnection, deleteUserConnection } from './workspace.service.js';
+import { t } from '../i18n/index.js';
 
 @RegisterTreeDataProvider('openmcp.sidebar.workspace-connection')
 export class McpWorkspaceConnectProvider implements vscode.TreeDataProvider<ConnectionViewItem> {
@@ -60,14 +61,18 @@ export class McpWorkspaceConnectProvider implements vscode.TreeDataProvider<Conn
 
     @RegisterCommand('addConnection')
     public async addConnection(context: vscode.ExtensionContext) {
-
+        const workspaceConnectionConfig = getWorkspaceConnectionConfig();
+        if (!workspaceConnectionConfig) {
+            vscode.window.showErrorMessage('OpenMCP: ' + t('error.notOpenWorkspace'));
+            return;
+        }
         const item = await acquireUserCustomConnection();
 
         if (item.length === 0) {
             return;
         }
 
-        const workspaceConnectionConfig = getWorkspaceConnectionConfig();
+
         workspaceConnectionConfig.items.push(item);
         saveWorkspaceConnectionConfig(getWorkspacePath());
 
@@ -78,6 +83,10 @@ export class McpWorkspaceConnectProvider implements vscode.TreeDataProvider<Conn
     @RegisterCommand('openConfiguration')
     public async openConfiguration(context: vscode.ExtensionContext, view: ConnectionViewItem) {
         const configPath = getWorkspaceConnectionConfigPath();
+        if (!configPath) {
+            vscode.window.showErrorMessage('OpenMCP: ' + t('error.notOpenWorkspace'));
+            return;
+        }
         const uri = vscode.Uri.file(configPath);
         vscode.commands.executeCommand('vscode.open', uri);
     }
