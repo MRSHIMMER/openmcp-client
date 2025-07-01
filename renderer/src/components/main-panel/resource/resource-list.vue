@@ -167,6 +167,11 @@ h3.resource-template .iconfont.icon-restart:hover {
 	transition: var(--animation-3s);
 }
 
+.resource-template-container > .item:active {
+    transform: scale(0.95);
+    transition: var(--animation-3s);
+}
+
 .resource-title {
 	font-weight: bold;
 	max-width: 250px;

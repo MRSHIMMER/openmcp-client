@@ -128,6 +128,11 @@ onMounted(async () => {
     transition: var(--animation-3s);
 }
 
+.tool-list-container>.item:active {
+	transform: scale(0.95);
+	transition: var(--animation-3s);
+}
+
 .tool-list-container>.item:hover {
     background-color: var(--main-light-color);
     transition: var(--animation-3s);

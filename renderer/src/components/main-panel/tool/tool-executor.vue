@@ -296,7 +296,7 @@ watch(() => tabStorage.currentToolName, () => {
 }
 
 .el-button:active {
-    transform: scale(1.05);
+    transform: scale(0.95);
     transition: transform 0.08s;
 }
 </style>

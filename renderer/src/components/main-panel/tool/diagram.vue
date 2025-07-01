@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, nextTick, reactive } from 'vue';
+import { ref, onMounted, nextTick, reactive, inject } from 'vue';
 import * as d3 from 'd3';
 import ELK, { type ElkNode } from 'elkjs/lib/elk.bundled.js';
 import { mcpClientAdapter } from '@/views/connect/core';
@@ -195,7 +195,7 @@ function renderSvg() {
         .attr('y1', d => d.section.startPoint.y + 30)
         .attr('x2', d => d.section.endPoint.x + 30)
         .attr('y2', d => d.section.endPoint.y + 30)
-        .attr('opacity', 1); // 保证 update 阶段 opacity 始终为 1
+        .attr('opacity', 1);
 
     // --- 节点动画部分 ---
     const nodeGroup = svg.selectAll<SVGGElement, any>('.node')
@@ -220,27 +220,60 @@ function renderSvg() {
         .on('mouseup', function (event, d) {
             event.stopPropagation();
             if (state.selectedNodeId && state.selectedNodeId !== d.id) {
-                state.edges.push({
-                    id: `e${state.selectedNodeId}_${d.id}_${Date.now()}`,
-                    sources: [state.selectedNodeId],
-                    targets: [d.id]
-                });
-                state.selectedNodeId = null;
-                recomputeLayout().then(renderSvg);
+                // 检查是否已存在这条连线
+                const exists = state.edges.some(
+                    e =>
+                        Array.isArray(e.sources) &&
+                        Array.isArray(e.targets) &&
+                        e.sources[0] === state.selectedNodeId &&
+                        e.targets[0] === d.id
+                );
+                if (!exists) {
+                    state.edges.push({
+                        id: `e${state.selectedNodeId}_${d.id}_${Date.now()}`,
+                        sources: [state.selectedNodeId],
+                        targets: [d.id]
+                    });
+                    state.selectedNodeId = null;
+                    recomputeLayout().then(renderSvg);
+                } else {
+                    // 已存在则只取消选中
+                    state.selectedNodeId = null;
+                    renderSvg();
+                }
+                context.caption.value = '';
+
             } else {
                 state.selectedNodeId = d.id;
                 renderSvg();
+                context.caption.value = '选择另一个节点以构建顺序';
             }
             state.draggingNodeId = null;
+        })
+        .on('mouseover', function (event, d) {
+            d3.select(this).select('rect')
+                .transition()
+                .duration(200)
+                .attr('stroke', 'var(--main-color)')
+                .attr('stroke-width', 2);
+        })
+        .on('mouseout', function (event, d) {
+            if (state.selectedNodeId === d.id) {
+                return;
+            }
+            d3.select(this).select('rect')
+                .transition()
+                .duration(200)
+                .attr('stroke', 'var(--main-light-color-10)')
+                .attr('stroke-width', 1);
         });
 
     nodeGroupEnter.append('rect')
         .attr('width', d => d.width)
         .attr('height', d => d.height)
         .attr('rx', 16)
-        .attr('fill', 'var(--main-color)')
-        .attr('opacity', d => state.selectedNodeId === d.id ? 0.25 : 0.12)
-        .attr('stroke', 'var(--main-color)')
+        .attr('fill', 'var(--main-light-color-20)')
+        .attr('stroke', d => state.selectedNodeId === d.id ? 'var(--main-color)' : 'var(--main-light-color-10)')
         .attr('stroke-width', 2);
 
     nodeGroupEnter.append('text')
@@ -270,10 +303,47 @@ function renderSvg() {
     nodeGroup.select('rect')
         .transition()
         .duration(400)
-        .attr('opacity', d => state.selectedNodeId === d.id ? 0.55 : 0.12)
-        .attr('stroke-width', d => state.selectedNodeId === d.id ? 4 : 2)
-        .attr('stroke', d => state.selectedNodeId === d.id ? 'var(--main-color)' : 'var(--main-color)')
-        .attr('fill', d => state.selectedNodeId === d.id ? 'var(--main-color)' : 'var(--main-color)');
+        .attr('stroke-width', d => state.selectedNodeId === d.id ? 2 : 1)
+        .attr('stroke', d => state.selectedNodeId === d.id ? 'var(--main-color)' : 'var(--main-light-color-10)');
+    
+    // 边高亮
+    svg.selectAll<SVGLineElement, any>('.edge')
+        .on('mouseover', function () {
+            d3.select(this)
+                .transition()
+                .duration(200)
+                .attr('stroke', 'var(--main-color)')
+                .attr('stroke-width', 4.5);
+
+            context.caption.value = '点击边以删除';
+            
+        })
+        .on('mouseout', function () {
+            d3.select(this)
+                .transition()
+                .duration(200)
+                .attr('stroke', 'var(--main-color)')
+                .attr('stroke-width', 2.5);
+        
+            context.caption.value = '';
+        
+        })
+        .on('click', function (event, d) {
+            // 只删除当前 edge
+            state.edges = state.edges.filter(e => {
+                // 多段 edge 情况
+                if (e.sections) {
+                    // 只保留不是当前 section 的
+                    return !e.sections.some((section: any, idx: number) =>
+                        ((e.id || '') + '-' + (section.id || idx)) === d.id
+                    );
+                }
+                // 单段 edge 情况
+                return e.id !== d.id && e.id !== d.section?.id;
+            });
+            recomputeLayout().then(renderSvg);
+            event.stopPropagation();
+        });
 
     // 渲染结束后保存当前快照
     prevNodes = state.nodes.map(n => ({ ...n }));
@@ -284,7 +354,7 @@ function renderSvg() {
 function resetConnections() {
     if (!state.nodes.length) return;
     const edges = [];
-    for (let i = 0; i < state.nodes.length - 1; ++i) {
+    for (let i = 0; i < state.nodes.length - 1; ++ i) {
         const prev = state.nodes[i];
         const next = state.nodes[i + 1];
         edges.push({
@@ -296,6 +366,9 @@ function resetConnections() {
     state.edges = edges;
     recomputeLayout().then(renderSvg);
 }
+
+const context = inject('context') as any;
+context.reset = resetConnections;
 
 onMounted(() => {
     nextTick(drawDiagram);

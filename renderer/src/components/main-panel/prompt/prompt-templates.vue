@@ -140,6 +140,11 @@ onMounted(async () => {
 	transition: var(--animation-3s);
 }
 
+.prompt-template-container>.item:active {
+    transform: scale(0.95);
+	transition: var(--animation-3s);
+}
+
 .prompt-template-container>.item.active {
 	background-color: var(--main-light-color);
 	transition: var(--animation-3s);

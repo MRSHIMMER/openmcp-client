@@ -73,6 +73,6 @@ const onRadioGroupChange = () => {
 }
 
 .setting-button:active {
-    transform: scale(1.1);
+    transform: scale(0.95);
 }
 </style>
