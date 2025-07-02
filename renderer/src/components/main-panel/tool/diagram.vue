@@ -7,16 +7,14 @@
 <script setup lang="ts">
 import { ref, onMounted, nextTick, reactive, inject } from 'vue';
 import * as d3 from 'd3';
-import ELK, { type ElkNode } from 'elkjs/lib/elk.bundled.js';
+import ELK from 'elkjs/lib/elk.bundled.js';
 import { mcpClientAdapter } from '@/views/connect/core';
+import { invalidConnectionDetector, type Edge, type Node } from './diagram';
+import { ElMessage } from 'element-plus';
 
 const svgContainer = ref<HTMLDivElement | null>(null);
 let prevNodes: any[] = [];
 let prevEdges: any[] = [];
-
-type Node = ElkNode & {
-    [key: string]: any;
-};
 
 const state = reactive({
     nodes: [] as any[],
@@ -63,16 +61,11 @@ const recomputeLayout = async () => {
 
 const drawDiagram = async () => {
     const tools = await getAllTools();
-    
-    state.nodes = tools.map((tool, i) => ({
-        id: tool.name,
-        width: 160,
-        height: 48,
-        labels: [{ text: tool.name || 'Tool' }]
-    }));
 
     // 默认按照链表进行串联
-    const edges = [];
+    const nodes = [] as Node[];
+    const edges = [] as Edge[];
+
     for (let i = 0; i < tools.length - 1; ++ i) {
         const prev = tools[i];
         const next = tools[i + 1];
@@ -83,7 +76,17 @@ const drawDiagram = async () => {
         })
     }
 
+	for (const tool of tools) {
+		nodes.push({
+			id: tool.name,
+			width: 160,
+			height: 48,
+			labels: [{ text: tool.name || 'Tool' }]
+		});
+	}
+
     state.edges = edges;
+	state.nodes = nodes;
 
     // 重新计算布局
     await recomputeLayout();
@@ -96,7 +99,14 @@ function renderSvg() {
     const prevNodeMap = new Map(prevNodes.map(n => [n.id, n]));
     const prevEdgeMap = new Map(prevEdges.map(e => [e.id, e]));
 
-    const width = Math.max(...state.nodes.map(n => (n.x || 0) + (n.width || 160)), 400) + 60;
+    // 计算所有节点的最小x和最大x
+    const xs = state.nodes.map(n => (n.x || 0));
+    const minX = Math.min(...xs);
+    const maxX = Math.max(...xs.map((x, i) => x + (state.nodes[i].width || 160)));
+    const contentWidth = maxX - minX;
+    const svgWidth = Math.max(contentWidth + 120, 400); // 120为两侧留白
+    const offsetX = (svgWidth - contentWidth) / 2 - minX;	
+
     const height = Math.max(...state.nodes.map(n => (n.y || 0) + (n.height || 48)), 300) + 60;
 
     // 不再全量清空，只清空 svg 元素
@@ -105,11 +115,11 @@ function renderSvg() {
         svg = d3
             .select(svgContainer.value)
             .append('svg')
-            .attr('width', width)
+            .attr('width', svgWidth)
             .attr('height', height)
             .style('user-select', 'none') as any;
     } else {
-        svg.attr('width', width).attr('height', height);
+        svg.attr('width', svgWidth).attr('height', height);
         svg.selectAll('defs').remove();
     }
 
@@ -128,6 +138,16 @@ function renderSvg() {
         .attr('d', 'M 0 0 L 8 4 L 0 8 z')
         .attr('fill', 'var(--main-color)');
 
+    // 1. 创建/获取 main group
+    let mainGroup = svg.select('g.main-group');
+    if (mainGroup.empty()) {
+        mainGroup = svg.append('g').attr('class', 'main-group') as any;
+    }
+    mainGroup
+		.transition()
+		.duration(600)
+		.attr('transform', `translate(${offsetX}, 0)`);
+
     // Draw edges with enter animation
     const allSections: { id: string, section: any }[] = [];
     (state.edges || []).forEach(edge => {
@@ -140,7 +160,7 @@ function renderSvg() {
         });
     });
 
-    const edgeSelection = svg.selectAll<SVGLineElement, any>('.edge')
+    const edgeSelection = mainGroup.selectAll<SVGLineElement, any>('.edge')
         .data(allSections, d => d.id);
 
     edgeSelection.exit().remove();
@@ -198,7 +218,7 @@ function renderSvg() {
         .attr('opacity', 1);
 
     // --- 节点动画部分 ---
-    const nodeGroup = svg.selectAll<SVGGElement, any>('.node')
+    const nodeGroup = mainGroup.selectAll<SVGGElement, any>('.node')
         .data(state.nodes, d => d.id);
 
     nodeGroup.exit().remove();
@@ -219,16 +239,18 @@ function renderSvg() {
         .on('mousedown', null)
         .on('mouseup', function (event, d) {
             event.stopPropagation();
-            if (state.selectedNodeId && state.selectedNodeId !== d.id) {
-                // 检查是否已存在这条连线
-                const exists = state.edges.some(
-                    e =>
-                        Array.isArray(e.sources) &&
-                        Array.isArray(e.targets) &&
-                        e.sources[0] === state.selectedNodeId &&
-                        e.targets[0] === d.id
-                );
-                if (!exists) {
+            if (state.selectedNodeId) {
+				
+				const { canConnect, reason } = invalidConnectionDetector(state, d);
+
+				console.log(reason);
+				
+
+				if (reason) {
+					ElMessage.warning(reason);
+				}
+
+                if (canConnect) {
                     state.edges.push({
                         id: `e${state.selectedNodeId}_${d.id}_${Date.now()}`,
                         sources: [state.selectedNodeId],
@@ -241,12 +263,12 @@ function renderSvg() {
                     state.selectedNodeId = null;
                     renderSvg();
                 }
-                context.caption.value = '';
+                context.setCaption('');
 
             } else {
                 state.selectedNodeId = d.id;
                 renderSvg();
-                context.caption.value = '选择另一个节点以构建顺序';
+                context.setCaption('选择另一个节点以定义测试拓扑');
             }
             state.draggingNodeId = null;
         })
@@ -315,7 +337,7 @@ function renderSvg() {
                 .attr('stroke', 'var(--main-color)')
                 .attr('stroke-width', 4.5);
 
-            context.caption.value = '点击边以删除';
+            context.setCaption('点击边以删除');
             
         })
         .on('mouseout', function () {
@@ -325,8 +347,7 @@ function renderSvg() {
                 .attr('stroke', 'var(--main-color)')
                 .attr('stroke-width', 2.5);
         
-            context.caption.value = '';
-        
+            context.setCaption('');
         })
         .on('click', function (event, d) {
             // 只删除当前 edge

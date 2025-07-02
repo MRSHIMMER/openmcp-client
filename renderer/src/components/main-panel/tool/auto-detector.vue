@@ -12,8 +12,8 @@
         	<Diagram />
 		</el-scrollbar>
         <transition name="main-fade" mode="out-in">
-            <div class="caption" v-show="context.caption.value">
-                {{ context.caption }}
+            <div class="caption" v-show="showCaption">
+                {{ caption }}
             </div>
         </transition>
     </el-dialog>
@@ -23,13 +23,27 @@
 </template>
 
 <script setup lang="ts">
-import { provide, ref } from 'vue';
+import { nextTick, provide, ref } from 'vue';
 import Diagram from './diagram.vue';
 const showDiagram = ref(true);
 
+const caption = ref('');
+const showCaption = ref(false);
+
 const context = {
     reset: () => {},
-    caption: ref('')
+	setCaption: (text: string) => {
+		caption.value = text;
+		if (caption.value) {
+			nextTick(() => {
+				showCaption.value = true;
+			});
+		} else {
+			nextTick(() => {
+				showCaption.value = false;
+			});
+		}
+	}
 };
 
 provide('context', context);

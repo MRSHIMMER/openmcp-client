@@ -233,6 +233,7 @@ const generateAIMockData = async (prompt?: string) => {
         aiMockLoading.value = false;
     }
 };
+
 const generateMockData = async () => {
     if (!currentTool.value?.inputSchema) return;
     mockLoading.value = true;
