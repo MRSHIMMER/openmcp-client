@@ -3,6 +3,7 @@ import { TaskLoop } from '../chat/core/task-loop';
 import type { Reactive } from 'vue';
 import type { ChatStorage } from '../chat/chat-box/chat';
 import { ElMessage } from 'element-plus';
+import type { ToolItem } from '@/hook/type';
 
 export interface Edge {
 	id: string;
@@ -19,12 +20,26 @@ export interface DiagramState {
 	nodes: Node[];
 	edges: Edge[];
 	selectedNodeId: string | null;
+    dataView: Map<string, NodeDataView>;
 	[key: string]: any;
 }
 
 export interface CanConnectResult {
 	canConnect: boolean;
 	reason?: string;
+}
+
+export interface NodeDataView {
+    tool: ToolItem;
+    status: 'default' | 'running' | 'waiting' | 'success' | 'error';
+    result: any;
+}
+
+export interface DiagramContext {
+    reset: () => void,
+    render: () => void,
+    state?: DiagramState,
+    setCaption: (value: string) => void
 }
 
 /**
@@ -133,25 +148,31 @@ export function topoSortParallel(state: DiagramState): string[][] {
     return result;
 }
 
-export async function makeNodeTest(dataView: Reactive<any>, enableXmlWrapper: boolean, prompt: string | null = null) {
+export async function makeNodeTest(
+    dataView: Reactive<NodeDataView>,
+    enableXmlWrapper: boolean,
+    prompt: string | null = null,
+    context: DiagramContext
+) {
     if (!dataView.tool.inputSchema) {
 		return;
 	}
 
-    dataView.loading = true;
+    dataView.status = 'running';
+    context.render();
 
     try {
         const loop = new TaskLoop({ maxEpochs: 1 });
-        const usePrompt = prompt || `please call the tool ${dataView.too.name} to make some test`;
+        const usePrompt = (prompt || 'please call the tool {tool} to make some test').replace('{tool}', dataView.tool.name);
         const chatStorage = {
             messages: [],
             settings: {
                 temperature: 0.6,
                 systemPrompt: '',
                 enableTools: [{
-                    name: dataView.too.name,
-                    description: dataView.too.description,
-                    inputSchema: dataView.too.inputSchema,
+                    name: dataView.tool.name,
+                    description: dataView.tool.description,
+                    inputSchema: dataView.tool.inputSchema,
                     enabled: true
                 }],
                 enableWebSearch: false,
@@ -168,15 +189,21 @@ export async function makeNodeTest(dataView: Reactive<any>, enableXmlWrapper: bo
         loop.registerOnToolCall(toolCall => {
             console.log(toolCall);
             
-            if (toolCall.function?.name === dataView.too?.name) {
+            if (toolCall.function?.name === dataView.tool?.name) {
                 try {
                     const toolArgs = JSON.parse(toolCall.function?.arguments || '{}');
                     aiMockJson = toolArgs;
                 } catch (e) {
                     // ElMessage.error('AI 生成的 JSON 解析错误');
+                    dataView.status = 'error';
+                    dataView.result = 'AI 生成的 JSON 解析错误';
+                    context.render();
                 }
             } else {
                 // ElMessage.error('AI 调用了未知的工具');
+                dataView.status = 'error';
+                dataView.result = 'AI 调用了未知的工具 ' + toolCall.function?.name;
+                context.render();
             }
             loop.abort();
             return toolCall;
@@ -189,6 +216,9 @@ export async function makeNodeTest(dataView: Reactive<any>, enableXmlWrapper: bo
         await loop.start(chatStorage, usePrompt);
 
     } finally {
-        dataView.loading = false;
+        if (dataView.status === 'running') {
+            dataView.status = 'success';
+            context.render();
+        }
     }
 };
