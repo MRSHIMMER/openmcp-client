@@ -390,6 +390,7 @@ function resetConnections() {
 
 const context = inject('context') as any;
 context.reset = resetConnections;
+context.state = state;
 
 onMounted(() => {
     nextTick(drawDiagram);

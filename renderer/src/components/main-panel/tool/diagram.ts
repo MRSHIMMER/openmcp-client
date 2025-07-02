@@ -1,4 +1,8 @@
 import type { ElkNode } from 'elkjs/lib/elk-api';
+import { TaskLoop } from '../chat/core/task-loop';
+import type { Reactive } from 'vue';
+import type { ChatStorage } from '../chat/chat-box/chat';
+import { ElMessage } from 'element-plus';
 
 export interface Edge {
 	id: string;
@@ -77,65 +81,114 @@ export function invalidConnectionDetector(state: DiagramState, d: Node): CanConn
 	}
 }
 
+/**
+ * @description 拓扑排序，输出每一层可以并行调度的节点id数组
+ * @returns string[][] 每一层可以并行调度的节点id数组
+ */
+export function topoSortParallel(state: DiagramState): string[][] {
+    // 统计每个节点的入度
+    const inDegree: Record<string, number> = {};
+    state.nodes.forEach(node => {
+        inDegree[node.id] = 0;
+    });
+    state.edges.forEach(edge => {
+        const tgt = edge.targets[0];
+        if (tgt in inDegree) {
+            inDegree[tgt]++;
+        }
+    });
 
-// export async function generateAIMockData(params: any) {
-//     if (!currentTool.value?.inputSchema) return;
-//     aiMockLoading.value = true;
-//     try {
-//         const loop = new TaskLoop({ maxEpochs: 1 });
-//         const usePrompt = prompt || `please call the tool ${currentTool.value.name} to make some test`;
-//         const chatStorage = {
-//             messages: [],
-//             settings: {
-//                 temperature: 0.6,
-//                 systemPrompt: '',
-//                 enableTools: [{
-//                     name: currentTool.value.name,
-//                     description: currentTool.value.description,
-//                     inputSchema: currentTool.value.inputSchema,
-//                     enabled: true
-//                 }],
-//                 enableWebSearch: false,
-//                 contextLength: 5,
-//                 enableXmlWrapper: enableXmlWrapper.value,
-//                 parallelToolCalls: false
-//             }
-//         } as ChatStorage;
+    // 初始化队列，收集所有入度为0的节点
+    const result: string[][] = [];
+    let queue: string[] = Object.keys(inDegree).filter(id => inDegree[id] === 0);
 
-//         loop.setMaxEpochs(1);
+    const visited = new Set<string>();
 
-//         let aiMockJson: any = undefined;
+    while (queue.length > 0) {
+        // 当前层可以并行的节点
+        result.push([...queue]);
+        const nextQueue: string[] = [];
+        for (const id of queue) {
+            visited.add(id);
+            // 遍历所有以当前节点为源的边，减少目标节点的入度
+            state.edges.forEach(edge => {
+                if (edge.sources[0] === id) {
+                    const tgt = edge.targets[0];
+                    inDegree[tgt]--;
+                    // 如果目标节点入度为0且未访问过，加入下一层
+                    if (inDegree[tgt] === 0 && !visited.has(tgt)) {
+                        nextQueue.push(tgt);
+                    }
+                }
+            });
+        }
+        queue = nextQueue;
+    }
 
-//         loop.registerOnToolCall(toolCall => {
-//             console.log(toolCall);
+    // 检查是否有环
+    if (visited.size !== state.nodes.length) {
+        throw new Error('图中存在环，无法进行拓扑排序');
+    }
+
+    return result;
+}
+
+export async function makeNodeTest(dataView: Reactive<any>, enableXmlWrapper: boolean, prompt: string | null = null) {
+    if (!dataView.tool.inputSchema) {
+		return;
+	}
+
+    dataView.loading = true;
+
+    try {
+        const loop = new TaskLoop({ maxEpochs: 1 });
+        const usePrompt = prompt || `please call the tool ${dataView.too.name} to make some test`;
+        const chatStorage = {
+            messages: [],
+            settings: {
+                temperature: 0.6,
+                systemPrompt: '',
+                enableTools: [{
+                    name: dataView.too.name,
+                    description: dataView.too.description,
+                    inputSchema: dataView.too.inputSchema,
+                    enabled: true
+                }],
+                enableWebSearch: false,
+                contextLength: 5,
+                enableXmlWrapper,
+                parallelToolCalls: false
+            }
+        } as ChatStorage;
+
+        loop.setMaxEpochs(1);
+
+        let aiMockJson: any = undefined;
+
+        loop.registerOnToolCall(toolCall => {
+            console.log(toolCall);
             
-//             if (toolCall.function?.name === currentTool.value?.name) {
-//                 try {
-//                     const toolArgs = JSON.parse(toolCall.function?.arguments || '{}');
-//                     aiMockJson = toolArgs;
-//                 } catch (e) {
-//                     ElMessage.error('AI 生成的 JSON 解析错误');
-//                 }
-//             } else {
-//                 ElMessage.error('AI 调用了未知的工具');
-//             }
-//             loop.abort();
-//             return toolCall;
-//         });
+            if (toolCall.function?.name === dataView.too?.name) {
+                try {
+                    const toolArgs = JSON.parse(toolCall.function?.arguments || '{}');
+                    aiMockJson = toolArgs;
+                } catch (e) {
+                    // ElMessage.error('AI 生成的 JSON 解析错误');
+                }
+            } else {
+                // ElMessage.error('AI 调用了未知的工具');
+            }
+            loop.abort();
+            return toolCall;
+        });
 
-//         loop.registerOnError(error => {
-//             ElMessage.error(error + '');
-//         });
+        loop.registerOnError(error => {
+            ElMessage.error(error + '');
+        });
 
-//         await loop.start(chatStorage, usePrompt);
+        await loop.start(chatStorage, usePrompt);
 
-//         if (aiMockJson && typeof aiMockJson === 'object') {
-//             Object.keys(aiMockJson).forEach(key => {
-//                 tabStorage.formData[key] = aiMockJson[key];
-//             });
-//             formRef.value?.clearValidate?.();
-//         }
-//     } finally {
-//         aiMockLoading.value = false;
-//     }
-// };
+    } finally {
+        dataView.loading = false;
+    }
+};

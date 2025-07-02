@@ -25,31 +25,53 @@
 <script setup lang="ts">
 import { nextTick, provide, ref } from 'vue';
 import Diagram from './diagram.vue';
+import { topoSortParallel, type DiagramState } from './diagram';
+import { ElMessage } from 'element-plus';
 const showDiagram = ref(true);
 
 const caption = ref('');
 const showCaption = ref(false);
 
-const context = {
-    reset: () => {},
-	setCaption: (text: string) => {
-		caption.value = text;
-		if (caption.value) {
-			nextTick(() => {
-				showCaption.value = true;
-			});
-		} else {
-			nextTick(() => {
-				showCaption.value = false;
-			});
-		}
+function setCaption(text: string) {
+	caption.value = text;
+	if (caption.value) {
+		nextTick(() => {
+			showCaption.value = true;
+		});
+	} else {
+		nextTick(() => {
+			showCaption.value = false;
+		});
 	}
+}
+
+interface DiagramContext {
+	reset: () => void,
+	state?: DiagramState,
+	setCaption: (value: string) => void
+}
+
+const context: DiagramContext = {
+    reset: () => {},
+	state: undefined,
+	setCaption
 };
 
 provide('context', context);
 
-function startTest() {
-
+async function startTest() {
+	const state = context.state;
+	if (state) {
+		const dispatches = topoSortParallel(state);
+		// for (const layer of dispatches) {
+		// 	await Promise.all(
+		// 		layer.map(nodeId => state.nodes[nodeId].run())
+		// 	);
+		// }
+		
+	} else {
+		ElMessage.error('error');
+	}
 }
 
 </script>
