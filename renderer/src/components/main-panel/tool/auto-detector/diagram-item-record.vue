@@ -1,20 +1,23 @@
 <template>
     <div class="diagram-item-record" v-if="props.dataView && props.dataView.tool">
+        <div class="item-status" :class="props.dataView.status">{{ props.dataView.status }}</div>
+        
         <div class="item-header">
             <span class="item-title">{{ props.dataView.tool.name }}</span>
-            <span class="item-status" :class="props.dataView.status">{{ props.dataView.status }}</span>
-        </div>
+        </div>        
+
         <div class="item-desc">{{ props.dataView.tool.description }}</div>
 
-        <div v-if="props.dataView.function !== undefined" class="item-result">
-            <div class="item-label">Function</div>
-            <div class="item-json">{{ props.dataView.function.name }}</div>
-        </div>
+        <br>
 
         <div v-if="props.dataView.function !== undefined" class="item-result">
             <span class="item-label">Arguments</span>
-            <json-render :json="props.dataView.function.arguments" />
+            <div class="code-container">
+                <json-render :json="props.dataView.function.arguments" />
+            </div>
         </div>
+
+        <br>
 
         <div v-if="props.dataView.result !== undefined" class="item-result">
             <span class="item-label">Result</span>
@@ -85,10 +88,9 @@ function formatJson(obj: any) {
 }
 
 .item-status {
-    font-size: 13px;
-    padding: 2px 10px;
+    font-size: 15px;
+    padding: 5px 0;
     border-radius: 12px;
-    margin-left: 8px;
     text-transform: capitalize;
 }
 
@@ -127,7 +129,7 @@ function formatJson(obj: any) {
 .item-json {
     border-radius: 4px;
     padding: 6px 10px;
-    font-size: 13px;
+    font-size: 15px;
     font-family: var(--code-font-family, monospace);
     margin: 2px 0 8px 0;
     white-space: pre-wrap;
@@ -135,6 +137,13 @@ function formatJson(obj: any) {
     overflow-x: auto;
     max-width: 100%;
     box-sizing: border-box;
+}
+
+.code-container {
+    margin-top: 10px;
+    border-radius: .3em;
+    padding: 0 10px;
+    background-color: var(--sidebar);
 }
 
 .item-result {
