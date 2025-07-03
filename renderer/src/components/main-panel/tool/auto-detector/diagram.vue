@@ -11,7 +11,9 @@
 					:style="getNodePopupStyle(node)"
 					class="node-popup"
 				>
-					<DiagramItemRecord :data-view="state.dataView.get(node.id)"/>
+					<el-scrollbar height="100%" width="100%">
+                        <DiagramItemRecord :data-view="state.dataView.get(node.id)"/>
+                    </el-scrollbar>
 				</div>
 			</transition>
         </template>
@@ -29,22 +31,54 @@ import { ElMessage } from 'element-plus';
 
 import DiagramItemRecord from './diagram-item-record.vue';
 import { useI18n } from 'vue-i18n';
+import type { ToolStorage } from '../tools';
+import { tabs } from '../../panel';
 
 const { t } = useI18n();
+
+const props = defineProps({
+    tabId: {
+        type: Number,
+        required: true
+    }
+});
 
 const svgContainer = ref<HTMLDivElement | null>(null);
 let prevNodes: any[] = [];
 let prevEdges: any[] = [];
 
 const state = reactive({
-    nodes: [] as any[],
-    edges: [] as any[],
+    nodes: [] as Node[],
+    edges: [] as Edge[],
     selectedNodeId: null as string | null,
     draggingNodeId: null as string | null,
     hoverNodeId: null as string | null,
     offset: { x: 0, y: 0 },
     dataView: new Map<string, NodeDataView>
 });
+
+const tab = tabs.content[props.tabId];
+const tabStorage = tab.storage as ToolStorage;
+const autoDetectDiagram = tabStorage.autoDetectDiagram;
+
+if (autoDetectDiagram) {
+    // 将 tabStorage.autoDetectDiagram 中的 dataView 保存到 state 中
+    autoDetectDiagram.views?.forEach(item => {
+        state.dataView.set(item.tool.name, {
+            tool: item.tool,
+            status: item.status || 'waiting',
+            result: item.result || null
+        });
+    });
+} else {
+    tabStorage.autoDetectDiagram = {
+        edges: [],
+        views: []
+    };
+}
+
+console.log(tabStorage.autoDetectDiagram!.views);
+console.log(state.dataView);
 
 
 let cancelHoverHandler: NodeJS.Timeout | undefined = undefined;
@@ -88,17 +122,26 @@ const recomputeLayout = async () => {
         children: state.nodes,
         edges: state.edges
     };
-    const layout = await elk.layout(elkGraph) as Node;
+    const layout = await elk.layout(elkGraph) as unknown as Node;
+
     state.nodes.forEach((n, i) => {
         const ln = layout.children?.find(c => c.id === n.id);
         if (ln) {
             n.x = ln.x;
             n.y = ln.y;
-            n.width = ln.width;
-            n.height = ln.height;
+            n.width = ln.width || 200; // 默认宽度
+            n.height = ln.height || 64; // 默认高度
         }
     });
     state.edges = layout.edges || [];
+
+    // 保存拓扑信息到 tabStorage
+    tabStorage.autoDetectDiagram!.edges = state.edges.map(edge => ({
+        id: edge.id,
+        sources: edge.sources || [],
+        targets: edge.targets || []
+    }));
+
     return layout;
 };
 
@@ -109,14 +152,28 @@ const drawDiagram = async () => {
     const nodes = [] as Node[];
     const edges = [] as Edge[];
 
-    for (let i = 0; i < tools.length - 1; ++i) {
-        const prev = tools[i];
-        const next = tools[i + 1];
-        edges.push({
-            id: prev.name + '-' + next.name,
-            sources: [prev.name],
-            targets: [next.name]
-        })
+    // 如果保存了 edges 信息，则需要进行同步
+    const reservedEdges = autoDetectDiagram?.edges;
+    if (reservedEdges) {
+        for (const edge of reservedEdges) {
+            if (edge.sources && edge.targets && edge.sources.length > 0 && edge.targets.length > 0) {
+                edges.push({
+                    id: edge.id,
+                    sources: edge.sources || [],
+                    targets: edge.targets || [],
+                });
+            }
+        }
+    } else {
+        for (let i = 0; i < tools.length - 1; ++i) {
+            const prev = tools[i];
+            const next = tools[i + 1];
+            edges.push({
+                id: prev.name + '-' + next.name,
+                sources: [prev.name],
+                targets: [next.name]
+            })
+        }
     }
 
     for (const tool of tools) {
@@ -127,11 +184,13 @@ const drawDiagram = async () => {
             labels: [{ text: tool.name || 'Tool' }]
         });
 
-        state.dataView.set(tool.name, {
-            tool,
-            status: 'waiting',
-            result: null
-        });
+        if (!state.dataView.has(tool.name)) {
+            // 如果 dataView 中没有该工具，则初始化
+            state.dataView.set(tool.name, {
+                tool,
+                status: 'waiting'
+            });
+        }
     }
 
     state.edges = edges;
@@ -291,9 +350,7 @@ function renderSvg() {
             if (state.selectedNodeId) {
 
                 const { canConnect, reason } = invalidConnectionDetector(state, d);
-
                 console.log(reason);
-
 
                 if (reason) {
                     ElMessage.warning(reason);
@@ -340,8 +397,8 @@ function renderSvg() {
         });
 
     nodeGroupEnter.append('rect')
-        .attr('width', d => d.width)
-        .attr('height', d => d.height)
+        .attr('width', (d: any) => d.width)
+        .attr('height', (d: any) => d.height)
         .attr('rx', 16)
         .attr('fill', 'var(--main-light-color-20)')
         .attr('stroke', d => state.selectedNodeId === d.id ? 'var(--main-color)' : 'var(--main-light-color-10)')
@@ -454,7 +511,6 @@ function renderSvg() {
     nodeGroup.select('rect')
         .transition()
         .duration(400)
-        .attr('stroke-width', d => state.selectedNodeId === d.id ? 2 : 1)
         .attr('stroke', d => state.selectedNodeId === d.id ? 'var(--main-color)' : 'var(--main-light-color-10)');
 
     // 边高亮
@@ -530,12 +586,33 @@ onMounted(() => {
 function getNodePopupStyle(node: any): any {
     // 节点的 svg 坐标转为容器内绝对定位
     // 注意：这里假设 offsetX、node.x、node.y 已经是最新的
-    const left = (node.x || 0) + (node.width || 160) + 120; // 节点右侧
-    const top = (node.y || 0) + 30;
+    const marginX = 50;
+    const marginY = 80;
+    const popupWidth = 300;
+    const popupHeight = 500;
+    
+    let left = (node.x || 0) + (node.width || 160) + 100;
+    let top = (node.y || 0) + 30;
+
+    // 获取容器宽高
+    const container = svgContainer.value;
+    let containerWidth = 1200, containerHeight = 800; // 默认值
+    if (container) {
+        const rect = container.getBoundingClientRect();
+        containerWidth = rect.width;
+        containerHeight = rect.height;
+    }
+
+    // 限制 left 和 top 不超出容器
+    left = Math.max(marginX, Math.min(left, containerWidth - popupWidth - marginX));
+    top = Math.max(marginY, Math.min(top, containerHeight - popupHeight - marginY));
+
     return {
         position: 'absolute',
         left: `${left}px`,
         top: `${top}px`,
+        width: `${popupWidth}px`,
+        height: `${popupHeight}px`
     };
 }
 </script>
@@ -556,7 +633,6 @@ function getNodePopupStyle(node: any): any {
     position: absolute;
     background: var(--background);
     border: 1px solid var(--main-color);
-    width: 240px;
     border-radius: 8px;
     padding: 8px 12px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);

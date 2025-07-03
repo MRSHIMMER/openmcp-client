@@ -1,11 +1,12 @@
 import type { ElkNode } from 'elkjs/lib/elk-api';
-import { TaskLoop } from '../../chat/core/task-loop';
+import { MessageState, TaskLoop } from '../../chat/core/task-loop';
 import type { Reactive } from 'vue';
 import type { ChatStorage } from '../../chat/chat-box/chat';
 import { ElMessage } from 'element-plus';
 import type { ToolItem } from '@/hook/type';
 
 import I18n from '@/i18n';
+import type { ChatCompletionChunk } from 'openai/resources/index.mjs';
 
 const { t } = I18n.global;
 
@@ -13,11 +14,14 @@ export interface Edge {
 	id: string;
 	sources: string[];
 	targets: string[];
-	section?: any; // { startPoint: { x, y }, endPoint: { x, 
+	sections?: any; // { startPoint: { x, y }, endPoint: { x, 
 }
 
 export type Node = ElkNode & {
 	[key: string]: any;
+    width: number;
+    height: number;
+    id: string;
 };
 
 export interface DiagramState {
@@ -36,7 +40,8 @@ export interface CanConnectResult {
 export interface NodeDataView {
     tool: ToolItem;
     status: 'default' | 'running' | 'waiting' | 'success' | 'error';
-    result: any;
+    function?: ChatCompletionChunk.Choice.Delta.ToolCall.Function;
+    result?: any;
 }
 
 export interface DiagramContext {
@@ -191,8 +196,8 @@ export async function makeNodeTest(
         let aiMockJson: any = undefined;
 
         loop.registerOnToolCall(toolCall => {
-            console.log(toolCall);
-            
+            dataView.function = toolCall.function;
+
             if (toolCall.function?.name === dataView.tool?.name) {
                 try {
                     const toolArgs = JSON.parse(toolCall.function?.arguments || '{}');
@@ -202,19 +207,34 @@ export async function makeNodeTest(
                     dataView.status = 'error';
                     dataView.result = t('ai-gen-error-json');
                     context.render();
+                    loop.abort();
                 }
             } else {
                 // ElMessage.error('AI 调用了未知的工具');
                 dataView.status = 'error';
                 dataView.result = t('ai-invoke-unknown-tool') +  ' ' + toolCall.function?.name;
                 context.render();
+                loop.abort();
             }
-            loop.abort();
             return toolCall;
         });
 
+        loop.registerOnToolCalled(toolCalled => {
+            if (toolCalled.state === MessageState.Success) {
+                dataView.status = 'success';
+                dataView.result = toolCalled.content;
+            } else {
+                dataView.status = 'error';
+                dataView.result = toolCalled.content;
+            }
+            loop.abort();
+            return toolCalled;
+        })
+
         loop.registerOnError(error => {
-            ElMessage.error(error + '');
+            dataView.status = 'error';
+            dataView.result = error;
+            context.render();
         });
 
         await loop.start(chatStorage, usePrompt);

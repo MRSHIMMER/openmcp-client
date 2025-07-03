@@ -5,21 +5,36 @@
             <span class="item-status" :class="props.dataView.status">{{ props.dataView.status }}</span>
         </div>
         <div class="item-desc">{{ props.dataView.tool.description }}</div>
-        <div class="item-schema">
-            <span class="item-label">Input Schema:</span>
-            <pre class="item-json">{{ formatJson(props.dataView.tool.inputSchema) }}</pre>
+        
+        <div v-if="props.dataView.function !== undefined" class="item-result">
+            <span class="item-label">Function</span>
+            <pre class="item-json">{{ props.dataView.function.name }}</pre>
+            <span class="item-label">Arguments</span>
+            <pre class="item-json">{{ formatJson(props.dataView.function.arguments) }}</pre>
         </div>
-        <div v-if="props.dataView.result !== undefined" class="item-result">
-            <span class="item-label">Result:</span>
-            <pre class="item-json">{{ formatJson(props.dataView.result) }}</pre>
-        </div>
+
+    <div v-if="props.dataView.result !== undefined" class="item-result">
+        <span class="item-label">Result</span>
+        <template v-if="Array.isArray(props.dataView.result)">
+            <div
+                v-for="(item, idx) in props.dataView.result"
+                :key="idx"
+                class="result-block"
+            >
+                <pre class="item-json" v-if="typeof item === 'object' && item.text !== undefined">{{ item.text }}</pre>
+                <pre class="item-json" v-else>{{ formatJson(item) }}</pre>
+            </div>
+        </template>
+        <pre class="item-json" v-else-if="typeof props.dataView.result === 'string'">{{ props.dataView.result }}</pre>
+        <pre class="item-json" v-else>{{ formatJson(props.dataView.result) }}</pre>
     </div>
-	<div v-else class="diagram-item-record">
-		<div class="item-header">
-			<span class="item-title">No Tool Selected</span>
-		</div>
-		<div class="item-desc">Please select a tool to view its details.</div>
-	</div>
+    </div>
+    <div v-else class="diagram-item-record">
+        <div class="item-header">
+            <span class="item-title">No Tool Selected</span>
+        </div>
+        <div class="item-desc">Please select a tool to view its details.</div>
+    </div>
 </template>
 
 <script setup lang="ts">
@@ -48,8 +63,7 @@ function formatJson(obj: any) {
     border-radius: 8px;
     box-shadow: 0 1px 4px rgba(0,0,0,0.04);
     font-size: 15px;
-    color: #222;
-    max-width: 420px;
+    max-width: 300px;
     word-break: break-all;
 }
 
@@ -103,5 +117,11 @@ function formatJson(obj: any) {
 
 .item-result {
     margin-top: 6px;
+}
+
+.result-block {
+    margin-bottom: 6px;
+    border-radius: .5em;
+    background-color: rgba(245, 108, 108, 0.3);
 }
 </style>
