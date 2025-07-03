@@ -194,5 +194,6 @@
     "ai-gen-error-json": "AI生成JSONの解析エラー",
     "ai-invoke-unknown-tool": "AIが未知のツールを呼び出しました",
     "click-edge-to-delete": "クリックして削除",
-    "select-node-define-test-tomo": "テストトポロジを定義するために別のノードを選択してください"
+    "select-node-define-test-tomo": "テストトポロジを定義するために別のノードを選択してください",
+    "tool-self-detect": "ツール自己診断"
 }

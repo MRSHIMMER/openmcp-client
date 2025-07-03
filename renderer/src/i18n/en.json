@@ -194,5 +194,6 @@
     "ai-gen-error-json": "AI-generated JSON parsing error",
     "ai-invoke-unknown-tool": "AI called an unknown tool",
     "click-edge-to-delete": "Click the edge to delete",
-    "select-node-define-test-tomo": "Select another node to define the test topology"
+    "select-node-define-test-tomo": "Select another node to define the test topology",
+    "tool-self-detect": "Tool Self-Check"
 }

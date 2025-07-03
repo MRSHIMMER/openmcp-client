@@ -194,5 +194,6 @@
     "ai-gen-error-json": "AI 生成的 JSON 解析錯誤",
     "ai-invoke-unknown-tool": "AI調用了未知的工具",
     "click-edge-to-delete": "點擊邊緣以刪除",
-    "select-node-define-test-tomo": "選擇另一個節點以定義測試拓撲"
+    "select-node-define-test-tomo": "選擇另一個節點以定義測試拓撲",
+    "tool-self-detect": "工具自檢"
 }

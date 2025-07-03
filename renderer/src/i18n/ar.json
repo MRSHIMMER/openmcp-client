@@ -194,5 +194,6 @@
     "ai-gen-error-json": "خطأ في تحليل JSON الذي تم إنشاؤه بواسطة الذكاء الاصطناعي",
     "ai-invoke-unknown-tool": "استدعت الذكاء الاصطناعي أداة غير معروفة",
     "click-edge-to-delete": "انقر على الحافة للحذف",
-    "select-node-define-test-tomo": "اختر عقدة أخرى لتحديد طوبولوجيا الاختبار"
+    "select-node-define-test-tomo": "اختر عقدة أخرى لتحديد طوبولوجيا الاختبار",
+    "tool-self-detect": "الفحص الذاتي للأداة"
 }

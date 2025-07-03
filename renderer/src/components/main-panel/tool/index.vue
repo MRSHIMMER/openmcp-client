@@ -6,22 +6,29 @@
                 <h2>
                     <span class="iconfont icon-tool"></span>
                     {{ t('tool-module') }}
+                    <el-button
+                        style="font-size: 12px;"
+                        @click="showAutoDetector = true"
+                    >
+                        {{ t('tool-self-detect') }}
+                    </el-button>
                 </h2>
                 <ToolList :tab-id="props.tabId"></ToolList>
-
             </div>
             <div class="right">
                 <ToolExecutor :tab-id="props.tabId"></ToolExecutor>
-
                 <ToolLogger :tab-id="props.tabId"></ToolLogger>
             </div>
         </div>
+        <AutoDetector 
+            v-model="showAutoDetector"
+            :tab-id="props.tabId"
+        />
     </el-scrollbar>
-
 </template>
 
 <script setup lang="ts">
-import { defineProps } from 'vue';
+import { defineProps, ref } from 'vue';
 import ToolList from './tool-list.vue';
 import ToolExecutor from './tool-executor.vue';
 import ToolLogger from './tool-logger.vue';
@@ -36,6 +43,8 @@ const props = defineProps({
         required: true
     }
 });
+
+const showAutoDetector = ref(false);
 </script>
 
 <style scoped>

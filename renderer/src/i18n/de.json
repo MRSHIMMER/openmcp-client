@@ -194,5 +194,6 @@
     "ai-gen-error-json": "Fehler beim Parsen von KI-generiertem JSON",
     "ai-invoke-unknown-tool": "KI hat ein unbekanntes Tool aufgerufen",
     "click-edge-to-delete": "Klicken Sie auf die Kante, um sie zu löschen",
-    "select-node-define-test-tomo": "Wählen Sie einen anderen Knoten aus, um die Testtopologie zu definieren"
+    "select-node-define-test-tomo": "Wählen Sie einen anderen Knoten aus, um die Testtopologie zu definieren",
+    "tool-self-detect": "Werkzeug-Selbsttest"
 }

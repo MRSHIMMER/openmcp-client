@@ -1,5 +1,5 @@
 <template>
-    <el-dialog v-model="showDiagram" width="800px" append-to-body class="no-padding-dialog">
+    <el-dialog v-model="showDialog" width="800px" class="no-padding-dialog">
         <template #header>
             <div style="display: flex; align-items: center;">
                 <span>Tool Diagram</span>
@@ -43,7 +43,7 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, provide, ref } from 'vue';
+import { computed, nextTick, provide, ref } from 'vue';
 import Diagram from './diagram.vue';
 import { makeNodeTest, topoSortParallel, type DiagramContext, type DiagramState } from './diagram';
 import { ElMessage } from 'element-plus';
@@ -52,17 +52,26 @@ import { useI18n } from 'vue-i18n';
 import type { ToolStorage } from '../tools';
 import { tabs } from '../../panel';
 
-const showDiagram = ref(true);
 const { t } = useI18n();
 
 const caption = ref('');
 const showCaption = ref(false);
 
 const props = defineProps({
+    modelValue: {
+        type: Boolean,
+        default: false
+    },
     tabId: {
         type: Number,
         required: true
     }
+});
+const emit = defineEmits(['update:modelValue']);
+
+const showDialog = computed({
+    get: () => props.modelValue,
+    set: v => emit('update:modelValue', v)
 });
 
 function setCaption(text: string) {

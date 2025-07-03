@@ -194,5 +194,6 @@
     "ai-gen-error-json": "Erreur d'analyse JSON générée par IA",
     "ai-invoke-unknown-tool": "L'IA a appelé un outil inconnu",
     "click-edge-to-delete": "Cliquez sur le bord pour supprimer",
-    "select-node-define-test-tomo": "Sélectionnez un autre nœud pour définir la topologie de test"
+    "select-node-define-test-tomo": "Sélectionnez un autre nœud pour définir la topologie de test",
+    "tool-self-detect": "Auto-vérification de l'outil"
 }

@@ -67,7 +67,7 @@ function formatJson(obj: any) {
     border-radius: 8px;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
     font-size: 15px;
-    max-width: 300px;
+    max-width: 1000px;
     word-break: break-all;
 }
 
@@ -127,6 +127,14 @@ function formatJson(obj: any) {
 .item-json {
     border-radius: 4px;
     padding: 6px 10px;
+    font-size: 13px;
+    font-family: var(--code-font-family, monospace);
+    margin: 2px 0 8px 0;
+    white-space: pre-wrap;
+    word-break: break-all;
+    overflow-x: auto;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 .item-result {
@@ -137,7 +145,10 @@ function formatJson(obj: any) {
     margin-bottom: 6px;
     border-radius: .5em;
     margin: 5px 0;
+    overflow-x: auto;
+    max-width: 100%;
 }
+
 
 .result-block.error {
     background-color: rgba(245, 108, 108, 0.5);
