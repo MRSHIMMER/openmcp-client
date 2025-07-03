@@ -183,5 +183,17 @@
     "export": "Exportieren",
     "export-filename": "Exportdateiname",
     "how-to-use": "Wie benutzt man?",
-    "is-required": "ist ein Pflichtfeld"
+    "is-required": "ist ein Pflichtfeld",
+    "edit-ai-mook-prompt": "AI Mook-Prompts bearbeiten",
+    "start-auto-detect": "Selbsttest starten",
+    "tool-module": "Werkzeugmodul",
+    "prompt-module": "Aufforderungsmodul",
+    "not-select-begin-node": "Kein Startknoten ausgewählt",
+    "can-make-loop": "Die Verbindung wird eine Schleife bilden",
+    "this-is-repeat-connection": "Dies ist ein doppelter Link",
+    "ai-gen-error-json": "Fehler beim Parsen von KI-generiertem JSON",
+    "ai-invoke-unknown-tool": "KI hat ein unbekanntes Tool aufgerufen",
+    "click-edge-to-delete": "Klicken Sie auf die Kante, um sie zu löschen",
+    "select-node-define-test-tomo": "Wählen Sie einen anderen Knoten aus, um die Testtopologie zu definieren",
+    "tool-self-detect": "Werkzeug-Selbsttest"
 }

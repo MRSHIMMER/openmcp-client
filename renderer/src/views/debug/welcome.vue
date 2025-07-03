@@ -108,6 +108,7 @@ function chooseDebugMode(index: number) {
 .welcome-container > span {
 	flex: 1 1 calc(50% - 100px);
 	box-sizing: border-box;
+    transition: .3s transform ease-in-out;
 }
 
 .debug-option {

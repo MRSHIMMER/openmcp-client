@@ -48,6 +48,7 @@ export class TaskLoop {
     private bridge: MessageBridge;
     private streamingContent: Ref<string>;
     private streamingToolCalls: Ref<ToolCall[]>;
+    private aborted = false;
 
     private currentChatId = '';
     private onError: (error: IErrorMssage) => void = (msg) => { };
@@ -318,6 +319,7 @@ export class TaskLoop {
         });
         this.streamingContent.value = '';
         this.streamingToolCalls.value = [];
+        this.aborted = true;
     }
 
     /**
@@ -545,6 +547,7 @@ export class TaskLoop {
             maxEpochs = 50,
             verbose = 0
         } = this.taskOptions || {};
+        this.aborted = false;
 
         for (let i = 0; i < maxEpochs; ++i) {
 
@@ -569,6 +572,12 @@ export class TaskLoop {
 
             // 发送请求
             const doConverationResult = await this.doConversation(chatData, toolcallIndexAdapter);
+
+            // 如果在调用过程中出发了 abort，则直接中断
+            if (this.aborted) {
+                this.aborted = false;
+                break;
+            }
 
             // 如果存在需要调度的工具
             if (this.streamingToolCalls.value.length > 0) {
@@ -597,7 +606,18 @@ export class TaskLoop {
 
                     // ready to call tools
                     toolCall = this.consumeToolCalls(toolCall);
+
+                    if (this.aborted) {
+                        this.aborted = false;
+                        break;
+                    }
+
                     let toolCallResult = await handleToolCalls(toolCall);
+
+                    if (this.aborted) {
+                        this.aborted = false;
+                        break;
+                    }
 
                     // hook : finish call tools
                     toolCallResult = this.consumeToolCalleds(toolCallResult);
@@ -654,6 +674,11 @@ export class TaskLoop {
                             }
                         });
                     }
+                }
+
+                if (this.aborted) {
+                    this.aborted = false;
+                    break;
                 }
 
             } else if (this.streamingContent.value) {

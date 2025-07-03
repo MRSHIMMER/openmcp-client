@@ -183,5 +183,17 @@
     "export": "導出",
     "export-filename": "導出文件名",
     "how-to-use": "如何使用?",
-    "is-required": "是必填欄位"
+    "is-required": "是必填欄位",
+    "edit-ai-mook-prompt": "編輯AI Mook提示詞",
+    "start-auto-detect": "開啟自檢程序",
+    "tool-module": "工具模組",
+    "prompt-module": "提示詞模組",
+    "not-select-begin-node": "未選擇起始節點",
+    "can-make-loop": "連接會形成環路",
+    "this-is-repeat-connection": "這是一個重複的連結",
+    "ai-gen-error-json": "AI 生成的 JSON 解析錯誤",
+    "ai-invoke-unknown-tool": "AI調用了未知的工具",
+    "click-edge-to-delete": "點擊邊緣以刪除",
+    "select-node-define-test-tomo": "選擇另一個節點以定義測試拓撲",
+    "tool-self-detect": "工具自檢"
 }

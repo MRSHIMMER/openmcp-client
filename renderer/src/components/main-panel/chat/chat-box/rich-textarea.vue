@@ -234,6 +234,7 @@ function handleCompositionEnd() {
 .rich-editor {
     min-height: 100px;
     outline: none;
+    white-space: pre-wrap;
 }
 
 .rich-editor:empty::before {

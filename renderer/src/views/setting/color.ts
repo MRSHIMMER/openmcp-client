@@ -32,6 +32,11 @@ export function onGeneralColorChange(colorString: string) {
 
     document?.documentElement.style.setProperty(
         '--main-light-color', `rgba(${r}, ${g}, ${b}, 0.7)`);
+
+    for (let i = 1; i <= 9; ++ i) {
+        document?.documentElement.style.setProperty(
+            `--main-light-color-${i}0`, `rgba(${r}, ${g}, ${b}, 0.${i})`);
+    }
 }
 
 export const predefinedColors = [

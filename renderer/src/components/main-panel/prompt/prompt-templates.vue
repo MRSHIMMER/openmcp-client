@@ -8,23 +8,27 @@
 					<span>prompts/list</span>
 					<span @click.stop="reloadPrompts(client, { first: false })" class="iconfont icon-restart"></span>
 				</h3>
-
 			</template>
 
 			<!-- body -->
-
 			<div class="prompt-template-container-scrollbar">
-				<el-scrollbar height="500px">
+				<el-scrollbar height="fit-content" v-if="(client.promptTemplates?.size || 0) > 0">
 					<div class="prompt-template-container">
 						<div class="item"
 							:class="{ 'active': props.tabId >= 0 && tabStorage.currentPromptName === template.name }"
 							v-for="template of client.promptTemplates?.values()" :key="template.name"
 							@click="handleClick(template)">
-							<span>{{ template.name }}</span>
-							<span>{{ template.description || '' }}</span>
+							<span class="prompt-title">{{ template.name }}</span>
+							<span class="prompt-description">{{ template.description || '' }}</span>
 						</div>
 					</div>
 				</el-scrollbar>
+				<div v-else style="padding: 10px;">
+					<div class="empty-description">
+						<span class="iconfont icon-empty" style="font-size: 22px; opacity: 0.4; margin-right: 6px;"></span>
+						<span style="opacity: 0.6;">No prompts found.</span>
+					</div>
+				</div>
 			</div>
 		</el-collapse-item>
 	</el-collapse>
@@ -126,8 +130,8 @@ onMounted(async () => {
 	user-select: none;
 	cursor: pointer;
 	display: flex;
-	align-items: center;
-	justify-content: space-between;
+	flex-direction: column;
+	align-items: flex-start;
 	transition: var(--animation-3s);
 }
 
@@ -136,24 +140,40 @@ onMounted(async () => {
 	transition: var(--animation-3s);
 }
 
+.prompt-template-container>.item:active {
+    transform: scale(0.95);
+	transition: var(--animation-3s);
+}
+
 .prompt-template-container>.item.active {
 	background-color: var(--main-light-color);
 	transition: var(--animation-3s);
 }
 
-.prompt-template-container>.item>span:first-child {
-	max-width: 200px;
+.prompt-title {
+	font-weight: bold;
+	max-width: 250px;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
 
-.prompt-template-container>.item>span:last-child {
+.prompt-description {
 	opacity: 0.6;
 	font-size: 12.5px;
-	max-width: 200px;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
+	max-width: 250px;
+	overflow: visible;
+	text-overflow: unset;
+	white-space: normal;
+	word-break: break-all;
+}
+
+.empty-description {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--el-text-color-placeholder, #bbb);
+	font-size: 15px;
+	min-height: 40px;
 }
 </style>

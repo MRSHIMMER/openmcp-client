@@ -183,5 +183,17 @@
     "export": "تصدير",
     "export-filename": "اسم ملف التصدير",
     "how-to-use": "كيفية الاستخدام؟",
-    "is-required": "هو حقل مطلوب"
+    "is-required": "هو حقل مطلوب",
+    "edit-ai-mook-prompt": "تحرير إشارات AI Mook",
+    "start-auto-detect": "بدء عملية الفحص الذاتي",
+    "tool-module": "وحدة الأدوات",
+    "prompt-module": "وحدة المطالبات",
+    "not-select-begin-node": "لم يتم تحديد عقدة البداية",
+    "can-make-loop": "سيؤدي الاتصال إلى تكوين حلقة",
+    "this-is-repeat-connection": "هذا رابط مكرر",
+    "ai-gen-error-json": "خطأ في تحليل JSON الذي تم إنشاؤه بواسطة الذكاء الاصطناعي",
+    "ai-invoke-unknown-tool": "استدعت الذكاء الاصطناعي أداة غير معروفة",
+    "click-edge-to-delete": "انقر على الحافة للحذف",
+    "select-node-define-test-tomo": "اختر عقدة أخرى لتحديد طوبولوجيا الاختبار",
+    "tool-self-detect": "الفحص الذاتي للأداة"
 }

@@ -4,7 +4,7 @@
             <div class="left">
                 <h2>
                     <span class="iconfont icon-chat"></span>
-                    提示词模块
+                    {{ t('prompt-module') }}
                 </h2>
 
                 <PromptTemplates :tab-id="props.tabId"></PromptTemplates>
@@ -24,6 +24,9 @@ import { defineProps } from 'vue';
 import PromptTemplates from './prompt-templates.vue';
 import PromptReader from './prompt-reader.vue';
 import PromptLogger from './prompt-logger.vue';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 const props = defineProps({
     tabId: {

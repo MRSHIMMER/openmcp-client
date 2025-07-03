@@ -56,6 +56,7 @@ import { llmManager, llms } from '@/views/setting/llm';
 import { mcpClientAdapter } from '@/views/connect/core';
 import { ElMessage } from 'element-plus';
 import { useMessageBridge } from '@/api/message-bridge';
+import { gotoWebsite } from '@/hook/util';
 
 const { t, locale } = useI18n();
 
@@ -166,11 +167,11 @@ const exportCode = async () => {
 
 const gotoHowtoUse = () => {
     if (locale.value === 'zh') {
-        window.open('https://kirigaya.cn/openmcp/zh/sdk-tutorial/#%E4%BD%BF%E7%94%A8');
+        gotoWebsite('https://kirigaya.cn/openmcp/zh/sdk-tutorial/#%E4%BD%BF%E7%94%A8');
     } else if (locale.value === 'ja') {
-        window.open('https://kirigaya.cn/openmcp/ja/sdk-tutorial/#%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95');
+        gotoWebsite('https://kirigaya.cn/openmcp/ja/sdk-tutorial/#%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95');
     } else {
-        window.open('https://kirigaya.cn/openmcp/sdk-tutorial/#usage');
+        gotoWebsite('https://kirigaya.cn/openmcp/sdk-tutorial/#usage');
     }
 }
 

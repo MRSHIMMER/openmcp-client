@@ -1,29 +1,41 @@
 <template>
     <el-scrollbar height="100%">
+        <AutoDetector :tab-id="props.tabId" />
         <div class="tool-module">
             <div class="left">
                 <h2>
                     <span class="iconfont icon-tool"></span>
-                    工具模块
+                    {{ t('tool-module') }}
+                    <el-button
+                        style="font-size: 12px;"
+                        @click="showAutoDetector = true"
+                    >
+                        {{ t('tool-self-detect') }}
+                    </el-button>
                 </h2>
                 <ToolList :tab-id="props.tabId"></ToolList>
-
             </div>
             <div class="right">
                 <ToolExecutor :tab-id="props.tabId"></ToolExecutor>
-
                 <ToolLogger :tab-id="props.tabId"></ToolLogger>
             </div>
         </div>
+        <AutoDetector 
+            v-model="showAutoDetector"
+            :tab-id="props.tabId"
+        />
     </el-scrollbar>
-
 </template>
 
 <script setup lang="ts">
-import { defineProps } from 'vue';
+import { defineProps, ref } from 'vue';
 import ToolList from './tool-list.vue';
 import ToolExecutor from './tool-executor.vue';
 import ToolLogger from './tool-logger.vue';
+import AutoDetector from './auto-detector/index.vue';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 const props = defineProps({
     tabId: {
@@ -31,6 +43,8 @@ const props = defineProps({
         required: true
     }
 });
+
+const showAutoDetector = ref(false);
 </script>
 
 <style scoped>

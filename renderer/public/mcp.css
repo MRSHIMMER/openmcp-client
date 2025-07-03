@@ -3,6 +3,15 @@
     --main-color: #CB81DA;
     --main-dark-color: #2D323B;
     --main-light-color: rgba(203, 129, 218, 0.7);
+    --main-light-color-90: rgba(203, 129, 218, 0.9);
+    --main-light-color-80: rgba(203, 129, 218, 0.8);
+    --main-light-color-70: rgba(203, 129, 218, 0.7);
+    --main-light-color-60: rgba(203, 129, 218, 0.6);
+    --main-light-color-50: rgba(203, 129, 218, 0.5);
+    --main-light-color-40: rgba(203, 129, 218, 0.4);
+    --main-light-color-30: rgba(203, 129, 218, 0.3);
+    --main-light-color-20: rgba(203, 129, 218, 0.2);
+    --main-light-color-10: rgba(203, 129, 218, 0.1);
     --sidebar-width: 330px;
     --right-nav-width: 50px;
     --time-scale-height: 30px;

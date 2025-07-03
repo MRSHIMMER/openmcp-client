@@ -12,17 +12,23 @@
 
 			<!-- body -->
 			<div class="resource-template-container-scrollbar">
-				<el-scrollbar height="500px">
+				<el-scrollbar height="fit-content" v-if="(client.resources?.size || 0) > 0">
 					<div class="resource-template-container">
 						<div class="item"
 							:class="{ 'active': props.tabId >= 0 && tabStorage.currentType === 'resource' && tabStorage.currentResourceName === resource.name }"
 							v-for="resource of client.resources?.values()" :key="resource.uri"
 							@click="handleClick(resource)">
-							<span>{{ resource.name }}</span>
-							<span>{{ resource.mimeType }}</span>
+							<span class="resource-title">{{ resource.name }}</span>
+							<span class="resource-description">{{ resource.mimeType }}</span>
 						</div>
 					</div>
 				</el-scrollbar>
+				<div v-else style="padding: 10px;">
+					<div class="empty-description">
+						<span class="iconfont icon-empty" style="font-size: 22px; opacity: 0.4; margin-right: 6px;"></span>
+						<span style="opacity: 0.6;">No resources found.</span>
+					</div>
+				</div>
 			</div>
 		</el-collapse-item>
 	</el-collapse>
@@ -139,41 +145,58 @@ h3.resource-template .iconfont.icon-restart:hover {
 	width: 175px;
 }
 
-.resource-template-container>.item {
+.resource-template-container > .item {
 	margin: 3px;
 	padding: 5px 10px;
 	border-radius: .3em;
 	user-select: none;
 	cursor: pointer;
 	display: flex;
-	align-items: center;
-	justify-content: space-between;
+	flex-direction: column;
+	align-items: flex-start;
 	transition: var(--animation-3s);
 }
 
-.resource-template-container>.item:hover {
+.resource-template-container > .item:hover {
 	background-color: var(--main-light-color);
 	transition: var(--animation-3s);
 }
 
-.resource-template-container>.item.active {
+.resource-template-container > .item.active {
 	background-color: var(--main-light-color);
 	transition: var(--animation-3s);
 }
 
-.resource-template-container>.item>span:first-child {
-	max-width: 200px;
+.resource-template-container > .item:active {
+    transform: scale(0.95);
+    transition: var(--animation-3s);
+}
+
+.resource-title {
+	font-weight: bold;
+	max-width: 250px;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
 
-.resource-template-container>.item>span:last-child {
+.resource-description {
 	opacity: 0.6;
 	font-size: 12.5px;
-	max-width: 200px;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
+	max-width: 250px;
+	/* Remove ellipsis and allow full text wrap */
+	overflow: visible;
+	text-overflow: unset;
+	white-space: normal;
+	word-break: break-all;
+}
+
+.empty-description {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--el-text-color-placeholder, #bbb);
+	font-size: 15px;
+	min-height: 40px;
 }
 </style>

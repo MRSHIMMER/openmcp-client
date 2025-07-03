@@ -163,24 +163,26 @@ function getDefaultValue(property: any): string {
     }
 }
 
-// 修改 watch 逻辑
-// watch(
-//     () => props.modelValue,
-//     (newVal) => {
-//         const currentParsed = tryParse(inputValue.value)
-//         if (!isDeepEqual(currentParsed, newVal)) {
-//             const newContent = JSON.stringify(newVal, null, 2)
-//             editorView.value?.dispatch({
-//                 changes: {
-//                     from: 0,
-//                     to: editorView.value.state.doc.length,
-//                     insert: newContent
-//                 }
-//             })
-//         }
-//     },
-//     { deep: true }
-// )
+watch(
+    () => props.modelValue,
+    (newVal) => {
+        // 当前编辑器内容
+        const currentContent = editorView.value?.state.doc.toString() ?? '';
+        const newContent = JSON.stringify(newVal ?? {}, null, 2);
+
+        if (currentContent !== newContent && editorView.value) {
+            editorView.value.dispatch({
+                changes: {
+                    from: 0,
+                    to: editorView.value.state.doc.length,
+                    insert: newContent
+                }
+            });
+        }
+    },
+    { deep: true }
+);
+
 
 // 辅助函数：尝试解析 JSON
 const tryParse = (value: string): any => {

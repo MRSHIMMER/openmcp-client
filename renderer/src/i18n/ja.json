@@ -183,5 +183,17 @@
     "export": "エクスポート",
     "export-filename": "エクスポートファイル名",
     "how-to-use": "使用方法",
-    "is-required": "は必須フィールドです"
+    "is-required": "は必須フィールドです",
+    "edit-ai-mook-prompt": "AI Mookプロンプトを編集",
+    "start-auto-detect": "自己診断を開始",
+    "tool-module": "ツールモジュール",
+    "prompt-module": "プロンプトモジュール",
+    "not-select-begin-node": "開始ノードが選択されていません",
+    "can-make-loop": "接続によりループが形成されます",
+    "this-is-repeat-connection": "これは重複したリンクです",
+    "ai-gen-error-json": "AI生成JSONの解析エラー",
+    "ai-invoke-unknown-tool": "AIが未知のツールを呼び出しました",
+    "click-edge-to-delete": "クリックして削除",
+    "select-node-define-test-tomo": "テストトポロジを定義するために別のノードを選択してください",
+    "tool-self-detect": "ツール自己診断"
 }
