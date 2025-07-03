@@ -20,9 +20,16 @@
                     <el-switch v-else-if="property.type === 'boolean'" active-text="true" inactive-text="false"
                         v-model="tabStorage.formData[name]" />
 
+                    <el-input-tag
+                        v-else-if="property.type === 'array'"
+                        v-model="tabStorage.formData[name]"
+                        :placeholder="property.description || t('enter') + ' ' + (property.title || name) + ' (逗号分隔)'"
+                    />
+
                     <k-input-object v-else-if="property.type === 'object'" v-model="tabStorage.formData[name]"
                         :schema="property"
                         :placeholder="property.description || t('enter') + ' ' + (property.title || name)" />
+
                 </el-form-item>
             </template>
 
@@ -37,7 +44,6 @@
                     :disabled="loading || aiMockLoading || mockLoading">
                     {{ 'mook' }}
                 </el-button>
-
 
                 <el-popover placement="top" width="350" trigger="click" v-model:visible="aiPromptVisible">
                     <template #reference>
@@ -150,7 +156,8 @@ const initFormData = () => {
 
     Object.entries(currentTool.value.inputSchema.properties).forEach(([name, property]) => {
         newSchemaDataForm[name] = getDefaultValue(property);
-        const originType = normaliseJavascriptType(typeof tabStorage.formData[name]);
+        const rawType = Array.isArray(tabStorage.formData[name]) ? 'array' : typeof tabStorage.formData[name];        
+        const originType = normaliseJavascriptType(rawType);
 
         if (tabStorage.formData[name] !== undefined && originType === property.type) {
             newSchemaDataForm[name] = tabStorage.formData[name];
@@ -300,4 +307,9 @@ watch(() => tabStorage.currentToolName, () => {
     transform: scale(0.95);
     transition: transform 0.08s;
 }
+
+.el-tag.el-tag--info {
+    background-color: var(--main-color);
+}
+
 </style>

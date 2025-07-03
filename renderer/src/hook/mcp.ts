@@ -11,6 +11,8 @@ export function getDefaultValue(property: TypeAble): any {
         return false;
     } else if (property.type === 'object') {
         return {};
+    } else if (property.type === 'array') {
+        return [];
     } else {
         return '';
     }
@@ -26,6 +28,8 @@ export function normaliseJavascriptType(type: string) {
             return 'boolean';
         case 'string':
             return 'string';
+        case 'array':
+            return 'array';
         default:
             return type;
     }
