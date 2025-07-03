@@ -185,5 +185,14 @@
     "how-to-use": "Comment utiliser ?",
     "is-required": "est un champ obligatoire",
     "edit-ai-mook-prompt": "Modifier les invites AI Mook",
-    "start-auto-detect": "Démarrer l'autovérification"
+    "start-auto-detect": "Démarrer l'autovérification",
+    "tool-module": "Module d'outils",
+    "prompt-module": "Module d'invite",
+    "not-select-begin-node": "Aucun nœud de départ sélectionné",
+    "can-make-loop": "La connexion formera une boucle",
+    "this-is-repeat-connection": "Ceci est un lien en double",
+    "ai-gen-error-json": "Erreur d'analyse JSON générée par IA",
+    "ai-invoke-unknown-tool": "L'IA a appelé un outil inconnu",
+    "click-edge-to-delete": "Cliquez sur le bord pour supprimer",
+    "select-node-define-test-tomo": "Sélectionnez un autre nœud pour définir la topologie de test"
 }

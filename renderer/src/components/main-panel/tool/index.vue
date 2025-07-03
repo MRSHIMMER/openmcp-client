@@ -1,11 +1,11 @@
 <template>
     <el-scrollbar height="100%">
-        <AutoDetector />
+        <AutoDetector :tab-id="props.tabId" />
         <div class="tool-module">
             <div class="left">
                 <h2>
                     <span class="iconfont icon-tool"></span>
-                    工具模块
+                    {{ t('tool-module') }}
                 </h2>
                 <ToolList :tab-id="props.tabId"></ToolList>
 
@@ -25,7 +25,10 @@ import { defineProps } from 'vue';
 import ToolList from './tool-list.vue';
 import ToolExecutor from './tool-executor.vue';
 import ToolLogger from './tool-logger.vue';
-import AutoDetector from './auto-detector.vue';
+import AutoDetector from './auto-detector/index.vue';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 const props = defineProps({
     tabId: {

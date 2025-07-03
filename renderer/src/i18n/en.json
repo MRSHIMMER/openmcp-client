@@ -185,5 +185,14 @@
     "how-to-use": "How to use?",
     "is-required": "is a required field",
     "edit-ai-mook-prompt": "Edit AI Mook prompts",
-    "start-auto-detect": "Start self-check"
+    "start-auto-detect": "Start self-check",
+    "tool-module": "Tool module",
+    "prompt-module": "Prompt Module",
+    "not-select-begin-node": "No starting node selected",
+    "can-make-loop": "The connection will form a loop",
+    "this-is-repeat-connection": "This is a duplicate link",
+    "ai-gen-error-json": "AI-generated JSON parsing error",
+    "ai-invoke-unknown-tool": "AI called an unknown tool",
+    "click-edge-to-delete": "Click the edge to delete",
+    "select-node-define-test-tomo": "Select another node to define the test topology"
 }

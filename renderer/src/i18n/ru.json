@@ -185,5 +185,14 @@
     "how-to-use": "Как использовать?",
     "is-required": "является обязательным полем",
     "edit-ai-mook-prompt": "Редактировать подсказки AI Mook",
-    "start-auto-detect": "Запустить самопроверку"
+    "start-auto-detect": "Запустить самопроверку",
+    "tool-module": "Модуль инструментов",
+    "prompt-module": "Модуль подсказок",
+    "not-select-begin-node": "Начальный узел не выбран",
+    "can-make-loop": "Соединение образует петлю",
+    "this-is-repeat-connection": "Это повторяющаяся ссылка",
+    "ai-gen-error-json": "Ошибка разбора JSON, созданного ИИ",
+    "ai-invoke-unknown-tool": "ИИ вызвал неизвестный инструмент",
+    "click-edge-to-delete": "Нажмите на край, чтобы удалить",
+    "select-node-define-test-tomo": "Выберите другой узел для определения тестовой топологии"
 }

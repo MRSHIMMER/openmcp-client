@@ -1,9 +1,13 @@
 import type { ElkNode } from 'elkjs/lib/elk-api';
-import { TaskLoop } from '../chat/core/task-loop';
+import { TaskLoop } from '../../chat/core/task-loop';
 import type { Reactive } from 'vue';
-import type { ChatStorage } from '../chat/chat-box/chat';
+import type { ChatStorage } from '../../chat/chat-box/chat';
 import { ElMessage } from 'element-plus';
 import type { ToolItem } from '@/hook/type';
+
+import I18n from '@/i18n';
+
+const { t } = I18n.global;
 
 export interface Edge {
 	id: string;
@@ -50,11 +54,11 @@ export function invalidConnectionDetector(state: DiagramState, d: Node): CanConn
     const to = d.id;
 
 	if (!from) {
-		return { canConnect: false, reason: '未选择起始节点' };
+		return { canConnect: false, reason: t('not-select-begin-node') };
 	}
 
 	if (from === to) {
-        return { canConnect: false, reason: '不能连接到自身' };
+        return { canConnect: false, reason: '' };
     }
 
 	// 建立邻接表
@@ -84,11 +88,11 @@ export function invalidConnectionDetector(state: DiagramState, d: Node): CanConn
 	}
 
 	if (hasPath(to, from, new Set())) {
-		return { canConnect: false, reason: '连接会形成环路' };
+		return { canConnect: false, reason: t('can-make-loop') };
 	}
 	
 	if (hasPath(from, to, new Set())) {
-		return { canConnect: false, reason: '这是一个重复的连接' };
+		return { canConnect: false, reason: t('this-is-repeat-connection') };
 	}
 
 	return {
@@ -196,13 +200,13 @@ export async function makeNodeTest(
                 } catch (e) {
                     // ElMessage.error('AI 生成的 JSON 解析错误');
                     dataView.status = 'error';
-                    dataView.result = 'AI 生成的 JSON 解析错误';
+                    dataView.result = t('ai-gen-error-json');
                     context.render();
                 }
             } else {
                 // ElMessage.error('AI 调用了未知的工具');
                 dataView.status = 'error';
-                dataView.result = 'AI 调用了未知的工具 ' + toolCall.function?.name;
+                dataView.result = t('ai-invoke-unknown-tool') +  ' ' + toolCall.function?.name;
                 context.render();
             }
             loop.abort();

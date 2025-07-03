@@ -2,16 +2,19 @@
     <div style="display: flex; align-items: center; gap: 16px;">
         <div ref="svgContainer" class="diagram-container"></div>
 
-        <!-- <template v-for="(node, index) in state.nodes" :key="node.id + '-popup'">
-            <div
-                v-if="state.hoverNodeId === node.id"
-                :style="getNodePopupStyle(node)"
-                class="node-popup"
-            >
-                <div>节点：{{ node.labels?.[0]?.text || node.id }}</div>
-                <div>宽: {{ node.width }}, 高: {{ node.height }}</div>
-            </div>
-        </template> -->
+        <template v-for="(node, index) in state.nodes" :key="node.id + '-popup'">
+            <transition name="collapse-from-top" mode="out-in">
+				<div
+					v-show="state.hoverNodeId === node.id && state.dataView.get(node.id)?.status !== 'waiting'"
+					@mouseenter="setHoverItem(node.id)"
+					@mouseleave="clearHoverItem()"
+					:style="getNodePopupStyle(node)"
+					class="node-popup"
+				>
+					<DiagramItemRecord :data-view="state.dataView.get(node.id)"/>
+				</div>
+			</transition>
+        </template>
     </div>
 </template>
 
@@ -22,6 +25,12 @@ import ELK from 'elkjs/lib/elk.bundled.js';
 import { mcpClientAdapter } from '@/views/connect/core';
 import { invalidConnectionDetector, type Edge, type Node, type NodeDataView } from './diagram';
 import { ElMessage } from 'element-plus';
+
+
+import DiagramItemRecord from './diagram-item-record.vue';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 const svgContainer = ref<HTMLDivElement | null>(null);
 let prevNodes: any[] = [];
@@ -36,6 +45,27 @@ const state = reactive({
     offset: { x: 0, y: 0 },
     dataView: new Map<string, NodeDataView>
 });
+
+
+let cancelHoverHandler: NodeJS.Timeout | undefined = undefined;
+
+const setHoverItem = (id: string) => {
+	if (cancelHoverHandler) {
+		clearTimeout(cancelHoverHandler);
+	}
+	state.hoverNodeId = id;
+}
+
+const clearHoverItem = () => {
+	cancelHoverHandler = setTimeout(() => {
+		if (cancelHoverHandler) {
+			clearTimeout(cancelHoverHandler);
+		}
+		if (state.hoverNodeId) {
+			state.hoverNodeId = null;
+		}
+	}, 300);
+};
 
 const getAllTools = async () => {
     const items = [];
@@ -287,12 +317,12 @@ function renderSvg() {
             } else {
                 state.selectedNodeId = d.id;
                 renderSvg();
-                context.setCaption('选择另一个节点以定义测试拓扑');
+                context.setCaption(t('select-node-define-test-tomo'));
             }
             state.draggingNodeId = null;
         })
         .on('mouseover', function (event, d) {
-            state.hoverNodeId = d.id;
+			setHoverItem(d.id);
             d3.select(this).select('rect')
                 .transition()
                 .duration(200)
@@ -300,7 +330,7 @@ function renderSvg() {
                 .attr('stroke-width', 2);
         })
         .on('mouseout', function (event, d) {
-            state.hoverNodeId = null;
+            clearHoverItem();
             if (state.selectedNodeId === d.id) return;
             d3.select(this).select('rect')
                 .transition()
@@ -436,7 +466,7 @@ function renderSvg() {
                 .attr('stroke', 'var(--main-color)')
                 .attr('stroke-width', 4.5);
 
-            context.setCaption('点击边以删除');
+            context.setCaption(t('click-edge-to-delete'));
 
         })
         .on('mouseout', function () {
@@ -500,10 +530,8 @@ onMounted(() => {
 function getNodePopupStyle(node: any): any {
     // 节点的 svg 坐标转为容器内绝对定位
     // 注意：这里假设 offsetX、node.x、node.y 已经是最新的
-    console.log(node);
-
-    const left = (node.x || 0) + (node.width || 160) - 120; // 节点右侧
-    const top = (node.y || 0) + 30; // 节点顶部对齐
+    const left = (node.x || 0) + (node.width || 160) + 120; // 节点右侧
+    const top = (node.y || 0) + 30;
     return {
         position: 'absolute',
         left: `${left}px`,

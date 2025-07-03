@@ -17,7 +17,12 @@
                         placeholder="请输入 prompt" />
                     <div style="display: flex; align-items: center; margin-bottom: 8px;">
                         <el-switch v-model="enableXmlWrapper" style="margin-right: 8px;" />
-                        <span style="opacity: 0.7;">enableXmlWrapper</span>
+                        <span
+                            :style="{
+                                opacity: enableXmlWrapper? 1 : 0.7,
+                                color: enableXmlWrapper ? 'var(--main-color)' : undefined
+                            }"
+                        >XML</span>
                     </div>
                     <div style="text-align: right;">
                         <el-button size="small" @click="testFormVisible = false">{{ t("cancel") }}</el-button>
@@ -44,6 +49,9 @@ import { nextTick, provide, ref } from 'vue';
 import Diagram from './diagram.vue';
 import { makeNodeTest, topoSortParallel, type DiagramContext, type DiagramState } from './diagram';
 import { ElMessage } from 'element-plus';
+import { tabs } from '../../panel';
+import type { ToolStorage } from '../tools';
+
 import { useI18n } from 'vue-i18n';
 
 const showDiagram = ref(true);
@@ -51,6 +59,21 @@ const { t } = useI18n();
 
 const caption = ref('');
 const showCaption = ref(false);
+
+const props = defineProps({
+    tabId: {
+        type: Number,
+        required: true
+    }
+});
+
+
+const tab = tabs.content[props.tabId];
+const tabStorage = tab.storage as ToolStorage;
+
+if (!tabStorage.formData) {
+    tabStorage.formData = {};
+}
 
 function setCaption(text: string) {
     caption.value = text;

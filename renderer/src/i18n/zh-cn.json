@@ -185,5 +185,14 @@
     "how-to-use": "如何使用?",
     "is-required": "是必填字段",
     "edit-ai-mook-prompt": "编辑 AI Mook 提示词",
-    "start-auto-detect": "开启自检程序"
+    "start-auto-detect": "开启自检程序",
+    "tool-module": "工具模块",
+    "prompt-module": "提示词模块",
+    "not-select-begin-node": "未选择起始节点",
+    "can-make-loop": "连接会形成环路",
+    "this-is-repeat-connection": "这是一个重复的连接",
+    "ai-gen-error-json": "AI 生成的 JSON 解析错误",
+    "ai-invoke-unknown-tool": "AI 调用了未知的工具",
+    "click-edge-to-delete": "点击边以删除",
+    "select-node-define-test-tomo": "选择另一个节点以定义测试拓扑"
 }
