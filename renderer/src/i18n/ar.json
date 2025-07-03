@@ -184,5 +184,6 @@
     "export-filename": "اسم ملف التصدير",
     "how-to-use": "كيفية الاستخدام؟",
     "is-required": "هو حقل مطلوب",
-    "edit-ai-mook-prompt": "تحرير إشارات AI Mook"
+    "edit-ai-mook-prompt": "تحرير إشارات AI Mook",
+    "start-auto-detect": "بدء عملية الفحص الذاتي"
 }

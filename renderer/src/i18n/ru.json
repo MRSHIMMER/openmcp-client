@@ -184,5 +184,6 @@
     "export-filename": "Имя файла экспорта",
     "how-to-use": "Как использовать?",
     "is-required": "является обязательным полем",
-    "edit-ai-mook-prompt": "Редактировать подсказки AI Mook"
+    "edit-ai-mook-prompt": "Редактировать подсказки AI Mook",
+    "start-auto-detect": "Запустить самопроверку"
 }

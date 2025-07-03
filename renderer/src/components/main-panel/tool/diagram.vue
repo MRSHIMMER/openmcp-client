@@ -326,82 +326,86 @@ function renderSvg() {
         .attr('fill', 'var(--main-color)')
         .attr('font-weight', 600)
         .text(d => d.labels?.[0]?.text || 'Tool');
+		
+    nodeGroupEnter.append('g').attr('class', 'node-status');
 
-    // 状态条
-    nodeGroupEnter.append('g')
-        .attr('class', 'node-status')
-        .each(function (d) {
-            const status = state.dataView.get(d.id)?.status || 'waiting';
-            const g = d3.select(this);
-            if (status === 'running') {
-                // 动画圆环+文字
-                g.append('circle')
-                    .attr('cx', d.width / 2 - 32)
-                    .attr('cy', d.height - 16)
-                    .attr('r', 6) // 半径更小
-                    .attr('fill', 'none')
-                    .attr('stroke', 'var(--main-color)') // 使用主题色
-                    .attr('stroke-width', 3)
-                    .attr('stroke-dasharray', 20)
-                    .attr('stroke-dashoffset', 0)
-                    .append('animateTransform')
-                    .attr('attributeName', 'transform')
-                    .attr('attributeType', 'XML')
-                    .attr('type', 'rotate')
-                    .attr('from', `0 ${(d.width / 2 - 32)} ${(d.height - 16)}`)
-                    .attr('to', `360 ${(d.width / 2 - 32)} ${(d.height - 16)}`)
-                    .attr('dur', '1s')
-                    .attr('repeatCount', 'indefinite');
-                g.append('text')
-                    .attr('x', d.width / 2 - 16)
-                    .attr('y', d.height - 12)
-                    .attr('font-size', 13)
-                    .attr('fill', 'var(--main-color)')
-                    .text('running');
-            } else if (status === 'waiting') {
-                g.append('circle')
-                    .attr('cx', d.width / 2 - 32)
-                    .attr('cy', d.height - 16)
-                    .attr('r', 6)
-                    .attr('fill', 'none')
-                    .attr('stroke', '#bdbdbd')
-                    .attr('stroke-width', 3);
-                g.append('text')
-                    .attr('x', d.width / 2 - 16)
-                    .attr('y', d.height - 12)
-                    .attr('font-size', 13)
-                    .attr('fill', '#bdbdbd')
-                    .text('waiting');
-            } else if (status === 'success') {
-                g.append('circle')
-                    .attr('cx', d.width / 2 - 32)
-                    .attr('cy', d.height - 16)
-                    .attr('r', 6) // 保持和 waiting 一致
-                    .attr('fill', 'none')
-                    .attr('stroke', '#4caf50')
-                    .attr('stroke-width', 3);
-                g.append('text')
-                    .attr('x', d.width / 2 - 16)
-                    .attr('y', d.height - 12)
-                    .attr('font-size', 13)
-                    .attr('fill', '#4caf50')
-                    .text('success');
-            } else if (status === 'error') {
-                g.append('circle')
-                    .attr('cx', d.width / 2 - 32)
-                    .attr('cy', d.height - 16)
-                    .attr('r', 6) // 保持和 waiting 一致
-                    .attr('fill', 'none')
-                    .attr('stroke', '#f44336')
-                    .attr('stroke-width', 3);
-                g.append('text')
-                    .attr('x', d.width / 2 - 16)
-                    .attr('y', d.height - 12)
-                    .attr('font-size', 13)
-                    .attr('fill', '#f44336')
-                    .text('error');
-            }
-        });
+    // 合并 enter+update
+    const nodeStatusGroup = nodeGroup.merge(nodeGroupEnter).select('.node-status');
+
+    // 先清空再重绘
+    nodeStatusGroup.each(function (d) {
+        const g = d3.select(this);
+        g.selectAll('*').remove(); // 清空旧内容
+
+        const status = state.dataView.get(d.id)?.status || 'waiting';
+        if (status === 'running') {
+            g.append('circle')
+                .attr('cx', d.width / 2 - 32)
+                .attr('cy', d.height - 16)
+                .attr('r', 6)
+                .attr('fill', 'none')
+                .attr('stroke', 'var(--main-color)')
+                .attr('stroke-width', 3)
+                .attr('stroke-dasharray', 20)
+                .attr('stroke-dashoffset', 0)
+                .append('animateTransform')
+                .attr('attributeName', 'transform')
+                .attr('attributeType', 'XML')
+                .attr('type', 'rotate')
+                .attr('from', `0 ${(d.width / 2 - 32)} ${(d.height - 16)}`)
+                .attr('to', `360 ${(d.width / 2 - 32)} ${(d.height - 16)}`)
+                .attr('dur', '1s')
+                .attr('repeatCount', 'indefinite');
+            g.append('text')
+                .attr('x', d.width / 2 - 16)
+                .attr('y', d.height - 12)
+                .attr('font-size', 13)
+                .attr('fill', 'var(--main-color)')
+                .text('running');
+        } else if (status === 'waiting') {
+            g.append('circle')
+                .attr('cx', d.width / 2 - 32)
+                .attr('cy', d.height - 16)
+                .attr('r', 6)
+                .attr('fill', 'none')
+                .attr('stroke', '#bdbdbd')
+                .attr('stroke-width', 3);
+            g.append('text')
+                .attr('x', d.width / 2 - 16)
+                .attr('y', d.height - 12)
+                .attr('font-size', 13)
+                .attr('fill', '#bdbdbd')
+                .text('waiting');
+        } else if (status === 'success') {
+            g.append('circle')
+                .attr('cx', d.width / 2 - 32)
+                .attr('cy', d.height - 16)
+                .attr('r', 6)
+                .attr('fill', 'none')
+                .attr('stroke', '#4caf50')
+                .attr('stroke-width', 3);
+            g.append('text')
+                .attr('x', d.width / 2 - 16)
+                .attr('y', d.height - 12)
+                .attr('font-size', 13)
+                .attr('fill', '#4caf50')
+                .text('success');
+        } else if (status === 'error') {
+            g.append('circle')
+                .attr('cx', d.width / 2 - 32)
+                .attr('cy', d.height - 16)
+                .attr('r', 6)
+                .attr('fill', 'none')
+                .attr('stroke', '#f44336')
+                .attr('stroke-width', 3);
+            g.append('text')
+                .attr('x', d.width / 2 - 16)
+                .attr('y', d.height - 12)
+                .attr('font-size', 13)
+                .attr('fill', '#f44336')
+                .text('error');
+        }
+    });
     // 节点 enter 动画
     nodeGroupEnter
         .transition()

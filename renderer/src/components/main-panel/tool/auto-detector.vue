@@ -1,15 +1,15 @@
 <template>
     <el-dialog v-model="showDiagram" width="800px" append-to-body class="no-padding-dialog">
-        <template #title>
+        <template #header>
             <div style="display: flex; align-items: center;">
                 <span>Tool Diagram</span>
                 &ensp;
-                <el-button size="small" type="primary" @click="() => context.reset()">重置</el-button>
+                <el-button size="small" type="primary" @click="() => context.reset()">{{ t("reset") }}</el-button>
                 <!-- 自检程序弹出表单 -->
                 <el-popover placement="top" width="350" trigger="click" v-model:visible="testFormVisible">
                     <template #reference>
                         <el-button size="small" type="primary">
-                            开启自检程序
+                            {{ t('start-auto-detect') }}
                         </el-button>
                     </template>
 
@@ -20,9 +20,9 @@
                         <span style="opacity: 0.7;">enableXmlWrapper</span>
                     </div>
                     <div style="text-align: right;">
-                        <el-button size="small" @click="testFormVisible = false">取消</el-button>
+                        <el-button size="small" @click="testFormVisible = false">{{ t("cancel") }}</el-button>
                         <el-button size="small" type="primary" @click="onTestConfirm">
-                            确认
+                            {{ t("confirm") }}
                         </el-button>
                     </div>
                 </el-popover>
@@ -44,8 +44,10 @@ import { nextTick, provide, ref } from 'vue';
 import Diagram from './diagram.vue';
 import { makeNodeTest, topoSortParallel, type DiagramContext, type DiagramState } from './diagram';
 import { ElMessage } from 'element-plus';
+import { useI18n } from 'vue-i18n';
 
 const showDiagram = ref(true);
+const { t } = useI18n();
 
 const caption = ref('');
 const showCaption = ref(false);

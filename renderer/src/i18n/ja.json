@@ -184,5 +184,6 @@
     "export-filename": "エクスポートファイル名",
     "how-to-use": "使用方法",
     "is-required": "は必須フィールドです",
-    "edit-ai-mook-prompt": "AI Mookプロンプトを編集"
+    "edit-ai-mook-prompt": "AI Mookプロンプトを編集",
+    "start-auto-detect": "自己診断を開始"
 }

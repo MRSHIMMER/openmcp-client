@@ -184,5 +184,6 @@
     "export-filename": "내보내기 파일 이름",
     "how-to-use": "사용 방법?",
     "is-required": "는 필수 필드입니다",
-    "edit-ai-mook-prompt": "AI Mook 프롬프트 편집"
+    "edit-ai-mook-prompt": "AI Mook 프롬프트 편집",
+    "start-auto-detect": "자체 점검 시작"
 }

@@ -184,5 +184,6 @@
     "export-filename": "Exportdateiname",
     "how-to-use": "Wie benutzt man?",
     "is-required": "ist ein Pflichtfeld",
-    "edit-ai-mook-prompt": "AI Mook-Prompts bearbeiten"
+    "edit-ai-mook-prompt": "AI Mook-Prompts bearbeiten",
+    "start-auto-detect": "Selbsttest starten"
 }
