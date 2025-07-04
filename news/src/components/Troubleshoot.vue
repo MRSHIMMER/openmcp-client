@@ -1,3 +1,6 @@
+<script>
+</script>
+
 <template>
 	<section class="troubleshoot-section">
 		<div class="section-title">🔧 Troubleshooting</div>

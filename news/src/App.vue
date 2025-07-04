@@ -7,24 +7,16 @@ import OmSponsor from './components/Sponsor.vue';
 import OmResource from './components/Resource.vue';
 import OmTroubleshoot from './components/Troubleshoot.vue';
 
-const version = '0.1.9';
-const changelogs = [
-	'增加 mook 功能：可以利用随机种子或者AI生成来自动化填充测试 tool 的表单数据',
-	'增加工具自检功能：openmcp 的 tool 下可以点击「工具模块」 右侧的 「工具自检」进入自检模式，该模式下，用户可以自己定义工具执行的拓扑顺序，然后一次性进行自动检测。',
-	'修复 issue #44: 完成链接跳转的平台适配',
-	'修复 issue #36: 完成非文件夹打开下的成功启动',
-	'修复 issue #45: 数组类型参数不支持',
-	'修复多行对话粘贴进入对话框样式异常的问题'
-];
+import data from './data.json';
 
 </script>
 
 <template>
 	<main class="openmcp-news-root">
-		<om-header :version="version" />
+		<om-header :version="data.version" />
 
 		<!-- 1. 📣 What is news in OpenMCP -->
-		<om-what-news :version="version" :changelogs="changelogs" />
+		<om-what-news :version="data.version" :changelogs="data.changelogs" />
 
 		<!-- 2. 🐳 Learn more features -->
 		<om-more-feature />
