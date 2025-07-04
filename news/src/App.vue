@@ -5,7 +5,7 @@ import OmMoreFeature from './components/MoreFeature.vue';
 import OmCoreFeature from './components/CoreFeature.vue';
 import OmSponsor from './components/Sponsor.vue';
 import OmResource from './components/Resource.vue';
-import OmTroubleshoot from './components/Troubleshoot.vue';
+import OmTroubleshoot from './components/Trouble.vue';
 
 import data from './data.json';
 

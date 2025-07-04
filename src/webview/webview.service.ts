@@ -150,3 +150,36 @@ export function getDefaultLanunchSignature(path: string, cwd: string) {
         };
     }
 }
+
+export function revealOpenMcpWebviewPanel(
+    context: vscode.ExtensionContext,
+) {
+
+    const panel = vscode.window.createWebviewPanel(
+        'What\'s new in OpenMCP',
+        'What\'s new in OpenMCP',
+        vscode.ViewColumn.One,
+        {
+            enableScripts: true,
+            retainContextWhenHidden: true,
+            enableFindWidget: true
+        }
+    );
+
+    // 设置HTML内容
+    const html = getWebviewContent(context, panel);
+    panel.webview.html = html || '';
+    panel.iconPath = vscode.Uri.file(fspath.join(context.extensionPath, 'openmcp-sdk', 'renderer', 'images', 'openmcp.png'));
+
+    panel.onDidDispose(async () => {
+        // 删除
+        panels.delete(panelKey);
+
+        // TODO: 通过引用计数器关闭后端的 clientMap
+
+        // 退出
+        panel.dispose();
+    });
+
+    return panel;
+}
