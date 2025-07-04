@@ -1,38 +1,22 @@
 <template>
-    <div style="display: flex; align-items: flex-start; gap: 32px;">
+    <div style="display: flex; align-items: center; gap: 16px;">
         <div ref="svgContainer" class="diagram-container"></div>
-        <div class="diagram-info-panel">
-            <div style="display: flex; justify-content: flex-end; align-items: center;">
-                <el-button
-                    circle
-                    size="small"
-                    :type="state.pinnedNodeId ? 'primary' : 'default'"
-                    @click="togglePin"
-                    style="margin-bottom: 4px;"
-                    :disabled="!infoNodeId"
-                >
-                    <span class="iconfont icon-pin"></span>
-                </el-button>
+
+        <!-- <template v-for="(node, index) in state.nodes" :key="node.id + '-popup'">
+            <div
+                v-if="state.hoverNodeId === node.id"
+                :style="getNodePopupStyle(node)"
+                class="node-popup"
+            >
+                <div>节点：{{ node.labels?.[0]?.text || node.id }}</div>
+                <div>宽: {{ node.width }}, 高: {{ node.height }}</div>
             </div>
-            <template v-if="infoNodeId && state.dataView.get(infoNodeId)">
-                <el-scrollbar height="500px" width="300px">
-                    <DiagramItemRecord :data-view="state.dataView.get(infoNodeId)" />
-                </el-scrollbar>
-            </template>
-            <template v-else>
-                <div class="diagram-info-empty">
-                    <el-icon style="font-size: 32px; color: #bbb; margin-bottom: 8px;">
-                        <i-ep-InfoFilled />
-                    </el-icon>
-                    <div style="color: #bbb; font-size: 15px;">暂无节点信息</div>
-                </div>
-            </template>
-        </div>
+        </template> -->
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, nextTick, reactive, inject, computed } from 'vue';
+import { ref, onMounted, nextTick, reactive, inject } from 'vue';
 import * as d3 from 'd3';
 import ELK from 'elkjs/lib/elk.bundled.js';
 import { mcpClientAdapter } from '@/views/connect/core';
@@ -40,94 +24,19 @@ import { invalidConnectionDetector, type Edge, type Node, type NodeDataView } fr
 import { ElMessage } from 'element-plus';
 
 
-import DiagramItemRecord from './diagram-item-record.vue';
-import { useI18n } from 'vue-i18n';
-import type { ToolStorage } from '../tools';
-import { tabs } from '../../panel';
-
-const { t } = useI18n();
-
-const props = defineProps({
-    tabId: {
-        type: Number,
-        required: true
-    }
-});
-
 const svgContainer = ref<HTMLDivElement | null>(null);
 let prevNodes: any[] = [];
 let prevEdges: any[] = [];
 
 const state = reactive({
-    nodes: [] as Node[],
-    edges: [] as Edge[],
+    nodes: [] as any[],
+    edges: [] as any[],
     selectedNodeId: null as string | null,
     draggingNodeId: null as string | null,
     hoverNodeId: null as string | null,
-    pinnedNodeId: null as string | null, // 新增
     offset: { x: 0, y: 0 },
     dataView: new Map<string, NodeDataView>
 });
-
-const tab = tabs.content[props.tabId];
-const tabStorage = tab.storage as ToolStorage;
-const autoDetectDiagram = tabStorage.autoDetectDiagram;
-
-if (autoDetectDiagram) {
-    // 将 tabStorage.autoDetectDiagram 中的 dataView 保存到 state 中
-    autoDetectDiagram.views?.forEach(item => {
-        state.dataView.set(item.tool.name, {
-            tool: item.tool,
-            function: item.function, 
-            status: item.status || 'waiting',
-            result: item.result || null
-        });
-    });
-} else {
-    tabStorage.autoDetectDiagram = {
-        edges: [],
-        views: []
-    };
-}
-
-console.log(tabStorage.autoDetectDiagram!.views);
-console.log(state.dataView);
-
-
-let cancelHoverHandler: NodeJS.Timeout | undefined = undefined;
-
-const setHoverItem = (id: string) => {
-    if (state.pinnedNodeId) return; // 如果已pin，不响应hover
-    if (cancelHoverHandler) {
-        clearTimeout(cancelHoverHandler);
-    }
-    state.hoverNodeId = id;
-};
-
-const clearHoverItem = () => {
-    if (state.pinnedNodeId) return; // 如果已pin，不响应hover
-    cancelHoverHandler = setTimeout(() => {
-        if (cancelHoverHandler) {
-            clearTimeout(cancelHoverHandler);
-        }
-        if (state.hoverNodeId) {
-            state.hoverNodeId = null;
-        }
-    }, 300);
-};
-
-// pin 按钮点击事件
-function togglePin() {
-    if (state.pinnedNodeId) {
-        state.pinnedNodeId = null;
-    } else if (state.hoverNodeId) {
-        state.pinnedNodeId = state.hoverNodeId;
-    }
-}
-
-// 让面板内容始终显示 pinnedNodeId 优先
-const infoNodeId = computed(() => state.pinnedNodeId || state.hoverNodeId);
-
 
 const getAllTools = async () => {
     const items = [];
@@ -150,26 +59,17 @@ const recomputeLayout = async () => {
         children: state.nodes,
         edges: state.edges
     };
-    const layout = await elk.layout(elkGraph) as unknown as Node;
-
+    const layout = await elk.layout(elkGraph) as Node;
     state.nodes.forEach((n, i) => {
         const ln = layout.children?.find(c => c.id === n.id);
         if (ln) {
             n.x = ln.x;
             n.y = ln.y;
-            n.width = ln.width || 200; // 默认宽度
-            n.height = ln.height || 64; // 默认高度
+            n.width = ln.width;
+            n.height = ln.height;
         }
     });
     state.edges = layout.edges || [];
-
-    // 保存拓扑信息到 tabStorage
-    tabStorage.autoDetectDiagram!.edges = state.edges.map(edge => ({
-        id: edge.id,
-        sources: edge.sources || [],
-        targets: edge.targets || []
-    }));
-
     return layout;
 };
 
@@ -180,28 +80,14 @@ const drawDiagram = async () => {
     const nodes = [] as Node[];
     const edges = [] as Edge[];
 
-    // 如果保存了 edges 信息，则需要进行同步
-    const reservedEdges = autoDetectDiagram?.edges;
-    if (reservedEdges && reservedEdges.length > 0) {
-        for (const edge of reservedEdges) {
-            if (edge.sources && edge.targets && edge.sources.length > 0 && edge.targets.length > 0) {
-                edges.push({
-                    id: edge.id,
-                    sources: edge.sources || [],
-                    targets: edge.targets || [],
-                });
-            }
-        }
-    } else {
-        for (let i = 0; i < tools.length - 1; ++i) {
-            const prev = tools[i];
-            const next = tools[i + 1];
-            edges.push({
-                id: prev.name + '-' + next.name,
-                sources: [prev.name],
-                targets: [next.name]
-            })
-        }
+    for (let i = 0; i < tools.length - 1; ++i) {
+        const prev = tools[i];
+        const next = tools[i + 1];
+        edges.push({
+            id: prev.name + '-' + next.name,
+            sources: [prev.name],
+            targets: [next.name]
+        })
     }
 
     for (const tool of tools) {
@@ -212,13 +98,11 @@ const drawDiagram = async () => {
             labels: [{ text: tool.name || 'Tool' }]
         });
 
-        if (!state.dataView.has(tool.name)) {
-            // 如果 dataView 中没有该工具，则初始化
-            state.dataView.set(tool.name, {
-                tool,
-                status: 'waiting'
-            });
-        }
+        state.dataView.set(tool.name, {
+            tool,
+            status: 'waiting',
+            result: null
+        });
     }
 
     state.edges = edges;
@@ -378,7 +262,9 @@ function renderSvg() {
             if (state.selectedNodeId) {
 
                 const { canConnect, reason } = invalidConnectionDetector(state, d);
+
                 console.log(reason);
+
 
                 if (reason) {
                     ElMessage.warning(reason);
@@ -402,12 +288,12 @@ function renderSvg() {
             } else {
                 state.selectedNodeId = d.id;
                 renderSvg();
-                context.setCaption(t('select-node-define-test-tomo'));
+                context.setCaption('选择另一个节点以定义测试拓扑');
             }
             state.draggingNodeId = null;
         })
         .on('mouseover', function (event, d) {
-            setHoverItem(d.id);
+            state.hoverNodeId = d.id;
             d3.select(this).select('rect')
                 .transition()
                 .duration(200)
@@ -415,7 +301,7 @@ function renderSvg() {
                 .attr('stroke-width', 2);
         })
         .on('mouseout', function (event, d) {
-            // clearHoverItem();
+            state.hoverNodeId = null;
             if (state.selectedNodeId === d.id) return;
             d3.select(this).select('rect')
                 .transition()
@@ -425,8 +311,8 @@ function renderSvg() {
         });
 
     nodeGroupEnter.append('rect')
-        .attr('width', (d: any) => d.width)
-        .attr('height', (d: any) => d.height)
+        .attr('width', d => d.width)
+        .attr('height', d => d.height)
         .attr('rx', 16)
         .attr('fill', 'var(--main-light-color-20)')
         .attr('stroke', d => state.selectedNodeId === d.id ? 'var(--main-color)' : 'var(--main-light-color-10)')
@@ -442,85 +328,81 @@ function renderSvg() {
         .attr('font-weight', 600)
         .text(d => d.labels?.[0]?.text || 'Tool');
 
-    nodeGroupEnter.append('g').attr('class', 'node-status');
-
-    // 合并 enter+update
-    const nodeStatusGroup = nodeGroup.merge(nodeGroupEnter).select('.node-status');
-
-    // 先清空再重绘
-    nodeStatusGroup.each(function (d) {
-        const g = d3.select(this);
-        g.selectAll('*').remove(); // 清空旧内容
-
-        const status = state.dataView.get(d.id)?.status || 'waiting';
-        if (status === 'running') {
-            g.append('circle')
-                .attr('cx', d.width / 2 - 32)
-                .attr('cy', d.height - 16)
-                .attr('r', 6)
-                .attr('fill', 'none')
-                .attr('stroke', 'var(--main-color)')
-                .attr('stroke-width', 3)
-                .attr('stroke-dasharray', 20)
-                .attr('stroke-dashoffset', 0)
-                .append('animateTransform')
-                .attr('attributeName', 'transform')
-                .attr('attributeType', 'XML')
-                .attr('type', 'rotate')
-                .attr('from', `0 ${(d.width / 2 - 32)} ${(d.height - 16)}`)
-                .attr('to', `360 ${(d.width / 2 - 32)} ${(d.height - 16)}`)
-                .attr('dur', '1s')
-                .attr('repeatCount', 'indefinite');
-            g.append('text')
-                .attr('x', d.width / 2 - 16)
-                .attr('y', d.height - 12)
-                .attr('font-size', 13)
-                .attr('fill', 'var(--main-color)')
-                .text('running');
-        } else if (status === 'waiting') {
-            g.append('circle')
-                .attr('cx', d.width / 2 - 32)
-                .attr('cy', d.height - 16)
-                .attr('r', 6)
-                .attr('fill', 'none')
-                .attr('stroke', '#bdbdbd')
-                .attr('stroke-width', 3);
-            g.append('text')
-                .attr('x', d.width / 2 - 16)
-                .attr('y', d.height - 12)
-                .attr('font-size', 13)
-                .attr('fill', '#bdbdbd')
-                .text('waiting');
-        } else if (status === 'success') {
-            g.append('circle')
-                .attr('cx', d.width / 2 - 32)
-                .attr('cy', d.height - 16)
-                .attr('r', 6)
-                .attr('fill', 'none')
-                .attr('stroke', '#4caf50')
-                .attr('stroke-width', 3);
-            g.append('text')
-                .attr('x', d.width / 2 - 16)
-                .attr('y', d.height - 12)
-                .attr('font-size', 13)
-                .attr('fill', '#4caf50')
-                .text('success');
-        } else if (status === 'error') {
-            g.append('circle')
-                .attr('cx', d.width / 2 - 32)
-                .attr('cy', d.height - 16)
-                .attr('r', 6)
-                .attr('fill', 'none')
-                .attr('stroke', '#f44336')
-                .attr('stroke-width', 3);
-            g.append('text')
-                .attr('x', d.width / 2 - 16)
-                .attr('y', d.height - 12)
-                .attr('font-size', 13)
-                .attr('fill', '#f44336')
-                .text('error');
-        }
-    });
+    // 状态条
+    nodeGroupEnter.append('g')
+        .attr('class', 'node-status')
+        .each(function (d) {
+            const status = state.dataView.get(d.id)?.status || 'waiting';
+            const g = d3.select(this);
+            if (status === 'running') {
+                // 动画圆环+文字
+                g.append('circle')
+                    .attr('cx', d.width / 2 - 32)
+                    .attr('cy', d.height - 16)
+                    .attr('r', 6) // 半径更小
+                    .attr('fill', 'none')
+                    .attr('stroke', 'var(--main-color)') // 使用主题色
+                    .attr('stroke-width', 3)
+                    .attr('stroke-dasharray', 20)
+                    .attr('stroke-dashoffset', 0)
+                    .append('animateTransform')
+                    .attr('attributeName', 'transform')
+                    .attr('attributeType', 'XML')
+                    .attr('type', 'rotate')
+                    .attr('from', `0 ${(d.width / 2 - 32)} ${(d.height - 16)}`)
+                    .attr('to', `360 ${(d.width / 2 - 32)} ${(d.height - 16)}`)
+                    .attr('dur', '1s')
+                    .attr('repeatCount', 'indefinite');
+                g.append('text')
+                    .attr('x', d.width / 2 - 16)
+                    .attr('y', d.height - 12)
+                    .attr('font-size', 13)
+                    .attr('fill', 'var(--main-color)')
+                    .text('running');
+            } else if (status === 'waiting') {
+                g.append('circle')
+                    .attr('cx', d.width / 2 - 32)
+                    .attr('cy', d.height - 16)
+                    .attr('r', 6)
+                    .attr('fill', 'none')
+                    .attr('stroke', '#bdbdbd')
+                    .attr('stroke-width', 3);
+                g.append('text')
+                    .attr('x', d.width / 2 - 16)
+                    .attr('y', d.height - 12)
+                    .attr('font-size', 13)
+                    .attr('fill', '#bdbdbd')
+                    .text('waiting');
+            } else if (status === 'success') {
+                g.append('circle')
+                    .attr('cx', d.width / 2 - 32)
+                    .attr('cy', d.height - 16)
+                    .attr('r', 6) // 保持和 waiting 一致
+                    .attr('fill', 'none')
+                    .attr('stroke', '#4caf50')
+                    .attr('stroke-width', 3);
+                g.append('text')
+                    .attr('x', d.width / 2 - 16)
+                    .attr('y', d.height - 12)
+                    .attr('font-size', 13)
+                    .attr('fill', '#4caf50')
+                    .text('success');
+            } else if (status === 'error') {
+                g.append('circle')
+                    .attr('cx', d.width / 2 - 32)
+                    .attr('cy', d.height - 16)
+                    .attr('r', 6) // 保持和 waiting 一致
+                    .attr('fill', 'none')
+                    .attr('stroke', '#f44336')
+                    .attr('stroke-width', 3);
+                g.append('text')
+                    .attr('x', d.width / 2 - 16)
+                    .attr('y', d.height - 12)
+                    .attr('font-size', 13)
+                    .attr('fill', '#f44336')
+                    .text('error');
+            }
+        });
     // 节点 enter 动画
     nodeGroupEnter
         .transition()
@@ -539,6 +421,7 @@ function renderSvg() {
     nodeGroup.select('rect')
         .transition()
         .duration(400)
+        .attr('stroke-width', d => state.selectedNodeId === d.id ? 2 : 1)
         .attr('stroke', d => state.selectedNodeId === d.id ? 'var(--main-color)' : 'var(--main-light-color-10)');
 
     // 边高亮
@@ -550,7 +433,7 @@ function renderSvg() {
                 .attr('stroke', 'var(--main-color)')
                 .attr('stroke-width', 4.5);
 
-            context.setCaption(t('click-edge-to-delete'));
+            context.setCaption('点击边以删除');
 
         })
         .on('mouseout', function () {
@@ -585,7 +468,7 @@ function renderSvg() {
 }
 
 // 重置连接为链表结构
-function serialConnection() {
+function resetConnections() {
     if (!state.nodes.length) return;
     const edges = [];
     for (let i = 0; i < state.nodes.length - 1; ++i) {
@@ -601,21 +484,8 @@ function serialConnection() {
     recomputeLayout().then(renderSvg);
 }
 
-function parallelConnection() {
-    if (!state.nodes.length) return;
-    const edges = [] as Edge[];
-    state.edges = edges;
-    recomputeLayout().then(renderSvg);
-}
-
 const context = inject('context') as any;
-context.preset = (type: string) => {
-    if (type === 'serial') {
-        serialConnection();
-    } else if (type === 'parallel') {
-        parallelConnection();
-    }
-};
+context.reset = resetConnections;
 context.state = state;
 context.render = renderSvg;
 
@@ -627,45 +497,27 @@ onMounted(() => {
 function getNodePopupStyle(node: any): any {
     // 节点的 svg 坐标转为容器内绝对定位
     // 注意：这里假设 offsetX、node.x、node.y 已经是最新的
-    const marginX = 50;
-    const marginY = 80;
-    const popupWidth = 300;
-    const popupHeight = 500;
+    console.log(node);
 
-    let left = (node.x || 0) + (node.width || 160) + 100;
-    let top = (node.y || 0) + 30;
-
-    // 获取容器宽高
-    const container = svgContainer.value;
-    let containerWidth = 1200, containerHeight = 800; // 默认值
-    if (container) {
-        const rect = container.getBoundingClientRect();
-        containerWidth = rect.width;
-        containerHeight = rect.height;
-    }
-
-    // 限制 left 和 top 不超出容器
-    left = Math.max(marginX, Math.min(left, containerWidth - popupWidth - marginX));
-    top = Math.max(marginY, Math.min(top, containerHeight - popupHeight - marginY));
-
+    const left = (node.x || 0) + (node.width || 160) - 120; // 节点右侧
+    const top = (node.y || 0) + 30; // 节点顶部对齐
     return {
         position: 'absolute',
         left: `${left}px`,
         top: `${top}px`,
-        width: `${popupWidth}px`,
-        height: `${popupHeight}px`
     };
 }
 </script>
 
 <style>
 .diagram-container {
-    width: 600px;
+    width: 100%;
     min-height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
     border-radius: 8px;
     padding: 24px 0;
-    display: flex;
-    justify-content: flex-start;
     overflow-x: auto;
 }
 
@@ -673,6 +525,7 @@ function getNodePopupStyle(node: any): any {
     position: absolute;
     background: var(--background);
     border: 1px solid var(--main-color);
+    width: 240px;
     border-radius: 8px;
     padding: 8px 12px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -690,42 +543,5 @@ function getNodePopupStyle(node: any): any {
     100% {
         transform: rotate(360deg);
     }
-}
-
-.diagram-container {
-    width: 600px;
-    min-height: 200px;
-    display: flex;
-    align-items: flex-start;
-    border-radius: 8px;
-    padding: 24px 0;
-    overflow-x: auto;
-}
-
-.diagram-info-panel {
-    position: absolute;
-    right: 30px;
-    top: 10px;
-    width: 300px;
-    min-height: 180px;
-    border: 1px solid var(--main-color);
-    border-radius: 12px;
-    box-shadow: 0 2px 12px 0 rgba(0,0,0,0.06);
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    margin-top: 8px;
-    transition: box-shadow 0.2s;
-}
-
-.diagram-info-empty {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    min-height: 120px;
-    opacity: 0.85;
-    font-size: 15px;
 }
 </style>

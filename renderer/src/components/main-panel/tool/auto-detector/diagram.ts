@@ -45,7 +45,7 @@ export interface NodeDataView {
 }
 
 export interface DiagramContext {
-    reset: () => void,
+    preset: (type: string) => void,
     render: () => void,
     state?: DiagramState,
     setCaption: (value: string) => void
