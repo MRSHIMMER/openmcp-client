@@ -107,6 +107,12 @@
                 "title": "%openmcp.hook.test-ocr.title%",
                 "category": "openmcp",
                 "icon": "$(test)"
+            },
+            {
+                "command": "openmcp.hook.test-news",
+                "title": "%openmcp.hook.test-news.title%",
+                "category": "openmcp",
+                "icon": "$(test)"
             }
         ],
         "menus": {

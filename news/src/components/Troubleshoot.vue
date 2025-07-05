@@ -1,4 +1,4 @@
-<script>
+<script setup lang="ts">
 </script>
 
 <template>
@@ -18,6 +18,11 @@
 </template>
 
 <style>
+.troubleshoot-section {
+	margin-bottom: 20px;
+	padding-bottom: 16px;
+}
+
 .troubleshoot-list {
 	list-style: disc inside;
 	padding-left: 18px;

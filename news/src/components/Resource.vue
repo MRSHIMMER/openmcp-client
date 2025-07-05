@@ -42,8 +42,4 @@
 .resource-list a:hover {
 	color: #8e5bbf;
 }
-
-.troubleshoot-section {
-	margin-bottom: 32px;
-}
 </style>

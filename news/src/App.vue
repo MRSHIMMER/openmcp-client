@@ -5,9 +5,10 @@ import OmMoreFeature from './components/MoreFeature.vue';
 import OmCoreFeature from './components/CoreFeature.vue';
 import OmSponsor from './components/Sponsor.vue';
 import OmResource from './components/Resource.vue';
-import OmTroubleshoot from './components/Trouble.vue';
+import OmTroubleshoot from './components/Troubleshoot.vue';
+import OmContributor from './components/Contributor.vue';
 
-import data from './data.json';
+import data from './data.json';``
 
 </script>
 
@@ -32,6 +33,9 @@ import data from './data.json';
 
 		<!-- 6. 🔧 Troubleshooting -->
 		<om-troubleshoot />
+
+		<!-- 7. 👥 Contributors -->
+		<om-contributor :contributors="data.contributors" />
 	</main>
 </template>
 
@@ -95,15 +99,20 @@ body {
 	gap: 24px;
 	margin: 0 0 32px 0;
 	padding: 0 0 16px 0;
-	border-bottom: 1px solid #B988D1;
+}
+
+@media screen and (max-width: 600px) {
+	.openmcp-header {
+		flex-direction: column;
+		align-items: center;
+	}
+	
 }
 
 .openmcp-logo {
 	width: 84px;
 	height: 84px;
 	border-radius: 16px;
-	background: var(--vscode-sideBar-background);
-	box-shadow: 0 2px 8px 0 rgba(185, 136, 209, 0.08);
 }
 
 .margin-bottom {

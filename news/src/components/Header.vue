@@ -64,9 +64,18 @@ const props = defineProps({
 			</div>
 		</div>
 	</header>
+
+	<hr>
 </template>
 
 <style>
+hr {
+    border: none;
+    border-top: 1.5px solid #B988D1;
+    height: 0;
+    margin: 24px 0;
+}
+
 .openmcp-header h1 {
 	font-size: 2.1rem;
 	font-weight: bold;
@@ -74,7 +83,6 @@ const props = defineProps({
 	display: flex;
 	justify-content: center;
 	color: #B988D1;
-	letter-spacing: 1px;
 	line-height: 1.2;
 }
 
@@ -82,6 +90,7 @@ const props = defineProps({
 	display: flex;
 	flex-wrap: wrap;
 	gap: 16px;
+	justify-content: center;
 	margin-top: 4px;
 }
 

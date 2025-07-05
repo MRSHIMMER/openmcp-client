@@ -1,11 +1,48 @@
 {
-	"version": "0.1.9",
-	"changelogs": [
-		"Add mook feature: Automatically fill test tool form data using random seeds or AI generation.",
-		"Add tool self-check feature: In OpenMCP's tool section, click 'Tool Self-Check' on the right of 'Tool Module' to enter self-check mode, where users can define the execution topology order of tools and perform automatic detection in one go.",
-		"Fix issue #44: Complete platform adaptation for link redirection.",
-		"Fix issue #36: Successful startup when not opening a folder.",
-		"Fix issue #45: Support for array-type parameters.",
-		"Fix abnormal style when pasting multi-line conversations into the dialog box."
-	]
+  "version": "0.1.9",
+  "changelogs": [
+    "Add mook feature: Automatically fill in test tool form data using random seeds or AI generation",
+    "Add tool self-check feature: Under openmcp's tool, click 'Tool Self-Check' on the right side of 'Tool Module' to enter self-check mode. In this mode, users can define the topological order of tool execution and perform automatic detection in one go.",
+    "Fix issue #44: Complete platform adaptation for link redirection",
+    "Fix issue #36: Successful startup when not opening a folder",
+    "Fix issue #45: Array type parameters not supported",
+    "Fix abnormal dialog style when pasting multi-line conversations into the dialog box"
+  ],
+  "contributors": [
+    {
+      "username": "LSTM-Kirigaya",
+      "avatarUrl": "https://avatars.githubusercontent.com/u/59416203?v=4",
+      "homeUrl": "https://github.com/LSTM-Kirigaya"
+    },
+    {
+      "username": "li1553770945",
+      "avatarUrl": "https://avatars.githubusercontent.com/u/55867654?v=4",
+      "homeUrl": "https://github.com/li1553770945"
+    },
+    {
+      "username": "STUzhy",
+      "avatarUrl": "https://avatars.githubusercontent.com/u/129645384?v=4",
+      "homeUrl": "https://github.com/STUzhy"
+    },
+    {
+      "username": "appli456",
+      "avatarUrl": "https://avatars.githubusercontent.com/u/8943691?v=4",
+      "homeUrl": "https://github.com/appli456"
+    },
+    {
+      "username": "cybermanhao",
+      "avatarUrl": "https://avatars.githubusercontent.com/u/37235140?v=4",
+      "homeUrl": "https://github.com/cybermanhao"
+    },
+    {
+      "username": "ArcStellar2025",
+      "avatarUrl": "https://avatars.githubusercontent.com/u/115577936?v=4",
+      "homeUrl": "https://github.com/ArcStellar2025"
+    },
+    {
+      "username": "ZYD045692",
+      "avatarUrl": "https://avatars.githubusercontent.com/u/206822796?v=4",
+      "homeUrl": "https://github.com/ZYD045692"
+    }
+  ]
 }

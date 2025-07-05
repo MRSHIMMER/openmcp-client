@@ -13,5 +13,6 @@
     "openmcp.hook.test-ocr.title": "OCR をテスト",
     "openmcp.sidebar.workspace-connection.view.title": "MCP 接続（ワークスペース）",
     "openmcp.sidebar.installed-connection.view.title": "インストール済み MCP サーバー",
-    "openmcp.sidebar.help.view.title": "はじめに・ヘルプ"
+    "openmcp.sidebar.help.view.title": "はじめに・ヘルプ",
+    "openmcp.hook.test-news.title": "テストニュースレポート"
 }

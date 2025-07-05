@@ -18,4 +18,4 @@ resources/service
 stats.html
 .openmcp
 test-vsix
-resources/changelog/index.html
+resources/changelog/**
