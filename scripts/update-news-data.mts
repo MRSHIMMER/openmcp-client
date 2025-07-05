@@ -2,6 +2,7 @@ import { readFileSync, writeFileSync } from 'fs';
 import fetch from 'node-fetch';
 import path from 'path';
 import { OpenAI } from 'openai';
+import chalk from 'chalk';
 
 const client = new OpenAI({
 	baseURL: 'https://api.deepseek.com',
@@ -116,6 +117,7 @@ ${content}
     return { version, changelogs };
 }
 
+console.log(chalk.green('Starting to update contributors...'));
 const contributors = await fetchAndMergeContributors();
 const { version, changelogs } = await getVersionAndContent();
 const newsData = {

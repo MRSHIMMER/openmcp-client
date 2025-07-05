@@ -109,12 +109,6 @@ body {
 	
 }
 
-.openmcp-logo {
-	width: 84px;
-	height: 84px;
-	border-radius: 16px;
-}
-
 .margin-bottom {
 	margin-bottom: 32px;
 }

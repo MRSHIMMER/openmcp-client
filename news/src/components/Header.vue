@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import OmIcon from './OmIcon.vue';
+
 const props = defineProps({
 	version: {
 		type: String,
@@ -9,7 +11,7 @@ const props = defineProps({
 
 <template>
 	<header class="openmcp-header">
-		<img src="/favicon.svg" alt="OpenMCP Logo" width="72" height="72" class="openmcp-logo" />
+		<om-icon />
 		<div>
 			<h1>
 				OpenMCP Client<sup><small>{{ props.version }}</small></sup>

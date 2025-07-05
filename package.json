@@ -238,6 +238,7 @@
         "lint": "eslint src --ext ts",
         "test": "node ./dist/test/e2e/runTest.js",
         "prepare:ocr": "rollup -c rollup.tesseract.js --bundleConfigAsCjs",
+        "build:news": "npx tsx scripts/update-news-data.mts",
         "build:task-loop": "npx vite build --config renderer/vite.config.task-loop.mjs && node renderer/scripts/task-loop.build.mjs"
     },
     "dependencies": {
@@ -281,6 +282,7 @@
         "esbuild": "^0.25.5",
         "fork-ts-checker-webpack-plugin": "^9.1.0",
         "null-loader": "^4.0.1",
+        "ompipe": "^1.0.2",
         "rollup": "^4.43.0",
         "rollup-plugin-copy": "^3.5.0",
         "rollup-plugin-visualizer": "^6.0.1",
