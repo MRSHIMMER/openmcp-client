@@ -153,16 +153,7 @@ export function getNewsWebviewContent(context: vscode.ExtensionContext, panel: v
     const viewRoot = fspath.join(context.extensionPath, 'resources', 'changelog');
     const htmlIndexPath = fspath.join(viewRoot, 'index.html');    
 
-    const html = fs.readFileSync(htmlIndexPath, { encoding: 'utf-8' })?.replace(/(<link.+?href="|<script.+?src="|<img.+?src="|url\()(.+?)(\)|")/g, (m, $1, $2) => {
-        const importFile = $2 as string;
-        const rel = importFile.startsWith('/') ? importFile.substring(1) : importFile;
-        const absLocalPath = fspath.resolve(viewRoot, rel);
-        
-        const webviewUri = panel.webview.asWebviewUri(vscode.Uri.file(absLocalPath));
-        const replaceHref = $1 + webviewUri?.toString() + '"';        
-        return replaceHref;
-    });
-
+    const html = fs.readFileSync(htmlIndexPath, { encoding: 'utf-8' });
     return html;
 }
 
