@@ -1,27 +1,43 @@
 <template>
-    <div style="display: flex; align-items: center; gap: 16px;">
+    <div style="display: flex; align-items: flex-start; gap: 32px;">
         <div ref="svgContainer" class="diagram-container"></div>
-
-        <template v-for="(node, index) in state.nodes" :key="node.id + '-popup'">
-            <transition name="collapse-from-top" mode="out-in">
-				<div
-					v-show="state.hoverNodeId === node.id && state.dataView.get(node.id)?.status !== 'waiting'"
-					@mouseenter="setHoverItem(node.id)"
-					@mouseleave="clearHoverItem()"
-					:style="getNodePopupStyle(node)"
-					class="node-popup"
-				>
-					<el-scrollbar height="100%" width="100%">
-                        <DiagramItemRecord :data-view="state.dataView.get(node.id)"/>
-                    </el-scrollbar>
-				</div>
-			</transition>
-        </template>
+        <div class="diagram-info-panel">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div v-if="infoNodeId && state.dataView.get(infoNodeId)" class="item-status" :class="state.dataView.get(infoNodeId)?.status || 'waiting'">
+                    {{ state.dataView.get(infoNodeId)?.status || 'waiting' }}
+                </div>
+                <div v-else>
+                    {{ "Unknown Status" }}
+                </div>
+                <el-button
+                    circle
+                    size="small"
+                    :type="state.pinnedNodeId ? 'primary' : 'default'"
+                    @click="togglePin"
+                    style="margin-bottom: 4px;"
+                    :disabled="!infoNodeId"
+                >
+                    <span class="iconfont icon-pin"></span>
+                </el-button>
+            </div>
+            <template v-if="infoNodeId && state.dataView.get(infoNodeId)">
+                <el-scrollbar height="500px" width="300px">
+                    <DiagramItemRecord :data-view="state.dataView.get(infoNodeId)" />
+                </el-scrollbar>
+            </template>
+            <template v-else>
+                <div class="diagram-info-empty">
+                    <div style="color: #bbb; font-size: 15px;">
+                        {{ t('diagram-node-empty') }}
+                    </div>
+                </div>
+            </template>
+        </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, nextTick, reactive, inject } from 'vue';
+import { ref, onMounted, nextTick, reactive, inject, computed } from 'vue';
 import * as d3 from 'd3';
 import ELK from 'elkjs/lib/elk.bundled.js';
 import { mcpClientAdapter } from '@/views/connect/core';
@@ -53,6 +69,7 @@ const state = reactive({
     selectedNodeId: null as string | null,
     draggingNodeId: null as string | null,
     hoverNodeId: null as string | null,
+    pinnedNodeId: null as string | null, // 新增
     offset: { x: 0, y: 0 },
     dataView: new Map<string, NodeDataView>
 });
@@ -66,8 +83,13 @@ if (autoDetectDiagram) {
     autoDetectDiagram.views?.forEach(item => {
         state.dataView.set(item.tool.name, {
             tool: item.tool,
+            function: item.function, 
             status: item.status || 'waiting',
-            result: item.result || null
+            result: item.result || null,
+            createAt: item.createAt,
+            finishAt: item.finishAt,
+            llmTimecost: item.llmTimecost,
+            toolcallTimecost: item.toolcallTimecost
         });
     });
 } else {
@@ -77,29 +99,41 @@ if (autoDetectDiagram) {
     };
 }
 
-console.log(tabStorage.autoDetectDiagram!.views);
-console.log(state.dataView);
-
 
 let cancelHoverHandler: NodeJS.Timeout | undefined = undefined;
 
 const setHoverItem = (id: string) => {
-	if (cancelHoverHandler) {
-		clearTimeout(cancelHoverHandler);
-	}
-	state.hoverNodeId = id;
-}
+    if (state.pinnedNodeId) return; // 如果已pin，不响应hover
+    if (cancelHoverHandler) {
+        clearTimeout(cancelHoverHandler);
+    }
+    state.hoverNodeId = id;
+};
 
 const clearHoverItem = () => {
-	cancelHoverHandler = setTimeout(() => {
-		if (cancelHoverHandler) {
-			clearTimeout(cancelHoverHandler);
-		}
-		if (state.hoverNodeId) {
-			state.hoverNodeId = null;
-		}
-	}, 300);
+    if (state.pinnedNodeId) return; // 如果已pin，不响应hover
+    cancelHoverHandler = setTimeout(() => {
+        if (cancelHoverHandler) {
+            clearTimeout(cancelHoverHandler);
+        }
+        if (state.hoverNodeId) {
+            state.hoverNodeId = null;
+        }
+    }, 300);
 };
+
+// pin 按钮点击事件
+function togglePin() {
+    if (state.pinnedNodeId) {
+        state.pinnedNodeId = null;
+    } else if (state.hoverNodeId) {
+        state.pinnedNodeId = state.hoverNodeId;
+    }
+}
+
+// 让面板内容始终显示 pinnedNodeId 优先
+const infoNodeId = computed(() => state.pinnedNodeId || state.hoverNodeId);
+
 
 const getAllTools = async () => {
     const items = [];
@@ -154,7 +188,7 @@ const drawDiagram = async () => {
 
     // 如果保存了 edges 信息，则需要进行同步
     const reservedEdges = autoDetectDiagram?.edges;
-    if (reservedEdges) {
+    if (reservedEdges && reservedEdges.length > 0) {
         for (const edge of reservedEdges) {
             if (edge.sources && edge.targets && edge.sources.length > 0 && edge.targets.length > 0) {
                 edges.push({
@@ -188,7 +222,7 @@ const drawDiagram = async () => {
             // 如果 dataView 中没有该工具，则初始化
             state.dataView.set(tool.name, {
                 tool,
-                status: 'waiting'
+                status: 'waiting',
             });
         }
     }
@@ -379,7 +413,7 @@ function renderSvg() {
             state.draggingNodeId = null;
         })
         .on('mouseover', function (event, d) {
-			setHoverItem(d.id);
+            setHoverItem(d.id);
             d3.select(this).select('rect')
                 .transition()
                 .duration(200)
@@ -387,7 +421,7 @@ function renderSvg() {
                 .attr('stroke-width', 2);
         })
         .on('mouseout', function (event, d) {
-            clearHoverItem();
+            // clearHoverItem();
             if (state.selectedNodeId === d.id) return;
             d3.select(this).select('rect')
                 .transition()
@@ -413,7 +447,7 @@ function renderSvg() {
         .attr('fill', 'var(--main-color)')
         .attr('font-weight', 600)
         .text(d => d.labels?.[0]?.text || 'Tool');
-		
+
     nodeGroupEnter.append('g').attr('class', 'node-status');
 
     // 合并 enter+update
@@ -557,7 +591,7 @@ function renderSvg() {
 }
 
 // 重置连接为链表结构
-function resetConnections() {
+function serialConnection() {
     if (!state.nodes.length) return;
     const edges = [];
     for (let i = 0; i < state.nodes.length - 1; ++i) {
@@ -573,8 +607,21 @@ function resetConnections() {
     recomputeLayout().then(renderSvg);
 }
 
+function parallelConnection() {
+    if (!state.nodes.length) return;
+    const edges = [] as Edge[];
+    state.edges = edges;
+    recomputeLayout().then(renderSvg);
+}
+
 const context = inject('context') as any;
-context.reset = resetConnections;
+context.preset = (type: string) => {
+    if (type === 'serial') {
+        serialConnection();
+    } else if (type === 'parallel') {
+        parallelConnection();
+    }
+};
 context.state = state;
 context.render = renderSvg;
 
@@ -590,7 +637,7 @@ function getNodePopupStyle(node: any): any {
     const marginY = 80;
     const popupWidth = 300;
     const popupHeight = 500;
-    
+
     let left = (node.x || 0) + (node.width || 160) + 100;
     let top = (node.y || 0) + 30;
 
@@ -619,13 +666,12 @@ function getNodePopupStyle(node: any): any {
 
 <style>
 .diagram-container {
-    width: 100%;
+    width: 600px;
     min-height: 200px;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
     border-radius: 8px;
     padding: 24px 0;
+    display: flex;
+    justify-content: flex-start;
     overflow-x: auto;
 }
 
@@ -651,4 +697,62 @@ function getNodePopupStyle(node: any): any {
         transform: rotate(360deg);
     }
 }
+
+.diagram-container {
+    width: 600px;
+    min-height: 200px;
+    display: flex;
+    align-items: flex-start;
+    border-radius: 8px;
+    padding: 24px 0;
+    overflow-x: auto;
+}
+
+.diagram-info-panel {
+    position: absolute;
+    right: 30px;
+    top: 10px;
+    width: 300px;
+    min-height: 180px;
+    border: 1px solid var(--main-color);
+    border-radius: 12px;
+    box-shadow: 0 2px 12px 0 rgba(0,0,0,0.06);
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    margin-top: 8px;
+    transition: box-shadow 0.2s;
+}
+
+.diagram-info-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    min-height: 120px;
+    opacity: 0.85;
+    font-size: 15px;
+}
+
+.item-status.running {
+    color: var(--main-color);
+}
+
+.item-status.success {
+    color: #43a047;
+}
+
+.item-status.error {
+    color: #e53935;
+}
+
+.item-status.waiting {
+    color: #aaa;
+}
+
+.item-status.default {
+    color: #888;
+}
+
 </style>

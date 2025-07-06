@@ -2,7 +2,7 @@ import { RegisterCommand } from "../common/index.js";
 import * as vscode from 'vscode';
 import * as path from 'path';
 import Tesseract from 'tesseract.js';
-
+import { revealOpenMcpNewsWebviewPanel } from "../webview/webview.service.js";
 
 export class HookController {
 
@@ -40,4 +40,8 @@ export class HookController {
         }
     }
 
+    @RegisterCommand('openmcp.hook.test-news')
+    async testNews(context: vscode.ExtensionContext) {
+        revealOpenMcpNewsWebviewPanel(context);
+    }
 }

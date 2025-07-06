@@ -195,5 +195,7 @@
     "ai-invoke-unknown-tool": "KI hat ein unbekanntes Tool aufgerufen",
     "click-edge-to-delete": "Klicken Sie auf die Kante, um sie zu löschen",
     "select-node-define-test-tomo": "Wählen Sie einen anderen Knoten aus, um die Testtopologie zu definieren",
-    "tool-self-detect": "Werkzeug-Selbsttest"
+    "tool-self-detect": "Werkzeug-Selbsttest",
+    "self-detect-caption": "Klicken Sie auf die Verbindungslinie, um die Verbindung aufzuheben, klicken Sie auf den Knoten, um eine Verbindung herzustellen",
+    "diagram-node-empty": "Keine Knoteninformationen"
 }

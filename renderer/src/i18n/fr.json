@@ -195,5 +195,7 @@
     "ai-invoke-unknown-tool": "L'IA a appelé un outil inconnu",
     "click-edge-to-delete": "Cliquez sur le bord pour supprimer",
     "select-node-define-test-tomo": "Sélectionnez un autre nœud pour définir la topologie de test",
-    "tool-self-detect": "Auto-vérification de l'outil"
+    "tool-self-detect": "Auto-vérification de l'outil",
+    "self-detect-caption": "Cliquez sur la ligne de connexion pour annuler la connexion, cliquez sur le nœud pour créer une connexion",
+    "diagram-node-empty": "Aucune information sur le nœud"
 }

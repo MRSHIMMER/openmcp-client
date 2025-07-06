@@ -4,15 +4,30 @@
             <div style="display: flex; align-items: center;">
                 <span>Tool Diagram</span>
                 &ensp;
-                <el-button size="small" type="primary" @click="() => context.reset()">{{ t("reset") }}</el-button>
-                <!-- 自检程序弹出表单 -->
+                <!-- 重置按钮弹出下拉列表 -->
+                <el-popover placement="bottom" width="180" trigger="click" v-model:visible="resetPopoverVisible">
+                    <template #reference>
+                        <el-button size="small" type="primary">
+                            {{ t("preset") }}
+                        </el-button>
+                    </template>
+                    <div style="display: flex; gap: 8px;">
+                        <el-button size="small" @click="tomoPreset('serial')">
+                            <span class="iconfont icon-serial"></span>
+                        </el-button>
+                        <el-button size="small" @click="tomoPreset('parallel')">
+                            <span class="iconfont icon-parallel"></span>
+                        </el-button>
+                    </div>
+                </el-popover>
+                <!-- 原有自检程序弹出表单 -->
                 <el-popover placement="top" width="350" trigger="click" v-model:visible="testFormVisible">
                     <template #reference>
                         <el-button size="small" type="primary">
                             {{ t('start-auto-detect') }}
                         </el-button>
                     </template>
-
+                    <!-- ...原有自检表单内容... -->
                     <el-input type="textarea" v-model="testPrompt" :rows="2" style="margin-bottom: 8px;"
                         placeholder="请输入 prompt" />
                     <div style="display: flex; align-items: center; margin-bottom: 8px;">
@@ -34,11 +49,21 @@
         <el-scrollbar height="80vh">
             <Diagram :tab-id="props.tabId" />
         </el-scrollbar>
-        <transition name="main-fade" mode="out-in">
-            <div class="caption" v-show="showCaption">
-                {{ caption }}
-            </div>
-        </transition>
+   
+        <div class="caption" v-if="showCaption">
+            {{ caption }}
+        </div>
+        <div v-else>
+            <span class="caption">
+            <el-tooltip
+                placement="top"
+                effect="light"
+                :content="t('self-detect-caption')"
+            >
+                <span class="iconfont icon-about"></span>
+            </el-tooltip>
+            </span>
+        </div>
     </el-dialog>
 </template>
 
@@ -88,7 +113,7 @@ function setCaption(text: string) {
 }
 
 const context: DiagramContext = {
-    reset: () => { },
+    preset: () => { },
     render: () => { },
     state: undefined,
     setCaption
@@ -128,13 +153,19 @@ async function onTestConfirm() {
             for (const id of nodeIds) {
                 const view = state.dataView.get(id);
                 if (view) {
-                    await makeNodeTest(view, enableXmlWrapper.value, testPrompt.value, context)
+                    await makeNodeTest(view, enableXmlWrapper.value, testPrompt.value, context)                    
                     tabStorage.autoDetectDiagram!.views!.push({
                         tool: view.tool,
                         status: view.status,
                         function: view.function,
-                        result: view.result
+                        result: view.result,
+                        createAt: view.createAt,
+                        finishAt: view.finishAt,
+                        llmTimecost: view.llmTimecost,
+                        toolcallTimecost: view.toolcallTimecost,
                     });
+
+                    context.render();
                 }
             }
         }
@@ -144,16 +175,24 @@ async function onTestConfirm() {
 
 
 }
+
+const resetPopoverVisible = ref(false);
+
+function tomoPreset(type: string) {
+    resetPopoverVisible.value = false;
+    context.preset?.(type);
+}
 </script>
 
 <style>
 .no-padding-dialog {
     margin-top: 30px !important;
+    width: 90vw !important;
 }
 
 .no-padding-dialog .caption {
     position: absolute;
-    left: 20px;
+    right: 30px;
     bottom: 10px;
     margin: 0 auto;
     width: fit-content;

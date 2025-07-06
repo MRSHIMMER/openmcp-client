@@ -18,9 +18,6 @@ export function getWebviewContent(context: vscode.ExtensionContext, panel: vscod
         return replaceHref;
     });
 
-    console.log(html);
-    
-
     return html;
 }
 
@@ -148,5 +145,55 @@ export function getDefaultLanunchSignature(path: string, cwd: string) {
             command:'node',
             args: [relativePath]
         };
+    }
+}
+
+
+export function getNewsWebviewContent(context: vscode.ExtensionContext, panel: vscode.WebviewPanel): string | undefined {
+    const viewRoot = fspath.join(context.extensionPath, 'resources', 'changelog');
+    const htmlIndexPath = fspath.join(viewRoot, 'index.html');    
+
+    const html = fs.readFileSync(htmlIndexPath, { encoding: 'utf-8' });
+    return html;
+}
+
+export function revealOpenMcpNewsWebviewPanel(
+    context: vscode.ExtensionContext,
+) {
+
+    const panel = vscode.window.createWebviewPanel(
+        'What\'s new in OpenMCP',
+        'What\'s new in OpenMCP',
+        vscode.ViewColumn.One,
+        {
+            enableScripts: true,
+            retainContextWhenHidden: true,
+            enableFindWidget: true
+        }
+    );
+
+    // 设置HTML内容
+    const html = getNewsWebviewContent(context, panel);
+    panel.webview.html = html || '';
+    panel.iconPath = vscode.Uri.file(fspath.join(context.extensionPath, 'openmcp-sdk', 'renderer', 'images', 'openmcp.png'));
+
+    panel.onDidDispose(async () => {
+        // 退出
+        panel.dispose();
+    });
+
+    return panel;
+}
+
+export async function checkNews(context: vscode.ExtensionContext) {
+    const versionKey = 'openmcp-news-version';
+    const lastVersion = context.globalState.get<string>(versionKey) || '';
+
+    const currentVersion = context.extension.packageJSON.version;
+    if (lastVersion !== currentVersion) {
+        // 记录新版本
+        await context.globalState.update(versionKey, currentVersion);
+        // 展示新闻面板
+        revealOpenMcpNewsWebviewPanel(context);
     }
 }

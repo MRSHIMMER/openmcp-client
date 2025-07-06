@@ -195,5 +195,7 @@
     "ai-invoke-unknown-tool": "AI called an unknown tool",
     "click-edge-to-delete": "Click the edge to delete",
     "select-node-define-test-tomo": "Select another node to define the test topology",
-    "tool-self-detect": "Tool Self-Check"
+    "tool-self-detect": "Tool Self-Check",
+    "self-detect-caption": "Click on the connection line to cancel the connection, click on the node to create a connection",
+    "diagram-node-empty": "No node information"
 }

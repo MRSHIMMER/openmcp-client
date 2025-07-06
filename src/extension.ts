@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { setRunningCWD, setVscodeWorkspace } from '../openmcp-sdk/service/index.js';
 import { launch } from './common/entry.js';
 import { initialiseI18n, getAvailableKeys } from './i18n/index.js';
+import { checkNews } from './webview/webview.service.js';
 
 export function activate(context: vscode.ExtensionContext) {
     console.log('activate openmcp');
@@ -19,6 +20,7 @@ export function activate(context: vscode.ExtensionContext) {
     console.log('Available i18n keys:', getAvailableKeys().length);
     
     launch(context);
+    checkNews(context);
 }
 
 
