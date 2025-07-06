@@ -2,7 +2,13 @@
     <div style="display: flex; align-items: flex-start; gap: 32px;">
         <div ref="svgContainer" class="diagram-container"></div>
         <div class="diagram-info-panel">
-            <div style="display: flex; justify-content: flex-end; align-items: center;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div v-if="infoNodeId && state.dataView.get(infoNodeId)" class="item-status" :class="state.dataView.get(infoNodeId)?.status || 'waiting'">
+                    {{ state.dataView.get(infoNodeId)?.status || 'waiting' }}
+                </div>
+                <div v-else>
+                    {{ "Unknown Status" }}
+                </div>
                 <el-button
                     circle
                     size="small"
@@ -21,10 +27,9 @@
             </template>
             <template v-else>
                 <div class="diagram-info-empty">
-                    <el-icon style="font-size: 32px; color: #bbb; margin-bottom: 8px;">
-                        <i-ep-InfoFilled />
-                    </el-icon>
-                    <div style="color: #bbb; font-size: 15px;">暂无节点信息</div>
+                    <div style="color: #bbb; font-size: 15px;">
+                        {{ t('diagram-node-empty') }}
+                    </div>
                 </div>
             </template>
         </div>
@@ -80,7 +85,11 @@ if (autoDetectDiagram) {
             tool: item.tool,
             function: item.function, 
             status: item.status || 'waiting',
-            result: item.result || null
+            result: item.result || null,
+            createAt: item.createAt,
+            finishAt: item.finishAt,
+            llmTimecost: item.llmTimecost,
+            toolcallTimecost: item.toolcallTimecost
         });
     });
 } else {
@@ -89,9 +98,6 @@ if (autoDetectDiagram) {
         views: []
     };
 }
-
-console.log(tabStorage.autoDetectDiagram!.views);
-console.log(state.dataView);
 
 
 let cancelHoverHandler: NodeJS.Timeout | undefined = undefined;
@@ -216,7 +222,7 @@ const drawDiagram = async () => {
             // 如果 dataView 中没有该工具，则初始化
             state.dataView.set(tool.name, {
                 tool,
-                status: 'waiting'
+                status: 'waiting',
             });
         }
     }
@@ -728,4 +734,25 @@ function getNodePopupStyle(node: any): any {
     opacity: 0.85;
     font-size: 15px;
 }
+
+.item-status.running {
+    color: var(--main-color);
+}
+
+.item-status.success {
+    color: #43a047;
+}
+
+.item-status.error {
+    color: #e53935;
+}
+
+.item-status.waiting {
+    color: #aaa;
+}
+
+.item-status.default {
+    color: #888;
+}
+
 </style>

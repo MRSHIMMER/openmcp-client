@@ -41,6 +41,10 @@ export interface NodeDataView {
     tool: ToolItem;
     status: 'default' | 'running' | 'waiting' | 'success' | 'error';
     function?: ChatCompletionChunk.Choice.Delta.ToolCall.Function;
+    createAt?: number;
+    llmTimecost?: number;
+    toolcallTimecost?: number;
+    finishAt?: number;
     result?: any;
 }
 
@@ -168,6 +172,8 @@ export async function makeNodeTest(
 	}
 
     dataView.status = 'running';
+    const createAt = Date.now();
+    dataView.createAt = createAt;
     context.render();
 
     try {
@@ -197,20 +203,19 @@ export async function makeNodeTest(
 
         loop.registerOnToolCall(toolCall => {
             dataView.function = toolCall.function;
+            dataView.llmTimecost = Date.now() - createAt;
 
             if (toolCall.function?.name === dataView.tool?.name) {
                 try {
                     const toolArgs = JSON.parse(toolCall.function?.arguments || '{}');
                     aiMockJson = toolArgs;
                 } catch (e) {
-                    // ElMessage.error('AI 生成的 JSON 解析错误');
                     dataView.status = 'error';
                     dataView.result = t('ai-gen-error-json');
                     context.render();
                     loop.abort();
                 }
             } else {
-                // ElMessage.error('AI 调用了未知的工具');
                 dataView.status = 'error';
                 dataView.result = t('ai-invoke-unknown-tool') +  ' ' + toolCall.function?.name;
                 context.render();
@@ -220,6 +225,8 @@ export async function makeNodeTest(
         });
 
         loop.registerOnToolCalled(toolCalled => {
+            dataView.toolcallTimecost = Date.now() - createAt - dataView.llmTimecost!;
+
             if (toolCalled.state === MessageState.Success) {
                 dataView.status = 'success';
                 dataView.result = toolCalled.content;
@@ -240,6 +247,8 @@ export async function makeNodeTest(
         await loop.start(chatStorage, usePrompt);
 
     } finally {
+        dataView.finishAt = Date.now();
+
         if (dataView.status === 'running') {
             dataView.status = 'success';
             context.render();

@@ -58,7 +58,7 @@
             <el-tooltip
                 placement="top"
                 effect="light"
-                content="点击连接线取消连接，点击节点以创建连接"
+                :content="t('self-detect-caption')"
             >
                 <span class="iconfont icon-about"></span>
             </el-tooltip>
@@ -153,13 +153,19 @@ async function onTestConfirm() {
             for (const id of nodeIds) {
                 const view = state.dataView.get(id);
                 if (view) {
-                    await makeNodeTest(view, enableXmlWrapper.value, testPrompt.value, context)
+                    await makeNodeTest(view, enableXmlWrapper.value, testPrompt.value, context)                    
                     tabStorage.autoDetectDiagram!.views!.push({
                         tool: view.tool,
                         status: view.status,
                         function: view.function,
-                        result: view.result
+                        result: view.result,
+                        createAt: view.createAt,
+                        finishAt: view.finishAt,
+                        llmTimecost: view.llmTimecost,
+                        toolcallTimecost: view.toolcallTimecost,
                     });
+
+                    context.render();
                 }
             }
         }
