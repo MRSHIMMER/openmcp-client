@@ -25,7 +25,7 @@ Integrated Inspector + MCP client basic functions, combining development and tes
 
 ![](./icons/openmcp.welcome.png)
 
-Test resource protocols, tools, and Prompts for MCP servers.
+Test mcp tools, prompts and resources with a variety of tools.
 
 ![](./icons/openmcp.resource.png)
 
@@ -40,6 +40,10 @@ Complete project-level management panel for easier MCP project management at bot
 Supports multiple large models
 
 ![](./icons/openmcp.support.llm.png)
+
+Support XML mode and customized options for your tool selection.
+
+![](./icons/openmcp.xml.png)
 
 ## TODO
 

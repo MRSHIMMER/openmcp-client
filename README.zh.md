@@ -41,6 +41,10 @@
 
 ![](./icons/openmcp.support.llm.png)
 
+支持 XML 模式和自定义工具选择
+
+![](./icons/openmcp.xml.png)
+
 
 ## TODO
 

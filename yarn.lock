@@ -736,7 +736,7 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@openmcp/renderer@file:/Users/bytedance/projects/openmcp-client/renderer":
+"@openmcp/renderer@file:/Users/kirigaya/projects/openmcp-client/renderer":
   version "0.1.0"
   resolved "file:renderer"
   dependencies:
@@ -764,7 +764,7 @@
     vue-router "^4.5.0"
     xml2js "^0.6.2"
 
-"@openmcp/service@file:/Users/bytedance/projects/openmcp-client/service":
+"@openmcp/service@file:/Users/kirigaya/projects/openmcp-client/service":
   version "0.0.1"
   resolved "file:service"
   dependencies:
