@@ -37,6 +37,13 @@
                             color: enableXmlWrapper ? 'var(--main-color)' : undefined
                         }">XML</span>
                     </div>
+                    <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                        <el-switch v-model="enableParallelTest" style="margin-right: 8px;" />
+                        <span :style="{
+                            opacity: enableParallelTest ? 1 : 0.7,
+                            color: enableParallelTest ? 'var(--main-color)' : undefined
+                        }">{{ t('parallel-test') }}</span>
+                    </div>
                     <div style="text-align: right;">
                         <el-button size="small" @click="testFormVisible = false">{{ t("cancel") }}</el-button>
                         <el-button size="small" type="primary" @click="onTestConfirm">
@@ -70,7 +77,7 @@
 <script setup lang="ts">
 import { computed, nextTick, provide, ref } from 'vue';
 import Diagram from './diagram.vue';
-import { makeNodeTest, topoSortParallel, type DiagramContext, type DiagramState } from './diagram';
+import { makeNodeTest, makeParallelTest, topoSortParallel, type DiagramContext, type DiagramState } from './diagram';
 import { ElMessage } from 'element-plus';
 
 import { useI18n } from 'vue-i18n';
@@ -137,43 +144,60 @@ if (autoDetectDiagram) {
 // 新增：自检参数表单相关
 const testFormVisible = ref(false);
 const enableXmlWrapper = ref(false);
+const enableParallelTest = ref(false);
 const testPrompt = ref('please call the tool {tool} to make some test');
 
 async function onTestConfirm() {
     testFormVisible.value = false;
-    // 这里可以将 enableXmlWrapper.value 和 testPrompt.value 传递给自检逻辑
     const state = context.state;
-
-
+    
     tabStorage.autoDetectDiagram!.views = [];
 
     if (state) {
-        const dispatches = topoSortParallel(state);
-        for (const nodeIds of dispatches) {
-            for (const id of nodeIds) {
-                const view = state.dataView.get(id);
-                if (view) {
-                    await makeNodeTest(view, enableXmlWrapper.value, testPrompt.value, context)                    
-                    tabStorage.autoDetectDiagram!.views!.push({
-                        tool: view.tool,
-                        status: view.status,
-                        function: view.function,
-                        result: view.result,
-                        createAt: view.createAt,
-                        finishAt: view.finishAt,
-                        llmTimecost: view.llmTimecost,
-                        toolcallTimecost: view.toolcallTimecost,
-                    });
-
-                    context.render();
+        if (enableParallelTest.value) {
+            // 并行测试模式：一次性测试所有工具
+            const allViews = Array.from(state.dataView.values());
+            await makeParallelTest(allViews, enableXmlWrapper.value, testPrompt.value, context);
+            
+            // 保存结果
+            allViews.forEach(view => {
+                tabStorage.autoDetectDiagram!.views!.push({
+                    tool: view.tool,
+                    status: view.status,
+                    function: view.function,
+                    result: view.result,
+                    createAt: view.createAt,
+                    finishAt: view.finishAt,
+                    llmTimecost: view.llmTimecost,
+                    toolcallTimecost: view.toolcallTimecost,
+                });
+            });
+        } else {
+            // 串行测试模式：按拓扑顺序逐个测试
+            const dispatches = topoSortParallel(state);
+            for (const nodeIds of dispatches) {
+                for (const id of nodeIds) {
+                    const view = state.dataView.get(id);
+                    if (view) {
+                        await makeNodeTest(view, enableXmlWrapper.value, testPrompt.value, context);
+                        tabStorage.autoDetectDiagram!.views!.push({
+                            tool: view.tool,
+                            status: view.status,
+                            function: view.function,
+                            result: view.result,
+                            createAt: view.createAt,
+                            finishAt: view.finishAt,
+                            llmTimecost: view.llmTimecost,
+                            toolcallTimecost: view.toolcallTimecost,
+                        });
+                        context.render();
+                    }
                 }
             }
         }
     } else {
         ElMessage.error('error');
     }
-
-
 }
 
 const resetPopoverVisible = ref(false);

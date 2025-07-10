@@ -157,6 +157,7 @@
     "feedback": "反馈",
     "waiting-mcp-server": "等待 MCP 服务器响应",
     "parallel-tool-calls": "允许模型在单轮回复中调用多个工具",
+    "parallel-test": "并行测试",
     "proxy-server": "代理服务器",
     "update-model-list": "更新模型列表",
     "preset-env-sync.success": "预设环境变量同步完成",
