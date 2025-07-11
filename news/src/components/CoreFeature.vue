@@ -5,32 +5,32 @@
             <li class="core-card">
                 <span class="core-dot">🧩</span>
                 <span>Full support for all MCP protocols, including <b>stdio</b>, <b>SSE</b>, and <b>streamable HTTP</b> connection modes.</span>
-				<a href="https://kirigaya.cn/openmcp/plugin-tutorial/usage/debug.html" target="_blank">Learn more</a>
+				<a href="https://openmcp.kirigaya.cn/plugin-tutorial/usage/debug.html" target="_blank">Learn more</a>
             </li>
             <li class="core-card">
                 <span class="core-dot">🧩</span>
                 <span>Connect Multiple MCP Servers and combine more mcp tools in just one instance.</span>
-				<a href="https://kirigaya.cn/openmcp/plugin-tutorial/usage/multi-server.html" target="_blank">Learn more</a>
+				<a href="https://openmcp.kirigaya.cn/plugin-tutorial/usage/multi-server.html" target="_blank">Learn more</a>
             </li>
             <li class="core-card">
                 <span class="core-dot">🧩</span>
                 <span>One-click AI Mock data generation & Automatic mcp tool testing width custom and flexible order.</span>
-				<a href="https://kirigaya.cn/openmcp/sdk-tutorial/" target="_blank">Learn more</a>
+				<a href="https://openmcp.kirigaya.cn/sdk-tutorial/" target="_blank">Learn more</a>
             </li>
 			<li class="core-card">
                 <span class="core-dot">🧩</span>
                 <span>Support function calling based on both <strong>XML</strong> and <strong>openai tools protocols.</strong></span>
-				<a href="https://kirigaya.cn/openmcp/sdk-tutorial/" target="_blank">Learn more</a>
+				<a href="https://openmcp.kirigaya.cn/sdk-tutorial/" target="_blank">Learn more</a>
             </li>
             <li class="core-card">
                 <span class="core-dot">🧩</span>
                 <span>Export connection as mcpconfig.json and deploy in openmcp-sdk</span>
-				<a href="https://kirigaya.cn/openmcp/sdk-tutorial/" target="_blank">Learn more</a>
+				<a href="https://openmcp.kirigaya.cn/sdk-tutorial/" target="_blank">Learn more</a>
             </li>
             <li class="core-card">
                 <span class="core-dot">🧩</span>
                 <span>Native VSCode experience, cross-platform support</span>
-				<a href="https://kirigaya.cn/openmcp/plugin-tutorial/quick-start/acquire-openmcp.html" target="_blank">Learn more</a>
+				<a href="https://openmcp.kirigaya.cn/plugin-tutorial/quick-start/acquire-openmcp.html" target="_blank">Learn more</a>
             </li>
         </ul>
     </section>

@@ -5,7 +5,7 @@
 <h3>openmcp-sdk: Deployment Framework for OpenMCP</h3>
 <h4>Lightning-fast deployment of your agent from lab to production</h4>
 
-<a href="https://kirigaya.cn/openmcp/sdk-tutorial/" target="_blank" style="display: inline-block; padding: 8px 16px; background-color: #7D3FF8; color: white; border-radius: .5em; text-decoration: none;">📄 OpenMCP SDK Documentation</a>
+<a href="https://openmcp.kirigaya.cn/sdk-tutorial/" target="_blank" style="display: inline-block; padding: 8px 16px; background-color: #7D3FF8; color: white; border-radius: .5em; text-decoration: none;">🫱 OpenMCP SDK 官方文档</a>
 
 
 <a href="https://qm.qq.com/cgi-bin/qm/qr?k=C6ZUTZvfqWoI12lWe7L93cWa1hUsuVT0&jump_from=webapi&authKey=McW6B1ogTPjPDrCyGttS890tMZGQ1KB3QLuG4aqVNRaYp4vlTSgf2c6dMcNjMuBD" target="_blank" style="display: inline-block; padding: 8px 16px; background-color: #CB81DA; color: white; border-radius: .5em; text-decoration: none;">QQ Discussion Group</a><a href="https://discord.gg/af5cfB9a" target="_blank" style="display: inline-block; padding: 8px 16px; background-color: rgb(84, 176, 84); color: white; border-radius: .5em; text-decoration: none; margin-left: 5px;">Discord Channel</a>
@@ -106,6 +106,6 @@ Posted: 8 hours ago
 Link: https://github.com/Orange-OpenSource/hurl
 ```
 
-For more details, see the official documentation: [https://kirigaya.cn/openmcp/sdk-tutorial/](https://kirigaya.cn/openmcp/sdk-tutorial/)  
+For more details, see the official documentation: [https://openmcp.kirigaya.cn/sdk-tutorial/](https://openmcp.kirigaya.cn/sdk-tutorial/)  
 
 Star our project: [https://github.com/LSTM-Kirigaya/openmcp-client](https://github.com/LSTM-Kirigaya/openmcp-client)  

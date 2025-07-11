@@ -33,7 +33,7 @@ const props = defineProps({
 					</svg>
 					Releases
 				</a>
-				<a href="https://kirigaya.cn/openmcp/" target="_blank" title="Website">
+				<a href="https://openmcp.kirigaya.cn/" target="_blank" title="Website">
 					<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"
 						style="vertical-align: middle;">
 						<path

@@ -28,7 +28,7 @@ const props = defineProps({
 				</li>
 			</ul>
 			<br>
-			<a class="release-link" href="https://kirigaya.cn/openmcp/preview/changelog.html" target="_blank"
+			<a class="release-link" href="https://openmcp.kirigaya.cn/preview/changelog.html" target="_blank"
 				rel="noopener">View History Changelog →</a>
 		</div>
 	</section>

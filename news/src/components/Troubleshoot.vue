@@ -9,7 +9,7 @@
 				If the interface displays abnormally, try restarting VSCode or report an <a href="https://github.com/LSTM-Kirigaya/openmcp-client/issues" target="_blank">Issue</a>.
 			</li>
 			<li>
-				For more questions, refer to the <a href="https://kirigaya.cn/openmcp/" target="_blank">official
+				For more questions, refer to the <a href="https://openmcp.kirigaya.cn/" target="_blank">official
 					documentation</a> or join the community.</li>
 
 			<li>Contant Jinhui via <a href="mailto:1193466151@qq.com">1193466151@qq.com</a> to seek technical consultation or business cooperation.</li>

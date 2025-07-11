@@ -10,7 +10,7 @@ You are a clever bot to write SPA page to display the changelog and news of my s
 ### Some basic information you should know
 
 - Release is: https://github.com/LSTM-Kirigaya/openmcp-client/releases
-- OpenMCP website is: https://kirigaya.cn/openmcp/
+- OpenMCP website is: https://openmcp.kirigaya.cn/
 - Github: https://github.com/LSTM-Kirigaya/openmcp-client
 - Discord: https://discord.com/invite/SKTZRf6NzU
 - QQ: https://qm.qq.com/cgi-bin/qm/qr?k=C6ZUTZvfqWoI12lWe7L93cWa1hUsuVT0&jump_from=webapi&authKey=McW6B1ogTPjPDrCyGttS890tMZGQ1KB3QLuG4aqVNRaYp4vlTSgf2c6dMcNjMuBD
