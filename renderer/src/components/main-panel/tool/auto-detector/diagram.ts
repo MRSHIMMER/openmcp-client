@@ -161,6 +161,125 @@ export function topoSortParallel(state: DiagramState): string[][] {
     return result;
 }
 
+export async function makeParallelTest(
+    dataViews: Reactive<NodeDataView>[],
+    enableXmlWrapper: boolean,
+    prompt: string | null = null,
+    context: DiagramContext
+) {
+    if (dataViews.length === 0) {
+        return;
+    }
+
+    // 设置所有节点状态为运行中
+    const createAt = Date.now();
+    dataViews.forEach(dataView => {
+        dataView.status = 'running';
+        dataView.createAt = createAt;
+    });
+    context.render();
+
+    try {
+        const loop = new TaskLoop({ maxEpochs: 1 });
+        
+        // 构建所有工具的信息
+        const allTools = dataViews.map(dataView => ({
+            name: dataView.tool.name,
+            description: dataView.tool.description,
+            inputSchema: dataView.tool.inputSchema,
+            enabled: true
+        }));
+
+        // 构建测试提示词，包含所有工具
+        const toolNames = dataViews.map(dv => dv.tool.name).join(', ');
+        const usePrompt = (prompt || 'please call the tools {tool} to make some test').replace('{tool}', toolNames);
+        
+        const chatStorage = {
+            messages: [],
+            settings: {
+                temperature: 0.6,
+                systemPrompt: '',
+                enableTools: allTools,
+                enableWebSearch: false,
+                contextLength: 5,
+                enableXmlWrapper,
+                parallelToolCalls: true // 开启并行工具调用
+            }
+        } as ChatStorage;
+
+        loop.setMaxEpochs(1);
+
+        // 记录工具调用信息，用于匹配工具调用结果
+        const toolCallMap: Map<string, Reactive<NodeDataView>> = new Map(); // toolCallId -> dataView
+        let completedToolsCount = 0;
+        
+        loop.registerOnToolCall(toolCall => {
+            // 找到对应的dataView
+            const dataView = dataViews.find(dv => dv.tool.name === toolCall.function?.name);
+            if (dataView) {
+                dataView.function = toolCall.function;
+                dataView.llmTimecost = Date.now() - createAt;
+                context.render();
+                
+                // 记录工具调用ID与dataView的映射
+                if (toolCall.id) {
+                    toolCallMap.set(toolCall.id, dataView);
+                }
+            }
+            return toolCall;
+        });
+
+        loop.registerOnToolCalled(toolCalled => {
+            // 这里我们需要改变策略，因为没有工具调用ID信息
+            // 对于并行调用，我们可以根据工具调用的顺序来匹配结果
+            // 简单的策略：找到第一个仍在运行状态的工具
+            const runningView = dataViews.find(dv => dv.status === 'running');
+            if (runningView) {
+                runningView.toolcallTimecost = Date.now() - createAt - (runningView.llmTimecost || 0);
+                
+                if (toolCalled.state === MessageState.Success) {
+                    runningView.status = 'success';
+                    runningView.result = toolCalled.content;
+                } else {
+                    runningView.status = 'error';
+                    runningView.result = toolCalled.content;
+                }
+                
+                completedToolsCount++;
+                context.render();
+                
+                // 如果所有工具都完成了，终止循环
+                if (completedToolsCount >= dataViews.length) {
+                    loop.abort();
+                }
+            }
+            return toolCalled;
+        });
+
+        loop.registerOnError(error => {
+            dataViews.forEach(dataView => {
+                if (dataView.status === 'running') {
+                    dataView.status = 'error';
+                    dataView.result = error;
+                }
+            });
+            context.render();
+        });
+
+        await loop.start(chatStorage, usePrompt);
+
+    } finally {
+        const finishAt = Date.now();
+        dataViews.forEach(dataView => {
+            dataView.finishAt = finishAt;
+            if (dataView.status === 'running') {
+                dataView.status = 'success';
+            }
+        });
+        context.render();
+    }
+}
+
 export async function makeNodeTest(
     dataView: Reactive<NodeDataView>,
     enableXmlWrapper: boolean,
