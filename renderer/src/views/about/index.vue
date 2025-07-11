@@ -17,7 +17,7 @@
 				{{ t('star-our-project') }}
 			</el-button>
 
-			<el-button class="join-qq" type="primary" @click="gotoWebsite('https://kirigaya.cn/openmcp')">
+			<el-button class="join-qq" type="primary" @click="gotoWebsite('https://openmcp.kirigaya.cn')">
 				<span class="iconfont icon-wendang"></span>
 				{{ t('document') }}
 			</el-button>

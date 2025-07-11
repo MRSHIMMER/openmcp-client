@@ -167,11 +167,11 @@ const exportCode = async () => {
 
 const gotoHowtoUse = () => {
     if (locale.value === 'zh') {
-        gotoWebsite('https://kirigaya.cn/openmcp/zh/sdk-tutorial/#%E4%BD%BF%E7%94%A8');
+        gotoWebsite('https://openmcp.kirigaya.cn/zh/sdk-tutorial/#%E4%BD%BF%E7%94%A8');
     } else if (locale.value === 'ja') {
-        gotoWebsite('https://kirigaya.cn/openmcp/ja/sdk-tutorial/#%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95');
+        gotoWebsite('https://openmcp.kirigaya.cn/ja/sdk-tutorial/#%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95');
     } else {
-        gotoWebsite('https://kirigaya.cn/openmcp/sdk-tutorial/#usage');
+        gotoWebsite('https://openmcp.kirigaya.cn/sdk-tutorial/#usage');
     }
 }
 

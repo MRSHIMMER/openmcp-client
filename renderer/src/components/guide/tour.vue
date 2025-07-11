@@ -256,7 +256,7 @@
                 <br>
                 <br>
                 
-                <a href="https://kirigaya.cn/openmcp/" target="_blank">OpenMCP 官方文档</a> 是我们的文档站点，您在其中能找到非常完整的使用说明和案例教程。
+                <a href="https://openmcp.kirigaya.cn/" target="_blank">OpenMCP 官方文档</a> 是我们的文档站点，您在其中能找到非常完整的使用说明和案例教程。
 
                 <br><br>
 

@@ -9,10 +9,10 @@
 					href="https://kirigaya.cn/blog/search?q=mcp" target="_blank" rel="noreferrer">Jin Hui's MCP Series
 					Blog</a></li>
 			<li><a data-v-dd258f77="" class="VPNolebaseInlinePreviewLink" relative=""
-					href="https://kirigaya.cn/openmcp/plugin-tutorial" target="_blank" rel="noreferrer">OpenMCP Official
+					href="https://openmcp.kirigaya.cn/plugin-tutorial" target="_blank" rel="noreferrer">OpenMCP Official
 					Documentation</a></li>
 			<li><a data-v-dd258f77="" class="VPNolebaseInlinePreviewLink" relative=""
-					href="https://kirigaya.cn/openmcp/sdk-tutorial" target="_blank" rel="noreferrer">openmcp-sdk
+					href="https://openmcp.kirigaya.cn/sdk-tutorial" target="_blank" rel="noreferrer">openmcp-sdk
 					Official Documentation</a></li>
 		</ul>
 	</section>
