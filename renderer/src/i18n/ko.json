@@ -197,5 +197,6 @@
     "select-node-define-test-tomo": "테스트 토폴로지를 정의하려면 다른 노드를 선택하세요",
     "tool-self-detect": "도구 자체 점검",
     "self-detect-caption": "연결선을 클릭하여 연결을 취소하고, 노드를 클릭하여 연결을 생성합니다",
-    "diagram-node-empty": "노드 정보 없음"
+    "diagram-node-empty": "노드 정보 없음",
+    "parallel-test": "병렬 테스트"
 }
