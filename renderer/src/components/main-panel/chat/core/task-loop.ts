@@ -178,10 +178,17 @@ export class TaskLoop {
         }
     }
 
-    private handleChunkUsage(chunk: ChatCompletionChunk) {
+    private handleChunkUsage(chunk: ChatCompletionChunk) {        
         const usage = chunk.usage;
+        
         if (usage) {
             this.completionUsage = usage;
+        } else {
+            // 有一些模型会把 usage 放在 completion 中
+            const choice = chunk.choices[0] as any;
+            if (choice.usage) {
+                this.completionUsage = choice.usage;
+            }
         }
     }
 
@@ -282,10 +289,12 @@ export class TaskLoop {
             prompt += getXmlWrapperPrompt(tabStorage.settings.enableTools, tabStorage);
         }
 
-        userMessages.push({
-            role: 'system',
-            content: prompt
-        });
+        if (prompt) {
+            userMessages.push({
+                role: 'system',
+                content: prompt
+            });
+        }
 
         // 如果超出了 tabStorage.settings.contextLength, 则删除最早的消息
         const loadMessages = tabStorage.messages.slice(- tabStorage.settings.contextLength);
