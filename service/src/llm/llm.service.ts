@@ -5,15 +5,16 @@ import { RestfulResponse } from "../common/index.dto.js";
 import { ocrDB } from "../hook/db.js";
 import type { ToolCallContent } from "../mcp/client.dto.js";
 import { ocrWorkerStorage } from "../mcp/ocr.service.js";
-import Table from 'cli-table3';
 
-export let currentStream: AsyncIterable<any> | null = null;
+// 用 Map<string, AsyncIterable<any> | null> 管理多个流
+export const chatStreams = new Map<string, AsyncIterable<any>>();
 
 export async function streamingChatCompletion(
     data: any,
     webview: PostMessageble
 ) {
     const {
+        sessionId,
         baseURL,
         apiKey,
         model,
@@ -24,16 +25,6 @@ export async function streamingChatCompletion(
         proxyServer = ''
     } = data;
 
-    // 创建请求参数表格
-    const requestTable = new Table({
-        head: ['Parameter', 'Value'],
-        colWidths: [20, 40],
-        style: {
-            head: ['cyan'],
-            border: ['grey']
-        }
-    });
-    
 
     // 构建OpenRouter特定的请求头
     const defaultHeaders: Record<string, string> = {};
@@ -47,26 +38,13 @@ export async function streamingChatCompletion(
         apiKey,
         defaultHeaders: Object.keys(defaultHeaders).length > 0 ? defaultHeaders : undefined
     });
-    
-    const seriableTools = (tools.length === 0) ? undefined: tools;
-    const seriableParallelToolCalls = (tools.length === 0)? 
-        undefined: model.startsWith('gemini') ? undefined : parallelToolCalls;
-     
+
+    const seriableTools = (tools.length === 0) ? undefined : tools;
+    const seriableParallelToolCalls = (tools.length === 0) ?
+        undefined : model.startsWith('gemini') ? undefined : parallelToolCalls;
+
     await postProcessMessages(messages);
 
-    // // 使用表格渲染请求参数
-    // requestTable.push(
-    //     ['Model', model],
-    //     ['Base URL', baseURL || 'Default'],
-    //     ['Temperature', temperature],
-    //     ['Tools Count', tools.length],
-    //     ['Parallel Tool Calls', parallelToolCalls],
-    //     ['Proxy Server', proxyServer || 'No Proxy']
-    // );
-    
-    // console.log('\nOpenAI Request Parameters:');
-    // console.log(requestTable.toString());
-    
     const stream = await client.chat.completions.create({
         model,
         messages,
@@ -76,19 +54,20 @@ export async function streamingChatCompletion(
         stream: true
     });
 
-    // 存储当前的流式传输对象
-    currentStream = stream;
+    // 用 sessionId 作为 key 存储流
+    if (sessionId) {
+        chatStreams.set(sessionId, stream);
+    }
 
     // 流式传输结果
     for await (const chunk of stream) {
-        if (!currentStream) {
+        if (!chatStreams.has(sessionId)) {
             // 如果流被中止，则停止循环
-            // TODO: 为每一个标签页设置不同的 currentStream 管理器
             stream.controller.abort();
-            // 传输结束
             webview.postMessage({
                 command: 'llm/chat/completions/done',
                 data: {
+                    sessionId,
                     code: 200,
                     msg: {
                         success: true,
@@ -98,26 +77,29 @@ export async function streamingChatCompletion(
             });
             break;
         }
-        
-        if (chunk.choices) {
-            const chunkResult = {
-                code: 200,
-                msg: {
-                    chunk
-                }
-            };
 
+        if (chunk.choices) {
             webview.postMessage({
                 command: 'llm/chat/completions/chunk',
-                data: chunkResult
+                data: {
+                    sessionId,
+                    code: 200,
+                    msg: {
+                        chunk
+                    }
+                }
             });
         }
     }
 
-    // 传输结束
+    // 传输结束，移除对应的 stream
+    if (sessionId) {
+        chatStreams.delete(sessionId);
+    }
     webview.postMessage({
         command: 'llm/chat/completions/done',
         data: {
+            sessionId,
             code: 200,
             msg: {
                 success: true,
@@ -130,9 +112,9 @@ export async function streamingChatCompletion(
 
 // 处理中止消息的函数
 export function abortMessageService(data: any, webview: PostMessageble): RestfulResponse {
-    if (currentStream) {
-        // 标记流已中止
-        currentStream = null;
+    const sessionId = data?.sessionId;
+    if (sessionId) {
+        chatStreams.delete(sessionId);
     }
 
     return {
@@ -144,18 +126,18 @@ export function abortMessageService(data: any, webview: PostMessageble): Restful
 }
 
 async function postProcessToolMessages(message: MyToolMessageType) {
-	if (typeof message.content === 'string') {
-		return;
-	}
+    if (typeof message.content === 'string') {
+        return;
+    }
 
-	for (const content of message.content) {
-		const contentType = content.type as string;
-		const rawContent = content as ToolCallContent;
+    for (const content of message.content) {
+        const contentType = content.type as string;
+        const rawContent = content as ToolCallContent;
 
-		if (contentType === 'image') {			
-			rawContent.type = 'text';
-			
-			// 此时图片只会存在三个状态
+        if (contentType === 'image') {
+            rawContent.type = 'text';
+
+            // 此时图片只会存在三个状态
             // 1. 图片在 ocrDB 中
             // 2. 图片的 OCR 仍然在进行中
             // 3. 图片已被删除
@@ -164,7 +146,7 @@ async function postProcessToolMessages(message: MyToolMessageType) {
             // rawContent.data 就是 filename
             const result = await ocrDB.findById(rawContent.data);
             if (result) {
-                rawContent.text = result.text || '';            
+                rawContent.text = result.text || '';
             } else if (rawContent._meta) {
                 const workerId = rawContent._meta.workerId;
                 const worker = ocrWorkerStorage.get(workerId);
@@ -177,35 +159,35 @@ async function postProcessToolMessages(message: MyToolMessageType) {
             }
 
             delete rawContent._meta;
-		}
-	}
+        }
+    }
 
-	message.content = JSON.stringify(message.content);
+    message.content = JSON.stringify(message.content);
 }
 
 export async function postProcessMessages(messages: MyMessageType[]) {
-	for (const message of messages) {
-		// 去除 extraInfo 属性
-		delete message.extraInfo;
+    for (const message of messages) {
+        // 去除 extraInfo 属性
+        delete message.extraInfo;
 
-		switch (message.role) {
-			case 'user':
+        switch (message.role) {
+            case 'user':
+
+                break;
+
+            case 'assistant':
 
                 break;
 
-			case 'assistant':
+            case 'system':
 
                 break;
-			
-			case 'system':
 
-				break;
-
-			case 'tool':
-				await postProcessToolMessages(message);
-				break;
-			default:
-				break;
-		}
-	}
+            case 'tool':
+                await postProcessToolMessages(message);
+                break;
+            default:
+                break;
+        }
+    }
 }

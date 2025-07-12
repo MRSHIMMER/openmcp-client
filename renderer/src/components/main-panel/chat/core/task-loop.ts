@@ -18,6 +18,7 @@ import { getXmlWrapperPrompt, getToolCallFromXmlString, getXmlsFromString, handl
 export type ChatCompletionChunk = OpenAI.Chat.Completions.ChatCompletionChunk;
 export interface TaskLoopChatOption {
     id?: string
+    sessionId: string;
     proxyServer?: string
     enableXmlWrapper?: boolean
 }
@@ -193,9 +194,15 @@ export class TaskLoop {
     }
 
     private doConversation(chatData: ChatCompletionCreateParamsBase, toolcallIndexAdapter: (toolCall: ToolCall) => IToolCallIndex) {
+        const sessionId = chatData.sessionId;
 
         return new Promise<IDoConversationResult>((resolve, reject) => {
             const chunkHandler = this.bridge.addCommandListener('llm/chat/completions/chunk', data => {
+                
+                if (data.sessionId !== sessionId) {
+                    return;
+                }
+                
                 // data.code 一定为 200，否则不会走这个 route
                 const { chunk } = data.msg as { chunk: ChatCompletionChunk };
 
@@ -214,6 +221,10 @@ export class TaskLoop {
             }, { once: false });
 
             const doneHandler = this.bridge.addCommandListener('llm/chat/completions/done', data => {
+                if (data.sessionId !== sessionId) {
+                    return;
+                }
+
                 this.consumeDones();
 
                 chunkHandler();
@@ -225,6 +236,10 @@ export class TaskLoop {
             }, { once: true });
 
             const errorHandler = this.bridge.addCommandListener('llm/chat/completions/error', data => {
+                if (data.sessionId !== sessionId) {
+                    return;
+                }
+                
                 this.consumeErrors({
                     state: MessageState.ReceiveChunkError,
                     msg: data.msg || '请求模型服务时发生错误'
@@ -304,7 +319,7 @@ export class TaskLoop {
         const id = crypto.randomUUID();
 
         const chatData = {
-            id,
+            sessionId: id,
             baseURL,
             apiKey,
             model,
@@ -575,7 +590,7 @@ export class TaskLoop {
                 break;
             }
 
-            this.currentChatId = chatData.id!;
+            this.currentChatId = chatData.sessionId;
             const llm = this.getLlmConfig();
             const toolcallIndexAdapter = getToolCallIndexAdapter(llm, chatData);
 

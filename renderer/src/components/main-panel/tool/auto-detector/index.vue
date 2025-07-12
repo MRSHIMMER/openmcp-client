@@ -56,19 +56,15 @@
         <el-scrollbar height="80vh">
             <Diagram :tab-id="props.tabId" />
         </el-scrollbar>
-   
+
         <div class="caption" v-if="showCaption">
             {{ caption }}
         </div>
         <div v-else>
             <span class="caption">
-            <el-tooltip
-                placement="top"
-                effect="light"
-                :content="t('self-detect-caption')"
-            >
-                <span class="iconfont icon-about"></span>
-            </el-tooltip>
+                <el-tooltip placement="top" effect="light" :content="t('self-detect-caption')">
+                    <span class="iconfont icon-about"></span>
+                </el-tooltip>
             </span>
         </div>
     </el-dialog>
@@ -144,37 +140,41 @@ if (autoDetectDiagram) {
 // 新增：自检参数表单相关
 const testFormVisible = ref(false);
 const enableXmlWrapper = ref(false);
-const enableParallelTest = ref(false);
+const enableParallelTest = ref(true);
 const testPrompt = ref('please call the tool {tool} to make some test');
 
 async function onTestConfirm() {
     testFormVisible.value = false;
     const state = context.state;
-    
+
     tabStorage.autoDetectDiagram!.views = [];
 
     if (state) {
+        const dispatches = topoSortParallel(state);
+
         if (enableParallelTest.value) {
-            // 并行测试模式：一次性测试所有工具
-            const allViews = Array.from(state.dataView.values());
-            await makeParallelTest(allViews, enableXmlWrapper.value, testPrompt.value, context);
-            
-            // 保存结果
-            allViews.forEach(view => {
-                tabStorage.autoDetectDiagram!.views!.push({
-                    tool: view.tool,
-                    status: view.status,
-                    function: view.function,
-                    result: view.result,
-                    createAt: view.createAt,
-                    finishAt: view.finishAt,
-                    llmTimecost: view.llmTimecost,
-                    toolcallTimecost: view.toolcallTimecost,
-                });
-            });
+            for (const nodeIds of dispatches) {
+
+                await Promise.all(nodeIds.map(async id => {
+                    const view = state.dataView.get(id);
+                    if (view) {
+                        await makeNodeTest(view, enableXmlWrapper.value, testPrompt.value, context);
+                        tabStorage.autoDetectDiagram!.views!.push({
+                            tool: view.tool,
+                            status: view.status,
+                            function: view.function,
+                            result: view.result,
+                            createAt: view.createAt,
+                            finishAt: view.finishAt,
+                            llmTimecost: view.llmTimecost,
+                            toolcallTimecost: view.toolcallTimecost,
+                        });
+                        context.render();
+                    }
+                }));
+            }
         } else {
             // 串行测试模式：按拓扑顺序逐个测试
-            const dispatches = topoSortParallel(state);
             for (const nodeIds of dispatches) {
                 for (const id of nodeIds) {
                     const view = state.dataView.get(id);
