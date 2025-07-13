@@ -197,5 +197,6 @@
     "select-node-define-test-tomo": "テストトポロジを定義するために別のノードを選択してください",
     "tool-self-detect": "ツール自己診断",
     "self-detect-caption": "接続線をクリックして接続を解除し、ノードをクリックして接続を作成します",
-    "diagram-node-empty": "ノード情報なし"
+    "diagram-node-empty": "ノード情報なし",
+    "parallel-test": "並列テスト"
 }

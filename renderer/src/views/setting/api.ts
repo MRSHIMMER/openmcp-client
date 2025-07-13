@@ -64,6 +64,7 @@ export async function makeSimpleTalk() {
     const costTime = (Date.now() - startTime!) / 1000;
     const message = chatStorage.messages[chatStorage.messages.length - 1];
     console.log(chatStorage.messages);
+    console.log(message.extraInfo);
 
     if (message?.extraInfo) {
         const usage = message.extraInfo.usage;

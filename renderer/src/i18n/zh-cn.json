@@ -197,5 +197,6 @@
     "select-node-define-test-tomo": "选择另一个节点以定义测试拓扑",
     "tool-self-detect": "工具自检",
     "self-detect-caption": "点击连接线取消连接，点击节点以创建连接",
-    "diagram-node-empty": "暂无节点信息"
+    "diagram-node-empty": "暂无节点信息",
+    "parallel-test": "并行测试"
 }

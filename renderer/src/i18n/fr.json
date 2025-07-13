@@ -197,5 +197,6 @@
     "select-node-define-test-tomo": "Sélectionnez un autre nœud pour définir la topologie de test",
     "tool-self-detect": "Auto-vérification de l'outil",
     "self-detect-caption": "Cliquez sur la ligne de connexion pour annuler la connexion, cliquez sur le nœud pour créer une connexion",
-    "diagram-node-empty": "Aucune information sur le nœud"
+    "diagram-node-empty": "Aucune information sur le nœud",
+    "parallel-test": "Test en parallèle"
 }

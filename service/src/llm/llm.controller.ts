@@ -17,6 +17,8 @@ export class LlmController {
             webview.postMessage({
                 command: 'llm/chat/completions/error',
                 data: {
+                    sessionId: data.sessionId,
+                    code: 500,
                     msg: error
                 }
             });
