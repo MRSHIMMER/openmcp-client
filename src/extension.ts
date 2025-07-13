@@ -13,6 +13,7 @@ export function activate(context: vscode.ExtensionContext) {
     const workspace = workspaceFolder?.uri.fsPath || '';
     setVscodeWorkspace(workspace);
     setRunningCWD(context.extensionPath);
+
     initialiseI18n(context);
     
     // 添加i18n调试信息

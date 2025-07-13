@@ -73,7 +73,7 @@
 <script setup lang="ts">
 import { computed, nextTick, provide, ref } from 'vue';
 import Diagram from './diagram.vue';
-import { makeNodeTest, makeParallelTest, topoSortParallel, type DiagramContext, type DiagramState } from './diagram';
+import { makeNodeTest, topoSortParallel, type DiagramContext, type DiagramState } from './diagram';
 import { ElMessage } from 'element-plus';
 
 import { useI18n } from 'vue-i18n';

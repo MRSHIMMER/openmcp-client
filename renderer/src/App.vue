@@ -24,6 +24,7 @@ import { userHasReadGuide } from './components/guide/tour';
 
 import PasswordDialog from '@/components/password-dialog/index.vue';
 import { privilegeStatus } from './components/password-dialog/status';
+import { useI18n } from 'vue-i18n';
 
 const bridge = useMessageBridge();
 
@@ -66,7 +67,7 @@ onMounted(async () => {
 		Connection.showPanel = false;
 	});
 
-	await initialise();
+	await initialise();    
 });
 
 </script>

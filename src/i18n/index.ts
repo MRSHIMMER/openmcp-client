@@ -4,6 +4,14 @@ import * as path from 'path';
 
 const defaultBundle: Record<string, string> = {}
 
+export function getDefaultLanguage() {
+    const lang = vscode.env.language || 'en';
+    if (lang === 'zh-cn') {
+        return 'zh';
+    }
+    return lang;
+}
+
 export function initialiseI18n(context: vscode.ExtensionContext) {
     if (vscode.l10n.bundle === undefined) {
         // 获取用户的语言设置
