@@ -197,5 +197,6 @@
     "select-node-define-test-tomo": "اختر عقدة أخرى لتحديد طوبولوجيا الاختبار",
     "tool-self-detect": "الفحص الذاتي للأداة",
     "self-detect-caption": "انقر على خط الاتصال لإلغاء التوصيل، انقر على العقدة لإنشاء اتصال",
-    "diagram-node-empty": "لا توجد معلومات عن العقدة"
+    "diagram-node-empty": "لا توجد معلومات عن العقدة",
+    "parallel-test": "اختبار متوازي"
 }

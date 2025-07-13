@@ -182,7 +182,7 @@ const toolcallPercent = computed(() => {
 .item-json {
     border-radius: 4px;
     padding: 6px 10px;
-    font-size: 15px;
+    font-size: 13px;
     font-family: var(--code-font-family, monospace);
     margin: 2px 0 8px 0;
     white-space: pre-wrap;
@@ -193,6 +193,7 @@ const toolcallPercent = computed(() => {
 }
 
 .code-container {
+    font-size: 13px;
     margin-top: 10px;
     border-radius: .3em;
     padding: 0 10px;

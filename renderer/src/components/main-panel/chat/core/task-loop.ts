@@ -18,6 +18,7 @@ import { getXmlWrapperPrompt, getToolCallFromXmlString, getXmlsFromString, handl
 export type ChatCompletionChunk = OpenAI.Chat.Completions.ChatCompletionChunk;
 export interface TaskLoopChatOption {
     id?: string
+    sessionId: string;
     proxyServer?: string
     enableXmlWrapper?: boolean
 }
@@ -178,17 +179,30 @@ export class TaskLoop {
         }
     }
 
-    private handleChunkUsage(chunk: ChatCompletionChunk) {
+    private handleChunkUsage(chunk: ChatCompletionChunk) {        
         const usage = chunk.usage;
+        
         if (usage) {
             this.completionUsage = usage;
+        } else {
+            // 有一些模型会把 usage 放在 completion 中
+            const choice = chunk.choices[0] as any;
+            if (choice.usage) {
+                this.completionUsage = choice.usage;
+            }
         }
     }
 
     private doConversation(chatData: ChatCompletionCreateParamsBase, toolcallIndexAdapter: (toolCall: ToolCall) => IToolCallIndex) {
+        const sessionId = chatData.sessionId;
 
         return new Promise<IDoConversationResult>((resolve, reject) => {
             const chunkHandler = this.bridge.addCommandListener('llm/chat/completions/chunk', data => {
+                
+                if (data.sessionId !== sessionId) {
+                    return;
+                }
+                
                 // data.code 一定为 200，否则不会走这个 route
                 const { chunk } = data.msg as { chunk: ChatCompletionChunk };
 
@@ -207,30 +221,41 @@ export class TaskLoop {
             }, { once: false });
 
             const doneHandler = this.bridge.addCommandListener('llm/chat/completions/done', data => {
+                
+                if (data.sessionId !== sessionId) {
+                    return;
+                }
+
                 this.consumeDones();
 
                 chunkHandler();
                 errorHandler();
+                doneHandler();
 
                 resolve({
                     stop: false
                 });
-            }, { once: true });
+            }, { once: false });
 
             const errorHandler = this.bridge.addCommandListener('llm/chat/completions/error', data => {
+                if (data.sessionId !== sessionId) {
+                    return;
+                }
+                
                 this.consumeErrors({
                     state: MessageState.ReceiveChunkError,
                     msg: data.msg || '请求模型服务时发生错误'
                 });
 
                 chunkHandler();
+                errorHandler();
                 doneHandler();
 
                 resolve({
                     stop: true
                 });
 
-            }, { once: true });
+            }, { once: false });
 
             this.bridge.postMessage({
                 command: 'llm/chat/completions',
@@ -282,10 +307,12 @@ export class TaskLoop {
             prompt += getXmlWrapperPrompt(tabStorage.settings.enableTools, tabStorage);
         }
 
-        userMessages.push({
-            role: 'system',
-            content: prompt
-        });
+        if (prompt) {
+            userMessages.push({
+                role: 'system',
+                content: prompt
+            });
+        }
 
         // 如果超出了 tabStorage.settings.contextLength, 则删除最早的消息
         const loadMessages = tabStorage.messages.slice(- tabStorage.settings.contextLength);
@@ -295,7 +322,7 @@ export class TaskLoop {
         const id = crypto.randomUUID();
 
         const chatData = {
-            id,
+            sessionId: id,
             baseURL,
             apiKey,
             model,
@@ -566,7 +593,7 @@ export class TaskLoop {
                 break;
             }
 
-            this.currentChatId = chatData.id!;
+            this.currentChatId = chatData.sessionId;
             const llm = this.getLlmConfig();
             const toolcallIndexAdapter = getToolCallIndexAdapter(llm, chatData);
 
