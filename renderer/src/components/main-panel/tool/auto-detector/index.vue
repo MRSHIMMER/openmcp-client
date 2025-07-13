@@ -73,7 +73,7 @@
 <script setup lang="ts">
 import { computed, nextTick, provide, ref } from 'vue';
 import Diagram from './diagram.vue';
-import { makeNodeTest, makeParallelTest, topoSortParallel, type DiagramContext, type DiagramState } from './diagram';
+import { makeNodeTest, topoSortParallel, type DiagramContext } from './diagram';
 import { ElMessage } from 'element-plus';
 
 import { useI18n } from 'vue-i18n';
@@ -118,6 +118,7 @@ function setCaption(text: string) {
 const context: DiagramContext = {
     preset: () => { },
     render: () => { },
+    resetDataView: () => { },
     state: undefined,
     setCaption
 };
@@ -148,6 +149,10 @@ async function onTestConfirm() {
     const state = context.state;
 
     tabStorage.autoDetectDiagram!.views = [];
+
+    // 先重制状态
+    context.resetDataView();
+    context.render();
 
     if (state) {
         const dispatches = topoSortParallel(state);

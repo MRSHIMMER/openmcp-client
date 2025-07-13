@@ -51,6 +51,7 @@ export interface NodeDataView {
 export interface DiagramContext {
     preset: (type: string) => void,
     render: () => void,
+    resetDataView: () => void,
     state?: DiagramState,
     setCaption: (value: string) => void
 }
@@ -178,7 +179,7 @@ export async function makeNodeTest(
     context.render();
 
     try {
-        const loop = new TaskLoop({ maxEpochs: 1 });
+        const loop = new TaskLoop({ maxEpochs: 1, verbose: 0 });
         const usePrompt = (prompt || 'please call the tool {tool} to make some test').replace('{tool}', dataView.tool.name);
         const chatStorage = {
             messages: [],
@@ -197,8 +198,6 @@ export async function makeNodeTest(
                 parallelToolCalls: false
             }
         } as ChatStorage;
-
-        loop.setMaxEpochs(1);
 
         let aiMockJson: any = undefined;
 
@@ -225,7 +224,7 @@ export async function makeNodeTest(
             return toolCall;
         });
 
-        loop.registerOnToolCalled(toolCalled => {
+        loop.registerOnToolCalled(toolCalled => {            
             dataView.toolcallTimecost = Date.now() - createAt - dataView.llmTimecost!;
 
             if (toolCalled.state === MessageState.Success) {

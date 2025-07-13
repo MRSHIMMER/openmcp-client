@@ -60,8 +60,8 @@ export async function streamingChatCompletion(
     }
 
     // 流式传输结果
-    for await (const chunk of stream) {
-        if (!chatStreams.has(sessionId)) {
+    for await (const chunk of stream) {        
+        if (!chatStreams.has(sessionId)) {            
             // 如果流被中止，则停止循环
             stream.controller.abort();
             webview.postMessage({
@@ -91,6 +91,8 @@ export async function streamingChatCompletion(
             });
         }
     }
+
+    console.log('sessionId finish ' + sessionId);
 
     // 传输结束，移除对应的 stream
     if (sessionId) {

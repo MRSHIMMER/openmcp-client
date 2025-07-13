@@ -188,7 +188,7 @@ const drawDiagram = async () => {
 
     // 如果保存了 edges 信息，则需要进行同步
     const reservedEdges = autoDetectDiagram?.edges;
-    if (reservedEdges && reservedEdges.length > 0) {
+    if (reservedEdges) {
         for (const edge of reservedEdges) {
             if (edge.sources && edge.targets && edge.sources.length > 0 && edge.targets.length > 0) {
                 edges.push({
@@ -662,6 +662,24 @@ function getNodePopupStyle(node: any): any {
         height: `${popupHeight}px`
     };
 }
+
+// 重置所有节点的状态为初始值
+function resetDataView() {
+    state.dataView.forEach((view, key) => {
+        state.dataView.set(key, {
+            ...view,
+            status: 'waiting',
+            result: null,
+            createAt: undefined,
+            finishAt: undefined,
+            llmTimecost: undefined,
+            toolcallTimecost: undefined
+        });
+    });
+}
+
+context.resetDataView = resetDataView;
+
 </script>
 
 <style>
