@@ -237,6 +237,10 @@ export class MessageBridge {
 		
         return new Promise<RestFulResponse>((resolve, reject) => {
 			const handler = this.addCommandListener(command, (data) => {
+                if (data._id === undefined) {
+                    console.warn('detect data without id, data: ' + JSON.stringify(data, null, 2));
+                }
+
                 if (data._id === _id) {
                     handler();
     				resolve(data as RestFulResponse);

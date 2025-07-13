@@ -79,6 +79,7 @@ export function revealOpenMcpWebviewPanel(
         switch (command) {
             case 'vscode/launch-signature':
                 const launchResult = {
+                    _id: data._id,
                     code: 200,
                     msg: option
                 };
