@@ -1,6 +1,7 @@
 import { pinkLog, redLog } from '@/views/setting/util';
 import { acquireVsCodeApi, electronApi, getPlatform } from './platform';
 import { isReactive } from 'vue';
+import { v4 as uuidv4 } from 'uuid';
 
 export interface VSCodeMessage {
 	command: string;
@@ -9,6 +10,7 @@ export interface VSCodeMessage {
 }
 
 export interface RestFulResponse<T = any> {
+    _id?: string
 	code: number;
 	msg: T;
 }
@@ -163,8 +165,8 @@ export class MessageBridge {
 		const command = message.command;
 		const data = message.data;
 
-		const handlers = this.handlers.get(command) || [];
-		handlers.forEach(handler => handler(data));
+		const handlers = this.handlers.get(command) || new Set();
+        handlers.forEach(handler => handler(data));
 	}
 
 	public postMessage(message: VSCodeMessage) {
@@ -231,15 +233,26 @@ export class MessageBridge {
 	 * @returns 
 	 */
 	public commandRequest<T = any>(command: string, data?: ICommandRequestData): Promise<RestFulResponse<T>>  {
+        const _id = uuidv4();
+		
+        return new Promise<RestFulResponse>((resolve, reject) => {
+			const handler = this.addCommandListener(command, (data) => {
+                if (data._id === undefined) {
+                    console.warn('detect data without id, data: ' + JSON.stringify(data, null, 2));
+                }
 
-		return new Promise<RestFulResponse>((resolve, reject) => {
-			this.addCommandListener(command, (data) => {
-				resolve(data as RestFulResponse);
-			}, { once: true });
+                if (data._id === _id) {
+                    handler();
+    				resolve(data as RestFulResponse);
+                }
+			}, { once: false });
 
 			this.postMessage({
-				command,
-				data: this.deserializeReactiveData(data)
+                command,
+				data: this.deserializeReactiveData({
+                    _id,
+                    ...data
+                })
 			});
 		});
 	}

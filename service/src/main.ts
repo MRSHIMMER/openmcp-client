@@ -110,6 +110,7 @@ wss.on('connection', (ws) => {
                     webview.postMessage({
                         command: 'web/launch-signature',
                         data: {
+                            _id: data._id,
                             code: 200,
                             msg: option.items
                         }

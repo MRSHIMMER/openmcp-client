@@ -23,15 +23,21 @@ export async function routeMessage(command: string, data: any, webview: PostMess
 
         try {
             const res = await handler(data, webview);
-            
+
             // res.code = -1 代表当前请求不需要返回发送
             if (res.code >= 0) {
-                webview.postMessage({ command, data: res });
+                webview.postMessage({
+                    command, data: {
+                        _id: data._id,
+                        ...res
+                    }
+                });
             }
         } catch (error) {
             // console.error(error);
             webview.postMessage({
                 command, data: {
+                    _id: data._id,
                     code: 500,
                     msg: (error as any).toString()
                 }

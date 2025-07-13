@@ -221,6 +221,7 @@ export class TaskLoop {
             }, { once: false });
 
             const doneHandler = this.bridge.addCommandListener('llm/chat/completions/done', data => {
+                
                 if (data.sessionId !== sessionId) {
                     return;
                 }
@@ -229,11 +230,12 @@ export class TaskLoop {
 
                 chunkHandler();
                 errorHandler();
+                doneHandler();
 
                 resolve({
                     stop: false
                 });
-            }, { once: true });
+            }, { once: false });
 
             const errorHandler = this.bridge.addCommandListener('llm/chat/completions/error', data => {
                 if (data.sessionId !== sessionId) {
@@ -246,13 +248,14 @@ export class TaskLoop {
                 });
 
                 chunkHandler();
+                errorHandler();
                 doneHandler();
 
                 resolve({
                     stop: true
                 });
 
-            }, { once: true });
+            }, { once: false });
 
             this.bridge.postMessage({
                 command: 'llm/chat/completions',
