@@ -5,26 +5,31 @@ import { reactive, ref } from 'vue';
 import { makeUsageStatistic } from '@/components/main-panel/chat/core/usage';
 
 export const llmSettingRef = ref<any>(null);
+type NumberLike = string | number | undefined;
+
+export const testPrompt = ref('you\'re a smart assistant, please write an article of at least 100 words to introduce mcp');
 
 export const simpleTestResult = reactive<{
     done: boolean,
     start: boolean,
     error: any,
-    tps: string | number | undefined
+    tps: NumberLike,
+    outputTps: NumberLike
+    queueTime: NumberLike
 }>({
     done: false,
     start: false,
     error: '',
-    tps: undefined
+    tps: undefined,
+    outputTps: undefined,
+    queueTime: undefined,
 });
 
 export async function makeSimpleTalk() {
     simpleTestResult.done = false;
     simpleTestResult.start = true;
     simpleTestResult.tps = undefined;
-
-    // 使用最简单的 hello 来测试
-    const testMessage = 'hello';
+    simpleTestResult.queueTime = undefined;
 
     const loop = new TaskLoop();
 
@@ -44,6 +49,14 @@ export async function makeSimpleTalk() {
 
     loop.setMaxEpochs(1);
 
+    let receiveTime = -1;
+
+    loop.registerOnChunk(() => {
+        if (receiveTime <= 0) {
+            receiveTime = Date.now();
+        }
+    });
+
     loop.registerOnDone(() => {        
         simpleTestResult.error = '';
         simpleTestResult.done = true;
@@ -59,18 +72,20 @@ export async function makeSimpleTalk() {
     });
 
     const startTime = Date.now();
-    await loop.start(chatStorage, testMessage);
+    await loop.start(chatStorage, testPrompt.value);
+    const endTime = Date.now();
 
-    const costTime = (Date.now() - startTime!) / 1000;
+    const costTime = (endTime - receiveTime) / 1000;
+    simpleTestResult.queueTime = (receiveTime - startTime) / 1000;
+    
     const message = chatStorage.messages[chatStorage.messages.length - 1];
-    console.log(chatStorage.messages);
-    console.log(message.extraInfo);
 
     if (message?.extraInfo) {
         const usage = message.extraInfo.usage;
         if (usage?.prompt_tokens && usage.completion_tokens) {
-            const total = usage?.prompt_tokens + usage?.completion_tokens;
-            simpleTestResult.tps = (total / costTime).toFixed(2);
+            // const total = usage?.prompt_tokens + usage?.completion_tokens;
+            const total = usage?.completion_tokens;
+            simpleTestResult.tps = (total / costTime).toFixed(2);            
         }
     }
 }

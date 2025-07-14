@@ -230,5 +230,6 @@
     "guide.16.3": "Si vous êtes un utilisateur de plugin, vous trouverez quelques documents que nous avons préparés en bas du panneau de gauche sous \"Démarrage & Aide\", dans l'espoir de vous aider à développer élégamment votre serveur MCP.",
     "guide.16.4": "Travaillons ensemble pour intégrer de plus en plus d'APIs et de SDKs dans le grand modèle !",
     "maybe-end": "Chapitre final ?",
-    "finish": "Fin"
+    "finish": "Fin",
+    "queue-time": "Temps d'attente"
 }
