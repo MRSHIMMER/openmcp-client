@@ -3,7 +3,7 @@ import { RegisterCommand, RegisterTreeDataProvider } from '../common/index.js';
 import { getWorkspaceConnectionConfig, getWorkspaceConnectionConfigPath, getWorkspacePath, saveWorkspaceConnectionConfig } from '../global.js';
 import { ConnectionViewItem } from './common.js';
 import { revealOpenMcpWebviewPanel } from '../webview/webview.service.js';
-import { acquireUserCustomConnection, deleteUserConnection } from './workspace.service.js';
+import { acquireUserCustomConnection, changeUserConnectionName, deleteUserConnection } from './workspace.service.js';
 import { t } from '../i18n/index.js';
 
 @RegisterTreeDataProvider('openmcp.sidebar.workspace-connection')
@@ -15,6 +15,7 @@ export class McpWorkspaceConnectProvider implements vscode.TreeDataProvider<Conn
 
     // 实现 TreeDataProvider 接口
     getTreeItem(element: ConnectionViewItem): vscode.TreeItem {
+        element.contextValue = 'workspace-item';
         return element;
     }
     getChildren(element?: ConnectionViewItem): Thenable<ConnectionViewItem[]> {
@@ -95,5 +96,11 @@ export class McpWorkspaceConnectProvider implements vscode.TreeDataProvider<Conn
     public async deleteConnection(context: vscode.ExtensionContext, view: ConnectionViewItem) {
         const connectionItem = view.item;
         await deleteUserConnection(connectionItem);
+    }
+
+    @RegisterCommand('changeConnectionName')
+    public async changeConnectionName(context: vscode.ExtensionContext, view: ConnectionViewItem) {
+        const connectionItem = view.item;
+        await changeUserConnectionName(connectionItem);
     }
 }

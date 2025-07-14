@@ -14,5 +14,7 @@
     "openmcp.sidebar.workspace-connection.view.title": "MCP 连接 (工作区)",
     "openmcp.sidebar.installed-connection.view.title": "安装的 MCP 服务器",
     "openmcp.sidebar.help.view.title": "入门与帮助",
-    "openmcp.hook.test-news.title": "测试新闻报告"
+    "openmcp.hook.test-news.title": "测试新闻报告",
+    "openmcp.sidebar.installed-connection.changeConnectionName.title": "修改服务器名称",
+    "openmcp.sidebar.workspace-connection.changeConnectionName.title": "修改服务器名称"
 }

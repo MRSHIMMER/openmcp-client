@@ -113,6 +113,14 @@
                 "title": "%openmcp.hook.test-news.title%",
                 "category": "openmcp",
                 "icon": "$(test)"
+            },
+            {
+                "command": "openmcp.sidebar.installed-connection.changeConnectionName",
+                "title": "%openmcp.sidebar.installed-connection.changeConnectionName.title%"
+            },
+            {
+                "command": "openmcp.sidebar.workspace-connection.changeConnectionName",
+                "title": "%openmcp.sidebar.workspace-connection.changeConnectionName.title%"
             }
         ],
         "menus": {
@@ -173,6 +181,14 @@
                     }
                 },
                 {
+                    "command": "openmcp.sidebar.workspace-connection.changeConnectionName",
+                    "group": "navigation@1",
+                    "when": "view == openmcp.sidebar.workspace-connection && viewItem == workspace-item",
+                    "args": {
+                        "view": "${viewItem}"
+                    }
+                },
+                {
                     "command": "openmcp.sidebar.installed-connection.revealWebviewPanel",
                     "group": "inline@1",
                     "when": "view == openmcp.sidebar.installed-connection",
@@ -184,6 +200,14 @@
                     "command": "openmcp.sidebar.installed-connection.deleteConnection",
                     "group": "inline@2",
                     "when": "view == openmcp.sidebar.installed-connection",
+                    "args": {
+                        "view": "${viewItem}"
+                    }
+                },
+                {
+                    "command": "openmcp.sidebar.installed-connection.changeConnectionName",
+                    "group": "navigation@1",
+                    "when": "view == openmcp.sidebar.workspace-connection && viewItem == installed-item",
                     "args": {
                         "view": "${viewItem}"
                     }

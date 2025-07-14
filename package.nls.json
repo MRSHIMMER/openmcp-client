@@ -14,5 +14,7 @@
     "openmcp.sidebar.workspace-connection.view.title": "MCP Connections (Workspace)",
     "openmcp.sidebar.installed-connection.view.title": "Installed MCP Servers",
     "openmcp.sidebar.help.view.title": "Getting Started & Help",
-    "openmcp.hook.test-news.title": "test news report"
+    "openmcp.hook.test-news.title": "Test News Report",
+    "openmcp.sidebar.installed-connection.changeConnectionName.title": "Change Server Name",
+    "openmcp.sidebar.workspace-connection.changeConnectionName.title": "Change Server Name"
 }

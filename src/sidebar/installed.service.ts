@@ -44,6 +44,43 @@ export async function deleteInstalledConnection(item: McpOptions[] | McpOptions)
     }
 }
 
+export async function changeInstalledConnectionName(item: McpOptions[] | McpOptions) {
+    // 获取当前连接项
+    const masterNode = Array.isArray(item) ? item[0] : item;
+    const currentName = masterNode.name || '';
+
+    // 弹出输入框让用户输入新的服务器名称
+    const newName = await vscode.window.showInputBox({
+        prompt: t('openmcp.sidebar.installed-connection.changeConnectionName.title'),
+        value: currentName,
+        validateInput: (value) => {
+            if (!value || value.trim() === '') {
+                return t('error.connectionNameRequired');
+            }
+            return null;
+        }
+    });
+
+    // 用户取消或输入无效名称
+    if (!newName || newName.trim() === '' || newName === currentName) {
+        return;
+    }
+
+    // 获取已安装的连接配置
+    const installedConnection = getConnectionConfig();
+
+    // 更新连接名称
+    masterNode.name = newName.trim();
+
+    // 保存更新后的配置
+    saveConnectionConfig();
+
+    // 刷新侧边栏视图
+    vscode.commands.executeCommand('openmcp.sidebar.installed-connection.refresh');
+
+    // 显示成功消息
+    vscode.window.showInformationMessage(t('connectionNameChanged', currentName, newName));
+}
 
 export async function acquireInstalledConnection(): Promise<McpOptions[]> {
     // 让用户选择连接类型
