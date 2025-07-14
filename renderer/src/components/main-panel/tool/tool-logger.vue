@@ -78,7 +78,7 @@ const resultMarkdown = computed(() => {
         return markdownToHtml(lastToolCallResponse.toString());
     }
     
-    const rawText = lastToolCallResponse.content.map(c => c.text).join('\n');
+    const rawText = lastToolCallResponse.content.map(c => c.text).join('\n\n');
     const html = markdownToHtml(rawText);
     return html;
 })
