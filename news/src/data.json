@@ -1,12 +1,15 @@
 {
-  "version": "0.1.9",
+  "version": "0.1.10",
   "changelogs": [
-    "Add mook functionality: Automatically fill in test tool form data using random seeds or AI generation.",
-    "Add tool self-check functionality: Under openmcp's tool, click 'Tool Self-Check' on the right side of 'Tool Module' to enter self-check mode. In this mode, users can define the topological order of tool execution and perform automatic detection in one go.",
-    "Fix issue #44: Complete platform adaptation for link redirection. https://picx.zhimg.com/80/v2-87c2a29abdd2dd56a4d18cc4a8b946ff_1440w.png",
-    "Fix issue #36: Ensure successful startup when not opening a folder. https://picx.zhimg.com/80/v2-87c2a29abdd2dd56a4d18cc4a8b946ff_1440w.png",
-    "Fix issue #45: Array type parameters are not supported.",
-    "Fix the issue of abnormal dialog styles when pasting multi-line conversations into the dialog box."
+    "Fix issue #48: Correct the wrong boot path.",
+    "Support kimi's usage counting + support kimi's system prompt.",
+    "Implement parallel execution and pause functionality for openmcp tool testing. https://picx.zhimg.com/80/v2-4e09958d91dcf561c578294d8b6f3349_1440w.png",
+    "Revise the API speed test algorithm, splitting it into tps + queue time. https://picx.zhimg.com/80/v2-1cc3044a3ec3d5d21cb265dd67518ca0_1440w.png",
+    "The large model API speed test now supports custom prompts. https://picx.zhimg.com/80/v2-ff70af72254b82c11a941fe9cc29eeb8_1440w.png",
+    "Implement issue#49, tool module, debugging now supports markdown rendering echo. https://picx.zhimg.com/80/v2-5d708ccab00f33fdf63a656a0066bf23_1440w.png",
+    "Implement issue#54, right-click on the server list name to rename the server. https://picx.zhimg.com/80/v2-87c2a29abdd2dd56a4d18cc4a8b946ff_1440w.png",
+    "Fix some hot update issues related to resources and prompts.",
+    "Update the title of the tab created by vscode. https://picx.zhimg.com/80/v2-4d40c20f3eaa032573e4de58298c859f_1440w.png"
   ],
   "contributors": [
     {
