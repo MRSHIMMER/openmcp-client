@@ -69,6 +69,12 @@ export async function changeInstalledConnectionName(item: McpOptions[] | McpOpti
     // 获取已安装的连接配置
     const installedConnection = getConnectionConfig();
 
+    // 更新 panel 标题
+    if (masterNode.name && panels.has(masterNode.name)) {
+        const panel = panels.get(masterNode.name)!;
+        panel.title = 'OpenMCP ' + newName.trim();
+    }
+
     // 更新连接名称
     masterNode.name = newName.trim();
     masterNode.rename = true;

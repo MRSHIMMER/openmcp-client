@@ -9,6 +9,7 @@
 - 实现 issue#49，工具模块，调试希望支持markdown渲染回显。 https://picx.zhimg.com/80/v2-5d708ccab00f33fdf63a656a0066bf23_1440w.png
 - 实现 issue#54，右击服务器列表名，可以重命名服务器。 https://picx.zhimg.com/80/v2-87c2a29abdd2dd56a4d18cc4a8b946ff_1440w.png
 - 修复 resources 和 prompts 有关热更新的一些问题。
+- 更新 vscode 创建的标签栏的标题。 https://picx.zhimg.com/80/v2-4d40c20f3eaa032573e4de58298c859f_1440w.png
 
 ## [main] 0.1.9
 - 增加 mook 功能：可以利用随机种子或者AI生成来自动化填充测试 tool 的表单数据

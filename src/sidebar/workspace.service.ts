@@ -76,12 +76,16 @@ export async function changeUserConnectionName(item: McpOptions[] | McpOptions) 
         return;
     }
 
+    // 更新 panel 标题
+    if (masterNode.name && panels.has(masterNode.name)) {
+        const panel = panels.get(masterNode.name)!;
+        panel.title = 'OpenMCP ' + newName.trim();
+    }
+
     // 更新连接名称
     masterNode.name = newName.trim();
     masterNode.rename = true;
-
-    vscode.window.showInformationMessage('enter here');
-
+    
     // 保存更新后的配置
     const workspacePath = getWorkspacePath();    
     saveWorkspaceConnectionConfig(workspacePath);

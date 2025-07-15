@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as fspath from 'path';
-import { ConnectionType, exportFile, McpOptions, panels, updateInstalledConnectionConfig, updateWorkspaceConnectionConfig } from '../global.js';
+import { ConnectionType, detachMcpOptionAsItem, exportFile, McpOptions, panels, updateInstalledConnectionConfig, updateWorkspaceConnectionConfig } from '../global.js';
 import { routeMessage } from '../../openmcp-sdk/service/index.js';
 
 export function getWebviewContent(context: vscode.ExtensionContext, panel: vscode.WebviewPanel): string | undefined {
@@ -49,11 +49,14 @@ export function revealOpenMcpWebviewPanel(
         if (itemType === 'STDIO') {
             item.commandString = [item.command, ...(item.args || [])]?.join(' ');
         }
-    })
+    });
+
+    const item = detachMcpOptionAsItem(option);
+    const panelTitle = 'OpenMCP ' + item.name;
 
     const panel = vscode.window.createWebviewPanel(
-        'OpenMCP',
-        'OpenMCP',
+        'openmcp-webview',
+        panelTitle,
         vscode.ViewColumn.One,
         {
             enableScripts: true,
@@ -63,7 +66,6 @@ export function revealOpenMcpWebviewPanel(
     );
 
     panels.set(panelKey, panel);
-
 
     // 设置HTML内容
     const html = getWebviewContent(context, panel);
@@ -163,7 +165,7 @@ export function revealOpenMcpNewsWebviewPanel(
 ) {
 
     const panel = vscode.window.createWebviewPanel(
-        'What\'s new in OpenMCP',
+        'openmcp-whatnews',
         'What\'s new in OpenMCP',
         vscode.ViewColumn.One,
         {
