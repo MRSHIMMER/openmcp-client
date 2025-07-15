@@ -1,8 +1,6 @@
 import { getFirstValidPathFromCommand, getWorkspaceConnectionConfig, getWorkspacePath, McpOptions, panels, saveWorkspaceConnectionConfig } from "../global.js";
 import * as vscode from 'vscode';
 import { t } from "../i18n/index.js";
-import { promisify } from 'util';
-import { spawn } from 'node:child_process';
 
 export async function deleteUserConnection(item: McpOptions[] | McpOptions) {
     // 弹出确认对话框
@@ -80,16 +78,16 @@ export async function changeUserConnectionName(item: McpOptions[] | McpOptions) 
 
     // 更新连接名称
     masterNode.name = newName.trim();
+    masterNode.rename = true;
+
+    vscode.window.showInformationMessage('enter here');
 
     // 保存更新后的配置
-    const workspacePath = getWorkspacePath();
-    await saveWorkspaceConnectionConfig(workspacePath);
-
+    const workspacePath = getWorkspacePath();    
+    saveWorkspaceConnectionConfig(workspacePath);
+ 
     // 刷新侧边栏视图
     vscode.commands.executeCommand('openmcp.sidebar.workspace-connection.refresh');
-
-    // 显示成功消息
-    vscode.window.showInformationMessage(t('connectionNameChanged', currentName, newName));
 }
 
 export async function acquireUserCustomConnection(): Promise<McpOptions[]> {

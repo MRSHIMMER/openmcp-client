@@ -16,6 +16,6 @@
     "comment-plugin": "コメントプラグイン",
     "preset-env-sync": "プリセット環境変数の同期が完了しました",
     "preset-env-sync.fail": "プリセット環境変数の同期に失敗しました",
-    "error.notOpenWorkspace": "現在、VSCode でワークスペースが開かれていません。まずワークスペース（例：フォルダーを開く）を開いてください。"
-
+    "openmcp.sidebar.installed-connection.changeConnectionName.title": "変更する接続名を入力してください",
+    "error.connectionNameRequired": "サーバー名は必須です"
 }

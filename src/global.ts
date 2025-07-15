@@ -39,6 +39,7 @@ export interface McpOptions {
     name?: string;
     version?: string;
     type?: ConnectionType;
+    rename?: boolean;
 
     [key: string]: any;
 }
@@ -152,8 +153,7 @@ export function getWorkspaceConnectionConfig():IConnectionConfig| null {
 
     const workspacePath = getWorkspacePath();
     for (let item of connection.items) {
-        const connections = Array.isArray(item) ? item : [item];
-        for (let connection of connections) {
+        for (let connection of detachMcpOptionAsArray(item)) {
             const connectionType = (connection.type || connection.connectionType).toUpperCase() as ConnectionType;
             connection.type = undefined;
             connection.connectionType = connectionType;
@@ -205,8 +205,9 @@ export function saveWorkspaceConnectionConfig(workspace: string) {
 
     const workspacePath = getWorkspacePath();
     for (let item of connectionConfig.items) {
-        const connections = Array.isArray(item) ? item : [item];
-        for (let connection of connections) {
+        for (let connection of detachMcpOptionAsArray(item)) {
+            console.log(connection);
+            
             const connectionType = (connection.type || connection.connectionType).toUpperCase() as ConnectionType;
             connection.type = undefined;
             connection.connectionType = connectionType;
@@ -245,20 +246,22 @@ export function updateWorkspaceConnectionConfig(
 
     // 如果存在，替换老的 connectionItem
     if (connectionItem) {
-        console.log("存在的 connection")
         const index = workspaceConnectionConfig.items.indexOf(connectionItem);
         if (index !== -1) {
-            // 替换现有项目而不是删除后插入到开头
-            console.log("替换现有项目而不是删除后插入到开头")
+            // check rename value
+            const oldNItem = detachMcpOptionAsItem(workspaceConnectionConfig.items[index]);
+            if (oldNItem.rename) {
+                // if renamed, reserve user defined name
+                const newNItem = detachMcpOptionAsItem(data);
+                newNItem.name = oldNItem.name;
+            }
+
             workspaceConnectionConfig.items[index] = data;
         } else {
-            // 如果索引查找失败，则插入到第一个
-            console.log("没有找到现有项目，插入到第一个")
+            // insert new one
             workspaceConnectionConfig.items.unshift(data);
         }
     } else {
-        // 没有找到现有项目，插入到第一个
-        console.log("没有找到现有项目，插入到第一个")
         workspaceConnectionConfig.items.unshift(data);
     }
     
@@ -286,18 +289,14 @@ export function updateInstalledConnectionConfig(
 
     console.log('get connectionItem: ', data);
 
-    // 如果存在，替换老的 connectionItem
     if (connectionItem) {
         const index = installedConnectionConfig.items.indexOf(connectionItem);
         if (index !== -1) {
-            // 替换现有项目而不是删除后插入到开头
             installedConnectionConfig.items[index] = data;
         } else {
-            // 如果索引查找失败，则插入到第一个
             installedConnectionConfig.items.unshift(data);
         }
     } else {
-        // 没有找到现有项目，插入到第一个
         installedConnectionConfig.items.unshift(data);
     }
     
@@ -338,7 +337,7 @@ export function getWorkspaceConnectionConfigItemByPath(absPath: string) {
 
     const normaliseAbsPath = absPath.replace(/\\/g, '/');
     for (let item of workspaceConnectionConfig.items) {
-        const nItem = Array.isArray(item) ? item[0] : item;
+        const nItem = detachMcpOptionAsItem(item);
 
         const filePath = normaliseConnectionFilePath(nItem, workspacePath);
         if (filePath === normaliseAbsPath) {
@@ -359,7 +358,7 @@ export function getWorkspaceConnectionConfigItemByName(name: string) {
         return null; // 如果没有工作区连接配置文件，则返回 null
     }
     for (let item of workspaceConnectionConfig.items) {
-        const nItem = Array.isArray(item) ? item[0] : item;
+        const nItem = detachMcpOptionAsItem(item);
         if (nItem.name === name) {
             return item;
         }
@@ -376,7 +375,7 @@ export function getInstalledConnectionConfigItemByName(name: string) {
     const installedConnectionConfig = getConnectionConfig();
 
     for (let item of installedConnectionConfig.items) {
-        const nItem = Array.isArray(item) ? item[0] : item;
+        const nItem = detachMcpOptionAsItem(item);
 
         if (nItem.name) {
             return item;
@@ -396,7 +395,7 @@ export function getInstalledConnectionConfigItemByPath(absPath: string) {
 
     const normaliseAbsPath = absPath.replace(/\\/g, '/');
     for (let item of installedConnectionConfig.items) {
-        const nItem = Array.isArray(item) ? item[0] : item;
+        const nItem = detachMcpOptionAsItem(item);
 
         const filePath = (nItem.filePath || '').replace(/\\/g, '/');
         if (filePath === normaliseAbsPath) {
@@ -448,4 +447,12 @@ export async function exportFile(filename: string, content: any) {
     if (uri) {
         fs.writeFileSync(uri.fsPath, content, 'utf-8');
     }
+}
+
+export function detachMcpOptionAsItem(data: McpOptions | McpOptions[]): McpOptions {
+    return Array.isArray(data) ? data[0] : data;
+}
+
+export function detachMcpOptionAsArray(data: McpOptions | McpOptions[]): McpOptions[] {
+    return Array.isArray(data) ? data : [data];
 }

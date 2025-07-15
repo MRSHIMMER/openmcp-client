@@ -71,15 +71,13 @@ export async function changeInstalledConnectionName(item: McpOptions[] | McpOpti
 
     // 更新连接名称
     masterNode.name = newName.trim();
+    masterNode.rename = true;
 
     // 保存更新后的配置
     saveConnectionConfig();
 
     // 刷新侧边栏视图
     vscode.commands.executeCommand('openmcp.sidebar.installed-connection.refresh');
-
-    // 显示成功消息
-    vscode.window.showInformationMessage(t('connectionNameChanged', currentName, newName));
 }
 
 export async function acquireInstalledConnection(): Promise<McpOptions[]> {
