@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { RegisterCommand, RegisterTreeDataProvider } from '../common/index.js';
 import { ConnectionViewItem } from './common.js';
 import { getConnectionConfig, getInstalledConnectionConfigPath, saveConnectionConfig } from '../global.js';
-import { acquireInstalledConnection, deleteInstalledConnection } from './installed.service.js';
+import { acquireInstalledConnection, changeInstalledConnectionName, deleteInstalledConnection } from './installed.service.js';
 import { revealOpenMcpWebviewPanel } from '../webview/webview.service.js';
 
 @RegisterTreeDataProvider('openmcp.sidebar.installed-connection')
@@ -14,6 +14,7 @@ export class McpInstalledConnectProvider implements vscode.TreeDataProvider<Conn
 
     // 实现 TreeDataProvider 接口
     getTreeItem(element: ConnectionViewItem): vscode.TreeItem {
+        element.contextValue = 'installed-item';
         return element;
     }
 
@@ -74,5 +75,11 @@ export class McpInstalledConnectProvider implements vscode.TreeDataProvider<Conn
     public async deleteConnection(context: vscode.ExtensionContext, view: ConnectionViewItem) {
         const connectionItem = view.item;
         await deleteInstalledConnection(connectionItem);
+    }
+
+    @RegisterCommand('changeConnectionName')
+    public async changeConnectionName(context: vscode.ExtensionContext, view: ConnectionViewItem) {
+        const connectionItem = view.item;
+        await changeInstalledConnectionName(connectionItem);
     }
 }

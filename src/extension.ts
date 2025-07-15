@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
-import { setRunningCWD, setVscodeWorkspace } from '../openmcp-sdk/service/index.js';
+import { setRunningCWD, setVscodeWorkspace, setDefaultLang } from '../openmcp-sdk/service/index.js';
 import { launch } from './common/entry.js';
-import { initialiseI18n, getAvailableKeys } from './i18n/index.js';
+import { initialiseI18n, getAvailableKeys, getDefaultLanguage } from './i18n/index.js';
 import { checkNews } from './webview/webview.service.js';
 
 export function activate(context: vscode.ExtensionContext) {
@@ -13,6 +13,9 @@ export function activate(context: vscode.ExtensionContext) {
     const workspace = workspaceFolder?.uri.fsPath || '';
     setVscodeWorkspace(workspace);
     setRunningCWD(context.extensionPath);
+    const lang = getDefaultLanguage();
+    setDefaultLang(lang);
+    
     initialiseI18n(context);
     
     // 添加i18n调试信息

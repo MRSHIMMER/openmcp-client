@@ -279,10 +279,9 @@ export class McpClient {
         if (code !== 200) {
             return new Map();
         }
-        this.resourceTemplates = new Map<string, ResourceTemplate>();
+        this.resourceTemplates = new Map<string, ResourceTemplate>();        
         msg.resourceTemplates.forEach(template => {
             this.resourceTemplates!.set(template.name, template);
-
         });
         return this.resourceTemplates;
     }
@@ -496,7 +495,7 @@ export class McpClient {
 
 
 class McpClientAdapter {
-    public clients: Reactive<McpClient[]> = [];
+    public clients: Reactive<McpClient[]> = reactive([]);
     public currentClientIndex: number = 0;
     public refreshSignal = reactive({ value: 0 });
 
@@ -586,7 +585,9 @@ class McpClientAdapter {
                         console.log('clientIndex', clientIndex);
                         
                         await this.clients[clientIndex].refreshAllResources();
-                        this.refreshSignal.value++;
+
+                        // 更新 refreshSignal，所有 watch refreshSignal 的部分会发生更新
+                        this.refreshSignal.value ++;
                     } else {
                         console.error(
                             chalk.gray(`[${new Date().toLocaleString()}]`),

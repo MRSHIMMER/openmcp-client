@@ -2,10 +2,13 @@
     <div class="tool-logger">
         <span>
             <span>{{ t('response') }}</span>
-            <span style="width: 200px;">
-                <el-switch v-model="showRawJson" inline-prompt active-text="JSON" inactive-text="Text"
-                    style="margin-left: 10px; width: 200px;"
-                    :inactive-action-style="'backgroundColor: var(--sidebar)'" />
+            <span style="width: 200px; display: flex;">
+				<el-segmented v-model="renderMode.current" :options="renderMode.data" size="default"
+					style="margin: 10px; background-color: var(--background); font-size: 12px;">
+					<template #default="scope">
+						{{ scope.item.label }}
+					</template>
+				</el-segmented>
             </span>
         </span>
         <el-scrollbar height="500px">
@@ -20,7 +23,7 @@
 
                 <div v-else>
                     <!-- 展示原本的信息 -->
-                    <template v-if="!showRawJson && tabStorage.lastToolCallResponse">
+                    <template v-if="renderMode.current === 'plaintext'">
                         <div
                             v-for="(c, idx) in tabStorage.lastToolCallResponse!.content"
                             :key="idx"
@@ -30,8 +33,12 @@
                         </div>
                     </template>
 
+                    <template v-else-if="renderMode.current === 'markdown'">
+                        <div class="markdown" v-html="resultMarkdown"></div>
+                    </template>
+
                     <!-- 展示 json -->
-                    <template v-else>
+                    <template v-else-if="renderMode.current === 'json'">
                         <json-render :json="tabStorage.lastToolCallResponse"/>
                     </template>
                 </div>
@@ -42,11 +49,12 @@
 </template>
 
 <script setup lang="ts">
-import { defineComponent, defineProps, computed, ref } from 'vue';
+import { defineComponent, defineProps, computed, ref, reactive } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { tabs } from '../panel';
 import type { ToolStorage } from './tools';
 import JsonRender from '@/components/json-render/index.vue';
+import { markdownToHtml } from '../chat/markdown/markdown';
 
 defineComponent({ name: 'tool-logger' });
 const { t } = useI18n();
@@ -61,7 +69,37 @@ const props = defineProps({
 const tab = tabs.content[props.tabId];
 const tabStorage = tab.storage as ToolStorage;
 
-const showRawJson = ref(false);
+const resultMarkdown = computed(() => {
+    const lastToolCallResponse = tabStorage.lastToolCallResponse;
+    if (!lastToolCallResponse) {
+        return '';
+    }
+    if (typeof lastToolCallResponse === 'string') {
+        return markdownToHtml(lastToolCallResponse.toString());
+    }
+    
+    const rawText = lastToolCallResponse.content.map(c => c.text).join('\n\n');
+    const html = markdownToHtml(rawText);
+    return html;
+})
+
+const renderMode = reactive({
+	current: 'plaintext',
+	data: [
+		{
+			value: 'plaintext',
+			label: 'plaintext'
+		},
+		{
+			value: 'markdown',
+			label: 'markdown',
+		},
+		{
+			value: 'json',
+            label: 'json'
+		}
+	]
+});
 
 </script>
 
@@ -97,12 +135,6 @@ const showRawJson = ref(false);
     min-height: 450px;
     height: fit-content;
     font-family: var(--code-font-family);
-    white-space: pre-wrap;
-    word-break: break-all;
-    user-select: text;
-    cursor: text;
-    font-size: 15px;
-    line-height: 1.5;
     background-color: var(--sidebar);
 }
 

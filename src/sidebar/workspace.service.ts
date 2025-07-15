@@ -1,8 +1,6 @@
 import { getFirstValidPathFromCommand, getWorkspaceConnectionConfig, getWorkspacePath, McpOptions, panels, saveWorkspaceConnectionConfig } from "../global.js";
 import * as vscode from 'vscode';
 import { t } from "../i18n/index.js";
-import { promisify } from 'util';
-import { spawn } from 'node:child_process';
 
 export async function deleteUserConnection(item: McpOptions[] | McpOptions) {
     // 弹出确认对话框
@@ -48,6 +46,52 @@ export async function deleteUserConnection(item: McpOptions[] | McpOptions) {
         panel?.dispose();
         panels.delete(filePath);
     }
+}
+
+export async function changeUserConnectionName(item: McpOptions[] | McpOptions) {
+    // 获取当前连接项
+    const masterNode = Array.isArray(item) ? item[0] : item;
+    const currentName = masterNode.name || '';
+
+    // 弹出输入框让用户输入新的服务器名称
+    const newName = await vscode.window.showInputBox({
+        prompt: t('openmcp.sidebar.installed-connection.changeConnectionName.title'),
+        value: currentName,
+        validateInput: (value) => {
+            if (!value || value.trim() === '') {
+                return t('error.connectionNameRequired');
+            }
+            return null;
+        }
+    });
+
+    // 用户取消或输入无效名称
+    if (!newName || newName.trim() === '' || newName === currentName) {
+        return;
+    }
+
+    const workspaceConnectionConfig = getWorkspaceConnectionConfig();
+    if (!workspaceConnectionConfig) {
+        vscode.window.showErrorMessage(t('error.notOpenWorkspace'));
+        return;
+    }
+
+    // 更新 panel 标题
+    if (masterNode.name && panels.has(masterNode.name)) {
+        const panel = panels.get(masterNode.name)!;
+        panel.title = 'OpenMCP ' + newName.trim();
+    }
+
+    // 更新连接名称
+    masterNode.name = newName.trim();
+    masterNode.rename = true;
+    
+    // 保存更新后的配置
+    const workspacePath = getWorkspacePath();    
+    saveWorkspaceConnectionConfig(workspacePath);
+ 
+    // 刷新侧边栏视图
+    vscode.commands.executeCommand('openmcp.sidebar.workspace-connection.refresh');
 }
 
 export async function acquireUserCustomConnection(): Promise<McpOptions[]> {

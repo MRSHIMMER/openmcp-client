@@ -44,6 +44,7 @@ export class McpServerConnectMonitor {
 
         switch (options.connectionType) {
             case 'STDIO':
+                console.log('monitor on ' + this.filePath);
                 this.setupStdioMonitor(onchange);
                 break;
             case 'SSE':
@@ -63,8 +64,6 @@ export class McpServerConnectMonitor {
             onChange: async (curr, prev) => {
                 try {
                     await onchange(this.uuid, this.Options);
-
-                    console.log('send something');
                     
                     this.sendWebviewMessage('connect/refresh', {
                         code: 200,

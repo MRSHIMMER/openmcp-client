@@ -25,6 +25,21 @@ export async function updateClientMap(uuid: string, options: McpOptions): Promis
 			chalk.white('update client tools'),
 			chalk.blue(tools.tools.map(tool => tool.name).join(','))
 		);
+        const resourceTemplates = await client.listResourceTemplates();
+		console.log(
+			chalk.white('update client resourceTemplates'),
+			chalk.blue(resourceTemplates.resourceTemplates.map(r => r.name).join(','))
+		);
+        const resources = await client.listResources();
+		console.log(
+			chalk.white('update client resources'),
+			chalk.blue(resources.resources.map(r => r.name).join(','))
+		);
+        const prompts = await client.listPrompts();
+		console.log(
+			chalk.white('update client prompts'),
+			chalk.blue(prompts.prompts.map(p => p.name).join(','))
+		);
 		return { res: true };
 	} catch (error) {
 		console.error('[updateClientMap] error:', error);

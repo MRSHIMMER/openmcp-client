@@ -66,15 +66,39 @@
 				{{ t('update-model-list') }}
 			</el-button>
 
-			<el-button
-				type="primary"
-				id="test-llm-button"
-				@click="makeSimpleTalk"
-				:loading="simpleTestResult.start"
+			<!-- 新增：测试 prompt 下拉输入 -->
+			<el-popover
+				placement="top"
+				width="400"
+				trigger="click"
+				v-model:visible="testPromptPopoverVisible"
 			>
-				<span v-show="!simpleTestResult.start" class="iconfont icon-test"></span>
-				{{ t('test') }}
-			</el-button>
+				<template #reference>
+                    <el-button
+                        type="primary"
+                        id="test-llm-button"
+                        :loading="simpleTestResult.start"
+                    >
+                        <span v-show="!simpleTestResult.start" class="iconfont icon-test"></span>
+                        {{ t('test') }}
+                    </el-button>
+				</template>
+				<div style="margin-bottom: 8px; font-weight: bold;">
+                        {{ t('prompts') }}
+				</div>
+				<el-input
+					type="textarea"
+					v-model="testPrompt"
+					:rows="3"
+					:placeholder="t('test-prompt-placeholder') || '输入测试内容...'"
+					style="margin-bottom: 8px;"
+					clearable
+				/>
+				<div style="text-align: right;">
+					<el-button size="small" @click="testPromptPopoverVisible = false">{{ t('cancel') }}</el-button>
+					<el-button size="small" type="primary" @click="testPromptPopoverVisible = false; makeSimpleTalk()">{{ t('confirm') }}</el-button>
+				</div>
+			</el-popover>
 
 			<el-button
 				type="primary"
@@ -130,7 +154,7 @@ import { pinkLog } from './util';
 
 import ConnectInterfaceOpenai from './connect-interface-openai.vue';
 import ConnectTest from './connect-test.vue';
-import { llmSettingRef, makeSimpleTalk, simpleTestResult } from './api';
+import { llmSettingRef, makeSimpleTalk, simpleTestResult, testPrompt } from './api';
 import { useMessageBridge } from '@/api/message-bridge';
 import { mcpSetting } from '@/hook/mcp';
 
@@ -148,6 +172,7 @@ function saveLlmSetting() {
 
 const currentDialogMode = ref('');
 const dialogVisible = ref(false);
+const testPromptPopoverVisible = ref(false);
 
 function addNewServer() {
 	newProviderForm.value = {

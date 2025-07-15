@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import { VSCODE_WORKSPACE } from '../hook/setting.js';
+import { DEFAULT_LANG, VSCODE_WORKSPACE } from '../hook/setting.js';
 import { IConfig } from './setting.dto.js';
 import { llms } from '../hook/llm.js';
 
@@ -14,19 +14,14 @@ function getConfigurationPath() {
     return path.join(configDir, 'setting.json');
 }
 
-function getDefaultLanguage() {
-    if (process.env.VSCODE_PID) {
-        // TODO: 获取 vscode 内部的语言
-
+function getDefaultConfig() {
+    return {
+        MODEL_INDEX: 0,
+        LLM_INFO: llms,
+        LANG: DEFAULT_LANG,
+        MCP_TIMEOUT_SEC: 60
     }
-    return 'zh';
 }
-
-const DEFAULT_CONFIG: IConfig = {
-    MODEL_INDEX: 0,
-    LLM_INFO: llms,
-    LANG: getDefaultLanguage(),    MCP_TIMEOUT_SEC: 60
-};
 
 
 function createConfig(): IConfig {
@@ -39,8 +34,9 @@ function createConfig(): IConfig {
     }
     
     // 写入默认配置
-    fs.writeFileSync(configPath, JSON.stringify(DEFAULT_CONFIG, null, 2), 'utf-8');
-    return DEFAULT_CONFIG;
+    const defaultConfig = getDefaultConfig();
+    fs.writeFileSync(configPath, JSON.stringify(defaultConfig, null, 2), 'utf-8');
+    return defaultConfig;
 }
 
 export function loadSetting(): IConfig {

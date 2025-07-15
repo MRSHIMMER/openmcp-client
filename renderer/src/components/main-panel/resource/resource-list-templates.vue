@@ -6,7 +6,7 @@
 			<template #title>
 				<h3 class="resource-template">
 					<span>resources/templates/list</span>
-					<span class="iconfont icon-restart" @click="reloadResources(client, { first: false })"></span>
+					<span class="iconfont icon-restart" @click.stop="reloadResources(client, { first: false })"></span>
 				</h3>
 			</template>
 

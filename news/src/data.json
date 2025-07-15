@@ -3,8 +3,8 @@
   "changelogs": [
     "Add mook functionality: Automatically fill in test tool form data using random seeds or AI generation.",
     "Add tool self-check functionality: Under openmcp's tool, click 'Tool Self-Check' on the right side of 'Tool Module' to enter self-check mode. In this mode, users can define the topological order of tool execution and perform automatic detection in one go.",
-    "Fix issue #44: Complete platform adaptation for link redirection.",
-    "Fix issue #36: Ensure successful startup when not opening a folder.",
+    "Fix issue #44: Complete platform adaptation for link redirection. https://picx.zhimg.com/80/v2-87c2a29abdd2dd56a4d18cc4a8b946ff_1440w.png",
+    "Fix issue #36: Ensure successful startup when not opening a folder. https://picx.zhimg.com/80/v2-87c2a29abdd2dd56a4d18cc4a8b946ff_1440w.png",
     "Fix issue #45: Array type parameters are not supported.",
     "Fix the issue of abnormal dialog styles when pasting multi-line conversations into the dialog box."
   ],

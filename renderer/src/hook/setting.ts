@@ -19,6 +19,7 @@ export async function loadSetting() {
 
         llmManager.currentModelIndex = persistConfig.MODEL_INDEX || 0;
         I18n.global.locale.value = persistConfig.LANG || 'zh';
+        mcpSetting.language = persistConfig.LANG || 'zh';
         mcpSetting.timeout = persistConfig.MCP_TIMEOUT_SEC || 60;
         mcpSetting.proxyServer = persistConfig.PROXY_SERVER || '';
 

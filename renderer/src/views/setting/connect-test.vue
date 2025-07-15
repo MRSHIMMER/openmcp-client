@@ -7,6 +7,9 @@
             <div class="result-item" v-if="simpleTestResult.done">
                 <span class="iconfont icon-dui"></span>
                 <span>{{ " okey dockey :D" }}</span>
+                    <span v-if="simpleTestResult.queueTime" class="queue-time">
+                        {{ t('queue-time') }}: {{ simpleTestResult.queueTime }} s
+                    </span>
                 <span v-if="simpleTestResult.tps" class="tps">{{ simpleTestResult.tps }} token/s</span>
                 <span v-else class="tps">{{ t("server-not-support-statistic") }}</span>
             </div>
@@ -81,5 +84,13 @@ console.log(llms[llmManager.currentModelIndex]);
     border-radius: 4px;
     margin-top: 15px;
     margin-bottom: 10px;
+}
+
+.queue-time {
+    margin-left: 8px;
+    color: var(--foreground);
+    background-color: var(--el-fill-color-light);
+    padding: 2px 6px;
+    border-radius: 4px;
 }
 </style>
