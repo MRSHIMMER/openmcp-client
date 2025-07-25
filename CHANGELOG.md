@@ -1,5 +1,9 @@
 # Change Log
 
+## [main] 0.1.11
+- 修改 issue #50: 修复 vscode 插件端下，无法将对象复制进入 object 输入框的问题。
+- 修复 vscode 插件端下 mook 无法使用的问题。现在 mook 的数据条目更加精确。
+
 ## [main] 0.1.10
 - 修复 issue #48: 修复错误的引导路径。
 - 支持 kimi 的 usage 计数 + 支持 kimi 的 system prompt。

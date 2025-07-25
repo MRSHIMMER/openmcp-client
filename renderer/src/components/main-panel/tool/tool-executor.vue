@@ -86,6 +86,17 @@ import KInputObject from '@/components/k-input-object/index.vue';
 import { mcpClientAdapter } from '@/views/connect/core';
 import { JSONSchemaFaker } from 'json-schema-faker';
 
+import { faker } from '@faker-js/faker';
+
+// 插件注入
+JSONSchemaFaker.extend('faker', () => faker);
+
+// 可选设置
+JSONSchemaFaker.option({
+  useDefaultValue: true,
+  alwaysFakeOptionals: true
+});
+
 defineComponent({ name: 'tool-executor' });
 const mockLoading = ref(false);
 const aiMockLoading = ref(false);
@@ -244,20 +255,45 @@ const generateAIMockData = async (prompt?: string) => {
 const generateMockData = async () => {
     if (!currentTool.value?.inputSchema) return;
     mockLoading.value = true;
+
     try {
-        JSONSchemaFaker.option({
-            useDefaultValue: true,
-            alwaysFakeOptionals: true
-        });
-        const mockData = await JSONSchemaFaker.resolve(currentTool.value.inputSchema as any) as any;
+        const mockData = await JSONSchemaFaker.generate(currentTool.value.inputSchema as any) as any;
+
+        const schemaProperties = currentTool.value.inputSchema?.properties || {};
+
         Object.keys(mockData).forEach(key => {
-            tabStorage.formData[key] = mockData[key];
+            const schema = schemaProperties[key];
+
+            // 非 schema 中定义的字段，跳过
+            if (!schema) return;
+
+            // 如果是 object 类型，需要清洗掉嵌套中未定义的字段
+            if (schema.type === 'object') {
+                const mockObj = mockData[key];
+                const subSchemaProps = (schema as any).properties || {};
+                const cleanObj: Record<string, any> = {};
+
+                Object.keys(mockObj).forEach(subKey => {
+                    if (subSchemaProps[subKey]) {
+                        cleanObj[subKey] = mockObj[subKey];
+                    }
+                });
+
+                tabStorage.formData[key] = cleanObj;
+            } else {
+                tabStorage.formData[key] = mockData[key];
+            }
         });
+
         formRef.value?.clearValidate?.();
+    } catch (e) {
+        ElMessage.error('mock data 生成失败');
+        console.error(e);
     } finally {
         mockLoading.value = false;
     }
 };
+
 
 async function handleExecute() {
     if (!currentTool.value) return;

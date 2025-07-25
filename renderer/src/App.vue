@@ -25,6 +25,7 @@ import { userHasReadGuide } from './components/guide/tour';
 import PasswordDialog from '@/components/password-dialog/index.vue';
 import { privilegeStatus } from './components/password-dialog/status';
 import { useI18n } from 'vue-i18n';
+import { patchPasteCommand } from './components/k-input-object/patch';
 
 const bridge = useMessageBridge();
 
@@ -43,6 +44,9 @@ console.log(import.meta.env.VITE_USE_AUTH, useAuth);
 privilegeStatus.allow = !Boolean(useAuth);
 
 onMounted(async () => {
+    // https://github.com/microsoft/vscode/issues/232692
+    patchPasteCommand();
+
 	// 初始化 css
 	setDefaultCss();
 
