@@ -1,6 +1,8 @@
 <template>
     <div class="k-input-object">
-        <div :ref="el => editorContainer = el" class="k-input-object__editor"></div>
+        <div :ref="el => editorContainer = el"
+            class="k-input-object__editor"
+        ></div>
         <div v-if="errorMessage" class="k-input-object__error">
             {{ errorMessage }}
         </div>
@@ -8,7 +10,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, watch, type PropType } from 'vue';
+import { ref, onMounted, watch, type PropType, onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { EditorView, basicSetup } from 'codemirror';
 import type { Completion, CompletionContext } from "@codemirror/autocomplete"
@@ -17,6 +19,7 @@ import { jsonLanguage } from "@codemirror/lang-json"
 import { json } from '@codemirror/lang-json'
 import { oneDark } from '@codemirror/theme-one-dark'
 import { debounce } from 'lodash'
+import { patchEditors } from './patch';
 
 const props = defineProps({
     modelValue: {
@@ -76,37 +79,6 @@ const debouncedParse = debounce((value: string) => {
     }
 }, props.debounceTime);
 
-onMounted(() => {
-    if (editorContainer.value) {
-        const extensions = [
-            basicSetup,
-            json(),
-            oneDark,
-            EditorView.updateListener.of(update => {
-                if (update.docChanged) {
-                    const value = update.state.doc.toString()
-                    debouncedParse(value)
-                }
-            })
-        ]
-
-        // 如果schema不为空，添加自动补全
-        if (Object.keys(props.schema).length > 0) {
-            extensions.push(
-                jsonLanguage.data.of({
-                    autocomplete: getJsonCompletion(props.schema)
-                })
-            )
-        }
-
-        editorView.value = new EditorView({
-            doc: JSON.stringify(props.modelValue, null, 2),
-            extensions,
-            parent: editorContainer.value
-        })
-    }
-})
-
 // 添加自动补全函数
 function getJsonCompletion(schema: any) {
     return (context: CompletionContext) => {
@@ -122,13 +94,13 @@ function getJsonCompletion(schema: any) {
         const pos = context.pos
         const line = state.doc.lineAt(pos)
         const textBefore = line.text.slice(0, pos - line.from)
-        
+
         // 如果前面有奇数个双引号，说明在字符串内，不触发补全
         const quoteCount = (textBefore.match(/"/g) || []).length
         if (quoteCount % 2 !== 0) return null
 
         const completions: Completion[] = []
-        
+
         // 处理对象属性补全
         if (schema.properties) {
             Object.entries(schema.properties).forEach(([key, value]) => {
@@ -181,22 +153,49 @@ watch(
         }
     },
     { deep: true }
+
 );
 
 
-// 辅助函数：尝试解析 JSON
-const tryParse = (value: string): any => {
-    try {
-        return JSON.parse(value)
-    } catch {
-        return undefined
-    }
-}
+onMounted(() => {
+    if (editorContainer.value) {
+        const extensions = [
+            basicSetup,
+            json(),
+            oneDark,
+            EditorView.updateListener.of(update => {
+                if (update.docChanged) {
+                    const value = update.state.doc.toString()
+                    debouncedParse(value)
+                }
+            })
+        ];
 
-// 辅助函数：深度比较对象
-const isDeepEqual = (obj1: any, obj2: any): boolean => {
-    return JSON.stringify(obj1) === JSON.stringify(obj2)
-}
+        // 如果schema不为空，添加自动补全
+        if (Object.keys(props.schema).length > 0) {
+            extensions.push(
+                jsonLanguage.data.of({
+                    autocomplete: getJsonCompletion(props.schema)
+                })
+            )
+        }
+
+        editorView.value = new EditorView({
+            doc: JSON.stringify(props.modelValue, null, 2),
+            extensions,
+            parent: editorContainer.value
+        });
+
+        const editableElement = editorContainer.value.querySelector('[contenteditable="true"]');
+        patchEditors.add(editableElement);
+    }
+})
+
+
+onUnmounted(() => {
+    const editableElement = editorContainer.value.querySelector('[contenteditable="true"]');
+    patchEditors.delete(editableElement);
+})
 
 </script>
 
