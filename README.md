@@ -21,6 +21,8 @@ An all-in-one vscode/trae/cursor plugin for MCP server debugging.
 [![IMAGE ALT TEXT HERE](https://pic1.zhimg.com/80/v2-951261f789708621a2c34faa5fa6f330_1440w.png)](https://www.youtube.com/watch?v=S7igsEhcLiw)
 ### [👆 Full Video](https://www.youtube.com/watch?v=S7igsEhcLiw)
 
+### openmcp-client
+
 Integrated Inspector + MCP client basic functions, combining development and testing into one.
 
 ![](./icons/openmcp.welcome.png)
@@ -44,6 +46,85 @@ Supports multiple large models
 Support XML mode and customized options for your tool selection.
 
 ![](./icons/openmcp.xml.png)
+
+### openmcp-sdk
+
+once everything is tested and verified in `openmcp-client`, you can deploy your mcp as an agent app with `openmcp-sdk` fastly and easily:
+
+```bash
+npm install openmcp-sdk
+```
+
+then deploy your agent with just lines of codes
+
+```typescript
+import { OmAgent } from 'openmcp-sdk/service/sdk';
+
+// create Agent
+const agent = new OmAgent();
+    
+// Load configuration, which can be automatically generated after debugging with openmcp client
+agent.loadMcpConfig('./mcpconfig.json');
+
+// Read the debugged prompt
+const prompt = await agent.getPrompt('hacknews', { topn: '5' });    
+
+// Execute the task
+const res = await agent.ainvoke({ messages: prompt });
+
+console.log('⚙️ Agent Response', res);
+```
+
+output
+
+```
+[2025/6/20 20:47:31] 🚀 [crawl4ai-mcp] 1.9.1 connected
+[2025/6/20 20:47:35] 🤖 Agent wants to use these tools get_web_markdown
+[2025/6/20 20:47:35] 🔧 using tool get_web_markdown
+[2025/6/20 20:47:39] ✓  use tools success
+[2025/6/20 20:47:46] 🤖 Agent wants to use these tools get_web_markdown, get_web_markdown, get_web_markdown
+[2025/6/20 20:47:46] 🔧 using tool get_web_markdown
+[2025/6/20 20:47:48] ✓  use tools success
+[2025/6/20 20:47:48] 🔧 using tool get_web_markdown
+[2025/6/20 20:47:54] ✓  use tools success
+[2025/6/20 20:47:54] 🔧 using tool get_web_markdown
+[2025/6/20 20:47:57] ✓  use tools success
+
+⚙️ Agent Response
+⌨️ Today's Tech Article Roundup
+
+📌 How to Detect or Observe Passing Gravitational Waves?
+Summary: This article explores the physics of gravitational waves, explaining their effects on space-time and how humans might perceive or observe this cosmic phenomenon.
+Author: ynoxinul
+Posted: 2 hours ago
+Link: https://physics.stackexchange.com/questions/338912/how-would-a-passing-gravitational-wave-look-or-feel
+
+📌 Learn Makefile Tutorial
+Summary: A comprehensive Makefile tutorial for beginners and advanced users, covering basic syntax, variables, automatic rules, and advanced features to help developers manage project builds efficiently.
+Author: dsego
+Posted: 4 hours ago
+Link: https://makefiletutorial.com/
+
+📌 Hurl: Run and Test HTTP Requests in Plain Text
+Summary: Hurl is a command-line tool that allows defining and executing HTTP requests in plain text format, ideal for data fetching and HTTP session testing. It supports chained requests, value capture, and response queries, making it perfect for testing REST, SOAP, and GraphQL APIs.
+Author: flykespice
+Posted: 8 hours ago
+Link: https://github.com/Orange-OpenSource/hurl
+```
+
+[🔗 Document of openmcp-sdk](https://kirigaya.cn/openmcp/sdk-tutorial/)
+
+
+## Want to become a contributor ?
+
+Click [here](https://kirigaya.cn/openmcp/preview/join.html) to learn how to make contribution to OpenMCP.
+
+## Join Our Community
+
+* QQ: 782833642
+* Wechat: contact 1193466151@qq.com
+* Discord: https://discord.gg/SKTZRf6NzU
+
 
 ## TODO
 

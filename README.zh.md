@@ -21,6 +21,8 @@
 [![IMAGE ALT TEXT HERE](https://pic1.zhimg.com/80/v2-951261f789708621a2c34faa5fa6f330_1440w.png)](https://www.bilibili.com/video/BV1MFTBzpEtZ/?vd_source=3f248073d6ebdb61308992901b606f24)
 ### [👆 完整视频](https://www.youtube.com/watch?v=S7igsEhcLiw)
 
+### openmcp-client
+
 集成 Inspector + MCP 客户端基础功能，开发测试一体化。
 
 ![](./icons/openmcp.welcome.png)
@@ -45,6 +47,82 @@
 
 ![](./icons/openmcp.xml.png)
 
+### openmcp-sdk
+
+一旦你在 `openmcp-client` 中完成了所有测试和验证，就可以使用 `openmcp-sdk` 快速且轻松地将你的 MCP 部署为一个 Agent 应用：
+
+```bash
+npm install openmcp-sdk
+```
+
+然后只需几行代码就能部署你的 Agent：
+
+```typescript
+import { OmAgent } from 'openmcp-sdk/service/sdk';
+
+// 创建 Agent 实例
+const agent = new OmAgent();
+    
+// 加载配置文件，该文件可在使用 openmcp client 调试后自动生成
+agent.loadMcpConfig('./mcpconfig.json');
+
+// 读取调试过的 prompt
+const prompt = await agent.getPrompt('hacknews', { topn: '5' });    
+
+// 执行任务
+const res = await agent.ainvoke({ messages: prompt });
+
+console.log('⚙️ Agent Response', res);
+```
+
+输出
+
+```
+[2025/6/20 20:47:31] 🚀 [crawl4ai-mcp] 1.9.1 connected
+[2025/6/20 20:47:35] 🤖 Agent wants to use these tools get_web_markdown
+[2025/6/20 20:47:35] 🔧 using tool get_web_markdown
+[2025/6/20 20:47:39] ✓  use tools success
+[2025/6/20 20:47:46] 🤖 Agent wants to use these tools get_web_markdown, get_web_markdown, get_web_markdown
+[2025/6/20 20:47:46] 🔧 using tool get_web_markdown
+[2025/6/20 20:47:48] ✓  use tools success
+[2025/6/20 20:47:48] 🔧 using tool get_web_markdown
+[2025/6/20 20:47:54] ✓  use tools success
+[2025/6/20 20:47:54] 🔧 using tool get_web_markdown
+[2025/6/20 20:47:57] ✓  use tools success
+
+⚙️ Agent Response
+⌨️ Today's Tech Article Roundup
+
+📌 How to Detect or Observe Passing Gravitational Waves?
+Summary: This article explores the physics of gravitational waves, explaining their effects on space-time and how humans might perceive or observe this cosmic phenomenon.
+Author: ynoxinul
+Posted: 2 hours ago
+Link: https://physics.stackexchange.com/questions/338912/how-would-a-passing-gravitational-wave-look-or-feel
+
+📌 Learn Makefile Tutorial
+Summary: A comprehensive Makefile tutorial for beginners and advanced users, covering basic syntax, variables, automatic rules, and advanced features to help developers manage project builds efficiently.
+Author: dsego
+Posted: 4 hours ago
+Link: https://makefiletutorial.com/
+
+📌 Hurl: Run and Test HTTP Requests in Plain Text
+Summary: Hurl is a command-line tool that allows defining and executing HTTP requests in plain text format, ideal for data fetching and HTTP session testing. It supports chained requests, value capture, and response queries, making it perfect for testing REST, SOAP, and GraphQL APIs.
+Author: flykespice
+Posted: 8 hours ago
+Link: https://github.com/Orange-OpenSource/hurl
+```
+
+[🔗 openmcp-sdk 文档](https://kirigaya.cn/openmcp/sdk-tutorial/)
+
+## 想要成为贡献者？
+
+点击 [这里](https://kirigaya.cn/openmcp/preview/join.html) 了解如何为 OpenMCP 做出贡献。
+
+## 加入我们的社区
+
+* QQ 群：782833642
+* 微信：联系 [1193466151@qq.com](mailto:1193466151@qq.com)
+* Discord：[https://discord.gg/SKTZRf6NzU](https://discord.gg/SKTZRf6NzU)
 
 ## TODO
 
