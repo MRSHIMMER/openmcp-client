@@ -167,3 +167,8 @@ VSCode extension uses Rollup for optimal bundling:
 - `service/src/common/router.ts` - Request routing system
 - `renderer/src/api/message-bridge.ts` - Cross-platform communication
 - `service/src/mcp/client.service.ts` - MCP client implementation
+
+## Development Reminders
+
+- **Service Startup**: 
+  - 不要自行启动服务器,run serve只能由用户操作

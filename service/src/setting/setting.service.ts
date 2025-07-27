@@ -53,6 +53,23 @@ export function loadSetting(): IConfig {
         if (!config.LLM_INFO || (Array.isArray(config.LLM_INFO) && config.LLM_INFO.length === 0)) {
             config.LLM_INFO = llms;
         } else {
+            // 首先清理可能存在的重复和临时配置
+            const cleanLlmInfo = config.LLM_INFO.filter((llm: any) => 
+                llm && !llm._isTemporary && typeof llm.id === 'string'
+            );
+            
+            // 去重：使用 Map 按 id 去重，保留第一个出现的配置
+            const uniqueLlmMap = new Map();
+            cleanLlmInfo.forEach((llm: any) => {
+                if (!uniqueLlmMap.has(llm.id)) {
+                    uniqueLlmMap.set(llm.id, llm);
+                } else {
+                    console.log(`[DEDUP] 发现重复配置，跳过: ${llm.id}`);
+                }
+            });
+            
+            config.LLM_INFO = Array.from(uniqueLlmMap.values());
+            
             // 自动同步新的提供商：检查默认配置中是否有新的提供商未在用户配置中
             const existingIds = new Set(config.LLM_INFO.map((llm: any) => llm.id));
             const newProviders = llms.filter((llm: any) => !existingIds.has(llm.id));

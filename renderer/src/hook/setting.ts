@@ -49,13 +49,18 @@ export async function setTour() {
 export function saveSetting(saveHandler?: () => void) {
     const bridge = useMessageBridge();
 
+    // 过滤掉临时配置，只保存永久配置
+    const permanentLlms = llms.filter(llm => !llm._isTemporary);
+    
     const saveConfig = {
         MODEL_INDEX: llmManager.currentModelIndex,
-        LLM_INFO: JSON.parse(JSON.stringify(llms)),
+        LLM_INFO: JSON.parse(JSON.stringify(permanentLlms)),
         LANG: I18n.global.locale.value,
         MCP_TIMEOUT_SEC: mcpSetting.timeout,
         PROXY_SERVER: mcpSetting.proxyServer
     };
+    
+    console.log(`[DEBUG] 保存设置: 总配置 ${llms.length} 个，永久配置 ${permanentLlms.length} 个`);
 
     bridge.addCommandListener('setting/save', data => {
         const saveStatusCode = data.code;
