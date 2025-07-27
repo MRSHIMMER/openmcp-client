@@ -22,7 +22,7 @@
 </template>
 
 <script setup lang="ts">
-import { provide, onMounted, onUnmounted, ref, defineEmits, defineProps, type PropType, inject, type Ref } from 'vue';
+import { provide, onMounted, onUnmounted, ref, defineEmits, defineProps, type PropType, inject, type Ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 import KRichTextarea from './rich-textarea.vue';
@@ -66,6 +66,11 @@ const scrollToBottom = inject('scrollToBottom') as () => Promise<void>;
 const updateScrollHeight = inject('updateScrollHeight') as () => void;
 const chatContext = inject('chatContext') as any;
 
+// 并行模式相关
+const isParallelMode = inject('isParallelMode') as Ref<boolean>;
+const parallelChats = inject('parallelChats') as Ref<any[]>;
+const updateChatRenderMessages = inject('updateChatRenderMessages') as (chat: any, streamingToolCalls?: ToolCall[]) => Promise<void>;
+
 chatContext.handleSend = handleSend;
 
 function clearErrorMessage(errorMessage: string) {
@@ -86,14 +91,29 @@ function clearErrorMessage(errorMessage: string) {
 }
 
 function handleSend(newMessage?: string) {
-    
-    // 将富文本信息转换成纯文本信息
     const userMessage = newMessage || userInput.value;
 
     if (!userMessage || isLoading.value) {
         return;
     }
 
+    // 清空文本
+    userInput.value = '';
+    const editor = editorRef.value.editor;
+    if (editor) {
+        editor.innerHTML = '';
+    }
+
+    if (isParallelMode.value && parallelChats.value.length > 0) {
+        // 并行模式：同时发送到多个模型
+        handleParallelSend(userMessage);
+    } else {
+        // 单聊天模式：发送到当前模型
+        handleSingleSend(userMessage);
+    }
+}
+
+function handleSingleSend(userMessage: string) {
     isLoading.value = true;
     autoScroll.value = true;
     
@@ -101,7 +121,6 @@ function handleSend(newMessage?: string) {
     loop.bindStreaming(streamingContent, streamingToolCalls);
 
     loop.registerOnError((error) => {
-        
         const errorMessage = clearErrorMessage(error.msg);
         ElMessage.error(errorMessage);
         
@@ -135,13 +154,155 @@ function handleSend(newMessage?: string) {
     loop.start(tabStorage, userMessage).then(() => {
         isLoading.value = false;
     });
+}
+
+function handleParallelSend(userMessage: string) {
+    isLoading.value = true;
     
-    // 清空文本
-    userInput.value = '';
-    const editor = editorRef.value.editor;
-    if (editor) {
-        editor.innerHTML = '';
-    }
+    // 为每个并行聊天实例启动独立的对话
+    const parallelPromises = parallelChats.value.map(async (chat, index) => {
+        
+        // 添加用户消息到这个聊天实例
+        chat.messages.push({
+            role: 'user',
+            content: userMessage,
+            extraInfo: {
+                created: Date.now(),
+                state: MessageState.Success,
+                serverName: chat.modelId,
+                enableXmlWrapper: tabStorage.settings.enableXmlWrapper
+            }
+        });
+
+        // 设置这个聊天实例为加载中
+        chat.isLoading = true;
+        chat.streamingContent = '';
+
+        // 立即更新渲染消息以显示用户输入
+        await updateChatRenderMessages(chat);
+
+        // 创建独立的TaskLoop实例，避免状态共享
+        const chatLoop = new TaskLoop({
+            maxEpochs: tabStorage.settings.contextLength || 5,
+            verbose: 0
+        });
+        
+        const targetModelIndex = chat.llmIndex;
+        
+        try {
+            // 为这个聊天实例创建完全独立的存储，包含独立的模型配置
+            const chatStorage = {
+                messages: [...chat.messages], // 深拷贝消息
+                settings: {
+                    ...tabStorage.settings,
+                    // 强制设置当前模型索引，避免全局状态冲突
+                    currentModelIndex: targetModelIndex,
+                    // 关闭并行工具调用，避免索引冲突
+                    parallelToolCalls: false
+                }
+            };
+            
+            // 动态注入模型索引到 chatLoop 的上下文中
+            (chatLoop as any)._targetModelIndex = targetModelIndex;
+            
+            // 绑定流式输出到这个聊天实例
+            const chatStreamingContent = ref('');
+            const chatStreamingToolCalls = ref<ToolCall[]>([]);
+            chatLoop.bindStreaming(chatStreamingContent, chatStreamingToolCalls);
+
+            // 监听流式内容变化
+            const stopWatchStreaming = watch(chatStreamingContent, (newContent) => {
+                console.log(`[DEBUG] 模型 ${chat.modelId} 流式内容更新:`, newContent.slice(0, 50) + '...');
+                chat.streamingContent = newContent;
+            });
+
+            // 防抖更新函数
+            let updateTimer: NodeJS.Timeout | null = null;
+            const debouncedUpdate = (newToolCalls: ToolCall[]) => {
+                if (updateTimer) {
+                    clearTimeout(updateTimer);
+                }
+                updateTimer = setTimeout(async () => {
+                    await updateChatRenderMessages(chat, newToolCalls);
+                    updateTimer = null;
+                }, 50);
+            };
+
+            // 监听流式工具调用变化
+            const stopWatchToolCalls = watch(chatStreamingToolCalls, (newToolCalls) => {
+                console.log(`[DEBUG] 模型 ${chat.modelId} 工具调用更新:`, newToolCalls.length, '个工具调用');
+                debouncedUpdate(newToolCalls);
+            }, { deep: true });
+
+            chatLoop.registerOnError((error) => {
+                console.log(`[DEBUG] 模型 ${chat.modelId} 出错:`, error.msg);
+                const errorMessage = clearErrorMessage(error.msg);
+                
+                chat.messages.push({
+                    role: 'assistant',
+                    content: errorMessage,
+                    extraInfo: {
+                        created: Date.now(),
+                        state: error.state,
+                        serverName: chat.modelId,
+                        enableXmlWrapper: false
+                    }
+                });
+                
+                updateChatRenderMessages(chat);
+            });
+
+            chatLoop.registerOnDone(() => {
+                chat.isLoading = false;
+                chat.streamingContent = '';
+                stopWatchStreaming();
+                stopWatchToolCalls();
+                if (updateTimer) {
+                    clearTimeout(updateTimer);
+                    updateTimer = null;
+                }
+            });
+
+            // 临时保存和恢复模型索引，确保TaskLoop使用正确的模型
+            const savedModelIndex = llmManager.currentModelIndex;
+            if (targetModelIndex >= 0 && targetModelIndex < llms.length) {
+                console.log(`[DEBUG] 模型 ${chat.modelId} 切换模型: ${savedModelIndex} -> ${targetModelIndex}`);
+                llmManager.currentModelIndex = targetModelIndex;
+            }
+            
+            console.log(`[DEBUG] 模型 ${chat.modelId} 开始TaskLoop执行，当前全局模型索引: ${llmManager.currentModelIndex}`);
+            await chatLoop.start(chatStorage, '__SKIP_USER_MESSAGE__');
+            console.log(`[DEBUG] 模型 ${chat.modelId} TaskLoop执行完成`);
+            
+            // 立即恢复模型索引
+            if (savedModelIndex !== llmManager.currentModelIndex) {
+                console.log(`[DEBUG] 模型 ${chat.modelId} 恢复模型: ${llmManager.currentModelIndex} -> ${savedModelIndex}`);
+                llmManager.currentModelIndex = savedModelIndex;
+            }
+            
+            // 更新存储中的消息
+            chat.messages = chatStorage.messages;
+            
+            // 重新计算渲染消息
+            await updateChatRenderMessages(chat);
+            
+        } catch (error) {
+            console.error(`并行聊天 ${chat.modelId} 出错:`, error);
+            chat.isLoading = false;
+            chat.streamingContent = '';
+        }
+    });
+
+    // 等待所有并行请求完成
+    Promise.all(parallelPromises).then(() => {
+        isLoading.value = false;
+        
+        // 更新存储
+        tabStorage.parallelChats = parallelChats.value.map(chat => ({
+            modelId: chat.modelId,
+            messages: chat.messages
+        }));
+    });
 }
 
 function handleAbort() {

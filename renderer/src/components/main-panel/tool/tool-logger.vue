@@ -25,7 +25,7 @@
                     <!-- 展示原本的信息 -->
                     <template v-if="renderMode.current === 'plaintext'">
                         <div
-                            v-for="(c, idx) in tabStorage.lastToolCallResponse!.content"
+                            v-for="(c, idx) in (tabStorage.lastToolCallResponse?.content || [])"
                             :key="idx"
                             class="tool-call-block"
                         >
@@ -78,7 +78,7 @@ const resultMarkdown = computed(() => {
         return markdownToHtml(lastToolCallResponse.toString());
     }
     
-    const rawText = lastToolCallResponse.content.map(c => c.text).join('\n\n');
+    const rawText = (lastToolCallResponse.content || []).map(c => c.text).join('\n\n');
     const html = markdownToHtml(rawText);
     return html;
 })

@@ -68,9 +68,18 @@ export interface ChatSetting {
     enableXmlWrapper: boolean
 }
 
+export interface ParallelChatInstance {
+    modelId: string
+    messages: ChatMessage[]
+    llmIndex?: number  // 对应的LLM配置索引
+}
+
 export interface ChatStorage {
     messages: ChatMessage[]
     settings: ChatSetting
+    parallelMode?: boolean
+    parallelChats?: ParallelChatInstance[]
+    selectedModels?: string[]
 }
 
 export type ToolCall = OpenAI.Chat.Completions.ChatCompletionChunk.Choice.Delta.ToolCall;
