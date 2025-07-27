@@ -143,9 +143,10 @@ export class TaskLoop {
 
         if (toolCall) {
             if (toolCall.index === undefined || toolCall.index === null) {
-                console.warn('tool_call.index is undefined or null');
+                console.warn('tool_call.index is undefined or null, 使用默认索引 0');
+                // 如果 index 未定义，使用默认值 0
+                toolCall.index = 0;
             }
-
 
             const index = toolcallIndexAdapter(toolCall);
             const currentCall = this.streamingToolCalls.value[index];
@@ -557,17 +558,19 @@ export class TaskLoop {
         }
         const enableXmlWrapper = tabStorage.settings.enableXmlWrapper;
 
-        // 添加目前的消息
-        tabStorage.messages.push({
-            role: 'user',
-            content: userMessage,
-            extraInfo: {
-                created: Date.now(),
-                state: MessageState.Success,
-                serverName: this.getLlmConfig().id || 'unknown',
-                enableXmlWrapper
-            }
-        });
+        // 添加目前的消息（如果不是特殊标记的话）
+        if (userMessage !== '__SKIP_USER_MESSAGE__') {
+            tabStorage.messages.push({
+                role: 'user',
+                content: userMessage,
+                extraInfo: {
+                    created: Date.now(),
+                    state: MessageState.Success,
+                    serverName: this.getLlmConfig().id || 'unknown',
+                    enableXmlWrapper
+                }
+            });
+        }
 
         let jsonParseErrorRetryCount = 0;
         const {

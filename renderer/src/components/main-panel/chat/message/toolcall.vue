@@ -46,7 +46,7 @@
                     </div>
 
                     <div class="tool-arguments">
-                        <json-render :json="props.message.tool_calls[toolIndex].function!.arguments"/>
+                        <json-render :json="parseArguments(props.message.tool_calls[toolIndex].function!.arguments)"/>
                     </div>
 
                     <!-- 工具调用结果 -->
@@ -254,6 +254,14 @@ const emits = defineEmits(['update:tool-result']);
 
 function updateToolCallResultItem(value: any, toolIndex: number, index: number) {
     emits('update:tool-result', value, toolIndex, index);
+}
+
+function parseArguments(args: string | undefined): object {
+    try {
+        return JSON.parse(args || '{}');
+    } catch {
+        return { rawArgs: args || '' };
+    }
 }
 
 </script>
