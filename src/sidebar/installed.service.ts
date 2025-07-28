@@ -53,6 +53,7 @@ export async function changeInstalledConnectionName(item: McpOptions[] | McpOpti
     const newName = await vscode.window.showInputBox({
         prompt: t('openmcp.sidebar.installed-connection.changeConnectionName.title'),
         value: currentName,
+        ignoreFocusOut: true,
         validateInput: (value) => {
             if (!value || value.trim() === '') {
                 return t('error.connectionNameRequired');
@@ -102,7 +103,8 @@ export async function acquireInstalledConnection(): Promise<McpOptions[]> {
         // 获取 command
         const commandString = await vscode.window.showInputBox({
             prompt: t('please-enter-connection-command'),
-            placeHolder: t('example-mcp-run')
+            placeHolder: t('example-mcp-run'),
+            ignoreFocusOut: true,
         });
 
         if (!commandString) {
@@ -112,7 +114,8 @@ export async function acquireInstalledConnection(): Promise<McpOptions[]> {
         // 获取 cwd
         const cwd = await vscode.window.showInputBox({
             prompt: t('please-enter-cwd'),
-            placeHolder: t('please-enter-cwd-placeholder')
+            placeHolder: t('please-enter-cwd-placeholder'),
+            ignoreFocusOut: true,
         });
 
 
@@ -138,7 +141,8 @@ export async function acquireInstalledConnection(): Promise<McpOptions[]> {
         // 获取 url
         const url = await vscode.window.showInputBox({
             prompt: t('please-enter-url'),
-            placeHolder: t('example-as') + 'https://127.0.0.1:8282/sse'
+            placeHolder: t('example-as') + 'https://127.0.0.1:8282/sse',
+            ignoreFocusOut: true,
         });
 
         if (!url) {
@@ -148,7 +152,8 @@ export async function acquireInstalledConnection(): Promise<McpOptions[]> {
         // 获取 oauth
         const oauth = await vscode.window.showInputBox({
             prompt: t('enter-optional-oauth'),
-            placeHolder: t('example-as') + ' your-oauth-token'
+            placeHolder: t('example-as') + ' your-oauth-token',
+            ignoreFocusOut: true,
         });
 
         // 保存连接配置
@@ -163,7 +168,8 @@ export async function acquireInstalledConnection(): Promise<McpOptions[]> {
         // 获取 url
         const url = await vscode.window.showInputBox({
             prompt: t('please-enter-url'),
-            placeHolder: t('example-as') + ' https://127.0.0.1:8282/stream'
+            placeHolder: t('example-as') + ' https://127.0.0.1:8282/stream',
+            ignoreFocusOut: true,
         });
 
         if (!url) {
@@ -173,7 +179,8 @@ export async function acquireInstalledConnection(): Promise<McpOptions[]> {
         // 获取 oauth
         const oauth = await vscode.window.showInputBox({
             prompt: t('enter-optional-oauth'),
-            placeHolder: t('example-as') + ' your-oauth-token'
+            placeHolder: t('example-as') + ' your-oauth-token',
+            ignoreFocusOut: true,
         });
 
         // 保存连接配置
