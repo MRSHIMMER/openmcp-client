@@ -20,5 +20,6 @@
     "openmcp.sidebar.installed-connection.changeConnectionName.title": "输入修改的名称",
     "error.connectionNameRequired": "服务器名称不能为空",
     "error.invalid-claude-command": "无效的 claude 命令",
-    "please-enter-claude-command": "请输入 claude 命令" 
+    "please-enter-claude-command": "请输入 claude 命令",
+    "please-enter-json-config": "请输入 JSON 配置"
 }

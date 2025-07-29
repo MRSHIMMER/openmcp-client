@@ -210,13 +210,214 @@ function parseHttpCommand(commandString: string): ParsedCommand {
     };
 }
 
+function validateJsonConfig(input: string): string | null {
+    try {
+        const config = JSON.parse(input);
+        if (!config.type) return t('error.missingTypeInJson');
+        if (!['stdio', 'sse', 'http'].includes(config.type.toLowerCase())) {
+            return t('error.invalidTypeInJson');
+        }
+        if (config.type.toLowerCase() === 'stdio' && !config.command) {
+            return t('error.missingCommandForStdio');
+        }
+        if (['sse', 'http'].includes(config.type.toLowerCase()) && !config.url) {
+            return t('error.missingUrlForRemote');
+        }
+        return null;
+    } catch (e) {
+        return t('error.invalidJsonFormat');
+    }
+}
+
+async function handleJsonConfig(): Promise<McpOptions[]> {
+    // 让用户输入JSON配置
+    const jsonInput = await vscode.window.showInputBox({
+        prompt: t('please-enter-json-config'),
+        placeHolder: '{"type":"stdio","command":"npx","args":["@modelcontextprotocol/server"],"cwd":"~/projects"}',
+        ignoreFocusOut: true,
+        validateInput: validateJsonConfig
+    });
+
+    if (!jsonInput) {
+        return [];
+    }
+
+    try {
+        const config = JSON.parse(jsonInput);
+        return [{
+            connectionType: config.type.toUpperCase(),
+            name: config.name || `${config.type}-${Date.now()}`,
+            command: config.command,
+            args: config.args,
+            url: config.url,
+            oauth: config.oauth,
+            cwd: config.cwd,
+            env: config.env || {},
+            scope: config.scope || 'local',
+            filePath: config.filePath
+        }];
+    } catch (error) {
+        vscode.window.showErrorMessage(t('error.invalidJsonConfig'));
+        return [];
+    }
+}
+
+async function handleClaudeCommand(): Promise<McpOptions[]> {
+    const commandString = await vscode.window.showInputBox({
+        prompt: t('please-enter-claude-command'),
+        placeHolder: 'claude mcp add filesystem -s user -- npx -y @modelcontextprotocol/server-filesystem ~/Projects',
+        ignoreFocusOut: true,
+    });
+
+    if (!commandString) return [];
+
+    const parsedCommand = parseClaudeCommand(commandString);
+    if (!parsedCommand) {
+        vscode.window.showErrorMessage(t('error.invalidClaudeCommand'));
+        return [];
+    }
+
+    // 根据解析结果创建配置
+    switch (parsedCommand.type) {
+        case 'STDIO':
+            return [{
+                connectionType: 'STDIO',
+                name: parsedCommand.name || `STDIO-${Date.now()}`,
+                command: parsedCommand.command || '',
+                args: parsedCommand.args || [],
+                cwd: parsedCommand.cwd || '',
+                env: parsedCommand.env || {},
+                scope: parsedCommand.scope || 'local',
+                filePath: await getFirstValidPathFromCommand(
+                    parsedCommand.command + ' ' + (parsedCommand.args?.join(' ') || ''), 
+                    parsedCommand.cwd || ''
+                )
+            }];
+        
+        case 'SSE':
+            return [{
+                connectionType: 'SSE',
+                name: parsedCommand.name || `SSE-${Date.now()}`,
+                version: '1.0',
+                url: parsedCommand.url || '',
+                oauth: parsedCommand.oauth || ''
+            }];
+        
+        case 'STREAMABLE_HTTP':
+            return [{
+                connectionType: 'STREAMABLE_HTTP',
+                name: parsedCommand.name || `STREAMABLE_HTTP-${Date.now()}`,
+                version: '1.0',
+                url: parsedCommand.url || '',
+                oauth: parsedCommand.oauth || ''
+            }];
+        
+        default:
+            return [];
+    }
+}
+
+// 处理STDIO类型
+async function handleStdioType(): Promise<McpOptions[]> {
+    // 获取 command
+    const commandString = await vscode.window.showInputBox({
+        prompt: t('please-enter-connection-command'),
+        placeHolder: t('example-mcp-run'),
+        ignoreFocusOut: true,
+    });
+
+    if (!commandString) {
+        return []; // 用户取消输入
+    }
+
+    // 获取 cwd
+    const cwd = await vscode.window.showInputBox({
+        prompt: t('please-enter-cwd'),
+        placeHolder: t('please-enter-cwd-placeholder'),
+        ignoreFocusOut: true
+    });
+
+    const commands = commandString.split(' ');
+    const command = commands[0];
+    const args = commands.slice(1);
+    const filePath = await getFirstValidPathFromCommand(commandString, cwd || '');
+
+    return [{
+        connectionType: 'STDIO',
+        name: `STDIO-${Date.now()}`,
+        command: command,
+        args,
+        cwd: cwd || '',
+        filePath
+    }];
+}
+
+// 处理SSE类型
+async function handleSseType(): Promise<McpOptions[]> {
+    // 获取 url
+    const url = await vscode.window.showInputBox({
+        prompt: t('please-enter-url'),
+        placeHolder: t('example-as') + 'https://127.0.0.1:8282/sse',
+        ignoreFocusOut: true,
+    });
+
+    if (!url) {
+        return []; // 用户取消输入
+    }
+
+    // 获取 oauth
+    const oauth = await vscode.window.showInputBox({
+        prompt: t('enter-optional-oauth'),
+        placeHolder: t('example-as') + ' your-oauth-token',
+        ignoreFocusOut: true,
+    });
+
+    return [{
+        connectionType: 'SSE',
+        name: `SSE-${Date.now()}`,
+        version: '1.0',
+        url: url,
+        oauth: oauth || ''
+    }];
+}
+
+// 处理STREAMABLE_HTTP类型
+async function handleStreamableHttpType(): Promise<McpOptions[]> {
+    // 获取 url
+    const url = await vscode.window.showInputBox({
+        prompt: t('please-enter-url'),
+        placeHolder: t('example-as') + ' https://127.0.0.1:8282/stream',
+        ignoreFocusOut: true,
+    });
+
+    if (!url) {
+        return []; // 用户取消输入
+    }
+
+    // 获取 oauth
+    const oauth = await vscode.window.showInputBox({
+        prompt: t('enter-optional-oauth'),
+        placeHolder: t('example-as') + ' your-oauth-token',
+        ignoreFocusOut: true,
+    });
+
+    return [{
+        connectionType: 'STREAMABLE_HTTP',
+        name: `STREAMABLE_HTTP-${Date.now()}`,
+        version: '1.0',
+        url: url,
+        oauth: oauth || ''
+    }];
+}
+
 export async function acquireUserCustomConnection(): Promise<McpOptions[]> {
-    // 让用户选择连接类型，新增Claude Command选项
+    // 让用户选择连接类型，新增JSON Config选项
     const connectionType = await vscode.window.showQuickPick([
         'STDIO', 
         'SSE', 
         'STREAMABLE_HTTP',
-        'Claude Command'
+        'Claude Command',
+        'JSON Config'
     ], {
         placeHolder: t('choose-connection-type'),
         canPickMany: false,
@@ -227,147 +428,25 @@ export async function acquireUserCustomConnection(): Promise<McpOptions[]> {
         return []; // 用户取消选择
     }
 
-    // 如果用户选择的是Claude Command
-    if (connectionType === 'Claude Command') {
-        // 让用户输入claude命令
-        const commandString = await vscode.window.showInputBox({
-            prompt: t('please-enter-claude-command'),
-            placeHolder: 'claude mcp add filesystem -s user -- npx -y @modelcontextprotocol/server-filesystem ~/Projects',
-            ignoreFocusOut: true,
-        });
-
-        if (!commandString) {
-            return [];
-        }
-
-        // 解析命令
-        const parsedCommand = parseClaudeCommand(commandString);
-        if (!parsedCommand) {
-            vscode.window.showErrorMessage(t('error.invalid-claude-command'));
-            return [];
-        }
-
-        // 根据解析结果创建配置
-        switch (parsedCommand.type) {
-            case 'STDIO':
-                return [{
-                    connectionType: 'STDIO',
-                    name: parsedCommand.name || `STDIO-${Date.now()}`,
-                    command: parsedCommand.command || '',
-                    args: parsedCommand.args || [],
-                    cwd: parsedCommand.cwd || '',
-                    env: parsedCommand.env || {},
-                    scope: parsedCommand.scope || 'local'
-                }];
-            
-            case 'SSE':
-                return [{
-                    connectionType: 'SSE',
-                    name: parsedCommand.name || `SSE-${Date.now()}`,
-                    version: '1.0',
-                    url: parsedCommand.url || '',
-                    oauth: parsedCommand.oauth || ''
-                }];
-            
-            case 'STREAMABLE_HTTP':
-                return [{
-                    connectionType: 'STREAMABLE_HTTP',
-                    name: parsedCommand.name || `STREAMABLE_HTTP-${Date.now()}`,
-                    version: '1.0',
-                    url: parsedCommand.url || '',
-                    oauth: parsedCommand.oauth || ''
-                }];
-            
-            default:
-                return [];
-        }
+    // 处理JSON Config选项
+    if (connectionType === 'JSON Config') {
+        return await handleJsonConfig();
     }
-    // 以下是原有的三种连接类型的处理逻辑
+    // 处理Claude Command选项
+    else if (connectionType === 'Claude Command') {
+        return await handleClaudeCommand();
+    }
+    // 处理STDIO类型
     else if (connectionType === 'STDIO') {
-        // 获取 command
-        const commandString = await vscode.window.showInputBox({
-            prompt: t('please-enter-connection-command'),
-            placeHolder: t('example-mcp-run'),
-            ignoreFocusOut: true,
-        });
-
-        if (!commandString) {
-            return []; // 用户取消输入
-        }
-
-        // 获取 cwd
-        const cwd = await vscode.window.showInputBox({
-            prompt: t('please-enter-cwd'),
-            placeHolder: t('please-enter-cwd-placeholder'),
-            ignoreFocusOut: true
-        });
-
-        const commands = commandString.split(' ');
-        const command = commands[0];
-        const args = commands.slice(1);
-        const filePath = await getFirstValidPathFromCommand(commandString, cwd || '');
-
-        return [{
-            connectionType: 'STDIO',
-            name: `STDIO-${Date.now()}`,
-            command: command,
-            args,
-            cwd: cwd || '',
-            filePath
-        }];
-
-    } else if (connectionType === 'SSE') {
-        // 获取 url
-        const url = await vscode.window.showInputBox({
-            prompt: t('please-enter-url'),
-            placeHolder: t('example-as') + 'https://127.0.0.1:8282/sse',
-            ignoreFocusOut: true,
-        });
-
-        if (!url) {
-            return []; // 用户取消输入
-        }
-
-        // 获取 oauth
-        const oauth = await vscode.window.showInputBox({
-            prompt: t('enter-optional-oauth'),
-            placeHolder: t('example-as') + ' your-oauth-token',
-            ignoreFocusOut: true,
-        });
-
-        return [{
-            connectionType: 'SSE',
-            name: `SSE-${Date.now()}`,
-            version: '1.0',
-            url: url,
-            oauth: oauth || ''
-        }];
-    } else if (connectionType === 'STREAMABLE_HTTP') {
-        // 获取 url
-        const url = await vscode.window.showInputBox({
-            prompt: t('please-enter-url'),
-            placeHolder: t('example-as') + ' https://127.0.0.1:8282/stream',
-            ignoreFocusOut: true,
-        });
-
-        if (!url) {
-            return []; // 用户取消输入
-        }
-
-        // 获取 oauth
-        const oauth = await vscode.window.showInputBox({
-            prompt: t('enter-optional-oauth'),
-            placeHolder: t('example-as') + ' your-oauth-token',
-            ignoreFocusOut: true,
-        });
-
-        return [{
-            connectionType: 'STREAMABLE_HTTP',
-            name: `STREAMABLE_HTTP-${Date.now()}`,
-            version: '1.0',
-            url: url,
-            oauth: oauth || ''
-        }];
+        return await handleStdioType();
+    }
+    // 处理SSE类型
+    else if (connectionType === 'SSE') {
+        return await handleSseType();
+    }
+    // 处理STREAMABLE_HTTP类型
+    else if (connectionType === 'STREAMABLE_HTTP') {
+        return await handleStreamableHttpType();
     }
 
     return [];

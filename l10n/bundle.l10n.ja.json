@@ -19,5 +19,6 @@
     "openmcp.sidebar.installed-connection.changeConnectionName.title": "変更する接続名を入力してください",
     "error.connectionNameRequired": "サーバー名は必須です",
     "error.invalid-claude-command": "無効な claude コマンド",
-    "please-enter-claude-command": "Claude コマンドを入力してください"
+    "please-enter-claude-command": "Claude コマンドを入力してください",
+    "please-enter-json-config": "JSON 設定を入力してください"
 }
