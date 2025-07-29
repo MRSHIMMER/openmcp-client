@@ -80,6 +80,7 @@ const generateExportData = computed(() => {
 
         if (type === 'STDIO') {
             mcpServers[client.name] = {
+                type: 'stdio',
                 command: option.command,
                 args: option.args,
                 cwd: option.cwd,

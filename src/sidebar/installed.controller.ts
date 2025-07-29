@@ -2,8 +2,9 @@ import * as vscode from 'vscode';
 import { RegisterCommand, RegisterTreeDataProvider } from '../common/index.js';
 import { ConnectionViewItem } from './common.js';
 import { getConnectionConfig, getInstalledConnectionConfigPath, saveConnectionConfig } from '../global.js';
-import { acquireInstalledConnection, changeInstalledConnectionName, deleteInstalledConnection } from './installed.service.js';
+import { changeInstalledConnectionName, deleteInstalledConnection } from './installed.service.js';
 import { revealOpenMcpWebviewPanel } from '../webview/webview.service.js';
+import { acquireUserCustomConnection } from './workspace.service.js';
 
 @RegisterTreeDataProvider('openmcp.sidebar.installed-connection')
 export class McpInstalledConnectProvider implements vscode.TreeDataProvider<ConnectionViewItem> {
@@ -49,7 +50,7 @@ export class McpInstalledConnectProvider implements vscode.TreeDataProvider<Conn
 
     @RegisterCommand('addConnection')
     public async addConnection(context: vscode.ExtensionContext) {
-        const item = await acquireInstalledConnection();
+        const item = await acquireUserCustomConnection();
 
         if (item.length === 0) {
             return;

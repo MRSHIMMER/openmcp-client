@@ -213,27 +213,60 @@ function parseHttpCommand(commandString: string): ParsedCommand {
 function validateJsonConfig(input: string): string | null {
     try {
         const config = JSON.parse(input);
-        if (!config.type) return t('error.missingTypeInJson');
-        if (!['stdio', 'sse', 'http'].includes(config.type.toLowerCase())) {
-            return t('error.invalidTypeInJson');
+        
+        // 支持两种格式：
+        // 1. 直接的配置对象 {type: "...", command: "...", ...}
+        // 2. 包含mcpServers的对象 {"mcpServers": {"ServerName": {...}}}
+        
+        let serverConfigs: any = {};
+        
+        if (config.mcpServers) {
+            // 第二种格式
+            serverConfigs = config.mcpServers;
+        } else if (config.type) {
+            // 第一种格式，包装成对象
+            const tempKey = `temp-${Date.now()}`;
+            serverConfigs[tempKey] = config;
+        } else {
+            return t('error.invalidJsonFormat');
         }
-        if (config.type.toLowerCase() === 'stdio' && !config.command) {
-            return t('error.missingCommandForStdio');
+        
+        // 验证每个服务器配置
+        for (const [serverName, serverConfig] of Object.entries(serverConfigs)) {
+            const configObj = serverConfig as any;
+            
+            if (!configObj.type) return t('error.missingTypeInJson');
+            if (!['stdio', 'sse', 'http'].includes(configObj.type.toLowerCase())) {
+                return t('error.invalidTypeInJson');
+            }
+            if (configObj.type.toLowerCase() === 'stdio' && !configObj.command) {
+                return t('error.missingCommandForStdio');
+            }
+            if (['sse', 'http'].includes(configObj.type.toLowerCase()) && !configObj.url) {
+                return t('error.missingUrlForRemote');
+            }
         }
-        if (['sse', 'http'].includes(config.type.toLowerCase()) && !config.url) {
-            return t('error.missingUrlForRemote');
-        }
+        
         return null;
     } catch (e) {
         return t('error.invalidJsonFormat');
     }
 }
 
-async function handleJsonConfig(): Promise<McpOptions[]> {
+export async function handleJsonConfig(): Promise<McpOptions[]> {
     // 让用户输入JSON配置
     const jsonInput = await vscode.window.showInputBox({
         prompt: t('please-enter-json-config'),
-        placeHolder: '{"type":"stdio","command":"npx","args":["@modelcontextprotocol/server"],"cwd":"~/projects"}',
+        placeHolder: `{
+  "mcpServers": {
+    "SimpleMcpServer": {
+      "command": "uv",
+      "args": ["run", "mcp", "run", "main.py"],
+      "cwd": "/Users/kirigaya/projects/openmcp-tutorial/simple-mcp",
+      "type": "stdio"
+    }
+  }
+}`,
         ignoreFocusOut: true,
         validateInput: validateJsonConfig
     });
@@ -243,26 +276,57 @@ async function handleJsonConfig(): Promise<McpOptions[]> {
     }
 
     try {
-        const config = JSON.parse(jsonInput);
-        return [{
-            connectionType: config.type.toUpperCase(),
-            name: config.name || `${config.type}-${Date.now()}`,
-            command: config.command,
-            args: config.args,
-            url: config.url,
-            oauth: config.oauth,
-            cwd: config.cwd,
-            env: config.env || {},
-            scope: config.scope || 'local',
-            filePath: config.filePath
-        }];
+        const parsed = JSON.parse(jsonInput);
+        
+        // 支持两种格式：
+        // 1. 直接的配置对象 {type: "...", command: "...", ...}
+        // 2. 包含mcpServers的对象 {"mcpServers": {"ServerName": {...}}}
+        
+        let serverConfigs: any = {};
+        
+        if (parsed.mcpServers) {
+            // 第二种格式
+            serverConfigs = parsed.mcpServers;
+        } else if (parsed.type) {
+            // 第一种格式，包装成对象
+            serverConfigs.default = parsed;
+        } else {
+            vscode.window.showErrorMessage(t('error.invalidJsonFormat'));
+            return [];
+        }
+        
+        const results: McpOptions[] = [];
+        
+        // 处理每个服务器配置
+        for (const [serverName, serverConfig] of Object.entries(serverConfigs)) {
+            const config: any = serverConfig;
+            const connectionType = config.type.toUpperCase() as 'STDIO' | 'SSE' | 'STREAMABLE_HTTP';
+            
+            const mcpOption: McpOptions = {
+                connectionType,
+                name: config.name || serverName || `${config.type}-${Date.now()}`,
+                command: config.command,
+                args: config.args,
+                url: config.url,
+                oauth: config.oauth,
+                cwd: config.cwd,
+                env: config.env || {},
+                scope: config.scope || 'local',
+                filePath: config.filePath,
+                description: config.description
+            };
+            
+            results.push(mcpOption);
+        }
+        
+        return results;
     } catch (error) {
         vscode.window.showErrorMessage(t('error.invalidJsonConfig'));
         return [];
     }
 }
 
-async function handleClaudeCommand(): Promise<McpOptions[]> {
+export async function handleClaudeCommand(): Promise<McpOptions[]> {
     const commandString = await vscode.window.showInputBox({
         prompt: t('please-enter-claude-command'),
         placeHolder: 'claude mcp add filesystem -s user -- npx -y @modelcontextprotocol/server-filesystem ~/Projects',
@@ -318,7 +382,7 @@ async function handleClaudeCommand(): Promise<McpOptions[]> {
 }
 
 // 处理STDIO类型
-async function handleStdioType(): Promise<McpOptions[]> {
+export async function handleStdioType(): Promise<McpOptions[]> {
     // 获取 command
     const commandString = await vscode.window.showInputBox({
         prompt: t('please-enter-connection-command'),
@@ -353,7 +417,7 @@ async function handleStdioType(): Promise<McpOptions[]> {
 }
 
 // 处理SSE类型
-async function handleSseType(): Promise<McpOptions[]> {
+export async function handleSseType(): Promise<McpOptions[]> {
     // 获取 url
     const url = await vscode.window.showInputBox({
         prompt: t('please-enter-url'),
@@ -382,7 +446,7 @@ async function handleSseType(): Promise<McpOptions[]> {
 }
 
 // 处理STREAMABLE_HTTP类型
-async function handleStreamableHttpType(): Promise<McpOptions[]> {
+export async function handleStreamableHttpType(): Promise<McpOptions[]> {
     // 获取 url
     const url = await vscode.window.showInputBox({
         prompt: t('please-enter-url'),
