@@ -231,5 +231,12 @@
     "guide.16.4": "Travaillons ensemble pour intégrer de plus en plus d'APIs et de SDKs dans le grand modèle !",
     "maybe-end": "Chapitre final ?",
     "finish": "Fin",
-    "queue-time": "Temps d'attente"
+    "queue-time": "Temps d'attente",
+    "switch-to-single-chat": "Passer à la discussion individuelle",
+    "switch-to-parallel-chat": "Passer à la conversation parallèle",
+    "no-match-model": "Aucun modèle correspondant",
+    "choose-model-to-compare": "Sélectionnez un modèle à comparer (prend en charge la recherche par fournisseur/nom de modèle)",
+    "clear": "Effacer",
+    "copied": "Copié",
+    "fail-to-copy": "Échec de la copie"
 }

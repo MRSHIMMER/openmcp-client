@@ -18,5 +18,7 @@
     "preset-env-sync.fail": "Failed to sync preset environment variables",
     "error.notOpenWorkspace": "No workspace is currently open in VSCode. Please open a workspace (e.g., open a folder) first.",
     "openmcp.sidebar.installed-connection.changeConnectionName.title": "Enter the new connection name",
-    "error.connectionNameRequired": "Server name cannot be empty"
+    "error.connectionNameRequired": "Server name cannot be empty",
+    "error.invalid-claude-command": "Invalid claude command",
+    "please-enter-claude-command": "Please enter the claude command"
 }

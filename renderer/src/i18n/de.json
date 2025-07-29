@@ -231,5 +231,12 @@
     "guide.16.4": "Lasst uns gemeinsam immer mehr APIs und SDKs in das große Modell integrieren!",
     "maybe-end": "Ende?",
     "finish": "Ende",
-    "queue-time": "Wartezeit"
+    "queue-time": "Wartezeit",
+    "switch-to-single-chat": "Zu Einzelchat wechseln",
+    "switch-to-parallel-chat": "Zu paralleler Konversation wechseln",
+    "no-match-model": "Kein passendes Modell",
+    "choose-model-to-compare": "Wählen Sie ein Modell zum Vergleich aus (Unterstützung der Suche nach Anbieter/Modellname)",
+    "clear": "Leeren",
+    "copied": "Kopiert",
+    "fail-to-copy": "Kopieren fehlgeschlagen"
 }

@@ -3,18 +3,17 @@
         <!-- 并行模式切换工具栏 -->
         <div class="parallel-toolbar">
             <el-button @click="toggleParallelMode" size="small">
-                {{ isParallelMode ? '切换到单聊天' : '切换到并行对话' }}
+                {{ isParallelMode ? t('switch-to-single-chat') : t('switch-to-parallel-chat') }}
             </el-button>
             <div v-if="isParallelMode" class="model-selector">
                 <el-select 
                     v-model="selectedModels" 
                     multiple 
                     filterable
-                    placeholder="选择模型进行对比（支持搜索供应商/模型名称）"
+                    :placeholder="t('choose-model-to-compare')"
                     @change="initParallelChats"
-                    style="width: 400px;"
                     :filter-method="filterModels"
-                    no-match-text="无匹配的模型"
+                    :no-match-text="t('no-match-model')"
                 >
                     <el-option
                         v-for="model in filteredModels"
@@ -23,7 +22,7 @@
                         :value="model.id"
                     />
                 </el-select>
-                <span v-if="parallelChats.length > 0" style="margin-left: 10px; font-size: 12px;">
+                <span v-if="parallelChats.length > 0" style="margin-left: 10px; font-size: 12px; width: 130px;">
                     已选择 {{ parallelChats.length }} 个模型
                 </span>
             </div>
@@ -88,21 +87,27 @@
                     <div class="chat-header">
                         <span class="model-name">{{ getModelName(chat.modelId) }}</span>
                         <div class="chat-actions">
-                            <el-button 
-                                @click="clearChatHistory(chatIndex)" 
-                                size="small" 
-                                type="warning"
-                                title="清空上下文"
-                            >
-                                清空
-                            </el-button>
+                              <el-popconfirm title="确定要清空此对话的上下文吗？"
+                                @confirm="clearChatHistory(chatIndex)"
+                              >
+                                <template #reference>
+                                    <el-button 
+                                        size="small" 
+                                        type="warning"
+                                        title="清空上下文"
+                                    >
+                                        {{ t('clear') }}
+                                    </el-button>
+                                </template>
+                            </el-popconfirm>
+
                             <el-button 
                                 @click="removeParallelChat(chatIndex)" 
                                 size="small" 
                                 type="danger"
                                 title="移除此对话"
                             >
-                                ×
+                                <span class="iconfont icon-delete"></span>
                             </el-button>
                         </div>
                     </div>
@@ -150,7 +155,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, defineComponent, defineProps, computed, nextTick, watch, provide, watchEffect, onBeforeUnmount } from 'vue';
+import { ref, defineComponent, defineProps, computed, nextTick, watch, provide, watchEffect, onBeforeUnmount, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { type ScrollbarInstance } from 'element-plus';
 import { tabs } from '../panel';
@@ -263,11 +268,11 @@ const filteredModels = computed(() => {
     }
     
     const keyword = searchKeyword.value.toLowerCase().trim();
-    return availableModels.value.filter(model => {
+    return availableModels.value.filter(model => {        
         // 支持搜索：模型名称、供应商名称、完整显示名称
-        return model.modelName.toLowerCase().includes(keyword) ||
-               model.providerName.toLowerCase().includes(keyword) ||
-               model.name.toLowerCase().includes(keyword);
+        return model.modelName?.toLowerCase().includes(keyword) ||
+               model.providerName?.toLowerCase().includes(keyword) ||
+               model.name?.toLowerCase().includes(keyword);
     });
 });
 
@@ -440,20 +445,19 @@ function removeParallelChat(index: number) {
 
 // 清空聊天记录（上下文）
 function clearChatHistory(index: number) {
-    if (confirm('确定要清空此对话的上下文吗？')) {
-        const chat = parallelChats.value[index];
-        chat.messages = [];
-        chat.renderMessages = [];
-        chat.streamingContent = '';
-        
-        // 更新存储
-        tabStorage.parallelChats = parallelChats.value.map(chat => ({
-            modelId: chat.modelId,
-            messages: chat.messages
-        }));
-        
-        console.log(`模型 ${chat.modelId} 的上下文已清空`);
-    }
+    // 确定要清空此对话的上下文吗？
+    const chat = parallelChats.value[index];
+    chat.messages = [];
+    chat.renderMessages = [];
+    chat.streamingContent = '';
+    
+    // 更新存储
+    tabStorage.parallelChats = parallelChats.value.map(chat => ({
+        modelId: chat.modelId,
+        messages: chat.messages
+    }));
+    
+    console.log(`模型 ${chat.modelId} 的上下文已清空`);
 }
 
 // 获取模型名称
@@ -640,9 +644,12 @@ function getXmlToolCalls(message: ChatMessage) {
 
 const renderMessages = ref<IRenderMessage[]>([]);
 
+onMounted(() => {
+    initParallelChats();    
+});
+
 watchEffect(async () => {
     renderMessages.value = [];
-
     for (const message of tabStorage.messages) {
         const indexAdapter = getIdAsIndexAdapter();        
         const xmls = getXmlToolCalls(message);

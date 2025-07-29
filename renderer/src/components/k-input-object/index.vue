@@ -20,6 +20,7 @@ import { json } from '@codemirror/lang-json'
 import { oneDark } from '@codemirror/theme-one-dark'
 import { debounce } from 'lodash'
 import { patchEditors } from './patch';
+import { getPlatform } from '@/api/platform';
 
 const props = defineProps({
     modelValue: {
@@ -156,6 +157,7 @@ watch(
 
 );
 
+const platform = getPlatform();
 
 onMounted(() => {
     if (editorContainer.value) {
@@ -186,15 +188,19 @@ onMounted(() => {
             parent: editorContainer.value
         });
 
-        const editableElement = editorContainer.value.querySelector('[contenteditable="true"]');
-        patchEditors.add(editableElement);
+        if (platform === 'vscode') {
+            const editableElement = editorContainer.value.querySelector('[contenteditable="true"]');
+            patchEditors.add(editableElement);
+        }
     }
 })
 
 
 onUnmounted(() => {
-    const editableElement = editorContainer.value.querySelector('[contenteditable="true"]');
-    patchEditors.delete(editableElement);
+    if (platform === 'vscode') {
+         const editableElement = editorContainer.value.querySelector('[contenteditable="true"]');
+        patchEditors.delete(editableElement);   
+    }
 })
 
 </script>

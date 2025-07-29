@@ -231,5 +231,12 @@
     "guide.16.4": "Let's work together to integrate more and more APIs and SDKs into the large model!",
     "maybe-end": "Final Chapter?",
     "finish": "End",
-    "queue-time": "Waiting time"
+    "queue-time": "Waiting time",
+    "switch-to-single-chat": "Switch to single chat",
+    "switch-to-parallel-chat": "Switch to parallel conversation",
+    "no-match-model": "No matching model",
+    "choose-model-to-compare": "Select a model for comparison (supports searching by vendor/model name)",
+    "clear": "Clear",
+    "copied": "Copied",
+    "fail-to-copy": "Copy failed"
 }

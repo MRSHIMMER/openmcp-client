@@ -1,4 +1,7 @@
 import { Prism } from './prism';
+import I18n from '@/i18n';
+
+const { t } = I18n.global;
 
 // 定义 escapeHtml 函数
 function escapeHtml(unsafe: string) {
@@ -30,7 +33,7 @@ export default function highlight(option: HighlightOption = {}) {
             container += `
         <div class="code-header">
         <div class="code-language">${lang || ''}</div>
-        <button class="copy-button" onclick="copyCode(this)">复制</button>
+        <button class="copy-button" onclick="copyCode(this)">${t("copy")}</button>
         </div>
         `;
 
@@ -68,12 +71,12 @@ export default function highlight(option: HighlightOption = {}) {
 
     navigator.clipboard.writeText(code).then(() => {
         const originalText = button.textContent;
-        button.textContent = '已复制';
+        button.textContent = t('copied');
         setTimeout(() => {
             button.textContent = originalText;
         }, 500);
     }).catch((error) => {
         console.error('复制失败:', error);
-        button.textContent = '复制失败';
+        button.textContent = t('fail-to-copy');
     });
 };

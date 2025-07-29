@@ -231,5 +231,12 @@
     "guide.16.4": "대형 모델에 점점 더 많은 API와 SDK를 통합해 봅시다!",
     "maybe-end": "종장?",
     "finish": "종료",
-    "queue-time": "대기 시간"
+    "queue-time": "대기 시간",
+    "switch-to-single-chat": "단일 채팅으로 전환",
+    "switch-to-parallel-chat": "병렬 대화로 전환",
+    "no-match-model": "일치하는 모델 없음",
+    "choose-model-to-compare": "비교할 모델 선택 (공급업체/모델 이름으로 검색 지원)",
+    "clear": "지우기",
+    "copied": "복사됨",
+    "fail-to-copy": "복사 실패"
 }

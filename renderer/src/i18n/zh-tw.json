@@ -231,5 +231,12 @@
     "guide.16.4": "讓我們一起把越來越多的API和SDK接入大模型吧！",
     "maybe-end": "終章？",
     "finish": "結束",
-    "queue-time": "排隊時間"
+    "queue-time": "排隊時間",
+    "switch-to-single-chat": "切換到單聊天",
+    "switch-to-parallel-chat": "切換到並行對話",
+    "no-match-model": "無匹配的模型",
+    "choose-model-to-compare": "選擇模型進行對比（支援搜索供應商/模型名稱）",
+    "clear": "清空",
+    "copied": "已複製",
+    "fail-to-copy": "複製失敗"
 }

@@ -231,5 +231,12 @@
     "guide.16.4": "大規模モデルにどんどんAPIやSDKを統合していきましょう！",
     "maybe-end": "終章？",
     "finish": "終了",
-    "queue-time": "待ち時間"
+    "queue-time": "待ち時間",
+    "switch-to-single-chat": "単体チャットに切り替え",
+    "switch-to-parallel-chat": "並列会話に切り替える",
+    "no-match-model": "一致するモデルがありません",
+    "choose-model-to-compare": "比較するモデルを選択（ベンダー/モデル名で検索可能）",
+    "clear": "クリア",
+    "copied": "コピーしました",
+    "fail-to-copy": "コピーに失敗しました"
 }

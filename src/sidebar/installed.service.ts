@@ -2,6 +2,7 @@ import { getConnectionConfig, panels, saveConnectionConfig, getFirstValidPathFro
 import { exec, spawn } from 'node:child_process';
 import * as vscode from 'vscode';
 import { t } from "../i18n/index.js";
+import { parseClaudeCommand } from "./workspace.service.js";
 
 export async function deleteInstalledConnection(item: McpOptions[] | McpOptions) {
     // 弹出确认对话框
@@ -87,9 +88,14 @@ export async function changeInstalledConnectionName(item: McpOptions[] | McpOpti
     vscode.commands.executeCommand('openmcp.sidebar.installed-connection.refresh');
 }
 
-export async function acquireInstalledConnection(): Promise<McpOptions[]> {
-    // 让用户选择连接类型
-    const connectionType = await vscode.window.showQuickPick(['STDIO', 'SSE', 'STREAMABLE_HTTP'], {
+export async function acquireUserCustomConnection(): Promise<McpOptions[]> {
+    // 让用户选择连接类型，新增Claude Command选项
+    const connectionType = await vscode.window.showQuickPick([
+        'STDIO', 
+        'SSE', 
+        'STREAMABLE_HTTP',
+        'Claude Command'
+    ], {
         placeHolder: t('choose-connection-type'),
         canPickMany: false,
         ignoreFocusOut: true,
@@ -99,7 +105,63 @@ export async function acquireInstalledConnection(): Promise<McpOptions[]> {
         return []; // 用户取消选择
     }
 
-    if (connectionType === 'STDIO') {
+    // 如果用户选择的是Claude Command
+    if (connectionType === 'Claude Command') {
+        // 让用户输入claude命令
+        const commandString = await vscode.window.showInputBox({
+            prompt: t('please-enter-claude-command'),
+            placeHolder: 'claude mcp add filesystem -s user -- npx -y @modelcontextprotocol/server-filesystem ~/Projects',
+            ignoreFocusOut: true,
+        });
+
+        if (!commandString) {
+            return [];
+        }
+
+        // 解析命令
+        const parsedCommand = parseClaudeCommand(commandString);
+        if (!parsedCommand) {
+            vscode.window.showErrorMessage(t('error.invalid-claude-command'));
+            return [];
+        }
+
+        // 根据解析结果创建配置
+        switch (parsedCommand.type) {
+            case 'STDIO':
+                return [{
+                    connectionType: 'STDIO',
+                    name: parsedCommand.name || `STDIO-${Date.now()}`,
+                    command: parsedCommand.command || '',
+                    args: parsedCommand.args || [],
+                    cwd: parsedCommand.cwd || '',
+                    env: parsedCommand.env || {},
+                    scope: parsedCommand.scope || 'local'
+                }];
+            
+            case 'SSE':
+                return [{
+                    connectionType: 'SSE',
+                    name: parsedCommand.name || `SSE-${Date.now()}`,
+                    version: '1.0',
+                    url: parsedCommand.url || '',
+                    oauth: parsedCommand.oauth || ''
+                }];
+            
+            case 'STREAMABLE_HTTP':
+                return [{
+                    connectionType: 'STREAMABLE_HTTP',
+                    name: parsedCommand.name || `STREAMABLE_HTTP-${Date.now()}`,
+                    version: '1.0',
+                    url: parsedCommand.url || '',
+                    oauth: parsedCommand.oauth || ''
+                }];
+            
+            default:
+                return [];
+        }
+    }
+    // 以下是原有的三种连接类型的处理逻辑
+    else if (connectionType === 'STDIO') {
         // 获取 command
         const commandString = await vscode.window.showInputBox({
             prompt: t('please-enter-connection-command'),
@@ -115,26 +177,21 @@ export async function acquireInstalledConnection(): Promise<McpOptions[]> {
         const cwd = await vscode.window.showInputBox({
             prompt: t('please-enter-cwd'),
             placeHolder: t('please-enter-cwd-placeholder'),
-            ignoreFocusOut: true,
+            ignoreFocusOut: true
         });
-
 
         const commands = commandString.split(' ');
         const command = commands[0];
         const args = commands.slice(1);
-
-        console.log('Command:', command);
-
         const filePath = await getFirstValidPathFromCommand(commandString, cwd || '');
 
-        // 保存连接配置
         return [{
             connectionType: 'STDIO',
             name: `STDIO-${Date.now()}`,
             command: command,
             args,
             cwd: cwd || '',
-            filePath: filePath,
+            filePath
         }];
 
     } else if (connectionType === 'SSE') {
@@ -156,11 +213,10 @@ export async function acquireInstalledConnection(): Promise<McpOptions[]> {
             ignoreFocusOut: true,
         });
 
-        // 保存连接配置
         return [{
             connectionType: 'SSE',
             name: `SSE-${Date.now()}`,
-            version: '1.0', // 假设默认版本为 1.0，可根据实际情况修改
+            version: '1.0',
             url: url,
             oauth: oauth || ''
         }];
@@ -183,11 +239,10 @@ export async function acquireInstalledConnection(): Promise<McpOptions[]> {
             ignoreFocusOut: true,
         });
 
-        // 保存连接配置
         return [{
             connectionType: 'STREAMABLE_HTTP',
             name: `STREAMABLE_HTTP-${Date.now()}`,
-            version: '1.0', // 假设默认版本为 1.0，可根据实际情况修改
+            version: '1.0',
             url: url,
             oauth: oauth || ''
         }];
@@ -195,4 +250,3 @@ export async function acquireInstalledConnection(): Promise<McpOptions[]> {
 
     return [];
 }
-

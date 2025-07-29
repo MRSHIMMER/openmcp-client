@@ -17,5 +17,7 @@
     "preset-env-sync": "プリセット環境変数の同期が完了しました",
     "preset-env-sync.fail": "プリセット環境変数の同期に失敗しました",
     "openmcp.sidebar.installed-connection.changeConnectionName.title": "変更する接続名を入力してください",
-    "error.connectionNameRequired": "サーバー名は必須です"
+    "error.connectionNameRequired": "サーバー名は必須です",
+    "error.invalid-claude-command": "無効な claude コマンド",
+    "please-enter-claude-command": "Claude コマンドを入力してください"
 }

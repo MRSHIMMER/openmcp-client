@@ -248,6 +248,8 @@ function handleParallelSend(userMessage: string) {
                         enableXmlWrapper: false
                     }
                 });
+
+                chat.isLoading = false;
                 
                 updateChatRenderMessages(chat);
             });

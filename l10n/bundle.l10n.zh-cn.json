@@ -18,5 +18,7 @@
     "preset-env-sync.fail": "预设环境变量同步失败",
     "error.notOpenWorkspace": "当前VScode没有打开工作区，请先打开工作区（例如打开文件夹）",
     "openmcp.sidebar.installed-connection.changeConnectionName.title": "输入修改的名称",
-    "error.connectionNameRequired": "服务器名称不能为空"
+    "error.connectionNameRequired": "服务器名称不能为空",
+    "error.invalid-claude-command": "无效的 claude 命令",
+    "please-enter-claude-command": "请输入 claude 命令" 
 }
