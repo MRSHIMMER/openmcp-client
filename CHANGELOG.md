@@ -4,7 +4,7 @@
 - 添加新功能：并行对话。在交互测试中，用户可以点击左上角的 switch to single chat 来切换到并行对话窗口，这个窗口，你可以让大模型同时回答同一个问题，用于并行测试。 https://picx.zhimg.com/80/v2-92807279c2dcbbf7808b483f0141f592_1440w.png
 - 修改 issue #50: 修复 vscode 插件端下，无法将对象复制进入 object 输入框的问题。 https://picx.zhimg.com/80/v2-1098d1931dd6bc13372d1611d8494e32_1440w.png
 - 修复 vscode 插件端下 mook 无法使用的问题。现在 mook 的数据条目更加精确。
-- 添加新的链接形式，允许通过导入 claude command 或者 claude 兼容性的 json 的方式来创建新的链接。
+- 添加新的链接形式，允许通过导入 claude command 或者 claude 兼容性的 json 的方式来创建新的链接。 https://pic1.zhimg.com/80/v2-9e47bf3591472fc04ba0d7c2986f66e3_1440w.png
 
 ## [main] 0.1.10
 - 修复 issue #48: 修复错误的引导路径。
