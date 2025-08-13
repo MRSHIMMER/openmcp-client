@@ -281,6 +281,8 @@ export function toNormaliseToolcall(xmlToolcall: XmlToolCall, toolcallIndexAdapt
 export async function handleXmlWrapperToolcall(toolcall: XmlToolCall): Promise<ToolCallResult> {
     if (!toolcall) {
         return {
+            index: 0,
+            id: '',
             content: [{
                 type: 'error',
                 text: 'invalid xml'
@@ -290,5 +292,10 @@ export async function handleXmlWrapperToolcall(toolcall: XmlToolCall): Promise<T
     }
     
     const toolResponse = await mcpClientAdapter.callTool(toolcall.name, toolcall.parameters);
-    return handleToolResponse(toolResponse);
+    const response = handleToolResponse(toolResponse);
+    return {
+        index: 0,
+        id: toolcall.callId,
+        ...response
+    };
 }
