@@ -12,6 +12,8 @@ export interface TaskLoopChatOption {
 export type ChatCompletionCreateParamsBase = OpenAI.Chat.Completions.ChatCompletionCreateParams & TaskLoopChatOption;
 
 export interface ToolCallResult {
+    id?: string;
+    index: number;
     state: MessageState;
     content: ToolCallContent[];
 }
@@ -22,6 +24,8 @@ export async function handleToolCalls(toolCall: ToolCall): Promise<ToolCallResul
 
     if (!toolCall.function) {
         return {
+            index: toolCall.index,
+            id: toolCall.id,
             content: [{
                 type: 'error',
                 text: 'no tool function'
@@ -37,6 +41,8 @@ export async function handleToolCalls(toolCall: ToolCall): Promise<ToolCallResul
     
     if (argsResult.error) {
         return {
+            index: toolCall.index,
+            id: toolCall.id,
             content: [{
                 type: 'error',
                 text: parseErrorObject(argsResult.error)
@@ -49,7 +55,13 @@ export async function handleToolCalls(toolCall: ToolCall): Promise<ToolCallResul
 
     // 进行调用，根据结果返回不同的值
     const toolResponse = await mcpClientAdapter.callTool(toolName, toolArgs);
-    return handleToolResponse(toolResponse);
+    const response = handleToolResponse(toolResponse);
+
+    return {
+        index: toolCall.index,
+        id: toolCall.id,
+        ...response
+    };
 }
 
 function deserializeToolCallResponse(toolArgs: string) {

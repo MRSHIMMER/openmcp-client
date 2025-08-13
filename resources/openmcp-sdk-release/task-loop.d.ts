@@ -91,6 +91,8 @@ export interface ToolCallContent {
 }
 
 export interface ToolCallResult {
+    id?: string;
+    index: number;
     state: MessageState;
     content: ToolCallContent[];
 }
