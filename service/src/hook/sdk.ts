@@ -24,6 +24,7 @@ export class TaskLoopAdapter {
                     this.postMessage({
                         command: 'nodejs/launch-signature',
                         data: {
+                            _id: data._id,
                             code: 200,
                             msg: this.connectionOptions
                         }
